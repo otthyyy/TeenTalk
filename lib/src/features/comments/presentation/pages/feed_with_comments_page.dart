@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
@@ -63,7 +64,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
       floatingActionButton: _showComments
           ? null
           : FloatingActionButton(
-              onPressed: _showCreatePostDialog,
+              onPressed: _navigateToPostComposer,
               child: const Icon(Icons.add),
             ),
     );
@@ -193,74 +194,13 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     );
   }
 
-  void _showCreatePostDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Create Post',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: TextField(
-                      maxLines: null,
-                      expands: true,
-                      decoration: const InputDecoration(
-                        hintText: 'What\'s on your mind?',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      const Text('Post anonymously'),
-                      const Spacer(),
-                      Switch(value: false, onChanged: (value) {}),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        // TODO: Implement post creation
-                      },
-                      child: const Text('Post'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+  Future<void> _navigateToPostComposer() async {
+    final result = await context.push<bool>('/feed/compose');
+    
+    // Refresh posts if user successfully created a post
+    if (result == true && mounted) {
+      ref.read(postsProvider.notifier).loadPosts(refresh: true);
+    }
   }
 
   void _showReportDialog(Post post) {
