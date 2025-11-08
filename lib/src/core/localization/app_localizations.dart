@@ -101,6 +101,41 @@ abstract class AppLocalizations {
   String get navLogout;
   String get navSettings;
   String get navProfile;
+
+  // Moderation Strings
+  String get moderationReport;
+  String get moderationReportContent;
+  String get moderationReported;
+  String get moderationAlreadyReported;
+  String get moderationReportReason;
+  String get moderationReasonSpam;
+  String get moderationReasonHarassment;
+  String get moderationReasonHateSpeech;
+  String get moderationReasonViolence;
+  String get moderationReasonSexualContent;
+  String get moderationReasonMisinformation;
+  String get moderationReasonSelfHarm;
+  String get moderationReasonOther;
+  String get moderationAdditionalDetails;
+  String get moderationSubmit;
+  String get moderationCancel;
+  String get moderationSuccess;
+  String get moderationSuccessMessage;
+  String get moderationRateLimit;
+  String get moderationRateLimitMessage;
+  String get moderationWarning;
+  String get moderationWarningMessage;
+  String get moderationGuidelinesTitle;
+  String get moderationGuidelinesAgree;
+  String get moderationQueue;
+  String get moderationQueueEmpty;
+  String get moderationNoReports;
+  String get moderationViewDetails;
+  String get moderationTakeAction;
+  String get moderationKeepActive;
+  String get moderationKeepHidden;
+  String get moderationRemoveContent;
+  String get moderationContentHidden;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
