@@ -1,10 +1,13 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../auth/data/services/firebase_auth_service.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/data/repositories/posts_repository.dart';
 import '../../../profile/data/repositories/user_repository.dart';
-import '../../../auth/data/auth_service.dart';
 
 final feedRepositoryProvider = Provider<PostsRepository>((ref) {
   return PostsRepository();
