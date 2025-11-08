@@ -17,7 +17,6 @@ import 'package:teen_talk_app/src/features/profile/presentation/providers/user_p
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final userProfile = ref.watch(userProfileProvider);
-  final isAdminUser = userProfile.value?.isAdmin ?? false;
 
   return GoRouter(
     initialLocation: '/feed',
@@ -26,6 +25,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthenticated = authState.user != null;
       final isProfileLoading = userProfile.isLoading;
       final hasProfile = userProfile.value != null;
+      final isAdminUser = userProfile.value?.isAdmin ?? false;
 
       final isOnAuthPage = state.uri.toString() == '/auth';
       final isOnOnboardingPage = state.uri.toString() == '/onboarding';
@@ -63,9 +63,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) {
-          return const OnboardingPage();
-        },
+        builder: (context, state) => const OnboardingPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {
