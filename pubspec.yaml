@@ -41,8 +41,8 @@ dependencies:
   json_annotation: ^4.8.1
   
   # Firebase
-  firebase_core: ^2.24.0
-  firebase_auth: ^4.15.0
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
   google_sign_in: ^6.1.6
   cloud_firestore: ^4.14.0
   firebase_storage: ^11.6.0
@@ -60,12 +60,6 @@ dependencies:
   
   # UI
   provider: ^6.4.0
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.15.3
-  cloud_firestore: ^4.13.6
-  
-  # Utilities
-  intl: ^0.18.1
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
