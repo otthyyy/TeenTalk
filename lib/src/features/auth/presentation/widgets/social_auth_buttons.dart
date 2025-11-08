@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
-import '../../../../src/core/localization/app_localizations.dart';
 
 class SocialAuthButtons extends ConsumerWidget {
   const SocialAuthButtons({super.key});

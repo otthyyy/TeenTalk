@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../models/auth_form_state.dart';
-import '../../../../src/core/localization/app_localizations.dart';
 import '../../data/models/auth_user.dart';
 
 class ConsentPage extends ConsumerStatefulWidget {

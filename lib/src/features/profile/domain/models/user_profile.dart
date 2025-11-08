@@ -1,33 +1,107 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'user_profile.freezed.dart';
-part 'user_profile.g.dart';
+class UserProfile {
+  final String uid;
+  final String nickname;
+  final bool nicknameVerified;
+  final String? gender;
+  final String? school;
+  final int anonymousPostsCount;
+  final DateTime createdAt;
+  final DateTime? lastNicknameChangeAt;
+  final bool privacyConsentGiven;
+  final DateTime privacyConsentTimestamp;
+  final bool? isMinor;
+  final String? guardianContact;
+  final bool? parentalConsentGiven;
+  final DateTime? parentalConsentTimestamp;
+  final bool allowAnonymousPosts;
+  final bool profileVisible;
+  final DateTime? updatedAt;
+  final bool isAdmin;
+  final bool isModerator;
 
-@freezed
-class UserProfile with _$UserProfile {
-  const factory UserProfile({
-    required String uid,
-    required String nickname,
-    required bool nicknameVerified,
-    String? gender,
-    String? school,
-    @Default(0) int anonymousPostsCount,
-    required DateTime createdAt,
-    DateTime? lastNicknameChangeAt,
-    required bool privacyConsentGiven,
-    required DateTime privacyConsentTimestamp,
-    bool? isMinor,
-    String? guardianContact,
-    bool? parentalConsentGiven,
-    DateTime? parentalConsentTimestamp,
-    @Default(true) bool allowAnonymousPosts,
-    @Default(true) bool profileVisible,
-    DateTime? updatedAt,
-  }) = _UserProfile;
+  const UserProfile({
+    required this.uid,
+    required this.nickname,
+    required this.nicknameVerified,
+    this.gender,
+    this.school,
+    this.anonymousPostsCount = 0,
+    required this.createdAt,
+    this.lastNicknameChangeAt,
+    required this.privacyConsentGiven,
+    required this.privacyConsentTimestamp,
+    this.isMinor,
+    this.guardianContact,
+    this.parentalConsentGiven,
+    this.parentalConsentTimestamp,
+    this.allowAnonymousPosts = true,
+    this.profileVisible = true,
+    this.updatedAt,
+    this.isAdmin = false,
+    this.isModerator = false,
+  });
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) =>
-      _$UserProfileFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      uid: json['uid'] as String,
+      nickname: json['nickname'] as String,
+      nicknameVerified: json['nicknameVerified'] as bool? ?? false,
+      gender: json['gender'] as String?,
+      school: json['school'] as String?,
+      anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      lastNicknameChangeAt: json['lastNicknameChangeAt'] != null
+          ? (json['lastNicknameChangeAt'] as Timestamp).toDate()
+          : null,
+      privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
+      privacyConsentTimestamp: json['privacyConsentTimestamp'] != null
+          ? (json['privacyConsentTimestamp'] as Timestamp).toDate()
+          : DateTime.now(),
+      isMinor: json['isMinor'] as bool?,
+      guardianContact: json['guardianContact'] as String?,
+      parentalConsentGiven: json['parentalConsentGiven'] as bool?,
+      parentalConsentTimestamp: json['parentalConsentTimestamp'] != null
+          ? (json['parentalConsentTimestamp'] as Timestamp).toDate()
+          : null,
+      allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
+      profileVisible: json['profileVisible'] as bool? ?? true,
+      updatedAt: json['updatedAt'] != null
+          ? (json['updatedAt'] as Timestamp).toDate()
+          : null,
+      isAdmin: json['isAdmin'] as bool? ?? false,
+      isModerator: json['isModerator'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'nickname': nickname,
+      'nicknameVerified': nicknameVerified,
+      'gender': gender,
+      'school': school,
+      'anonymousPostsCount': anonymousPostsCount,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'lastNicknameChangeAt': lastNicknameChangeAt != null
+          ? Timestamp.fromDate(lastNicknameChangeAt!)
+          : null,
+      'privacyConsentGiven': privacyConsentGiven,
+      'privacyConsentTimestamp': Timestamp.fromDate(privacyConsentTimestamp),
+      'isMinor': isMinor,
+      'guardianContact': guardianContact,
+      'parentalConsentGiven': parentalConsentGiven,
+      'parentalConsentTimestamp': parentalConsentTimestamp != null
+          ? Timestamp.fromDate(parentalConsentTimestamp!)
+          : null,
+      'allowAnonymousPosts': allowAnonymousPosts,
+      'profileVisible': profileVisible,
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+      'isAdmin': isAdmin,
+      'isModerator': isModerator,
+    };
+  }
 
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -57,32 +131,107 @@ class UserProfile with _$UserProfile {
       updatedAt: data['updatedAt'] != null
           ? (data['updatedAt'] as Timestamp).toDate()
           : null,
+      isAdmin: data['isAdmin'] as bool? ?? false,
+      isModerator: data['isModerator'] as bool? ?? false,
     );
   }
 
   static Map<String, dynamic> toFirestore(UserProfile profile) {
-    return {
-      'nickname': profile.nickname,
-      'nicknameVerified': profile.nicknameVerified,
-      'gender': profile.gender,
-      'school': profile.school,
-      'anonymousPostsCount': profile.anonymousPostsCount,
-      'createdAt': Timestamp.fromDate(profile.createdAt),
-      'lastNicknameChangeAt': profile.lastNicknameChangeAt != null
-          ? Timestamp.fromDate(profile.lastNicknameChangeAt!)
-          : null,
-      'privacyConsentGiven': profile.privacyConsentGiven,
-      'privacyConsentTimestamp':
-          Timestamp.fromDate(profile.privacyConsentTimestamp),
-      'isMinor': profile.isMinor,
-      'guardianContact': profile.guardianContact,
-      'parentalConsentGiven': profile.parentalConsentGiven,
-      'parentalConsentTimestamp': profile.parentalConsentTimestamp != null
-          ? Timestamp.fromDate(profile.parentalConsentTimestamp!)
-          : null,
-      'allowAnonymousPosts': profile.allowAnonymousPosts,
-      'profileVisible': profile.profileVisible,
-      'updatedAt': Timestamp.fromDate(DateTime.now()),
-    };
+    return profile.toJson();
+  }
+
+  UserProfile copyWith({
+    String? uid,
+    String? nickname,
+    bool? nicknameVerified,
+    String? gender,
+    String? school,
+    int? anonymousPostsCount,
+    DateTime? createdAt,
+    DateTime? lastNicknameChangeAt,
+    bool? privacyConsentGiven,
+    DateTime? privacyConsentTimestamp,
+    bool? isMinor,
+    String? guardianContact,
+    bool? parentalConsentGiven,
+    DateTime? parentalConsentTimestamp,
+    bool? allowAnonymousPosts,
+    bool? profileVisible,
+    DateTime? updatedAt,
+    bool? isAdmin,
+    bool? isModerator,
+  }) {
+    return UserProfile(
+      uid: uid ?? this.uid,
+      nickname: nickname ?? this.nickname,
+      nicknameVerified: nicknameVerified ?? this.nicknameVerified,
+      gender: gender ?? this.gender,
+      school: school ?? this.school,
+      anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
+      createdAt: createdAt ?? this.createdAt,
+      lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
+      privacyConsentGiven: privacyConsentGiven ?? this.privacyConsentGiven,
+      privacyConsentTimestamp:
+          privacyConsentTimestamp ?? this.privacyConsentTimestamp,
+      isMinor: isMinor ?? this.isMinor,
+      guardianContact: guardianContact ?? this.guardianContact,
+      parentalConsentGiven: parentalConsentGiven ?? this.parentalConsentGiven,
+      parentalConsentTimestamp:
+          parentalConsentTimestamp ?? this.parentalConsentTimestamp,
+      allowAnonymousPosts: allowAnonymousPosts ?? this.allowAnonymousPosts,
+      profileVisible: profileVisible ?? this.profileVisible,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isAdmin: isAdmin ?? this.isAdmin,
+      isModerator: isModerator ?? this.isModerator,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserProfile &&
+        other.uid == uid &&
+        other.nickname == nickname &&
+        other.nicknameVerified == nicknameVerified &&
+        other.gender == gender &&
+        other.school == school &&
+        other.anonymousPostsCount == anonymousPostsCount &&
+        other.createdAt == createdAt &&
+        other.lastNicknameChangeAt == lastNicknameChangeAt &&
+        other.privacyConsentGiven == privacyConsentGiven &&
+        other.privacyConsentTimestamp == privacyConsentTimestamp &&
+        other.isMinor == isMinor &&
+        other.guardianContact == guardianContact &&
+        other.parentalConsentGiven == parentalConsentGiven &&
+        other.parentalConsentTimestamp == parentalConsentTimestamp &&
+        other.allowAnonymousPosts == allowAnonymousPosts &&
+        other.profileVisible == profileVisible &&
+        other.updatedAt == updatedAt &&
+        other.isAdmin == isAdmin &&
+        other.isModerator == isModerator;
+  }
+
+  @override
+  int get hashCode {
+    return uid.hashCode ^
+        nickname.hashCode ^
+        nicknameVerified.hashCode ^
+        gender.hashCode ^
+        school.hashCode ^
+        anonymousPostsCount.hashCode ^
+        createdAt.hashCode ^
+        lastNicknameChangeAt.hashCode ^
+        privacyConsentGiven.hashCode ^
+        privacyConsentTimestamp.hashCode ^
+        isMinor.hashCode ^
+        guardianContact.hashCode ^
+        parentalConsentGiven.hashCode ^
+        parentalConsentTimestamp.hashCode ^
+        allowAnonymousPosts.hashCode ^
+        profileVisible.hashCode ^
+        updatedAt.hashCode ^
+        isAdmin.hashCode ^
+        isModerator.hashCode;
   }
 }
