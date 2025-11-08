@@ -106,6 +106,7 @@ class UserProfile {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool profileComplete;
+  final bool isAdmin;
 
   const UserProfile({
     required this.uid,
@@ -117,6 +118,7 @@ class UserProfile {
     required this.createdAt,
     required this.updatedAt,
     this.profileComplete = false,
+    this.isAdmin = false,
   });
 
   UserProfile copyWith({
@@ -129,6 +131,7 @@ class UserProfile {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? profileComplete,
+    bool? isAdmin,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -140,6 +143,7 @@ class UserProfile {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       profileComplete: profileComplete ?? this.profileComplete,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 
@@ -154,6 +158,7 @@ class UserProfile {
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       profileComplete: json['profileComplete'] as bool? ?? false,
+      isAdmin: json['isAdmin'] as bool? ?? false,
     );
   }
 
@@ -167,6 +172,7 @@ class UserProfile {
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
     'profileComplete': profileComplete,
+    'isAdmin': isAdmin,
   };
 }
 
