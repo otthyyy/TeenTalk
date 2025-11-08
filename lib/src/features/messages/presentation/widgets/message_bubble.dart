@@ -80,7 +80,7 @@ class MessageBubble extends StatelessWidget {
                         ),
                       ),
                     Text(
-                      message.text,
+                      message.content,
                       style: TextStyle(
                         color:
                             isCurrentUser ? Colors.white : Colors.black87,

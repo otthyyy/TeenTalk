@@ -132,7 +132,6 @@ class Post {
     this.mentionedUserIds = const [],
     this.isModerated = false,
     this.imageUrl,
-    this.section = 'Spotted',
     this.section = 'spotted',
   });
 
@@ -185,7 +184,6 @@ class Post {
       mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
       isModerated: json['isModerated'] as bool? ?? false,
       imageUrl: json['imageUrl'] as String?,
-      section: json['section'] as String? ?? 'Spotted',
       section: json['section'] as String? ?? 'spotted',
     );
   }

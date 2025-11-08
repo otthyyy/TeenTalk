@@ -120,7 +120,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       
       await repository.createPost(
         authorId: authState.user!.uid,
-        authorNickname: '${userProfile.firstName} ${userProfile.lastName}',
+        authorNickname: userProfile.nickname,
         isAnonymous: _isAnonymous,
         content: _contentController.text.trim(),
         imageFile: _selectedImage,

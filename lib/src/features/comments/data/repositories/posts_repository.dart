@@ -15,7 +15,7 @@ class PostsRepository {
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
 
-  Future<List<Post>> getPosts({
+  Future<(List<Post>, DocumentSnapshot?)> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
@@ -36,13 +36,16 @@ class PostsRepository {
 
     final QuerySnapshot snapshot = await query.get();
     
-    return snapshot.docs.map((doc) {
+    final posts = snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Post.fromJson({
         ...data,
         'id': doc.id,
       });
     }).toList();
+
+    final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+    return (posts, lastDoc);
   }
 
   Future<Post?> getPostById(String postId) async {
@@ -84,7 +87,7 @@ class PostsRepository {
     }
   }
 
-  Future<void> validatePostContent(String content) {
+  Future<void> validatePostContent(String content) async {
     if (content.trim().isEmpty) {
       throw Exception('Post content cannot be empty');
     }
@@ -111,7 +114,6 @@ class PostsRepository {
     required bool isAnonymous,
     required String content,
     File? imageFile,
-    String section = 'Spotted',
     String section = 'spotted',
   }) async {
     // Validate content
@@ -284,11 +286,6 @@ class PostsRepository {
       // 2. Queue the post for moderation review
       // 3. Apply AI-based content filtering
       
-      // For now, we'll just log the moderation request
-      print('Moderation triggered for post: $postId');
-      print('Content: $content');
-      print('Has image: ${imageUrl != null}');
-      
       // Store moderation request in Firestore for processing
       await _firestore.collection('moderationQueue').add({
         'postId': postId,
@@ -302,6 +299,8 @@ class PostsRepository {
       // Log error but don't fail the post creation
       _logger.e('Failed to trigger moderation pipeline: $e');
     }
+  }
+
   Stream<List<Post>> getPostsStream({
     String? section,
     int limit = 20,
