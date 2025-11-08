@@ -142,23 +142,31 @@ class PostsRepository {
 
   Future<void> reportPost(String postId, String reason) async {
     final postRef = _firestore.collection(_postsCollection).doc(postId);
-    final reportRef = _firestore.collection('postReports').doc();
+    final reportRef = _firestore.collection('reports').doc();
 
     await _firestore.runTransaction((transaction) async {
       final postDoc = await transaction.get(postRef);
       
       if (!postDoc.exists) return;
 
+      final postData = postDoc.data() as Map<String, dynamic>;
+      final now = DateTime.now();
+
       transaction.set(reportRef, {
-        'postId': postId,
+        'itemId': postId,
+        'itemType': 'post',
+        'authorId': postData['authorId'],
+        'authorNickname': postData['authorNickname'],
+        'content': postData['content'],
         'reason': reason,
-        'createdAt': DateTime.now().toIso8601String(),
+        'createdAt': now.toIso8601String(),
+        'updatedAt': now.toIso8601String(),
         'status': 'pending',
       });
 
       transaction.update(postRef, {
         'isModerated': true,
-        'updatedAt': DateTime.now().toIso8601String(),
+        'updatedAt': now.toIso8601String(),
       });
     });
   }

@@ -66,16 +66,30 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isOwner(userId);
     }
     
-    // Posts collection rules (placeholder for future implementation)
+    // Posts collection rules
     match /posts/{postId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && 
                        request.auth.uid == request.resource.data.authorId;
       allow update: if isAuthenticated() && 
-                       request.auth.uid == resource.data.authorId;
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
       allow delete: if isAuthenticated() && 
                        (request.auth.uid == resource.data.authorId || 
-                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
+                        isAdmin());
+    }
+    
+    // Comments collection rules
+    match /comments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.authorId;
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
     }
     
     // Messages collection rules (placeholder for future implementation)
@@ -154,6 +168,26 @@ service cloud.firestore {
       }
     }
     
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Reports collection rules (admin only)
+    match /reports/{reportId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow update: if isAuthenticated() && isAdmin();
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Moderation decisions collection rules (admin only)
+    match /moderationDecisions/{decisionId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow list: if isAuthenticated() && isAdmin();
+    }
+
     // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;

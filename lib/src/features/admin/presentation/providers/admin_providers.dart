@@ -1,0 +1,81 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teen_talk_app/src/features/admin/data/models/report.dart';
+import 'package:teen_talk_app/src/features/admin/data/repositories/admin_repository.dart';
+
+final adminRepositoryProvider = Provider((ref) => AdminRepository());
+
+final adminReportsFilterProvider = StateProvider<AdminReportsFilter>((ref) {
+  return AdminReportsFilter();
+});
+
+final adminReportsProvider =
+    FutureProvider.family<List<Report>, AdminReportsFilter>((ref, filter) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  return repository.getReports(
+    status: filter.status,
+    startDate: filter.startDate,
+    endDate: filter.endDate,
+  );
+});
+
+final adminAnalyticsProvider = FutureProvider<AdminAnalytics>((ref) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  return repository.getAnalytics();
+});
+
+final adminReportDetailsProvider =
+    FutureProvider.family<Report?, String>((ref, reportId) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  return repository.getReportById(reportId);
+});
+
+final reportedContentProvider =
+    FutureProvider.family<Map<String, dynamic>?, ReportedContentRequest>(
+        (ref, request) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  return repository.getReportedContent(
+    itemId: request.itemId,
+    itemType: request.itemType,
+  );
+});
+
+final moderationDecisionsProvider =
+    FutureProvider.family<List<ModerationDecision>, String?>(
+        (ref, reportId) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  return repository.getModerationDecisions(reportId: reportId);
+});
+
+class AdminReportsFilter {
+  final String status;
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  AdminReportsFilter({
+    this.status = 'all',
+    this.startDate,
+    this.endDate,
+  });
+
+  AdminReportsFilter copyWith({
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    return AdminReportsFilter(
+      status: status ?? this.status,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+    );
+  }
+}
+
+class ReportedContentRequest {
+  final String itemId;
+  final String itemType;
+
+  ReportedContentRequest({
+    required this.itemId,
+    required this.itemType,
+  });
+}

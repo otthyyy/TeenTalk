@@ -211,23 +211,31 @@ class CommentsRepository {
 
   Future<void> reportComment(String commentId, String reason) async {
     final commentRef = _firestore.collection(_commentsCollection).doc(commentId);
-    final reportRef = _firestore.collection('commentReports').doc();
+    final reportRef = _firestore.collection('reports').doc();
 
     await _firestore.runTransaction((transaction) async {
       final commentDoc = await transaction.get(commentRef);
       
       if (!commentDoc.exists) return;
 
+      final commentData = commentDoc.data() as Map<String, dynamic>;
+      final now = DateTime.now();
+
       transaction.set(reportRef, {
-        'commentId': commentId,
+        'itemId': commentId,
+        'itemType': 'comment',
+        'authorId': commentData['authorId'],
+        'authorNickname': commentData['authorNickname'],
+        'content': commentData['content'],
         'reason': reason,
-        'createdAt': DateTime.now().toIso8601String(),
+        'createdAt': now.toIso8601String(),
+        'updatedAt': now.toIso8601String(),
         'status': 'pending',
       });
 
       transaction.update(commentRef, {
         'isModerated': true,
-        'updatedAt': DateTime.now().toIso8601String(),
+        'updatedAt': now.toIso8601String(),
       });
     });
   }
