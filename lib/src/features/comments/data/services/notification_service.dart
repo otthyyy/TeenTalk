@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:logger/logger.dart';
 import '../models/comment.dart';
 
 class NotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final Logger _logger = Logger();
 
   Future<void> sendCommentNotification({
     required Comment comment,
@@ -107,7 +109,7 @@ class NotificationService {
       );
     } catch (e) {
       // Log error but don't fail the operation
-      print('Failed to send push notification: $e');
+      _logger.e('Failed to send push notification: $e');
     }
   }
 

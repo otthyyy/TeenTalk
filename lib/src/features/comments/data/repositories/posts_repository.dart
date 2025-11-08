@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'dart:io';
 import '../models/comment.dart';
 
 class PostsRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final Logger _logger = Logger();
   static const String _postsCollection = 'posts';
   static const String _imagesFolder = 'post_images';
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
@@ -298,7 +300,7 @@ class PostsRepository {
       });
     } catch (e) {
       // Log error but don't fail the post creation
-      print('Failed to trigger moderation pipeline: $e');
+      _logger.e('Failed to trigger moderation pipeline: $e');
     }
   Stream<List<Post>> getPostsStream({
     String? section,

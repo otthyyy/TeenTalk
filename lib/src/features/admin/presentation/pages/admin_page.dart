@@ -29,61 +29,6 @@ class _AdminPageState extends ConsumerState<AdminPage> {
           AnalyticsWidget(),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const Text(
-            'Admin Panel',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Manage your app and moderate content',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 24),
-          _AdminTile(
-            icon: Icons.flag,
-            title: 'Moderation Queue',
-            subtitle: 'Review reported content and take action',
-            onTap: () => context.push('/admin/moderation'),
-          ),
-          _AdminTile(
-            icon: Icons.people,
-            title: 'User Management',
-            subtitle: 'Manage user accounts and permissions',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon')),
-              );
-            },
-          ),
-          _AdminTile(
-            icon: Icons.analytics,
-            title: 'Analytics',
-            subtitle: 'View app statistics and insights',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon')),
-              );
-            },
-          ),
-          _AdminTile(
-            icon: Icons.settings,
-            title: 'App Settings',
-            subtitle: 'Configure app-wide settings',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon')),
-              );
-            },
-          ),
         ],
       ),
     );
