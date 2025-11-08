@@ -9,7 +9,9 @@ import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_ed
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -19,7 +21,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/feed',
     redirect: (context, state) {
       final isAuthLoading = authState.isLoading;
-      final isAuthenticated = authState.value != null;
+      final isAuthenticated = authState.user != null;
       final isProfileLoading = userProfile.isLoading;
       final hasProfile = userProfile.value != null;
 
@@ -51,11 +53,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           final isSignUp = state.uri.queryParameters['signup'] == 'true';
           return AuthPage(isSignUp: isSignUp);
         },
-        builder: (context, state) => const AuthPage(),
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) {
+          final user = authState.user;
+          if (user == null) {
+            // This shouldn't happen if the redirect logic is correct,
+            // but as a fallback, redirect to auth
+            return const AuthPage();
+          }
+          return OnboardingPage(user: user);
+        },
       ),
       ShellRoute(
         builder: (context, state, child) {
