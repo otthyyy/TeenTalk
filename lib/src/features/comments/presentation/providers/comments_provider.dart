@@ -267,6 +267,7 @@ class PostsState {
   final String? error;
   final DocumentSnapshot? lastDocument;
   final bool hasMore;
+  final String? currentSection;
 
   const PostsState({
     this.posts = const [],
@@ -275,6 +276,7 @@ class PostsState {
     this.error,
     this.lastDocument,
     this.hasMore = true,
+    this.currentSection,
   });
 
   PostsState copyWith({
@@ -284,6 +286,7 @@ class PostsState {
     String? error,
     DocumentSnapshot? lastDocument,
     bool? hasMore,
+    String? currentSection,
   }) {
     return PostsState(
       posts: posts ?? this.posts,
@@ -292,18 +295,26 @@ class PostsState {
       error: error,
       lastDocument: lastDocument ?? this.lastDocument,
       hasMore: hasMore ?? this.hasMore,
+      currentSection: currentSection ?? this.currentSection,
     );
   }
 }
 
 class PostsNotifier extends StateNotifier<PostsState> {
   final PostsRepository _repository;
+  StreamSubscription? _postsSubscription;
 
   PostsNotifier(this._repository) : super(const PostsState());
 
-  Future<void> loadPosts({bool refresh = false}) async {
+  @override
+  void dispose() {
+    _postsSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> loadPosts({bool refresh = false, String? section}) async {
     if (refresh) {
-      state = const PostsState(isLoading: true);
+      state = PostsState(isLoading: true, currentSection: section);
     } else if (state.isLoading || state.isLoadingMore) {
       return;
     }
@@ -314,12 +325,14 @@ class PostsNotifier extends StateNotifier<PostsState> {
       final posts = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
+        section: section,
       );
 
       if (posts.isEmpty) {
         state = state.copyWith(
           isLoading: false,
           hasMore: false,
+          currentSection: section,
         );
         return;
       }
@@ -332,13 +345,39 @@ class PostsNotifier extends StateNotifier<PostsState> {
         isLoading: false,
         lastDocument: newLastDocument,
         hasMore: posts.length == 20,
+        currentSection: section,
       );
+
+      // Set up real-time updates
+      _setupRealtimeUpdates(section);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
+        currentSection: section,
       );
     }
+  }
+
+  void _setupRealtimeUpdates(String? section) {
+    _postsSubscription?.cancel();
+    
+    _postsSubscription = _repository
+        .getPostsStream(section: section, limit: 50)
+        .listen((realtimePosts) {
+      if (state.posts.isNotEmpty && realtimePosts.isNotEmpty) {
+        // Merge real-time updates with existing posts
+        final existingPostIds = state.posts.map((p) => p.id).toSet();
+        final newPosts = realtimePosts.where((p) => !existingPostIds.contains(p.id));
+        
+        if (newPosts.isNotEmpty) {
+          final updatedPosts = [...newPosts, ...state.posts];
+          state = state.copyWith(posts: updatedPosts);
+        }
+      }
+    }, onError: (error) {
+      // Handle real-time errors silently to not disrupt UI
+    });
   }
 
   Future<void> loadMorePosts() async {
@@ -350,6 +389,7 @@ class PostsNotifier extends StateNotifier<PostsState> {
       final posts = await _repository.getPosts(
         lastDocument: state.lastDocument,
         limit: 20,
+        section: state.currentSection,
       );
 
       if (posts.isEmpty) {
@@ -382,6 +422,7 @@ class PostsNotifier extends StateNotifier<PostsState> {
     required String authorNickname,
     required bool isAnonymous,
     required String content,
+    String section = 'spotted',
   }) async {
     try {
       final post = await _repository.createPost(
@@ -389,6 +430,7 @@ class PostsNotifier extends StateNotifier<PostsState> {
         authorNickname: authorNickname,
         isAnonymous: isAnonymous,
         content: content,
+        section: section,
       );
 
       state = state.copyWith(

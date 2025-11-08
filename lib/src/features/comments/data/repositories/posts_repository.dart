@@ -8,12 +8,17 @@ class PostsRepository {
   Future<List<Post>> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
+    String? section,
   }) async {
     Query query = _firestore
         .collection(_postsCollection)
-        .where('isModerated', isEqualTo: false)
-        .orderBy('createdAt', descending: true)
-        .limit(limit);
+        .where('isModerated', isEqualTo: false);
+
+    if (section != null) {
+      query = query.where('section', isEqualTo: section);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
@@ -50,6 +55,7 @@ class PostsRepository {
     required String authorNickname,
     required bool isAnonymous,
     required String content,
+    String section = 'spotted',
   }) async {
     final now = DateTime.now();
     final mentionedUserIds = _extractMentionedUserIds(content);
@@ -59,6 +65,7 @@ class PostsRepository {
       'authorNickname': authorNickname,
       'isAnonymous': isAnonymous,
       'content': content,
+      'section': section,
       'createdAt': now.toIso8601String(),
       'updatedAt': now.toIso8601String(),
       'likeCount': 0,
@@ -160,6 +167,31 @@ class PostsRepository {
         'isModerated': true,
         'updatedAt': DateTime.now().toIso8601String(),
       });
+    });
+  }
+
+  Stream<List<Post>> getPostsStream({
+    String? section,
+    int limit = 20,
+  }) {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('isModerated', isEqualTo: false);
+
+    if (section != null) {
+      query = query.where('section', isEqualTo: section);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Post.fromJson({
+          ...data,
+          'id': doc.id,
+        });
+      }).toList();
     });
   }
 
