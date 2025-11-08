@@ -1,169 +1,251 @@
-# Firebase Flutter App
+# TeenTalk Flutter App
 
-A Flutter application with comprehensive Firebase integration, including Authentication, Firestore, Storage, Cloud Functions, Analytics, and Cloud Messaging.
+A modern Flutter application for teen social communication, built with clean architecture and best practices.
 
-## Features
+## 🏗️ Project Structure
 
-- 🔐 **Authentication**: Email/password and anonymous authentication
-- 📊 **Firestore**: NoSQL database with real-time capabilities
-- 📁 **Storage**: File upload/download with progress tracking
-- ⚡ **Cloud Functions**: Serverless backend functions
-- 📈 **Analytics**: User behavior tracking
-- 🔔 **Cloud Messaging**: Push notifications
-- 🌍 **Environment Management**: Development and production flavors
-- 🧪 **Built-in Testing**: Comprehensive Firebase service test suite
-
-## Quick Start
-
-### Prerequisites
-
-- Flutter SDK (>=3.13.0)
-- Firebase account
-- Android Studio / Xcode
-
-### Setup
-
-1. **Clone and install dependencies**:
-   ```bash
-   git clone <repository>
-   cd firebase_app
-   flutter pub get
-   ```
-
-2. **Configure Firebase**:
-   - Follow the [Firebase Setup Guide](FIREBASE_SETUP.md)
-   - Create Firebase project and enable services
-   - Download configuration files
-   - Set up environment variables
-
-3. **Run the app**:
-   ```bash
-   flutter run
-   ```
-
-4. **Test Firebase services**:
-   - Navigate to the "Firebase Test" tab
-   - Click "Run Firebase Tests" to verify setup
-
-## Project Structure
+The app follows a clean architecture pattern with the following structure:
 
 ```
 lib/
-├── core/                  # Core application setup
-│   ├── app_config.dart    # Environment configuration
-│   └── firebase_bootstrap.dart  # Firebase initialization
-├── services/              # Firebase service abstractions
-│   ├── auth_service.dart
-│   ├── firestore_service.dart
-│   ├── storage_service.dart
-│   └── functions_service.dart
-├── utils/                 # Utilities and helpers
-│   ├── error_handler.dart
-│   └── logger.dart
-├── widgets/               # Reusable UI components
-│   └── app_wrapper.dart
-└── screens/               # Application screens
-    ├── auth_screen.dart
-    ├── home_screen.dart
-    └── test_screen.dart
+├── main.dart                 # App entry point
+├── gen/                      # Generated files (Flutter Gen)
+└── src/
+    ├── core/                 # Core utilities and configurations
+    │   ├── theme/
+    │   │   ├── app_theme.dart      # App theming (light/dark modes)
+    │   │   └── theme_provider.dart # Riverpod theme state management
+    │   ├── router/
+    │   │   └── app_router.dart     # GoRouter configuration
+    │   └── utils/
+    │       └── app_utils.dart      # Common utilities and constants
+    ├── features/             # Feature modules
+    │   ├── feed/             # Feed feature
+    │   │   └── presentation/pages/feed_page.dart
+    │   ├── messages/         # Messages feature
+    │   │   └── presentation/pages/messages_page.dart
+    │   ├── profile/          # Profile feature
+    │   │   └── presentation/pages/profile_page.dart
+    │   └── admin/            # Admin panel feature
+    │       └── presentation/pages/admin_page.dart
+    ├── common/              # Shared components
+    │   └── widgets/
+    │       ├── loading_widget.dart  # Loading indicator
+    │       └── error_widget.dart    # Error display widget
+    └── services/            # Business logic and external services
+        └── base_service.dart        # Service base classes
 ```
 
-## Architecture
+## 🛠️ Tech Stack
 
-This application follows a clean architecture pattern with:
+- **Framework**: Flutter 3.19.6
+- **State Management**: Riverpod 2.4.9
+- **Routing**: GoRouter 12.1.3
+- **Code Generation**: 
+  - Freezed for immutable models
+  - JSON Serializable for API serialization
+  - Flutter Gen for asset management
+- **Architecture**: Clean Architecture with feature-first approach
+- **Theming**: Material 3 with custom TeenTalk branding
 
-- **Service Layer**: Abstracts Firebase operations with error handling
-- **Bootstrap Layer**: Handles Firebase initialization and configuration
-- **UI Layer**: Flutter widgets with Provider state management
-- **Environment Management**: Support for multiple deployment environments
+## 🚀 Getting Started
 
-## Environment Configuration
+### Prerequisites
 
-The app supports multiple environments through `.env` files:
+- Flutter SDK (>=3.3.4)
+- Dart SDK
+- Android Studio / VS Code with Flutter extensions
+- For mobile: Android SDK and/or Xcode for iOS
 
-```env
-# Firebase Configuration
-FIREBASE_API_KEY=your_api_key
-FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=123456789
-FIREBASE_APP_ID=1:123456789:web:abcdef
+### Setup Instructions
 
-# Environment
-FLUTTER_ENV=dev
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd teen_talk_app
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run code generation** (if needed)
+   ```bash
+   flutter packages pub run build_runner build
+   ```
+
+4. **Run the app**
+   ```bash
+   # For development
+   flutter run
+   
+   # Specific platform
+   flutter run -d chrome     # Web
+   flutter run -d android     # Android (requires emulator/device)
+   flutter run -d ios         # iOS (requires simulator/device)
+   ```
+
+5. **Build for production**
+   ```bash
+   # Android APK
+   flutter build apk --release
+   
+   # Android App Bundle
+   flutter build appbundle --release
+   
+   # iOS
+   flutter build ios --release
+   
+   # Web
+   flutter build web --release
+   ```
+
+## 🎨 Theming
+
+The app includes a comprehensive theming system with:
+
+- **Light/Dark Mode Support**: Automatic system theme detection with manual override
+- **TeenTalk Brand Colors**: Purple primary, pink secondary, emerald accent
+- **Typography**: Consistent text styles following Material 3 guidelines
+- **Custom Components**: Themed buttons, cards, and navigation elements
+
+### Theme Customization
+
+Colors and styles are defined in `lib/src/core/theme/app_theme.dart`. 
+Theme state is managed through Riverpod in `theme_provider.dart`.
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+flutter test
+
+# Run with coverage
+flutter test --coverage
+
+# Run specific test file
+flutter test test/widget_test.dart
 ```
 
-Copy `.env.example` to `.env` and update with your Firebase configuration.
+## 📱 Features
 
-## Firebase Services
+### Current Implementation
 
-### Authentication
+- ✅ **Navigation Shell**: Bottom tab navigation with Feed, Messages, Profile, Admin
+- ✅ **Theming System**: Light/dark mode with TeenTalk branding
+- ✅ **Responsive Layout**: Adaptive design for different screen sizes
+- ✅ **Code Structure**: Clean architecture with proper separation of concerns
+- ✅ **State Management**: Riverpod integration for reactive state
+- ✅ **Code Generation**: Setup for models, JSON serialization, and assets
 
-- Email/password authentication
-- Anonymous authentication
-- User session management
-- Password reset functionality
+### Placeholder Pages
 
-### Firestore
+Each feature currently has a placeholder page with basic structure:
+- **Feed**: Social feed placeholder
+- **Messages**: Chat interface placeholder  
+- **Profile**: User profile placeholder
+- **Admin**: Administrative panel placeholder
 
-- Document CRUD operations
-- Real-time listeners
-- Batch operations
-- Query builders
+## 🔧 Development Guidelines
 
-### Storage
+### Code Style
 
-- File upload/download
-- Progress tracking
-- Directory management
-- URL generation
+- Follow Flutter/Dart conventions with `flutter_lints`
+- Use `prefer_single_quotes` for strings
+- Apply `prefer_const_constructors` where possible
+- Order constructors before other class members
 
-### Cloud Functions
+### Adding New Features
 
-- Callable functions
-- Error handling
-- Timeout management
-- Region support
+1. Create feature directory under `lib/src/features/`
+2. Follow the pattern: `presentation/pages/`, `domain/`, `data/`
+3. Add routes to `app_router.dart`
+4. Update navigation if needed
+5. Add appropriate tests
 
-### Analytics & Messaging
+### Asset Management
 
-- Automatic event tracking
-- FCM token management
-- Push notification setup
+- Place images in `assets/images/`
+- Place icons in `assets/icons/`
+- Run `flutter packages pub run build_runner build` to generate asset references
+- Access generated assets via `Assets.images.<filename>`
 
-## Testing
+## 📦 Dependency Management
 
-The app includes a comprehensive test screen to verify all Firebase services:
+Dependencies are managed in `pubspec.yaml`:
 
-1. Authentication status verification
-2. Firestore connectivity and operations
-3. Storage upload/download functionality
-4. Cloud Functions availability
-5. FCM token retrieval
+- **Dependencies**: Runtime packages
+- **Dev Dependencies**: Development tools (code generation, testing, linting)
 
-## Documentation
+To update dependencies:
+```bash
+# Get latest compatible versions
+flutter pub upgrade
 
-- [Firebase Setup Guide](FIREBASE_SETUP.md) - Comprehensive setup instructions
-- [API Documentation](lib/services/) - Service layer documentation
+# Check for outdated packages
+flutter pub outdated
+```
 
-## Contributing
+## 🔍 Code Analysis
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly with the built-in test suite
-5. Submit a pull request
+Run static analysis to ensure code quality:
 
-## License
+```bash
+# Analyze entire project
+flutter analyze
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+# Fix formatting issues
+dart format .
 
-## Support
+# Run with specific options
+flutter analyze --fatal-infos
+```
 
-For questions or issues:
+## 🚀 Deployment
 
-1. Check the [Firebase Setup Guide](FIREBASE_SETUP.md)
-2. Run the built-in test suite
-3. Review console logs
-4. Consult Firebase documentation
+### Android
+
+1. Configure signing keys in `android/app/build.gradle`
+2. Update version in `pubspec.yaml`
+3. Build release APK/AAB
+4. Upload to Google Play Console
+
+### iOS
+
+1. Configure app in Xcode
+2. Update version and build numbers
+3. Archive and upload to App Store Connect
+
+### Web
+
+1. Build web release
+2. Deploy to hosting service (Firebase Hosting, Vercel, etc.)
+
+## 🤝 Contributing
+
+1. Follow the existing code style and architecture
+2. Add tests for new features
+3. Update documentation as needed
+4. Ensure all tests pass before submitting
+
+## 📄 License
+
+This project is proprietary to TeenTalk.
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+1. **Build fails on Android**: Ensure Android SDK is properly configured
+2. **Code generation errors**: Run `flutter clean && flutter pub get && flutter packages pub run build_runner clean && flutter packages pub run build_runner build`
+3. **Import errors**: Ensure all files follow the correct package naming convention
+4. **Theme not applying**: Check Riverpod provider scope and widget tree structure
+
+### Getting Help
+
+- Check Flutter official documentation
+- Review the analysis output for specific error messages
+- Ensure all dependencies are compatible with your Flutter version

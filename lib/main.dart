@@ -1,47 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
-import 'core/firebase_bootstrap.dart';
-import 'core/app_config.dart';
-import 'services/auth_service.dart';
-import 'screens/home_screen.dart';
-import 'screens/test_screen.dart';
-import 'widgets/app_wrapper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'src/core/theme/app_theme.dart';
+import 'src/core/theme/theme_provider.dart';
+import 'src/core/router/app_router.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Initialize Firebase
-  await FirebaseBootstrap.initialize();
-  
-  runApp(const MyApp());
+void main() {
+  runApp(
+    const ProviderScope(
+      child: TeenTalkApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TeenTalkApp extends ConsumerWidget {
+  const TeenTalkApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
-      ],
-      child: MaterialApp(
-        title: 'Firebase App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const AppWrapper(),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/test': (context) => const TestScreen(),
-        },
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
+      title: 'TeenTalk',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      routerConfig: router,
     );
   }
 }
