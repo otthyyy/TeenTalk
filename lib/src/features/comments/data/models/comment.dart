@@ -133,6 +133,7 @@ class Post {
     this.isModerated = false,
     this.imageUrl,
     this.section = 'Spotted',
+    this.section = 'spotted',
   });
 
   Post copyWith({
@@ -185,6 +186,7 @@ class Post {
       isModerated: json['isModerated'] as bool? ?? false,
       imageUrl: json['imageUrl'] as String?,
       section: json['section'] as String? ?? 'Spotted',
+      section: json['section'] as String? ?? 'spotted',
     );
   }
 

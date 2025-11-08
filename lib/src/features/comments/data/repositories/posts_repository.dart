@@ -16,12 +16,17 @@ class PostsRepository {
   Future<List<Post>> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
+    String? section,
   }) async {
     Query query = _firestore
         .collection(_postsCollection)
-        .where('isModerated', isEqualTo: false)
-        .orderBy('createdAt', descending: true)
-        .limit(limit);
+        .where('isModerated', isEqualTo: false);
+
+    if (section != null) {
+      query = query.where('section', isEqualTo: section);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
@@ -105,6 +110,7 @@ class PostsRepository {
     required String content,
     File? imageFile,
     String section = 'Spotted',
+    String section = 'spotted',
   }) async {
     // Validate content
     await validatePostContent(content);
@@ -216,23 +222,31 @@ class PostsRepository {
 
   Future<void> reportPost(String postId, String reason) async {
     final postRef = _firestore.collection(_postsCollection).doc(postId);
-    final reportRef = _firestore.collection('postReports').doc();
+    final reportRef = _firestore.collection('reports').doc();
 
     await _firestore.runTransaction((transaction) async {
       final postDoc = await transaction.get(postRef);
       
       if (!postDoc.exists) return;
 
+      final postData = postDoc.data() as Map<String, dynamic>;
+      final now = DateTime.now();
+
       transaction.set(reportRef, {
-        'postId': postId,
+        'itemId': postId,
+        'itemType': 'post',
+        'authorId': postData['authorId'],
+        'authorNickname': postData['authorNickname'],
+        'content': postData['content'],
         'reason': reason,
-        'createdAt': DateTime.now().toIso8601String(),
+        'createdAt': now.toIso8601String(),
+        'updatedAt': now.toIso8601String(),
         'status': 'pending',
       });
 
       transaction.update(postRef, {
         'isModerated': true,
-        'updatedAt': DateTime.now().toIso8601String(),
+        'updatedAt': now.toIso8601String(),
       });
     });
   }
@@ -286,6 +300,29 @@ class PostsRepository {
       // Log error but don't fail the post creation
       print('Failed to trigger moderation pipeline: $e');
     }
+  Stream<List<Post>> getPostsStream({
+    String? section,
+    int limit = 20,
+  }) {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('isModerated', isEqualTo: false);
+
+    if (section != null) {
+      query = query.where('section', isEqualTo: section);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Post.fromJson({
+          ...data,
+          'id': doc.id,
+        });
+      }).toList();
+    });
   }
 
   List<String> _extractMentionedUserIds(String content) {
