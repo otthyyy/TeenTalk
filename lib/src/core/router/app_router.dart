@@ -3,10 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
+import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -67,6 +69,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/messages',
             builder: (context, state) => const MessagesPage(),
+            routes: [
+              GoRoute(
+                path: 'chat/:conversationId/:otherUserId',
+                builder: (context, state) => ChatScreen(
+                  conversationId: state.pathParameters['conversationId'] ?? '',
+                  otherUserId: state.pathParameters['otherUserId'] ?? '',
+                  otherUserDisplayName: state.uri.queryParameters['displayName'],
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/profile',
