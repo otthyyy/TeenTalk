@@ -41,3 +41,22 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+
+# Generated files
+**/*.freezed.dart
+**/*.g.dart
+**/*.config.dart
+
+# Coverage
+coverage/
+*.lcov
