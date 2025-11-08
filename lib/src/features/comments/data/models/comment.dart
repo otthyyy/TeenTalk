@@ -115,6 +115,8 @@ class Post {
   final int commentCount;
   final List<String> mentionedUserIds;
   final bool isModerated;
+  final String? imageUrl;
+  final String section;
 
   const Post({
     required this.id,
@@ -129,6 +131,8 @@ class Post {
     this.commentCount = 0,
     this.mentionedUserIds = const [],
     this.isModerated = false,
+    this.imageUrl,
+    this.section = 'Spotted',
   });
 
   Post copyWith({
@@ -144,6 +148,8 @@ class Post {
     int? commentCount,
     List<String>? mentionedUserIds,
     bool? isModerated,
+    String? imageUrl,
+    String? section,
   }) {
     return Post(
       id: id ?? this.id,
@@ -158,6 +164,8 @@ class Post {
       commentCount: commentCount ?? this.commentCount,
       mentionedUserIds: mentionedUserIds ?? this.mentionedUserIds,
       isModerated: isModerated ?? this.isModerated,
+      imageUrl: imageUrl ?? this.imageUrl,
+      section: section ?? this.section,
     );
   }
 
@@ -175,6 +183,8 @@ class Post {
       commentCount: json['commentCount'] as int? ?? 0,
       mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
       isModerated: json['isModerated'] as bool? ?? false,
+      imageUrl: json['imageUrl'] as String?,
+      section: json['section'] as String? ?? 'Spotted',
     );
   }
 
@@ -191,5 +201,7 @@ class Post {
     'commentCount': commentCount,
     'mentionedUserIds': mentionedUserIds,
     'isModerated': isModerated,
+    'imageUrl': imageUrl,
+    'section': section,
   };
 }

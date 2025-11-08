@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
+import 'package:teen_talk_app/src/features/feed/presentation/pages/post_composer_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
@@ -74,6 +75,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/feed',
             builder: (context, state) => const FeedPage(),
+            routes: [
+              GoRoute(
+                path: 'compose',
+                builder: (context, state) => const PostComposerPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/messages',
