@@ -89,6 +89,71 @@ service cloud.firestore {
                        request.auth.uid == resource.data.senderId;
     }
     
+    // Conversations collection rules
+    match /conversations/{conversationId} {
+      // Allow read if user is one of the conversation participants
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == resource.data.userId1 || 
+                      request.auth.uid == resource.data.userId2);
+      
+      // Allow create for conversation between two users
+      allow create: if isAuthenticated() && 
+                       (request.auth.uid == request.resource.data.userId1 || 
+                        request.auth.uid == request.resource.data.userId2);
+      
+      // Allow update for conversation participants
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Allow delete for conversation participants
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Messages subcollection rules
+      match /messages/{messageId} {
+        // Allow read if user is conversation participant
+        allow read: if isAuthenticated() && 
+                       (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                        request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow create if user is sender
+        allow create: if isAuthenticated() && 
+                         request.auth.uid == request.resource.data.senderId;
+        
+        // Allow update if user is conversation participant (for marking as read)
+        allow update: if isAuthenticated() && 
+                         (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                          request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow delete if user is sender
+        allow delete: if isAuthenticated() && 
+                        request.auth.uid == resource.data.senderId;
+      }
+    }
+    
+    // Blocks collection rules for managing blocked users
+    match /blocks/{userId} {
+      // Allow read own blocks
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Allow create own blocks document
+      allow create: if isAuthenticated() && isOwner(userId);
+      
+      // Blocked users subcollection rules
+      match /blockedUsers/{blockedUserId} {
+        // Allow read own blocked list
+        allow read: if isAuthenticated() && isOwner(userId);
+        
+        // Allow create to block a user
+        allow create: if isAuthenticated() && isOwner(userId);
+        
+        // Allow delete to unblock a user
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+    }
+    
     // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;
