@@ -7,9 +7,7 @@ import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_pa
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
-import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:teen_talk_app/src/features/auth/data/auth_service.dart';
-import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -47,6 +45,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/auth',
+        builder: (context, state) {
+          final isSignUp = state.uri.queryParameters['signup'] == 'true';
+          return AuthPage(isSignUp: isSignUp);
+        },
         builder: (context, state) => const AuthPage(),
       ),
       GoRoute(
