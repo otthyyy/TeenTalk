@@ -54,12 +54,12 @@ dependencies:
   logger: ^2.0.2
   
   # Localization
-  intl: ^0.19.0
+  intl: ^0.18.1
   flutter_localizations:
     sdk: flutter
   
   # UI
-  provider: ^6.4.0
+  provider: ^6.1.0
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
