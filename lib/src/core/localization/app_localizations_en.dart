@@ -169,4 +169,71 @@ class AppLocalizationsEN extends AppLocalizations {
   String get navSettings => 'Settings';
   @override
   String get navProfile => 'Profile';
+
+  @override
+  String get moderationReport => 'Report';
+  @override
+  String get moderationReportContent => 'Report Content';
+  @override
+  String get moderationReported => 'Reported';
+  @override
+  String get moderationAlreadyReported => 'Already reported';
+  @override
+  String get moderationReportReason => 'Reason for report';
+  @override
+  String get moderationReasonSpam => 'Spam or misleading';
+  @override
+  String get moderationReasonHarassment => 'Harassment or bullying';
+  @override
+  String get moderationReasonHateSpeech => 'Hate speech';
+  @override
+  String get moderationReasonViolence => 'Violence or dangerous content';
+  @override
+  String get moderationReasonSexualContent => 'Sexual content';
+  @override
+  String get moderationReasonMisinformation => 'Misinformation';
+  @override
+  String get moderationReasonSelfHarm => 'Self-harm or suicide';
+  @override
+  String get moderationReasonOther => 'Other';
+  @override
+  String get moderationAdditionalDetails => 'Additional details (optional)';
+  @override
+  String get moderationSubmit => 'Submit Report';
+  @override
+  String get moderationCancel => 'Cancel';
+  @override
+  String get moderationSuccess => 'Report Submitted';
+  @override
+  String get moderationSuccessMessage => 'Report submitted successfully. Thank you for helping keep our community safe.';
+  @override
+  String get moderationRateLimit => 'Report Limit Reached';
+  @override
+  String get moderationRateLimitMessage => 'You have reached the maximum number of reports allowed per day. Please try again tomorrow.';
+  @override
+  String get moderationWarning => 'Report Warning';
+  @override
+  String get moderationWarningMessage => 'Please ensure you are reporting genuine violations of our community guidelines.';
+  @override
+  String get moderationGuidelinesTitle => 'Community Guidelines';
+  @override
+  String get moderationGuidelinesAgree => 'I have read and understand the community guidelines';
+  @override
+  String get moderationQueue => 'Moderation Queue';
+  @override
+  String get moderationQueueEmpty => 'No items in moderation queue';
+  @override
+  String get moderationNoReports => 'No reports found';
+  @override
+  String get moderationViewDetails => 'View Details';
+  @override
+  String get moderationTakeAction => 'Take Action';
+  @override
+  String get moderationKeepActive => 'Keep Active';
+  @override
+  String get moderationKeepHidden => 'Keep Hidden';
+  @override
+  String get moderationRemoveContent => 'Remove Content';
+  @override
+  String get moderationContentHidden => 'This content has been hidden by moderators';
 }

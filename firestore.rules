@@ -66,16 +66,30 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isOwner(userId);
     }
     
-    // Posts collection rules (placeholder for future implementation)
+    // Posts collection rules
     match /posts/{postId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && 
                        request.auth.uid == request.resource.data.authorId;
       allow update: if isAuthenticated() && 
-                       request.auth.uid == resource.data.authorId;
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
       allow delete: if isAuthenticated() && 
                        (request.auth.uid == resource.data.authorId || 
-                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
+                        isAdmin());
+    }
+    
+    // Comments collection rules
+    match /comments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.authorId;
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.authorId || 
+                        isAdmin());
     }
     
     // Messages collection rules (placeholder for future implementation)
@@ -89,6 +103,148 @@ service cloud.firestore {
                        request.auth.uid == resource.data.senderId;
     }
     
+    // Conversations collection rules
+    match /conversations/{conversationId} {
+      // Allow read if user is one of the conversation participants
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == resource.data.userId1 || 
+                      request.auth.uid == resource.data.userId2);
+      
+      // Allow create for conversation between two users
+      allow create: if isAuthenticated() && 
+                       (request.auth.uid == request.resource.data.userId1 || 
+                        request.auth.uid == request.resource.data.userId2);
+      
+      // Allow update for conversation participants
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Allow delete for conversation participants
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Messages subcollection rules
+      match /messages/{messageId} {
+        // Allow read if user is conversation participant
+        allow read: if isAuthenticated() && 
+                       (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                        request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow create if user is sender
+        allow create: if isAuthenticated() && 
+                         request.auth.uid == request.resource.data.senderId;
+        
+        // Allow update if user is conversation participant (for marking as read)
+        allow update: if isAuthenticated() && 
+                         (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                          request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow delete if user is sender
+        allow delete: if isAuthenticated() && 
+                        request.auth.uid == resource.data.senderId;
+      }
+    }
+    
+    // Blocks collection rules for managing blocked users
+    match /blocks/{userId} {
+      // Allow read own blocks
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Allow create own blocks document
+      allow create: if isAuthenticated() && isOwner(userId);
+      
+      // Blocked users subcollection rules
+      match /blockedUsers/{blockedUserId} {
+        // Allow read own blocked list
+        allow read: if isAuthenticated() && isOwner(userId);
+        
+        // Allow create to block a user
+        allow create: if isAuthenticated() && isOwner(userId);
+        
+        // Allow delete to unblock a user
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Helper function to check if user is moderator or admin
+    function isModerator() {
+      return isAuthenticated() && 
+             (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true ||
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true);
+    }
+    
+    // Reported Content collection rules
+    match /reportedContent/{reportId} {
+      // Allow authenticated users to read their own reports
+      allow read: if isAuthenticated() && 
+                     (resource.data.reporterId == request.auth.uid || isModerator());
+      
+      // Allow authenticated users to create reports
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.reporterId &&
+                       request.resource.data.status == 'pending' &&
+                       request.resource.data.createdAt is timestamp;
+      
+      // Only moderators can update reports
+      allow update: if isModerator();
+      
+      // Only admins can delete reports
+      allow delete: if isAdmin();
+    }
+    
+    // Moderation Queue collection rules
+    match /moderationQueue/{contentId} {
+      // Moderators can read all items in queue
+      allow read: if isModerator();
+      
+      // System can create moderation items (via Cloud Functions or client when creating reports)
+      allow create: if isAuthenticated();
+      
+      // Moderators can update moderation status
+      allow update: if isModerator();
+      
+      // Only admins can delete from moderation queue
+      allow delete: if isAdmin();
+      
+      // Audit Logs subcollection - restricted to admins and moderators only
+      match /auditLogs/{logId} {
+        // Only moderators can read audit logs
+        allow read: if isModerator();
+        
+        // System can create audit logs (via Cloud Functions)
+        allow create: if isAuthenticated();
+        
+        // No updates or deletes allowed for audit logs (immutable)
+        allow update, delete: if false;
+      }
+    }
+    
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Reports collection rules (admin only)
+    match /reports/{reportId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow update: if isAuthenticated() && isAdmin();
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Moderation decisions collection rules (admin only)
+    match /moderationDecisions/{decisionId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow list: if isAuthenticated() && isAdmin();
+    }
+
     // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;

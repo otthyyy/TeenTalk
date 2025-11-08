@@ -2,27 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
+import 'package:teen_talk_app/src/features/feed/presentation/pages/post_composer_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
+import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
+import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final userProfile = ref.watch(userProfileProvider);
+  final isAdminUser = userProfile.value?.isAdmin ?? false;
 
   return GoRouter(
     initialLocation: '/feed',
     redirect: (context, state) {
       final isAuthLoading = authState.isLoading;
-      final isAuthenticated = authState.value != null;
+      final isAuthenticated = authState.user != null;
       final isProfileLoading = userProfile.isLoading;
       final hasProfile = userProfile.value != null;
 
       final isOnAuthPage = state.uri.toString() == '/auth';
       final isOnOnboardingPage = state.uri.toString() == '/onboarding';
+      final isOnAdminPage = state.uri.toString().startsWith('/admin');
 
       if (isAuthLoading || isProfileLoading) {
         return null;
@@ -34,6 +42,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (isAuthenticated && !hasProfile) {
         return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      if (isOnAdminPage && !isAdminUser) {
+        return '/feed';
       }
 
       if (isAuthenticated && hasProfile && (isOnAuthPage || isOnOnboardingPage)) {
@@ -49,11 +61,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           final isSignUp = state.uri.queryParameters['signup'] == 'true';
           return AuthPage(isSignUp: isSignUp);
         },
-        builder: (context, state) => const AuthPage(),
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) {
+          final user = authState.user;
+          if (user == null) {
+            // This shouldn't happen if the redirect logic is correct,
+            // but as a fallback, redirect to auth
+            return const AuthPage();
+          }
+          return OnboardingPage(user: user);
+        },
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -63,10 +82,26 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/feed',
             builder: (context, state) => const FeedPage(),
+            routes: [
+              GoRoute(
+                path: 'compose',
+                builder: (context, state) => const PostComposerPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/messages',
             builder: (context, state) => const MessagesPage(),
+            routes: [
+              GoRoute(
+                path: 'chat/:conversationId/:otherUserId',
+                builder: (context, state) => ChatScreen(
+                  conversationId: state.pathParameters['conversationId'] ?? '',
+                  otherUserId: state.pathParameters['otherUserId'] ?? '',
+                  otherUserDisplayName: state.uri.queryParameters['displayName'],
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/profile',
@@ -81,6 +116,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin',
             builder: (context, state) => const AdminPage(),
+            routes: [
+              GoRoute(
+                path: 'moderation',
+                builder: (context, state) => const ModerationQueuePage(),
+              ),
+            ],
           ),
         ],
       ),
@@ -88,7 +129,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-class MainNavigationShell extends StatelessWidget {
+class MainNavigationShell extends ConsumerWidget {
   const MainNavigationShell({
     super.key,
     required this.child,
@@ -97,40 +138,44 @@ class MainNavigationShell extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userProfile = ref.watch(userProfileProvider);
+    final isAdmin = userProfile.value?.isAdmin ?? false;
+
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context),
+        currentIndex: _calculateSelectedIndex(context, isAdmin),
+        onTap: (index) => _onItemTapped(index, context, isAdmin),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: 'Feed',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.message_outlined),
             activeIcon: Icon(Icons.message),
             label: 'Messages',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
             label: 'Profile',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.admin_panel_settings_outlined),
-            activeIcon: Icon(Icons.admin_panel_settings),
-            label: 'Admin',
-          ),
+          if (isAdmin)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.admin_panel_settings_outlined),
+              activeIcon: Icon(Icons.admin_panel_settings),
+              label: 'Admin',
+            ),
         ],
       ),
     );
   }
 
-  int _calculateSelectedIndex(BuildContext context) {
+  int _calculateSelectedIndex(BuildContext context, bool isAdmin) {
     final GoRouterState state = GoRouterState.of(context);
     final String location = state.uri.toString();
     if (location.startsWith('/feed')) {
@@ -139,13 +184,13 @@ class MainNavigationShell extends StatelessWidget {
       return 1;
     } else if (location.startsWith('/profile')) {
       return 2;
-    } else if (location.startsWith('/admin')) {
+    } else if (location.startsWith('/admin') && isAdmin) {
       return 3;
     }
     return 0;
   }
 
-  void _onItemTapped(int index, BuildContext context) {
+  void _onItemTapped(int index, BuildContext context, bool isAdmin) {
     switch (index) {
       case 0:
         context.go('/feed');
@@ -157,7 +202,9 @@ class MainNavigationShell extends StatelessWidget {
         context.go('/profile');
         break;
       case 3:
-        context.go('/admin');
+        if (isAdmin) {
+          context.go('/admin');
+        }
         break;
     }
   }

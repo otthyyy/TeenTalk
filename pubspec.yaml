@@ -50,6 +50,9 @@ dependencies:
   firebase_analytics: ^10.7.0
   firebase_messaging: ^14.7.0
   
+  # Image Handling
+  image_picker: ^1.0.4
+  
   # Logging
   logger: ^2.0.2
   

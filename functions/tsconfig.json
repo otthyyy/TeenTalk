@@ -13,4 +13,10 @@
   },
   "compileOnSave": true,
   "include": ["src"]
+    "target": "es2017"
+  },
+  "compileOnSave": true,
+  "include": [
+    "src"
+  ]
 }
