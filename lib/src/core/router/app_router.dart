@@ -11,7 +11,6 @@ import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.d
 import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:teen_talk_app/src/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 
@@ -65,13 +64,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) {
-          final user = authState.user;
-          if (user == null) {
-            // This shouldn't happen if the redirect logic is correct,
-            // but as a fallback, redirect to auth
-            return const AuthPage();
-          }
-          return OnboardingPage(user: user);
+          return const OnboardingPage();
         },
       ),
       ShellRoute(

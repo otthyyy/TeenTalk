@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/email_auth_form.dart';
 import '../widgets/phone_auth_form.dart';
 import '../widgets/social_auth_buttons.dart';
-import '../../../../src/core/localization/app_localizations.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
   final bool isSignUp;
