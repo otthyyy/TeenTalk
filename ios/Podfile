@@ -1,0 +1,44 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '12.0'
+
+# CocoaPods analytics sends network requests to Google about the pods that are being used
+# This helps them track usage and identify potential issues. Setting `disable_input_output_paths` to true
+# can help if you're seeing build errors related to duplicate files in your build directory.
+# Uncomment the following line to disable analytics:
+# ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+def parse_KV_file(file, separator='=')
+  file_abs_path = File.expand_path(file)
+  if !File.exists? file_abs_path
+    return [];
+  end
+  generated_key_values = {}
+  skip_line_start_symbols = ["#", "/"]
+  File.foreach(file_abs_path) do |line|
+    next if skip_line_start_symbols.any? { |symbol| line =~ /^\s*#{symbol}/ }
+    plugin = line.split(pattern=separator)
+    if plugin.length == 2
+      podname = plugin[0].strip()
+      path = plugin[1].strip()
+      # podname = podname.sub(/-Flutter$/, '') # Remove '-Flutter' suffix from pod names
+      generated_key_values[podname] = path
+    end
+  end
+  generated_key_values
+end
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+    end
+  end
+end
