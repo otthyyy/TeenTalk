@@ -1,0 +1,42 @@
+name: firebase_app
+description: A Flutter app with Firebase integration
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+  flutter: ">=3.13.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  
+  # Firebase Core
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  firebase_storage: ^11.5.6
+  cloud_functions: ^4.6.5
+  firebase_analytics: ^10.7.4
+  firebase_messaging: ^14.7.9
+  
+  # Environment configuration
+  flutter_dotenv: ^5.1.0
+  
+  # State management
+  provider: ^6.1.1
+  
+  # Utilities
+  logger: ^2.0.2+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_test_lints: ^0.1.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
