@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
+import 'package:teen_talk_app/src/features/feed/presentation/pages/post_composer_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
@@ -17,6 +18,7 @@ import 'package:teen_talk_app/src/features/profile/presentation/providers/user_p
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final userProfile = ref.watch(userProfileProvider);
+  final isAdminUser = userProfile.value?.isAdmin ?? false;
 
   return GoRouter(
     initialLocation: '/feed',
@@ -28,6 +30,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final isOnAuthPage = state.uri.toString() == '/auth';
       final isOnOnboardingPage = state.uri.toString() == '/onboarding';
+      final isOnAdminPage = state.uri.toString().startsWith('/admin');
 
       if (isAuthLoading || isProfileLoading) {
         return null;
@@ -39,6 +42,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (isAuthenticated && !hasProfile) {
         return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      if (isOnAdminPage && !isAdminUser) {
+        return '/feed';
       }
 
       if (isAuthenticated && hasProfile && (isOnAuthPage || isOnOnboardingPage)) {
@@ -75,6 +82,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/feed',
             builder: (context, state) => const FeedPage(),
+            routes: [
+              GoRoute(
+                path: 'compose',
+                builder: (context, state) => const PostComposerPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/messages',
@@ -116,7 +129,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-class MainNavigationShell extends StatelessWidget {
+class MainNavigationShell extends ConsumerWidget {
   const MainNavigationShell({
     super.key,
     required this.child,
@@ -125,40 +138,44 @@ class MainNavigationShell extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userProfile = ref.watch(userProfileProvider);
+    final isAdmin = userProfile.value?.isAdmin ?? false;
+
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context),
+        currentIndex: _calculateSelectedIndex(context, isAdmin),
+        onTap: (index) => _onItemTapped(index, context, isAdmin),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
             label: 'Feed',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.message_outlined),
             activeIcon: Icon(Icons.message),
             label: 'Messages',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
             label: 'Profile',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.admin_panel_settings_outlined),
-            activeIcon: Icon(Icons.admin_panel_settings),
-            label: 'Admin',
-          ),
+          if (isAdmin)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.admin_panel_settings_outlined),
+              activeIcon: Icon(Icons.admin_panel_settings),
+              label: 'Admin',
+            ),
         ],
       ),
     );
   }
 
-  int _calculateSelectedIndex(BuildContext context) {
+  int _calculateSelectedIndex(BuildContext context, bool isAdmin) {
     final GoRouterState state = GoRouterState.of(context);
     final String location = state.uri.toString();
     if (location.startsWith('/feed')) {
@@ -167,13 +184,13 @@ class MainNavigationShell extends StatelessWidget {
       return 1;
     } else if (location.startsWith('/profile')) {
       return 2;
-    } else if (location.startsWith('/admin')) {
+    } else if (location.startsWith('/admin') && isAdmin) {
       return 3;
     }
     return 0;
   }
 
-  void _onItemTapped(int index, BuildContext context) {
+  void _onItemTapped(int index, BuildContext context, bool isAdmin) {
     switch (index) {
       case 0:
         context.go('/feed');
@@ -185,7 +202,9 @@ class MainNavigationShell extends StatelessWidget {
         context.go('/profile');
         break;
       case 3:
-        context.go('/admin');
+        if (isAdmin) {
+          context.go('/admin');
+        }
         break;
     }
   }
