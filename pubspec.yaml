@@ -60,6 +60,12 @@ dependencies:
   
   # UI
   provider: ^6.4.0
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  
+  # Utilities
+  intl: ^0.18.1
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0

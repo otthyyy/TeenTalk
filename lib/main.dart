@@ -6,7 +6,12 @@ import 'src/core/theme/theme_provider.dart';
 import 'src/core/router/app_router.dart';
 import 'src/core/localization/app_localizations.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   runApp(
     const ProviderScope(
       child: TeenTalkApp(),

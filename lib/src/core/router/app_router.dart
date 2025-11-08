@@ -4,26 +4,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    initialLocation: '/auth',
-    redirect: (context, state) {
-      final authState = ref.watch(authStateProvider);
+  final authState = ref.watch(authStateProvider);
+  final userProfile = ref.watch(userProfileProvider);
 
-      // Redirect unauthenticated users to auth page
-      if (!authState.isAuthenticated && state.uri.path != '/auth') {
-        return '/auth';
+  return GoRouter(
+    initialLocation: '/feed',
+    redirect: (context, state) {
+      final isAuthLoading = authState.isLoading;
+      final isAuthenticated = authState.value != null;
+      final isProfileLoading = userProfile.isLoading;
+      final hasProfile = userProfile.value != null;
+
+      final isOnAuthPage = state.uri.toString() == '/auth';
+      final isOnOnboardingPage = state.uri.toString() == '/onboarding';
+
+      if (isAuthLoading || isProfileLoading) {
+        return null;
       }
 
-      // Redirect authenticated users away from auth page
-      if (authState.isAuthenticated && state.uri.path == '/auth') {
-        if (authState.requiresOnboarding) {
-          return '/onboarding';
-        }
+      if (!isAuthenticated) {
+        return isOnAuthPage ? null : '/auth';
+      }
+
+      if (isAuthenticated && !hasProfile) {
+        return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      if (isAuthenticated && hasProfile && (isOnAuthPage || isOnOnboardingPage)) {
         return '/feed';
       }
 
@@ -36,6 +49,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           final isSignUp = state.uri.queryParameters['signup'] == 'true';
           return AuthPage(isSignUp: isSignUp);
         },
+        builder: (context, state) => const AuthPage(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {
@@ -53,6 +71,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfilePage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => const ProfileEditPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/admin',

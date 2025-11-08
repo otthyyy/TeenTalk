@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Helper function to validate nickname format
+    function isValidNickname(nickname) {
+      return nickname.size() >= 3 && 
+             nickname.size() <= 20 &&
+             nickname.matches('^[a-zA-Z0-9_]+$');
+    }
+    
+    // Helper function to check if nickname is being changed
+    function isNicknameChanged() {
+      return request.resource.data.nickname != resource.data.nickname;
+    }
+    
+    // Helper function to check if 30 days have passed since last nickname change
+    function canChangeNickname() {
+      return !('lastNicknameChangeAt' in resource.data) ||
+             (request.time.toMillis() - resource.data.lastNicknameChangeAt.toMillis()) >= 2592000000; // 30 days in milliseconds
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Allow read for authenticated users if profile is visible or it's their own profile
+      allow read: if isAuthenticated() && 
+                     (get(/databases/$(database)/documents/users/$(userId)).data.profileVisible == true || 
+                      isOwner(userId));
+      
+      // Allow create only for own user document with valid data
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidNickname(request.resource.data.nickname) &&
+                       request.resource.data.nicknameVerified == true &&
+                       request.resource.data.privacyConsentGiven == true &&
+                       request.resource.data.privacyConsentTimestamp is timestamp &&
+                       request.resource.data.createdAt is timestamp &&
+                       request.resource.data.anonymousPostsCount == 0 &&
+                       // Nickname lowercase must match
+                       request.resource.data.nicknameLowercase == request.resource.data.nickname.lower();
+      
+      // Allow update only for own user document
+      allow update: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidNickname(request.resource.data.nickname) &&
+                       // If nickname is being changed, check if 30 days have passed
+                       (!isNicknameChanged() || canChangeNickname()) &&
+                       // Nickname lowercase must match if nickname changed
+                       (!isNicknameChanged() || request.resource.data.nicknameLowercase == request.resource.data.nickname.lower()) &&
+                       // Prevent modification of certain fields
+                       request.resource.data.uid == resource.data.uid &&
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp;
+      
+      // Allow delete only for own user document (for account deletion)
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Posts collection rules (placeholder for future implementation)
+    match /posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.authorId;
+      allow update: if isAuthenticated() && 
+                       request.auth.uid == resource.data.authorId;
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.authorId || 
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
+    }
+    
+    // Messages collection rules (placeholder for future implementation)
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == resource.data.senderId || 
+                      request.auth.uid == resource.data.receiverId);
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.senderId;
+      allow delete: if isAuthenticated() && 
+                       request.auth.uid == resource.data.senderId;
+    }
+    
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
