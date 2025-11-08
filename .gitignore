@@ -60,3 +60,20 @@ GoogleService-Info.plist
 # Coverage
 coverage/
 *.lcov
+
+# Firebase
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+.firebase/
+
+# Cloud Functions
+functions/node_modules/
+functions/lib/
+functions/.env
+functions/.env.local
+functions/.runtimeconfig.json
+
+# Emulator
+emulator-data/
+emulator.log

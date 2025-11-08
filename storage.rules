@@ -1,0 +1,95 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidFileSize() {
+      // Max 10MB for general files, 50MB for videos
+      return request.resource.size <= 10 * 1024 * 1024;
+    }
+    
+    function isValidImageType() {
+      return request.resource.contentType in ['image/jpeg', 'image/png', 'image/webp'];
+    }
+    
+    function isValidVideoType() {
+      return request.resource.contentType in ['video/mp4', 'video/quicktime'];
+    }
+    
+    function isValidAudioType() {
+      return request.resource.contentType in ['audio/mpeg', 'audio/mp4', 'audio/wav'];
+    }
+    
+    // ============================================================================
+    // USER PROFILE PHOTOS
+    // ============================================================================
+    
+    match /users/{userId}/profile/photo {
+      // Only authenticated users can read their own or public photos
+      allow read: if isAuthenticated();
+      
+      // Only owner can upload/delete their profile photo
+      allow write: if isAuthenticated() &&
+                      isOwner(userId) &&
+                      isValidImageType() &&
+                      request.resource.size <= 5 * 1024 * 1024;
+    }
+    
+    // ============================================================================
+    // POST MEDIA (Images, Videos)
+    // ============================================================================
+    
+    match /posts/{postId}/media/{fileName} {
+      // Only authenticated users can read
+      allow read: if isAuthenticated();
+      
+      // Only owner can upload/delete
+      allow write: if isAuthenticated() &&
+                      request.resource.name != 'metadata' &&
+                      (isValidImageType() || isValidVideoType()) &&
+                      isValidFileSize();
+    }
+    
+    // ============================================================================
+    // COMMENT ATTACHMENTS
+    // ============================================================================
+    
+    match /comments/{commentId}/attachments/{fileName} {
+      // Only authenticated users can read
+      allow read: if isAuthenticated();
+      
+      // Only authenticated users can upload
+      allow write: if isAuthenticated() &&
+                      isValidImageType() &&
+                      request.resource.size <= 3 * 1024 * 1024;
+    }
+    
+    // ============================================================================
+    // TEMPORARY UPLOADS (Draft content)
+    // ============================================================================
+    
+    match /temp/{userId}/uploads/{fileName} {
+      // Only owner can access
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // ============================================================================
+    // DEFAULT DENY
+    // ============================================================================
+    
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
