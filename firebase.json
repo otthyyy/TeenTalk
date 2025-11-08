@@ -1,0 +1,59 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": [
+    {
+      "bucket": "${PROJECT_ID}.appspot.com",
+      "rules": "storage.rules"
+    }
+  ],
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        ".runtimeconfig.json"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "host": "localhost",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "localhost",
+      "port": 8080
+    },
+    "pubsub": {
+      "host": "localhost",
+      "port": 8085
+    },
+    "storage": {
+      "host": "localhost",
+      "port": 9199
+    },
+    "functions": {
+      "host": "localhost",
+      "port": 5001
+    },
+    "ui": {
+      "enabled": true,
+      "host": "localhost",
+      "port": 4000
+    },
+    "logging": {
+      "host": "localhost",
+      "port": 4500
+    }
+  }
+}
