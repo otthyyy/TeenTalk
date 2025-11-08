@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_it.dart';
 
 abstract class AppLocalizations {
   static AppLocalizations? of(BuildContext context) {
@@ -143,7 +144,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   @override
   bool isSupported(Locale locale) {
-    return ['en', 'es'].contains(locale.languageCode);
+    return ['en', 'es', 'it'].contains(locale.languageCode);
   }
 
   @override
@@ -155,6 +156,8 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
     switch (locale.languageCode) {
       case 'es':
         return AppLocalizationsES();
+      case 'it':
+        return AppLocalizationsIT();
       case 'en':
       default:
         return AppLocalizationsEN();

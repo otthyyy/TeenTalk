@@ -125,6 +125,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         content: _contentController.text.trim(),
         imageFile: _selectedImage,
         section: _selectedSection,
+        school: userProfile.school,
       );
 
       if (mounted) {

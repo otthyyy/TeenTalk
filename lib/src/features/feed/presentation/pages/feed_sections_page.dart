@@ -37,7 +37,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     
     // Load initial posts for the default section (spotted)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(feedProvider(FeedSection.spotted.value).notifier).loadPosts(
+      ref.read(schoolAwareFeedProvider(FeedSection.spotted.value).notifier).loadPosts(
             refresh: true,
             section: FeedSection.spotted.value,
           );
@@ -46,7 +46,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         final section = FeedSection.values[_tabController.index];
-        ref.read(feedProvider(section.value).notifier).loadPosts(
+        ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
               refresh: true,
               section: section.value,
             );
@@ -65,7 +65,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       final section = FeedSection.values[_tabController.index];
-      ref.read(feedProvider(section.value).notifier).loadMorePosts();
+      ref.read(schoolAwareFeedProvider(section.value).notifier).loadMorePosts();
     }
   }
 
@@ -114,11 +114,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   }
 
   Widget _buildFeedView(FeedSection section) {
-    final postsState = ref.watch(feedProvider(section.value));
+    final postsState = ref.watch(schoolAwareFeedProvider(section.value));
 
     return RefreshIndicator(
       onRefresh: () async {
-        await ref.read(feedProvider(section.value).notifier).loadPosts(
+        await ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
               refresh: true,
               section: section.value,
             );
@@ -155,13 +155,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                             });
                           },
                           onLike: () {
-                            ref.read(feedProvider(section.value).notifier).likePost(
+                            ref.read(schoolAwareFeedProvider(section.value).notifier).likePost(
                                   post.id,
                                   'current_user_id', // TODO: Get from auth
                                 );
                           },
                           onUnlike: () {
-                            ref.read(feedProvider(section.value).notifier).unlikePost(
+                            ref.read(schoolAwareFeedProvider(section.value).notifier).unlikePost(
                                   post.id,
                                   'current_user_id', // TODO: Get from auth
                                 );
@@ -202,7 +202,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              ref.read(feedProvider(section.value).notifier).loadPosts(
+              ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
                     refresh: true,
                     section: section.value,
                   );
@@ -289,7 +289,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                           onPressed: () async {
                             if (contentController.text.trim().isNotEmpty) {
                               Navigator.of(context).pop();
-                              await ref.read(feedProvider(section).notifier).addPost(
+                              await ref.read(schoolAwareFeedProvider(section).notifier).addPost(
                                     authorId: 'current_user_id', // TODO: Get from auth
                                     authorNickname: 'CurrentUser', // TODO: Get from auth
                                     isAnonymous: isAnonymous,

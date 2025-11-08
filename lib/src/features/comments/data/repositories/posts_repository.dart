@@ -19,6 +19,7 @@ class PostsRepository {
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
+    String? school,
   }) async {
     Query query = _firestore
         .collection(_postsCollection)
@@ -26,6 +27,10 @@ class PostsRepository {
 
     if (section != null) {
       query = query.where('section', isEqualTo: section);
+    }
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
     }
 
     query = query.orderBy('createdAt', descending: true).limit(limit);
@@ -115,6 +120,7 @@ class PostsRepository {
     required String content,
     File? imageFile,
     String section = 'spotted',
+    String? school,
   }) async {
     // Validate content
     await validatePostContent(content);
@@ -134,6 +140,7 @@ class PostsRepository {
       'isAnonymous': isAnonymous,
       'content': content,
       'section': section,
+      'school': school,
       'createdAt': now.toIso8601String(),
       'updatedAt': now.toIso8601String(),
       'likeCount': 0,
@@ -303,6 +310,7 @@ class PostsRepository {
 
   Stream<List<Post>> getPostsStream({
     String? section,
+    String? school,
     int limit = 20,
   }) {
     Query query = _firestore
@@ -311,6 +319,10 @@ class PostsRepository {
 
     if (section != null) {
       query = query.where('section', isEqualTo: section);
+    }
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
     }
 
     query = query.orderBy('createdAt', descending: true).limit(limit);

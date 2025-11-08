@@ -12,6 +12,16 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
     
+    // Helper function to get user's school
+    function getUserSchool(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.school;
+    }
+    
+    // Helper function to check if user can access content from same school
+    function canAccessSchool(school) {
+      return school == null || getUserSchool(request.auth.uid) == school;
+    }
+    
     // Helper function to validate nickname format
     function isValidNickname(nickname) {
       return nickname.size() >= 3 && 
@@ -68,28 +78,34 @@ service cloud.firestore {
     
     // Posts collection rules
     match /posts/{postId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && 
-                       request.auth.uid == request.resource.data.authorId;
-      allow update: if isAuthenticated() && 
-                       (request.auth.uid == resource.data.authorId || 
-                        isAdmin());
-      allow delete: if isAuthenticated() && 
-                       (request.auth.uid == resource.data.authorId || 
-                        isAdmin());
+      allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == request.resource.data.authorId &&
+                       canAccessSchool(request.resource.data.school);
+      allow update: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+      allow delete: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
     }
     
     // Comments collection rules
     match /comments/{commentId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && 
-                       request.auth.uid == request.resource.data.authorId;
-      allow update: if isAuthenticated() && 
-                       (request.auth.uid == resource.data.authorId || 
-                        isAdmin());
-      allow delete: if isAuthenticated() && 
-                       (request.auth.uid == resource.data.authorId || 
-                        isAdmin());
+      allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == request.resource.data.authorId &&
+                       canAccessSchool(request.resource.data.school);
+      allow update: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+      allow delete: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
     }
     
     // Messages collection rules (placeholder for future implementation)

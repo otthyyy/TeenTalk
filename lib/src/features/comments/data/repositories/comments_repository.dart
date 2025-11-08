@@ -55,6 +55,7 @@ class CommentsRepository {
     required bool isAnonymous,
     required String content,
     String? replyToCommentId,
+    String? school,
   }) async {
     final now = DateTime.now();
     final mentionedUserIds = _extractMentionedUserIds(content);
@@ -65,6 +66,7 @@ class CommentsRepository {
       'authorNickname': authorNickname,
       'isAnonymous': isAnonymous,
       'content': content,
+      'school': school,
       'createdAt': now.toIso8601String(),
       'updatedAt': now.toIso8601String(),
       'likeCount': 0,
