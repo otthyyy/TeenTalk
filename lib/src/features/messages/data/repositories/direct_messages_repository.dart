@@ -63,15 +63,14 @@ class DirectMessagesRepository {
       id: messageRef.id,
       conversationId: conversationId,
       senderId: senderId,
-      receiverId: receiverId,
-      text: text,
+      senderName: 'User',
+      content: text,
       imageUrl: imageUrl,
       isRead: false,
       createdAt: now,
-      readAt: null,
     );
 
-    batch.set(messageRef, message.toFirestore());
+    batch.set(messageRef, message.toJson());
 
     // Update last message in conversation
     batch.update(conversationRef, {
@@ -90,7 +89,7 @@ class DirectMessagesRepository {
     return _firestore
         .collection('conversations')
         .where('userId1', isEqualTo: userId)
-        .orderBy('lastMessageTime', describeBy: true)
+        .orderBy('lastMessageTime', descending: true)
         .snapshots()
         .asyncMap((snapshot) async {
       final conversations = <Conversation>[];

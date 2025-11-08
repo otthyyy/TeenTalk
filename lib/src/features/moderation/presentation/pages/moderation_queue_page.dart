@@ -363,7 +363,7 @@ class _ModerationItemCard extends ConsumerWidget {
               leading: const Icon(Icons.visibility, color: Colors.green),
               title: const Text('Keep Active'),
               subtitle: const Text('Content is fine, dismiss reports'),
-              onTapped: () {
+              onTap: () {
                 Navigator.pop(context);
                 _showConfirmAction(
                   context,
@@ -378,7 +378,7 @@ class _ModerationItemCard extends ConsumerWidget {
               leading: const Icon(Icons.visibility_off, color: Colors.orange),
               title: const Text('Keep Hidden'),
               subtitle: const Text('Content stays hidden pending review'),
-              onTapped: () {
+              onTap: () {
                 Navigator.pop(context);
                 _showConfirmAction(
                   context,
@@ -393,7 +393,7 @@ class _ModerationItemCard extends ConsumerWidget {
               leading: const Icon(Icons.delete, color: Colors.red),
               title: const Text('Remove Content'),
               subtitle: const Text('Permanently remove this content'),
-              onTapped: () {
+              onTap: () {
                 Navigator.pop(context);
                 _showConfirmAction(
                   context,

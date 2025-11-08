@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../core/localization/app_localizations.dart';
+import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 import '../providers/auth_provider.dart';
 
 class PhoneAuthForm extends ConsumerStatefulWidget {

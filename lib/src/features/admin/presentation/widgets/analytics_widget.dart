@@ -96,7 +96,7 @@ class AnalyticsWidget extends ConsumerWidget {
                             ),
                             _buildSummaryRow(
                               'Resolution Rate',
-                              '${(((analytics.resolvedReportCount + analytics.dismissedReportCount) / (analytics.activeReportCount + analytics.resolvedReportCount + analytics.dismissedReportCount) * 100).toStringAsFixed(1)))}%',
+                              '${((analytics.resolvedReportCount + analytics.dismissedReportCount) / (analytics.activeReportCount + analytics.resolvedReportCount + analytics.dismissedReportCount) * 100).toStringAsFixed(1)}%',
                             ),
                             _buildSummaryRow(
                               'Total Flagged Content',

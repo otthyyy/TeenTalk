@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/data/repositories/posts_repository.dart';
 
@@ -65,7 +66,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final posts = await _repository.getPosts(
+      final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
         section: section,
@@ -80,12 +81,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
 
       final allPosts = refresh ? posts : [...state.posts, ...posts];
-      final newLastDocument = posts.length < 20 ? null : posts.last;
 
       state = state.copyWith(
         posts: allPosts,
         isLoading: false,
-        lastDocument: newLastDocument,
+        lastDocument: lastDoc,
         hasMore: posts.length == 20,
       );
 
@@ -105,7 +105,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
     state = state.copyWith(isLoadingMore: true);
 
     try {
-      final posts = await _repository.getPosts(
+      final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: state.lastDocument,
         limit: 20,
       );
@@ -119,12 +119,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
 
       final allPosts = [...state.posts, ...posts];
-      final newLastDocument = posts.length < 20 ? null : posts.last;
 
       state = state.copyWith(
         posts: allPosts,
         isLoadingMore: false,
-        lastDocument: newLastDocument,
+        lastDocument: lastDoc,
         hasMore: posts.length == 20,
       );
     } catch (e) {
