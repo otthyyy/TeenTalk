@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/data/repositories/posts_repository.dart';
+import '../../../profile/data/repositories/user_repository.dart';
+import '../../../auth/data/auth_service.dart';
 
 final feedRepositoryProvider = Provider<PostsRepository>((ref) {
   return PostsRepository();
@@ -56,7 +58,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
     super.dispose();
   }
 
-  Future<void> loadPosts({bool refresh = false, String? section}) async {
+  Future<void> loadPosts({bool refresh = false, String? section, String? school}) async {
     if (refresh) {
       state = const FeedState(isLoading: true);
     } else if (state.isLoading || state.isLoadingMore) {
@@ -70,6 +72,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
         section: section,
+        school: school,
       );
 
       if (posts.isEmpty) {
@@ -90,7 +93,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
       );
 
       // Set up real-time updates
-      _setupRealtimeUpdates(section);
+      _setupRealtimeUpdates(section, school);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -99,7 +102,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
     }
   }
 
-  Future<void> loadMorePosts() async {
+  Future<void> loadMorePosts({String? school}) async {
     if (!state.hasMore || state.isLoadingMore || state.isLoading) return;
 
     state = state.copyWith(isLoadingMore: true);
@@ -108,6 +111,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
       final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: state.lastDocument,
         limit: 20,
+        school: school,
       );
 
       if (posts.isEmpty) {
@@ -140,6 +144,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
     required bool isAnonymous,
     required String content,
     String section = 'spotted',
+    String? school,
   }) async {
     try {
       final post = await _repository.createPost(
@@ -148,6 +153,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
         isAnonymous: isAnonymous,
         content: content,
         section: section,
+        school: school,
       );
 
       state = state.copyWith(
@@ -200,11 +206,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
     }
   }
 
-  void _setupRealtimeUpdates(String? section) {
+  void _setupRealtimeUpdates(String? section, String? school) {
     _postsSubscription?.cancel();
     
     _postsSubscription = _repository
-        .getPostsStream(section: section, limit: 50)
+        .getPostsStream(section: section, school: school, limit: 50)
         .listen((realtimePosts) {
       if (state.posts.isNotEmpty && realtimePosts.isNotEmpty) {
         // Merge real-time updates with existing posts
@@ -232,3 +238,97 @@ final feedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, Strin
     return FeedNotifier(repository);
   },
 );
+
+// School-aware feed provider that gets user's school and applies filtering
+final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, String>(
+  (ref, section) {
+    final repository = ref.watch(feedRepositoryProvider);
+    final userRepository = ref.watch(userRepositoryProvider);
+    final authService = ref.watch(firebaseAuthServiceProvider);
+    
+    // Create a custom notifier that handles school filtering
+    return SchoolAwareFeedNotifier(repository, userRepository, authService);
+  },
+);
+
+class SchoolAwareFeedNotifier extends FeedNotifier {
+  final UserRepository _userRepository;
+  final FirebaseAuthService _authService;
+  
+  SchoolAwareFeedNotifier(
+    PostsRepository repository, 
+    this._userRepository, 
+    this._authService,
+  ) : super(repository);
+
+  @override
+  Future<void> loadPosts({bool refresh = false, String? section, String? school}) async {
+    // Get current user's school if not provided
+    if (school == null) {
+      final user = _authService.currentUser;
+      if (user != null) {
+        try {
+          final userProfile = await _userRepository.getUserProfile(user.uid);
+          school = userProfile?.school;
+        } catch (e) {
+          // If we can't get user profile, proceed without school filtering
+          school = null;
+        }
+      }
+    }
+    
+    await super.loadPosts(refresh: refresh, section: section, school: school);
+  }
+
+  @override
+  Future<void> loadMorePosts({String? school}) async {
+    // Get current user's school if not provided
+    if (school == null) {
+      final user = _authService.currentUser;
+      if (user != null) {
+        try {
+          final userProfile = await _userRepository.getUserProfile(user.uid);
+          school = userProfile?.school;
+        } catch (e) {
+          // If we can't get user profile, proceed without school filtering
+          school = null;
+        }
+      }
+    }
+    
+    await super.loadMorePosts(school: school);
+  }
+
+  @override
+  Future<void> addPost({
+    required String authorId,
+    required String authorNickname,
+    required bool isAnonymous,
+    required String content,
+    String section = 'spotted',
+    String? school,
+  }) async {
+    // Get current user's school if not provided
+    if (school == null) {
+      final user = _authService.currentUser;
+      if (user != null) {
+        try {
+          final userProfile = await _userRepository.getUserProfile(user.uid);
+          school = userProfile?.school;
+        } catch (e) {
+          // If we can't get user profile, proceed without school filtering
+          school = null;
+        }
+      }
+    }
+    
+    await super.addPost(
+      authorId: authorId,
+      authorNickname: authorNickname,
+      isAnonymous: isAnonymous,
+      content: content,
+      section: section,
+      school: school,
+    );
+  }
+}

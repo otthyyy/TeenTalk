@@ -13,6 +13,7 @@ class Comment {
   final bool isModerated;
   final String? replyToCommentId;
   final int replyCount;
+  final String? school;
 
   const Comment({
     required this.id,
@@ -29,6 +30,7 @@ class Comment {
     this.isModerated = false,
     this.replyToCommentId,
     this.replyCount = 0,
+    this.school,
   });
 
   Comment copyWith({
@@ -46,6 +48,7 @@ class Comment {
     bool? isModerated,
     String? replyToCommentId,
     int? replyCount,
+    String? school,
   }) {
     return Comment(
       id: id ?? this.id,
@@ -62,6 +65,7 @@ class Comment {
       isModerated: isModerated ?? this.isModerated,
       replyToCommentId: replyToCommentId ?? this.replyToCommentId,
       replyCount: replyCount ?? this.replyCount,
+      school: school ?? this.school,
     );
   }
 
@@ -81,6 +85,7 @@ class Comment {
       isModerated: json['isModerated'] as bool? ?? false,
       replyToCommentId: json['replyToCommentId'] as String?,
       replyCount: json['replyCount'] as int? ?? 0,
+      school: json['school'] as String?,
     );
   }
 
@@ -99,6 +104,7 @@ class Comment {
     'isModerated': isModerated,
     'replyToCommentId': replyToCommentId,
     'replyCount': replyCount,
+    'school': school,
   };
 }
 
@@ -117,6 +123,7 @@ class Post {
   final bool isModerated;
   final String? imageUrl;
   final String section;
+  final String? school;
 
   const Post({
     required this.id,
@@ -133,6 +140,7 @@ class Post {
     this.isModerated = false,
     this.imageUrl,
     this.section = 'spotted',
+    this.school,
   });
 
   Post copyWith({
@@ -150,6 +158,7 @@ class Post {
     bool? isModerated,
     String? imageUrl,
     String? section,
+    String? school,
   }) {
     return Post(
       id: id ?? this.id,
@@ -166,6 +175,7 @@ class Post {
       isModerated: isModerated ?? this.isModerated,
       imageUrl: imageUrl ?? this.imageUrl,
       section: section ?? this.section,
+      school: school ?? this.school,
     );
   }
 
@@ -185,6 +195,7 @@ class Post {
       isModerated: json['isModerated'] as bool? ?? false,
       imageUrl: json['imageUrl'] as String?,
       section: json['section'] as String? ?? 'spotted',
+      school: json['school'] as String?,
     );
   }
 
@@ -203,5 +214,6 @@ class Post {
     'isModerated': isModerated,
     'imageUrl': imageUrl,
     'section': section,
+    'school': school,
   };
 }
