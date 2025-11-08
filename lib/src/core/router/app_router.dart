@@ -4,12 +4,55 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/pages/feed_page.dart';
 import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:teen_talk_app/src/features/auth/data/auth_service.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authStateProvider);
+  final userProfile = ref.watch(userProfileProvider);
+
   return GoRouter(
     initialLocation: '/feed',
+    redirect: (context, state) {
+      final isAuthLoading = authState.isLoading;
+      final isAuthenticated = authState.value != null;
+      final isProfileLoading = userProfile.isLoading;
+      final hasProfile = userProfile.value != null;
+
+      final isOnAuthPage = state.uri.toString() == '/auth';
+      final isOnOnboardingPage = state.uri.toString() == '/onboarding';
+
+      if (isAuthLoading || isProfileLoading) {
+        return null;
+      }
+
+      if (!isAuthenticated) {
+        return isOnAuthPage ? null : '/auth';
+      }
+
+      if (isAuthenticated && !hasProfile) {
+        return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      if (isAuthenticated && hasProfile && (isOnAuthPage || isOnOnboardingPage)) {
+        return '/feed';
+      }
+
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) => const AuthPage(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingPage(),
+      ),
       ShellRoute(
         builder: (context, state, child) {
           return MainNavigationShell(child: child);
@@ -26,6 +69,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfilePage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => const ProfileEditPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: '/admin',
