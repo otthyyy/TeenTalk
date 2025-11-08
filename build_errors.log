@@ -1,0 +1,926 @@
+C:\Users\othma\Desktop\TeenTalk>git pull
+remote: Enumerating objects: 45, done.
+remote: Counting objects: 100% (45/45), done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 24 (delta 12), reused 23 (delta 12), pack-reused 0 (from 0)
+Unpacking objects: 100% (24/24), 6.16 KiB | 53.00 KiB/s, done.
+From https://github.com/otthyyy/TeenTalk
+   24ea170..3afc14f  main       -> origin/main
+ * [new branch]      fix-compilation-errors-post-merge -> origin/fix-compilation-errors-post-merge
+Updating 9e6473c..3afc14f
+error: Your local changes to the following files would be overwritten by merge:
+        pubspec.yaml
+Please commit your changes or stash them before you merge.
+Aborting
+
+C:\Users\othma\Desktop\TeenTalk>flutter clean
+Deleting build...                                                    9ms
+Deleting .dart_tool...                                               1ms
+Deleting ephemeral...                                                1ms
+Deleting Generated.xcconfig...                                       0ms
+Deleting flutter_export_environment.sh...                            0ms
+Deleting ephemeral...                                                1ms
+Deleting ephemeral...                                                2ms
+Deleting ephemeral...                                                1ms
+Deleting .flutter-plugins-dependencies...                            0ms
+
+C:\Users\othma\Desktop\TeenTalk>flutter pub get
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 67.0.0 (92.0.0 available)
+  _flutterfire_internals 1.3.35 (1.3.64 available)
+  analyzer 6.4.1 (9.0.0 available)
+  async 2.11.0 (2.13.0 available)
+  boolean_selector 2.1.1 (2.1.2 available)
+  build 2.4.1 (4.0.2 available)
+  build_config 1.1.1 (1.2.0 available)
+  build_daemon 4.0.1 (4.1.0 available)
+  build_resolvers 2.4.2 (3.0.4 available)
+  build_runner 2.4.9 (2.10.1 available)
+  build_runner_core 7.3.0 (9.3.2 available)
+  characters 1.4.0 (1.4.1 available)
+  checked_yaml 2.0.3 (2.0.4 available)
+  cloud_firestore 4.17.5 (6.1.0 available)
+  cloud_firestore_platform_interface 6.2.5 (7.0.4 available)
+  cloud_firestore_web 3.12.5 (5.1.0 available)
+  cloud_functions 4.7.6 (6.0.4 available)
+  cloud_functions_platform_interface 5.5.28 (5.8.7 available)
+  cloud_functions_web 4.9.6 (5.1.0 available)
+  code_builder 4.10.0 (4.11.0 available)
+  convert 3.1.1 (3.1.2 available)
+  crypto 3.0.3 (3.0.7 available)
+  dart_style 2.3.6 (3.1.2 available)
+  firebase_analytics 10.10.7 (12.0.4 available)
+  firebase_analytics_platform_interface 3.10.8 (5.0.4 available)
+  firebase_analytics_web 0.5.7+7 (0.6.1 available)
+  firebase_auth 4.20.0 (6.1.2 available)
+  firebase_auth_platform_interface 7.3.0 (8.1.4 available)
+  firebase_auth_web 5.12.0 (6.1.0 available)
+  firebase_core 2.32.0 (4.2.1 available)
+  firebase_core_platform_interface 5.4.2 (6.0.2 available)
+  firebase_core_web 2.17.5 (3.3.0 available)
+  firebase_messaging 14.9.4 (16.0.4 available)
+  firebase_messaging_platform_interface 4.5.37 (4.7.4 available)
+  firebase_messaging_web 3.8.7 (4.1.0 available)
+  firebase_storage 11.7.7 (13.0.4 available)
+  firebase_storage_platform_interface 5.1.22 (5.2.15 available)
+  firebase_storage_web 3.9.7 (3.11.0 available)
+  flutter_lints 3.0.2 (6.0.0 available)
+  flutter_riverpod 2.6.1 (3.0.3 available)
+  go_router 12.1.3 (17.0.0 available)
+  golden_toolkit 0.13.0 (discontinued)
+  google_identity_services_web 0.3.1+4 (0.3.3+1 available)
+  google_sign_in 6.2.2 (7.2.0 available)
+  google_sign_in_android 6.1.23 (7.2.2 available)
+  google_sign_in_ios 5.7.8 (6.2.3 available)
+  google_sign_in_platform_interface 2.4.5 (3.1.0 available)
+  google_sign_in_web 0.12.4+3 (1.1.0 available)
+  graphs 2.3.1 (2.3.2 available)
+  http 1.2.2 (1.5.0 available)
+  http_parser 4.0.2 (4.1.2 available)
+  io 1.0.4 (1.0.5 available)
+  js 0.7.1 (0.7.2 available)
+  json_serializable 6.8.0 (6.11.1 available)
+  lints 3.0.0 (6.0.0 available)
+  logging 1.2.0 (1.3.0 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.16.0 (1.17.0 available)
+  mime 1.0.6 (2.0.0 available)
+  mockito 5.4.4 (5.5.1 available)
+  package_config 2.1.0 (2.2.0 available)
+  pool 1.5.1 (1.5.2 available)
+  pub_semver 2.1.4 (2.2.0 available)
+  pubspec_parse 1.4.0 (1.5.0 available)
+  riverpod 2.6.1 (3.0.3 available)
+  shelf 1.4.1 (1.4.2 available)
+  shelf_web_socket 1.0.4 (3.0.0 available)
+  source_gen 1.5.0 (4.0.2 available)
+  source_helper 1.3.4 (1.3.8 available)
+  source_span 1.10.0 (1.10.1 available)
+  string_scanner 1.2.0 (1.4.1 available)
+  term_glyph 1.2.1 (1.2.2 available)
+  test_api 0.7.6 (0.7.7 available)
+  timing 1.0.1 (1.0.2 available)
+  typed_data 1.3.2 (1.4.0 available)
+  vm_service 13.0.0 (15.0.2 available)
+  web 0.5.1 (1.1.1 available)
+  web_socket_channel 2.4.5 (3.0.3 available)
+  yaml 3.1.2 (3.1.3 available)
+Got dependencies!
+1 package is discontinued.
+79 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+
+C:\Users\othma\Desktop\TeenTalk>flutter run -d edge
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 67.0.0 (92.0.0 available)
+  _flutterfire_internals 1.3.35 (1.3.64 available)
+  analyzer 6.4.1 (9.0.0 available)
+  async 2.11.0 (2.13.0 available)
+  boolean_selector 2.1.1 (2.1.2 available)
+  build 2.4.1 (4.0.2 available)
+  build_config 1.1.1 (1.2.0 available)
+  build_daemon 4.0.1 (4.1.0 available)
+  build_resolvers 2.4.2 (3.0.4 available)
+  build_runner 2.4.9 (2.10.1 available)
+  build_runner_core 7.3.0 (9.3.2 available)
+  characters 1.4.0 (1.4.1 available)
+  checked_yaml 2.0.3 (2.0.4 available)
+  cloud_firestore 4.17.5 (6.1.0 available)
+  cloud_firestore_platform_interface 6.2.5 (7.0.4 available)
+  cloud_firestore_web 3.12.5 (5.1.0 available)
+  cloud_functions 4.7.6 (6.0.4 available)
+  cloud_functions_platform_interface 5.5.28 (5.8.7 available)
+  cloud_functions_web 4.9.6 (5.1.0 available)
+  code_builder 4.10.0 (4.11.0 available)
+  convert 3.1.1 (3.1.2 available)
+  crypto 3.0.3 (3.0.7 available)
+  dart_style 2.3.6 (3.1.2 available)
+  firebase_analytics 10.10.7 (12.0.4 available)
+  firebase_analytics_platform_interface 3.10.8 (5.0.4 available)
+  firebase_analytics_web 0.5.7+7 (0.6.1 available)
+  firebase_auth 4.20.0 (6.1.2 available)
+  firebase_auth_platform_interface 7.3.0 (8.1.4 available)
+  firebase_auth_web 5.12.0 (6.1.0 available)
+  firebase_core 2.32.0 (4.2.1 available)
+  firebase_core_platform_interface 5.4.2 (6.0.2 available)
+  firebase_core_web 2.17.5 (3.3.0 available)
+  firebase_messaging 14.9.4 (16.0.4 available)
+  firebase_messaging_platform_interface 4.5.37 (4.7.4 available)
+  firebase_messaging_web 3.8.7 (4.1.0 available)
+  firebase_storage 11.7.7 (13.0.4 available)
+  firebase_storage_platform_interface 5.1.22 (5.2.15 available)
+  firebase_storage_web 3.9.7 (3.11.0 available)
+  flutter_lints 3.0.2 (6.0.0 available)
+  flutter_riverpod 2.6.1 (3.0.3 available)
+  go_router 12.1.3 (17.0.0 available)
+  golden_toolkit 0.13.0 (discontinued)
+  google_identity_services_web 0.3.1+4 (0.3.3+1 available)
+  google_sign_in 6.2.2 (7.2.0 available)
+  google_sign_in_android 6.1.23 (7.2.2 available)
+  google_sign_in_ios 5.7.8 (6.2.3 available)
+  google_sign_in_platform_interface 2.4.5 (3.1.0 available)
+  google_sign_in_web 0.12.4+3 (1.1.0 available)
+  graphs 2.3.1 (2.3.2 available)
+  http 1.2.2 (1.5.0 available)
+  http_parser 4.0.2 (4.1.2 available)
+  io 1.0.4 (1.0.5 available)
+  js 0.7.1 (0.7.2 available)
+  json_serializable 6.8.0 (6.11.1 available)
+  lints 3.0.0 (6.0.0 available)
+  logging 1.2.0 (1.3.0 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.16.0 (1.17.0 available)
+  mime 1.0.6 (2.0.0 available)
+  mockito 5.4.4 (5.5.1 available)
+  package_config 2.1.0 (2.2.0 available)
+  pool 1.5.1 (1.5.2 available)
+  pub_semver 2.1.4 (2.2.0 available)
+  pubspec_parse 1.4.0 (1.5.0 available)
+  riverpod 2.6.1 (3.0.3 available)
+  shelf 1.4.1 (1.4.2 available)
+  shelf_web_socket 1.0.4 (3.0.0 available)
+  source_gen 1.5.0 (4.0.2 available)
+  source_helper 1.3.4 (1.3.8 available)
+  source_span 1.10.0 (1.10.1 available)
+  string_scanner 1.2.0 (1.4.1 available)
+  term_glyph 1.2.1 (1.2.2 available)
+  test_api 0.7.6 (0.7.7 available)
+  timing 1.0.1 (1.0.2 available)
+  typed_data 1.3.2 (1.4.0 available)
+  vm_service 13.0.0 (15.0.2 available)
+  web 0.5.1 (1.1.1 available)
+  web_socket_channel 2.4.5 (3.0.3 available)
+  yaml 3.1.2 (3.1.3 available)
+Got dependencies!
+1 package is discontinued.
+79 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Launching lib\main.dart on Edge in debug mode...
+Warning: In index.html:37: Local variable for "serviceWorkerVersion" is deprecated. Use
+"{{flutter_service_worker_version}}" template token instead. See
+https://docs.flutter.dev/platform-integration/web/initialization for more details.
+Warning: In index.html:46: "FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See
+https://docs.flutter.dev/platform-integration/web/initialization for more details.
+lib/src/features/auth/presentation/pages/auth_page.dart:67:23: Error: Can't find ')' to match '('.
+              SizedBox(
+                      ^
+lib/src/features/auth/presentation/pages/auth_page.dart:53:23: Error: Can't find ']' to match '['.
+            children: [
+                      ^
+lib/src/features/auth/presentation/pages/auth_page.dart:52:24: Error: Can't find ')' to match '('.
+          child: Column(
+                       ^
+lib/src/features/auth/presentation/pages/auth_page.dart:50:23: Error: Can't find ')' to match '('.
+        child: Padding(
+                      ^
+lib/src/features/auth/presentation/pages/auth_page.dart:49:34: Error: Can't find ')' to match '('.
+      body: SingleChildScrollView(
+                                 ^
+lib/src/features/auth/presentation/pages/auth_page.dart:43:20: Error: Can't find ')' to match '('.
+    return Scaffold(
+                   ^
+lib/src/features/auth/presentation/pages/auth_page.dart:40:38: Error: Can't find '}' to match '{'.
+  Widget build(BuildContext context) {
+                                     ^
+lib/src/features/auth/presentation/pages/auth_page.dart:20:84: Error: Can't find '}' to match '{'.
+class _AuthPageState extends ConsumerState<AuthPage> with TickerProviderStateMixin {
+                                                                                   ^
+Error: Couldn't resolve the package 'freezed_annotation' in 'package:freezed_annotation/freezed_annotation.dart'.
+lib/src/features/auth/presentation/pages/auth_page.dart:6:8: Error: Error when reading
+'lib/src/src/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
+
+import '../../../../src/core/localization/app_localizations.dart';
+       ^
+lib/src/features/auth/presentation/widgets/email_auth_form.dart:5:8: Error: Error when reading
+'lib/src/src/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
+
+import '../../../../src/core/localization/app_localizations.dart';
+       ^
+lib/src/features/auth/presentation/widgets/phone_auth_form.dart:4:8: Error: Error when reading
+'lib/src/src/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
+
+import '../../../../src/core/localization/app_localizations.dart';
+       ^
+lib/src/features/auth/presentation/widgets/social_auth_buttons.dart:4:8: Error: Error when reading
+'lib/src/src/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
+
+import '../../../../src/core/localization/app_localizations.dart';
+       ^
+lib/src/features/profile/domain/models/user_profile.dart:1:8: Error: Not found:
+'package:freezed_annotation/freezed_annotation.dart'
+import 'package:freezed_annotation/freezed_annotation.dart';
+       ^
+lib/src/features/auth/data/services/firebase_auth_service.dart:6:8: Error: Error when reading
+'lib/src/utils/error_handler.dart': Impossibile trovare il percorso specificato.
+
+import '../../../../utils/error_handler.dart';
+       ^
+lib/src/core/router/app_router.dart:14:33: Error: Undefined name 'userProfileProvider'.
+  final userProfile = ref.watch(userProfileProvider);
+                                ^^^^^^^^^^^^^^^^^^^
+lib/src/core/router/app_router.dart:56:44: Error: Couldn't find constructor 'OnboardingPage'.
+        builder: (context, state) => const OnboardingPage(),
+                                           ^^^^^^^^^^^^^^
+lib/src/core/router/app_router.dart:52:9: Error: Duplicated named argument 'builder'.
+        builder: (context, state) => const AuthPage(),
+        ^^^^^^^
+lib/src/core/router/app_router.dart:20:41: Error: The getter 'value' isn't defined for the type 'AuthState'.
+ - 'AuthState' is from 'package:teen_talk_app/src/features/auth/data/models/auth_user.dart'
+ ('lib/src/features/auth/data/models/auth_user.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'value'.
+      final isAuthenticated = authState.value != null;
+                                        ^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:7:2: Error: Undefined name 'freezed'.
+@freezed
+ ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:7:2: Error: This can't be used as an annotation; an annotation
+should be a reference to a compile-time constant variable, or a call to a constant constructor.
+@freezed
+ ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:42:4: Error: Not a constant expression.
+  @JsonKey(ignore: true)
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:52:4: Error: Not a constant expression.
+  @useResult
+   ^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:52:4: Error: This can't be used as an annotation; an
+annotation should be a reference to a compile-time constant variable, or a call to a constant constructor.
+  @useResult
+   ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:87:22: Error: Undefined name 'freezed'.
+    Object? gender = freezed,
+                     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:88:22: Error: Undefined name 'freezed'.
+    Object? school = freezed,
+                     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:91:36: Error: Undefined name 'freezed'.
+    Object? lastNicknameChangeAt = freezed,
+                                   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:94:23: Error: Undefined name 'freezed'.
+    Object? isMinor = freezed,
+                      ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:95:31: Error: Undefined name 'freezed'.
+    Object? guardianContact = freezed,
+                              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:96:36: Error: Undefined name 'freezed'.
+    Object? parentalConsentGiven = freezed,
+                                   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:97:40: Error: Undefined name 'freezed'.
+    Object? parentalConsentTimestamp = freezed,
+                                       ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:100:25: Error: Undefined name 'freezed'.
+    Object? updatedAt = freezed,
+                        ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:165:4: Error: Not a constant expression.
+  @useResult
+   ^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:165:4: Error: This can't be used as an annotation; an
+annotation should be a reference to a compile-time constant variable, or a call to a constant constructor.
+  @useResult
+   ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:200:22: Error: Undefined name 'freezed'.
+    Object? gender = freezed,
+                     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:201:22: Error: Undefined name 'freezed'.
+    Object? school = freezed,
+                     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:204:36: Error: Undefined name 'freezed'.
+    Object? lastNicknameChangeAt = freezed,
+                                   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:207:23: Error: Undefined name 'freezed'.
+    Object? isMinor = freezed,
+                      ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:208:31: Error: Undefined name 'freezed'.
+    Object? guardianContact = freezed,
+                              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:209:36: Error: Undefined name 'freezed'.
+    Object? parentalConsentGiven = freezed,
+                                   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:210:40: Error: Undefined name 'freezed'.
+    Object? parentalConsentTimestamp = freezed,
+                                       ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:213:25: Error: Undefined name 'freezed'.
+    Object? updatedAt = freezed,
+                        ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:272:2: Error: Couldn't find constructor
+'JsonSerializable'.
+@JsonSerializable()
+ ^^^^^^^^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:307:4: Error: Not a constant expression.
+  @JsonKey()
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:326:4: Error: Not a constant expression.
+  @JsonKey()
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:329:4: Error: Not a constant expression.
+  @JsonKey()
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:376:4: Error: Not a constant expression.
+  @JsonKey(ignore: true)
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:398:4: Error: Not a constant expression.
+  @JsonKey(ignore: true)
+   ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:470:4: Error: Not a constant expression.
+  @JsonKey(ignore: true)
+   ^^^^^^^
+lib/main.dart:12:14: Error: Undefined name 'DefaultFirebaseOptions'.
+    options: DefaultFirebaseOptions.currentPlatform,
+             ^^^^^^^^^^^^^^^^^^^^^^
+lib/main.dart:11:9: Error: Undefined name 'Firebase'.
+  await Firebase.initializeApp(
+        ^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:77:8: Error: Expected ',' before this.
+import '../../data/auth_service.dart';
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:67:23: Error: Too many positional arguments: 0 allowed, but 2
+found.
+Try removing the extra positional arguments.
+              SizedBox(
+                      ^
+../flutter/packages/flutter/lib/src/widgets/basic.dart:2598:9: Context: Found this candidate, but the arguments don't
+match.
+  const SizedBox({super.key, this.width, this.height, super.child});
+        ^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:1: Error: 'class' can't be used as an identifier because it's
+a keyword.
+Try renaming this to be an identifier that isn't a keyword.
+class AuthPage extends ConsumerWidget {
+^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:1: Error: Expected ';' after this.
+class AuthPage extends ConsumerWidget {
+^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:7: Error: Expected ';' after this.
+class AuthPage extends ConsumerWidget {
+      ^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:16: Error: 'extends' can't be used as an identifier because
+it's a keyword.
+Try renaming this to be an identifier that isn't a keyword.
+class AuthPage extends ConsumerWidget {
+               ^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:16: Error: Expected ';' after this.
+class AuthPage extends ConsumerWidget {
+               ^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:24: Error: Expected ';' after this.
+class AuthPage extends ConsumerWidget {
+                       ^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:80:25: Error: Superclass has no getter named 'key'.
+  const AuthPage({super.key});
+                        ^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:80:17: Error: Too many positional arguments: 0 allowed, but 1
+found.
+Try removing the extra positional arguments.
+  const AuthPage({super.key});
+                ^
+lib/src/features/auth/presentation/pages/auth_page.dart:11:9: Context: Found this candidate, but the arguments don't
+match.
+  const AuthPage({
+        ^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:41:27: Error: The getter 'AppLocalizations' isn't defined for
+the type '_AuthPageState'.
+ - '_AuthPageState' is from 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart'
+ ('lib/src/features/auth/presentation/pages/auth_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:1: Error: The getter 'class' isn't defined for the type
+'_AuthPageState'.
+ - '_AuthPageState' is from 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart'
+ ('lib/src/features/auth/presentation/pages/auth_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'class'.
+class AuthPage extends ConsumerWidget {
+^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:79:16: Error: The getter 'extends' isn't defined for the type
+'_AuthPageState'.
+ - '_AuthPageState' is from 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart'
+ ('lib/src/features/auth/presentation/pages/auth_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'extends'.
+class AuthPage extends ConsumerWidget {
+               ^^^^^^^
+lib/src/features/auth/presentation/pages/auth_page.dart:114:36: Error: The getter 'authServiceProvider' isn't defined
+for the type '_AuthPageState'.
+ - '_AuthPageState' is from 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart'
+ ('lib/src/features/auth/presentation/pages/auth_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authServiceProvider'.
+                    await ref.read(authServiceProvider).signInAnonymously();
+                                   ^^^^^^^^^^^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:15:6: Error: Couldn't find constructor 'Default'.
+    @Default(0) int anonymousPostsCount,
+     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:24:6: Error: Couldn't find constructor 'Default'.
+    @Default(true) bool allowAnonymousPosts,
+     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:25:6: Error: Couldn't find constructor 'Default'.
+    @Default(true) bool profileVisible,
+     ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:112:15: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      gender: freezed == gender
+              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:115:15: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      school: freezed == school
+              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:124:29: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      lastNicknameChangeAt: freezed == lastNicknameChangeAt
+                            ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:133:16: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      isMinor: freezed == isMinor
+               ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:136:24: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      guardianContact: freezed == guardianContact
+                       ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:139:29: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      parentalConsentGiven: freezed == parentalConsentGiven
+                            ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:142:33: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      parentalConsentTimestamp: freezed == parentalConsentTimestamp
+                                ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:151:18: Error: The getter 'freezed' isn't defined for
+the type '_$UserProfileCopyWithImpl<$Res, $Val>'.
+ - '_$UserProfileCopyWithImpl' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      updatedAt: freezed == updatedAt
+                 ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:104:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'String'.
+ - 'Object' is from 'dart:core'.
+          ? _value.uid
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:107:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'String'.
+ - 'Object' is from 'dart:core'.
+          ? _value.nickname
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:110:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.nicknameVerified
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:113:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.gender
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:116:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.school
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:119:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'int'.
+ - 'Object' is from 'dart:core'.
+          ? _value.anonymousPostsCount
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:122:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'DateTime'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.createdAt
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:125:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.lastNicknameChangeAt
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:128:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.privacyConsentGiven
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:131:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'DateTime'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.privacyConsentTimestamp
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:134:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'bool?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.isMinor
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:137:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.guardianContact
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:140:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'bool?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.parentalConsentGiven
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:143:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.parentalConsentTimestamp
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:146:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.allowAnonymousPosts
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:149:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.profileVisible
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:152:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.updatedAt
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:225:15: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      gender: freezed == gender
+              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:228:15: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      school: freezed == school
+              ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:237:29: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      lastNicknameChangeAt: freezed == lastNicknameChangeAt
+                            ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:246:16: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      isMinor: freezed == isMinor
+               ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:249:24: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      guardianContact: freezed == guardianContact
+                       ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:252:29: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      parentalConsentGiven: freezed == parentalConsentGiven
+                            ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:255:33: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      parentalConsentTimestamp: freezed == parentalConsentTimestamp
+                                ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:264:18: Error: The getter 'freezed' isn't defined for
+the type '__$$UserProfileImplCopyWithImpl<$Res>'.
+ - '__$$UserProfileImplCopyWithImpl' is from
+ 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
+ ('lib/src/features/profile/domain/models/user_profile.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'freezed'.
+      updatedAt: freezed == updatedAt
+                 ^^^^^^^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:217:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'String'.
+ - 'Object' is from 'dart:core'.
+          ? _value.uid
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:220:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'String'.
+ - 'Object' is from 'dart:core'.
+          ? _value.nickname
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:223:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.nicknameVerified
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:226:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.gender
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:229:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.school
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:232:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'int'.
+ - 'Object' is from 'dart:core'.
+          ? _value.anonymousPostsCount
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:235:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'DateTime'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.createdAt
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:238:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.lastNicknameChangeAt
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:241:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.privacyConsentGiven
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:244:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'DateTime'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.privacyConsentTimestamp
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:247:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'bool?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.isMinor
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:250:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'String?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.guardianContact
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:253:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'bool?'.
+ - 'Object' is from 'dart:core'.
+          ? _value.parentalConsentGiven
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:256:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.parentalConsentTimestamp
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:259:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.allowAnonymousPosts
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:262:11: Error: The argument type 'Object' can't be
+assigned to the parameter type 'bool'.
+ - 'Object' is from 'dart:core'.
+          ? _value.profileVisible
+          ^
+lib/src/features/profile/domain/models/user_profile.freezed.dart:265:11: Error: The argument type 'Object?' can't be
+assigned to the parameter type 'DateTime?'.
+ - 'Object' is from 'dart:core'.
+ - 'DateTime' is from 'dart:core'.
+          ? _value.updatedAt
+          ^
+lib/src/features/auth/presentation/widgets/email_auth_form.dart:39:27: Error: The getter 'AppLocalizations' isn't
+defined for the type '_EmailAuthFormState'.
+ - '_EmailAuthFormState' is from 'package:teen_talk_app/src/features/auth/presentation/widgets/email_auth_form.dart'
+ ('lib/src/features/auth/presentation/widgets/email_auth_form.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/widgets/phone_auth_form.dart:30:27: Error: The getter 'AppLocalizations' isn't
+defined for the type '_PhoneAuthFormState'.
+ - '_PhoneAuthFormState' is from 'package:teen_talk_app/src/features/auth/presentation/widgets/phone_auth_form.dart'
+ ('lib/src/features/auth/presentation/widgets/phone_auth_form.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/widgets/phone_auth_form.dart:165:27: Error: The getter 'AppLocalizations' isn't
+defined for the type '_PhoneAuthFormState'.
+ - '_PhoneAuthFormState' is from 'package:teen_talk_app/src/features/auth/presentation/widgets/phone_auth_form.dart'
+ ('lib/src/features/auth/presentation/widgets/phone_auth_form.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/widgets/phone_auth_form.dart:215:27: Error: The getter 'AppLocalizations' isn't
+defined for the type '_PhoneAuthFormState'.
+ - '_PhoneAuthFormState' is from 'package:teen_talk_app/src/features/auth/presentation/widgets/phone_auth_form.dart'
+ ('lib/src/features/auth/presentation/widgets/phone_auth_form.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/presentation/widgets/social_auth_buttons.dart:11:27: Error: The getter 'AppLocalizations' isn't
+defined for the type 'SocialAuthButtons'.
+ - 'SocialAuthButtons' is from 'package:teen_talk_app/src/features/auth/presentation/widgets/social_auth_buttons.dart'
+ ('lib/src/features/auth/presentation/widgets/social_auth_buttons.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'AppLocalizations'.
+    final localizations = AppLocalizations.of(context);
+                          ^^^^^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:84:23: Error: The getter 'ErrorHandler' isn't defined for
+the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:111:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:152:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:211:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:259:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:303:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:367:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+lib/src/features/auth/data/services/firebase_auth_service.dart:394:23: Error: The getter 'ErrorHandler' isn't defined
+for the type 'FirebaseAuthService'.
+ - 'FirebaseAuthService' is from 'package:teen_talk_app/src/features/auth/data/services/firebase_auth_service.dart'
+ ('lib/src/features/auth/data/services/firebase_auth_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ErrorHandler'.
+      throw Exception(ErrorHandler.getAuthErrorMessage(e));
+                      ^^^^^^^^^^^^
+Unhandled exception:
+Unsupported operation: Unsupported invalid type InvalidType(<invalid>) (InvalidType). Encountered while compiling
+file:///C:/Users/othma/Desktop/TeenTalk/lib/src/core/router/app_router.dart, which contains the type:
+FunctionType(<invalid> Function(BuildContext, GoRouterState)).
+#0      LibraryCompiler._typeCompilationError (package:dev_compiler/src/kernel/compiler_new.dart:4451)
+#1      LibraryCompiler._emitType (package:dev_compiler/src/kernel/compiler_new.dart:4416)
+#2      LibraryCompiler._emitFunctionTagged (package:dev_compiler/src/kernel/compiler_new.dart:4263)
+#3      LibraryCompiler.visitFunctionExpression (package:dev_compiler/src/kernel/compiler_new.dart:8784)
+#4      FunctionExpression.accept (package:kernel/src/ast/expressions.dart:4608)
+#5      LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#6      LibraryCompiler._emitNamedExpression (package:dev_compiler/src/kernel/compiler_new.dart:7961)
+#7      LibraryCompiler._emitArgumentGroups (package:dev_compiler/src/kernel/compiler_new.dart:7947)
+#8      LibraryCompiler._emitArgumentList (package:dev_compiler/src/kernel/compiler_new.dart:7906)
+#9      LibraryCompiler.visitConstructorInvocation (package:dev_compiler/src/kernel/compiler_new.dart:8200)
+#10     ConstructorInvocation.accept (package:kernel/src/ast/expressions.dart:2686)
+#11     LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#12     MappedIterable.elementAt (dart:_internal/iterable.dart:402)
+#13     ListIterator.moveNext (dart:_internal/iterable.dart:371)
+#14     new _GrowableList._ofEfficientLengthIterable (dart:core-patch/growable_array.dart:194)
+#15     new _GrowableList.of (dart:core-patch/growable_array.dart:154)
+#16     new List.of (dart:core-patch/array_patch.dart:39)
+#17     SetBase.toList (dart:collection/set.dart:119)
+#18     LibraryCompiler._visitExpressionList (package:dev_compiler/src/kernel/compiler_new.dart:5073)
+#19     LibraryCompiler.visitListLiteral (package:dev_compiler/src/kernel/compiler_new.dart:8632)
+#20     ListLiteral.accept (package:kernel/src/ast/expressions.dart:4162)
+#21     LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#22     LibraryCompiler._emitNamedExpression (package:dev_compiler/src/kernel/compiler_new.dart:7961)
+#23     LibraryCompiler._emitArgumentGroups (package:dev_compiler/src/kernel/compiler_new.dart:7947)
+#24     LibraryCompiler._emitArgumentList (package:dev_compiler/src/kernel/compiler_new.dart:7906)
+#25     LibraryCompiler._emitFactoryInvocation (package:dev_compiler/src/kernel/compiler_new.dart:8269)
+#26     LibraryCompiler.visitStaticInvocation (package:dev_compiler/src/kernel/compiler_new.dart:7325)
+#27     StaticInvocation.accept (package:kernel/src/ast/expressions.dart:2602)
+#28     LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#29     LibraryCompiler.visitReturnStatement (package:dev_compiler/src/kernel/compiler_new.dart:5867)
+#30     ReturnStatement.accept (package:kernel/src/ast/statements.dart:1076)
+#31     LibraryCompiler._visitStatement (package:dev_compiler/src/kernel/compiler_new.dart:5015)
+#32     MappedIterable.elementAt (dart:_internal/iterable.dart:402)
+#33     ListIterator.moveNext (dart:_internal/iterable.dart:371)
+#34     new _GrowableList._ofEfficientLengthIterable (dart:core-patch/growable_array.dart:194)
+#35     new _GrowableList.of (dart:core-patch/growable_array.dart:154)
+#36     new List.of (dart:core-patch/array_patch.dart:39)
+#37     SetBase.toList (dart:collection/set.dart:119)
+#38     LibraryCompiler.visitBlock (package:dev_compiler/src/kernel/compiler_new.dart:5222)
+#39     Block.accept (package:kernel/src/ast/statements.dart:103)
+#40     LibraryCompiler._visitStatement (package:dev_compiler/src/kernel/compiler_new.dart:5015)
+#41     LibraryCompiler._emitFunctionScopedBody (package:dev_compiler/src/kernel/compiler_new.dart:5048)
+#42     LibraryCompiler._emitFunction.<anonymous closure> (package:dev_compiler/src/kernel/compiler_new.dart:4638)
+#43     LibraryCompiler._withLetScope (package:dev_compiler/src/kernel/compiler_new.dart:3632)
+#44     LibraryCompiler._withCurrentFunction (package:dev_compiler/src/kernel/compiler_new.dart:4812)
+#45     LibraryCompiler._emitFunction (package:dev_compiler/src/kernel/compiler_new.dart:4630)
+#46     LibraryCompiler._emitArrowFunction (package:dev_compiler/src/kernel/compiler_new.dart:8791)
+#47     LibraryCompiler.visitFunctionExpression (package:dev_compiler/src/kernel/compiler_new.dart:8781)
+#48     FunctionExpression.accept (package:kernel/src/ast/expressions.dart:4608)
+#49     LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#50     LibraryCompiler._emitArgumentGroups (package:dev_compiler/src/kernel/compiler_new.dart:7943)
+#51     LibraryCompiler._emitArgumentList (package:dev_compiler/src/kernel/compiler_new.dart:7906)
+#52     LibraryCompiler.visitConstructorInvocation (package:dev_compiler/src/kernel/compiler_new.dart:8200)
+#53     ConstructorInvocation.accept (package:kernel/src/ast/expressions.dart:2686)
+#54     LibraryCompiler._visitExpression (package:dev_compiler/src/kernel/compiler_new.dart:5112)
+#55     LibraryCompiler._visitInitializer (package:dev_compiler/src/kernel/compiler_new.dart:2702)
+#56     LibraryCompiler._emitLazyMember (package:dev_compiler/src/kernel/compiler_new.dart:3540)
+#57     LibraryCompiler._emitLazyMembers (package:dev_compiler/src/kernel/compiler_new.dart:3620)
+#58     LibraryCompiler._emitLibraryMembers (package:dev_compiler/src/kernel/compiler_new.dart:4104)
+#59     LibraryCompiler._emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:1313)
+#60     LibraryCompiler.emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:926)
+#61     LibraryBundleCompiler.emitModule (package:dev_compiler/src/kernel/compiler_new.dart:163)
+#62     IncrementalJavaScriptBundler.compile (package:frontend_server/src/javascript_bundle.dart:300)
+#63     FrontendCompiler.writeJavaScriptBundle (package:frontend_server/frontend_server.dart:898)
+<asynchronous suspension>
+#64     FrontendCompiler.compile (package:frontend_server/frontend_server.dart:708)
+<asynchronous suspension>
+#65     listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
+<asynchronous suspension>
+The Dart compiler exited unexpectedly.
+Waiting for connection from debug service on Edge...               32,1s
+Failed to compile application.
+
+C:\Users\othma\Desktop\TeenTalk>
