@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../models/auth_form_state.dart';
@@ -38,7 +39,6 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
-    final authNotifier = ref.read(authStateProvider.notifier);
 
     return Form(
       key: _formKey,
@@ -194,7 +194,15 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                final targetUri = Uri(
+                  path: '/auth',
+                  queryParameters: widget.isSignUp
+                      ? null
+                      : {
+                          'signup': 'true',
+                        },
+                );
+                context.go(targetUri.toString());
               },
               child: Text(
                 widget.isSignUp
@@ -220,15 +228,17 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
           password: _passwordController.text,
           displayName: _displayNameController.text.trim(),
         );
+
+        if (!mounted) return;
+        context.go('/onboarding');
       } else {
         await authNotifier.signInWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-      }
 
-      if (mounted) {
-        Navigator.of(context).pop();
+        if (!mounted) return;
+        context.go('/feed');
       }
     } catch (e) {
       // Error is handled by state
