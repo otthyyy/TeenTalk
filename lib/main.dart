@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,18 +11,25 @@ import 'src/core/router/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    debugPrint('✅ Firebase initialized successfully');
-  } catch (e, stackTrace) {
-    debugPrint('❌ Firebase initialization error: $e');
-    debugPrintStack(stackTrace: stackTrace);
-    rethrow;
-  }
-  
+
+  const webOptions = FirebaseOptions(
+    apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
+    appId: '1:505388994229:web:a620f3735bb1dc6420f8fc',
+    messagingSenderId: '505388994229',
+    projectId: 'teentalk-31e45',
+    authDomain: 'teentalk-31e45.firebaseapp.com',
+    storageBucket: 'teentalk-31e45.firebasestorage.app',
+    measurementId: 'G-0KPB6VFN4J',
+  );
+
+  final firebaseOptions = kIsWeb
+      ? webOptions
+      : DefaultFirebaseOptions.currentPlatform;
+
+  await Firebase.initializeApp(
+    options: firebaseOptions,
+  );
+
   runApp(
     const ProviderScope(
       child: TeenTalkApp(),
