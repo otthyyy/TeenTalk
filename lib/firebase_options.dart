@@ -32,40 +32,41 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDummyKey',
-    appId: '1:123456789:web:abcdef',
-    messagingSenderId: '123456789',
-    projectId: 'teentalk-demo',
-    authDomain: 'teentalk-demo.firebaseapp.com',
-    storageBucket: 'teentalk-demo.appspot.com',
+    apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
+    appId: '1:505388994229:web:a620f3735bb1dc6420f8fc',
+    messagingSenderId: '505388994229',
+    projectId: 'teentalk-31e45',
+    authDomain: 'teentalk-31e45.firebaseapp.com',
+    storageBucket: 'teentalk-31e45.firebasestorage.app',
+    measurementId: 'G-0KPB6VFN4J',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDummyKey',
-    appId: '1:123456789:android:abcdef',
-    messagingSenderId: '123456789',
-    projectId: 'teentalk-demo',
-    authDomain: 'teentalk-demo.firebaseapp.com',
-    storageBucket: 'teentalk-demo.appspot.com',
+    apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
+    appId: '1:505388994229:android:placeholder',
+    messagingSenderId: '505388994229',
+    projectId: 'teentalk-31e45',
+    authDomain: 'teentalk-31e45.firebaseapp.com',
+    storageBucket: 'teentalk-31e45.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDummyKey',
-    appId: '1:123456789:ios:abcdef',
-    messagingSenderId: '123456789',
-    projectId: 'teentalk-demo',
-    authDomain: 'teentalk-demo.firebaseapp.com',
-    storageBucket: 'teentalk-demo.appspot.com',
-    iosBundleId: 'com.example.teenTalkApp',
+    apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
+    appId: '1:505388994229:ios:placeholder',
+    messagingSenderId: '505388994229',
+    projectId: 'teentalk-31e45',
+    authDomain: 'teentalk-31e45.firebaseapp.com',
+    storageBucket: 'teentalk-31e45.firebasestorage.app',
+    iosBundleId: 'com.teentalk.teenTalkApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDummyKey',
-    appId: '1:123456789:ios:abcdef',
-    messagingSenderId: '123456789',
-    projectId: 'teentalk-demo',
-    authDomain: 'teentalk-demo.firebaseapp.com',
-    storageBucket: 'teentalk-demo.appspot.com',
-    iosBundleId: 'com.example.teenTalkApp',
+    apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
+    appId: '1:505388994229:ios:placeholder',
+    messagingSenderId: '505388994229',
+    projectId: 'teentalk-31e45',
+    authDomain: 'teentalk-31e45.firebaseapp.com',
+    storageBucket: 'teentalk-31e45.firebasestorage.app',
+    iosBundleId: 'com.teentalk.teenTalkApp',
   );
 }

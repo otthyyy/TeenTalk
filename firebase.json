@@ -5,7 +5,7 @@
   },
   "storage": [
     {
-      "bucket": "${PROJECT_ID}.appspot.com",
+      "bucket": "teentalk-31e45.firebasestorage.app",
       "rules": "storage.rules"
     }
   ],
