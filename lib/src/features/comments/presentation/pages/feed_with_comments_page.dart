@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/comment.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/comments_list_widget.dart';
@@ -44,23 +47,23 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
   @override
   Widget build(BuildContext context) {
     final postsState = ref.watch(postsProvider);
+    final authState = ref.watch(authStateProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('TeenTalk Feed'),
         actions: [
-          IconButton(
-            onPressed: () {
-              // Show notifications
+          NotificationBadge(
+            onTap: () {
+              context.push('/notifications');
             },
-            icon: const Icon(Icons.notifications_outlined),
           ),
         ],
       ),
       body: _showComments && _selectedPostId != null
           ? _buildCommentsView()
-          : _buildFeedView(postsState, theme),
+          : _buildFeedView(postsState, theme, authState),
       floatingActionButton: _showComments
           ? null
           : FloatingActionButton(
@@ -70,7 +73,9 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     );
   }
 
-  Widget _buildFeedView(PostsState postsState, ThemeData theme) {
+  Widget _buildFeedView(PostsState postsState, ThemeData theme, dynamic authState) {
+    final currentUserId = authState.user?.uid ?? '';
+    
     return RefreshIndicator(
       onRefresh: () async {
         await ref.read(postsProvider.notifier).loadPosts(refresh: true);
@@ -157,23 +162,35 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                         return PostWidget(
                           key: ValueKey(post.id),
                           post: post,
-                          currentUserId: 'current_user_id', // TODO: Get from auth
+                          currentUserId: currentUserId,
                           onComments: () {
+                            if (authState.user == null) {
+                              _showAuthRequiredDialog();
+                              return;
+                            }
                             setState(() {
                               _selectedPostId = post.id;
                               _showComments = true;
                             });
                           },
                           onLike: () {
+                            if (authState.user == null) {
+                              _showAuthRequiredDialog();
+                              return;
+                            }
                             ref.read(postsProvider.notifier).likePost(
                                   post.id,
-                                  'current_user_id', // TODO: Get from auth
+                                  authState.user!.uid,
                                 );
                           },
                           onUnlike: () {
+                            if (authState.user == null) {
+                              _showAuthRequiredDialog();
+                              return;
+                            }
                             ref.read(postsProvider.notifier).unlikePost(
                                   post.id,
-                                  'current_user_id', // TODO: Get from auth
+                                  authState.user!.uid,
                                 );
                           },
                           onReport: () {
@@ -186,11 +203,88 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
   }
 
   Widget _buildCommentsView() {
+    final authState = ref.watch(authStateProvider);
+    final userProfile = ref.watch(userProfileProvider).value;
+    
+    if (authState.user == null || userProfile == null) {
+      return _buildAuthRequiredView();
+    }
+    
     return CommentsListWidget(
       postId: _selectedPostId!,
-      currentUserId: 'current_user_id', // TODO: Get from auth
-      currentUserNickname: 'CurrentUser', // TODO: Get from auth
-      currentUserIsAnonymous: false, // TODO: Get from auth
+      currentUserId: authState.user!.uid,
+      currentUserNickname: userProfile.nickname,
+      currentUserIsAnonymous: false,
+    );
+  }
+  
+  Widget _buildAuthRequiredView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.lock_outlined,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Sign in required',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Please sign in to view comments',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _showComments = false;
+                _selectedPostId = null;
+              });
+            },
+            child: const Text('Go Back'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showAuthRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(
+                Icons.lock_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              const Text('Sign In Required'),
+            ],
+          ),
+          content: const Text(
+            'You need to sign in to interact with posts and comments. Sign in to like posts, comment, and create your own content!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Maybe Later'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Sign In'),
+            ),
+          ],
+        );
+      },
     );
   }
 

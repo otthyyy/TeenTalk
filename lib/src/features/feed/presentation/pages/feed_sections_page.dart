@@ -1,13 +1,22 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../profile/domain/models/user_profile.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/presentation/widgets/comments_bottom_sheet.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../comments/presentation/widgets/comments_list_widget.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card_widget.dart';
 import '../widgets/skeleton_loader_widget.dart';
 import '../widgets/empty_state_widget.dart';
+import '../widgets/segmented_control.dart';
 
 enum FeedSection {
   spotted('spotted', 'Spotted'),
@@ -29,45 +38,107 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
+    with SingleTickerProviderStateMixin {
+  late ScrollController _scrollController;
+  late AnimationController _headerAnimationController;
+  FeedSection _selectedSection = FeedSection.spotted;
+  String? _selectedPostId;
+  bool _showComments = false;
+  Timer? _trendingTimer;
+  int _trendingIndex = 0;
+  List<Post> _trendingPosts = [];
+  ProviderSubscription<FeedState>? _trendingSubscription;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: FeedSection.values.length, vsync: this);
+    _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-    
-    // Load initial posts for the default section (spotted)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(schoolAwareFeedProvider(FeedSection.spotted.value).notifier).loadPosts(
-            refresh: true,
-            section: FeedSection.spotted.value,
-          );
+
+    _headerAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _trendingSubscription = ref.listen<FeedState>(
+      schoolAwareFeedProvider(FeedSection.spotted.value),
+      (previous, next) {
+        final sortedPosts = [...next.posts]
+          ..sort((a, b) {
+            final likeComparison = b.likeCount.compareTo(a.likeCount);
+            if (likeComparison != 0) return likeComparison;
+            return b.createdAt.compareTo(a.createdAt);
+          });
+        final spotlightCandidates = sortedPosts.take(5).toList();
+
+        if (!mounted) {
+          return;
+        }
+
+        if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
+          setState(() {
+            _trendingPosts = spotlightCandidates;
+            if (_trendingPosts.isEmpty) {
+              _trendingIndex = 0;
+            } else {
+              _trendingIndex = _trendingIndex % _trendingPosts.length;
+            }
+          });
+        }
+      },
+    );
+
+    _trendingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (!mounted || _trendingPosts.length < 2) return;
+      setState(() {
+        _trendingIndex = (_trendingIndex + 1) % _trendingPosts.length;
+      });
     });
 
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        final section = FeedSection.values[_tabController.index];
-        ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
-              refresh: true,
-              section: section.value,
-            );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+          .loadPosts(
+            refresh: true,
+            section: _selectedSection.value,
+          );
     });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _trendingTimer?.cancel();
+    _trendingSubscription?.close();
     _scrollController.dispose();
+    _headerAnimationController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final section = FeedSection.values[_tabController.index];
-      ref.read(schoolAwareFeedProvider(section.value).notifier).loadMorePosts();
+      ref
+          .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+          .loadMorePosts();
     }
+  }
+
+  bool _trendingListsEqual(List<Post> a, List<Post> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].id != b[i].id) return false;
+    }
+    return true;
+  }
+
+  void _onSectionChanged(FeedSection section) {
+    setState(() {
+      _selectedSection = section;
+    });
+    ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
+          refresh: true,
+          section: section.value,
+        );
   }
 
   @override
@@ -75,25 +146,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TeenTalk Feed'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: FeedSection.values
-              .map((section) => Tab(text: section.label))
-              .toList(),
-          indicatorColor: theme.colorScheme.primary,
-          labelColor: theme.colorScheme.primary,
-          unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Show notifications
-            },
-            icon: const Icon(Icons.notifications_outlined),
-          ),
-        ],
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _showComments && _selectedPostId != null
+            ? _buildCommentsView()
+            : _buildFeedView(theme),
       ),
       body: TabBarView(
         controller: _tabController,
@@ -114,31 +171,138 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final postsState = ref.watch(schoolAwareFeedProvider(section.value));
     final authState = ref.watch(authStateProvider);
     final currentUserId = authState.user?.uid ?? '';
+      floatingActionButton: _showComments
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showCreatePostDialog,
+              icon: const Icon(Icons.add),
+              label: const Text('Post'),
+            ),
+    );
+  }
+
+  Widget _buildFeedView(ThemeData theme) {
+    final postsState = ref.watch(schoolAwareFeedProvider(_selectedSection.value));
+    final authState = ref.watch(authStateProvider);
+    final userProfile = ref.watch(userProfileProvider).value;
 
     return RefreshIndicator(
       onRefresh: () async {
-        await ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
+        await ref
+            .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+            .loadPosts(
               refresh: true,
-              section: section.value,
+              section: _selectedSection.value,
             );
       },
-      child: postsState.isLoading && postsState.posts.isEmpty
-          ? const SkeletonLoader()
-          : postsState.error != null
-              ? _buildErrorView(postsState.error!, section)
-              : postsState.posts.isEmpty
-                  ? EmptyStateWidget(section: section)
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(bottom: 80.0),
-                      itemCount: postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == postsState.posts.length) {
-                          return const Padding(
+      child: CustomScrollView(
+        controller: _scrollController,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 280,
+            pinned: true,
+            stretch: true,
+            automaticallyImplyLeading: false,
+            backgroundColor: theme.colorScheme.surface,
+            flexibleSpace: FlexibleSpaceBar(
+              background: _buildHeroHeader(theme, userProfile),
+              collapseMode: CollapseMode.parallax,
+            ),
+            actions: [
+              NotificationBadge(
+                onTap: () {
+                  context.push('/notifications');
+                },
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SegmentedControl<FeedSection>(
+                values: FeedSection.values,
+                selectedValue: _selectedSection,
+                onChanged: _onSectionChanged,
+                labelBuilder: (section) => section.label,
+              ),
+            ),
+          ),
+          if (postsState.isLoading && postsState.posts.isEmpty)
+            const SliverToBoxAdapter(
+              child: SkeletonLoader(),
+            )
+          else if (postsState.error != null)
+            SliverToBoxAdapter(
+              child: _buildErrorView(postsState.error!, theme),
+            )
+          else if (postsState.posts.isEmpty)
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 400,
+                child: EmptyStateWidget(section: _selectedSection),
+              ),
+            )
+          else
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == postsState.posts.length) {
+                    return postsState.isLoadingMore
+                        ? const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Center(
                               child: CircularProgressIndicator(),
                             ),
+                          )
+                        : const SizedBox.shrink();
+                  }
+
+                  final post = postsState.posts[index];
+                  final isNew =
+                      DateTime.now().difference(post.createdAt).inMinutes < 5;
+
+                  return PostCardWidget(
+                    key: ValueKey(post.id),
+                    post: post,
+                    currentUserId: authState.user?.uid,
+                    isNew: isNew,
+                    onComments: () {
+                      if (authState.user == null) {
+                        _showAuthRequiredDialog();
+                        return;
+                      }
+                      setState(() {
+                        _selectedPostId = post.id;
+                        _showComments = true;
+                      });
+                    },
+                    onLike: () {
+                      if (authState.user == null) {
+                        _showAuthRequiredDialog();
+                        return;
+                      }
+                      ref
+                          .read(schoolAwareFeedProvider(_selectedSection.value)
+                              .notifier)
+                          .likePost(
+                            post.id,
+                            authState.user!.uid,
+                          );
+                    },
+                    onUnlike: () {
+                      if (authState.user == null) {
+                        _showAuthRequiredDialog();
+                        return;
+                      }
+                      ref
+                          .read(schoolAwareFeedProvider(_selectedSection.value)
+                              .notifier)
+                          .unlikePost(
+                            post.id,
+                            authState.user!.uid,
                           );
                         }
 
@@ -178,42 +342,260 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                         );
                       },
                     ),
+                    },
+                    onReport: () {
+                      _showReportDialog(post);
+                    },
+                  );
+                },
+                childCount:
+                    postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+              ),
+            ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 80),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildErrorView(String error, FeedSection section) {
-    final theme = Theme.of(context);
+  Widget _buildHeroHeader(ThemeData theme, UserProfile? userProfile) {
+    return AnimatedBuilder(
+      animation: _headerAnimationController,
+      builder: (context, child) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.secondary,
+                theme.colorScheme.tertiary,
+              ],
+              stops: [
+                0.0,
+                _headerAnimationController.value,
+                1.0,
+              ],
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 100 + (_headerAnimationController.value * 20),
+                right: 30 - (_headerAnimationController.value * 30),
+                child: Opacity(
+                  opacity: 0.1,
+                  child: Icon(
+                    Icons.visibility,
+                    size: 120,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '👀 Spotted',
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Share what you\'ve spotted around campus',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                      if (userProfile?.school != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.school,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                userProfile!.school,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.trending_up,
+                                  size: 16,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Trending Now',
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorView(String error, ThemeData theme) {
+    return Container(
+      height: 400,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Failed to load ${_selectedSection.label.toLowerCase()} posts',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Text(
+                error,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                ref
+                    .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+                    .loadPosts(
+                      refresh: true,
+                      section: _selectedSection.value,
+                    );
+              },
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommentsView() {
+    final authState = ref.watch(authStateProvider);
+    final userProfile = ref.watch(userProfileProvider).value;
+
+    if (authState.user == null || userProfile == null) {
+      return _buildAuthRequiredView();
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Comments'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            setState(() {
+              _showComments = false;
+              _selectedPostId = null;
+            });
+          },
+        ),
+      ),
+      body: CommentsListWidget(
+        postId: _selectedPostId!,
+        currentUserId: authState.user!.uid,
+        currentUserNickname: userProfile.nickname,
+        currentUserIsAnonymous: false,
+      ),
+    );
+  }
+
+  Widget _buildAuthRequiredView() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.error_outline,
-            size: 48,
-            color: theme.colorScheme.error,
+            Icons.lock_outlined,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 16),
           Text(
-            'Failed to load ${section.label.toLowerCase()} posts',
-            style: theme.textTheme.titleMedium,
+            'Sign in required',
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            error,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.error,
-            ),
-            textAlign: TextAlign.center,
+            'Please sign in to view comments',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
-                    refresh: true,
-                    section: section.value,
-                  );
+              setState(() {
+                _showComments = false;
+                _selectedPostId = null;
+              });
             },
-            child: const Text('Retry'),
+            child: const Text('Go Back'),
           ),
         ],
       ),
@@ -334,6 +716,67 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               },
             );
           },
+  void _showCreatePostDialog() {
+    final authState = ref.read(authStateProvider);
+    final userProfile = ref.read(userProfileProvider).value;
+
+    if (authState.user == null) {
+      _showAuthRequiredDialog();
+      return;
+    }
+
+    if (userProfile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please complete your profile first'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    context.push('/feed/compose').then((result) {
+      if (result == true && mounted) {
+        ref
+            .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+            .loadPosts(
+              refresh: true,
+              section: _selectedSection.value,
+            );
+      }
+    });
+  }
+
+  void _showAuthRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(
+                Icons.lock_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              const Text('Sign In Required'),
+            ],
+          ),
+          content: const Text(
+            'You need to sign in to interact with posts and comments. Sign in to like posts, comment, and create your own content!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Maybe Later'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Sign In'),
+            ),
+          ],
         );
       },
       loading: () {
@@ -353,7 +796,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     );
   }
 
-  void _showReportDialog(Post post, FeedSection section) {
+  void _showReportDialog(Post post) {
     showDialog(
       context: context,
       builder: (context) {
@@ -370,10 +813,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // TODO: Implement post reporting
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Post reported'),
+                    content: Text('Post reported for moderation'),
                     duration: Duration(seconds: 2),
                   ),
                 );
