@@ -10,6 +10,7 @@ import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_ed
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.dart';
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
@@ -27,9 +28,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final hasProfile = userProfile.value != null;
       final isAdminUser = userProfile.value?.isAdmin ?? false;
 
-      final isOnAuthPage = state.uri.toString() == '/auth';
-      final isOnOnboardingPage = state.uri.toString() == '/onboarding';
-      final isOnAdminPage = state.uri.toString().startsWith('/admin');
+      final path = state.uri.path;
+      final isOnAuthPage = path == '/auth' || path == '/auth/signup';
+      final isOnOnboardingPage = path == '/onboarding';
+      final isOnAdminPage = path.startsWith('/admin');
 
       if (isAuthLoading || isProfileLoading) {
         return null;
@@ -56,10 +58,13 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/auth',
-        builder: (context, state) {
-          final isSignUp = state.uri.queryParameters['signup'] == 'true';
-          return AuthPage(isSignUp: isSignUp);
-        },
+        builder: (context, state) => const AuthPage(),
+        routes: [
+          GoRoute(
+            path: 'signup',
+            builder: (context, state) => const SignUpPage(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/onboarding',
