@@ -1,36 +1,25 @@
 {
   "project_info": {
-    "project_number": "123456789012",
-    "project_id": "dev-firebase-app",
-    "storage_bucket": "dev-firebase-app.appspot.com"
+    "project_number": "505388994229",
+    "project_id": "teentalk-31e45",
+    "storage_bucket": "teentalk-31e45.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789012:android:abcdef123456",
+        "mobilesdk_app_id": "1:505388994229:android:placeholder",
         "android_client_info": {
-          "package_name": "com.example.firebase_app"
+          "package_name": "com.teentalk.teen_talk_app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDummyApiKeyForDevelopment"
+          "current_key": "AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -71,16 +71,16 @@ The application uses `.env` files for configuration management:
 2. Update `.env` with your actual Firebase configuration:
 
 ```env
-# Firebase Configuration - Development Environment
-FIREBASE_API_KEY=your_actual_api_key
-FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=123456789012
-FIREBASE_APP_ID=1:123456789012:web:abcdef123456
+# Firebase Configuration - Production Environment
+FIREBASE_API_KEY=AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE
+FIREBASE_AUTH_DOMAIN=teentalk-31e45.firebaseapp.com
+FIREBASE_PROJECT_ID=teentalk-31e45
+FIREBASE_STORAGE_BUCKET=teentalk-31e45.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=505388994229
+FIREBASE_APP_ID=1:505388994229:web:a620f3735bb1dc6420f8fc
 
 # Environment
-FLUTTER_ENV=dev
+FLUTTER_ENV=prod
 ```
 
 ### Environment Flavors
@@ -88,7 +88,7 @@ FLUTTER_ENV=dev
 The application supports multiple environments:
 
 - **Development**: Uses development Firebase project
-- **Production**: Uses production Firebase project (to be configured)
+- **Production**: Uses production Firebase project `teentalk-31e45`
 
 To switch environments, modify the `FLUTTER_ENV` variable in your `.env` file.
 
