@@ -25,6 +25,10 @@ class ErrorHandler {
           return 'Email/password accounts are not enabled.';
         case 'network-request-failed':
           return 'Network error. Please check your connection.';
+        case 'configuration-not-found':
+          return 'Firebase is not configured properly. Please contact support.';
+        case 'app-not-authorized':
+          return 'This app is not authorized to use Firebase Authentication.';
         default:
           return 'Authentication error: ${error.message}';
       }

@@ -8,11 +8,19 @@ import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
 import 'src/core/router/app_router.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('✅ Firebase initialized successfully');
+  } catch (e, stackTrace) {
+    debugPrint('❌ Firebase initialization error: $e');
+    debugPrintStack(stackTrace: stackTrace);
+    rethrow;
+  }
   
   runApp(
     const ProviderScope(

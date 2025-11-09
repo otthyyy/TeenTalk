@@ -1,21 +1,59 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
-import '../models/auth_user.dart';
+import 'package:teen_talk_app/firebase_options.dart';
 import 'package:teen_talk_app/utils/error_handler.dart';
 
+import '../models/auth_user.dart';
+
 class FirebaseAuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuthService() {
+    _initialization ??= _initializeFirebase();
+  }
+
+  static Future<void>? _initialization;
+
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Logger _logger = Logger();
 
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
 
-  User? get currentUser => _auth.currentUser;
+  static Future<void> _initializeFirebase() async {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  }
+
+  Future<void> _ensureFirebaseInitialized() async {
+    try {
+      await (_initialization ??= _initializeFirebase());
+    } catch (e, stackTrace) {
+      _logger.e('Failed to initialize Firebase', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  Stream<User?> get authStateChanges {
+    return Stream.fromFuture(_ensureFirebaseInitialized()).asyncExpand((_) {
+      return _auth.authStateChanges();
+    });
+  }
+
+  User? get currentUser {
+    if (Firebase.apps.isEmpty) {
+      _logger.w('Firebase accessed before initialization. Returning null currentUser.');
+      return null;
+    }
+    return _auth.currentUser;
+  }
 
   Future<AuthUser?> getCurrentAuthUser() async {
+    await _ensureFirebaseInitialized();
     final user = _auth.currentUser;
     if (user == null) return null;
 
@@ -51,6 +89,7 @@ class FirebaseAuthService {
     required String password,
     String? displayName,
   }) async {
+    await _ensureFirebaseInitialized();
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -89,6 +128,7 @@ class FirebaseAuthService {
     required String email,
     required String password,
   }) async {
+    await _ensureFirebaseInitialized();
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -114,6 +154,7 @@ class FirebaseAuthService {
 
   // Google Sign-In
   Future<AuthUser> signInWithGoogle() async {
+    await _ensureFirebaseInitialized();
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
@@ -160,6 +201,7 @@ class FirebaseAuthService {
     required Function(FirebaseAuthException error) onError,
     required Function(PhoneAuthCredential credential) onVerificationComplete,
   }) async {
+    await _ensureFirebaseInitialized();
     try {
       await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
@@ -181,6 +223,7 @@ class FirebaseAuthService {
     required String verificationId,
     required String otp,
   }) async {
+    await _ensureFirebaseInitialized();
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
@@ -214,6 +257,7 @@ class FirebaseAuthService {
 
   // Linking Auth Providers
   Future<AuthUser> linkWithGoogle() async {
+    await _ensureFirebaseInitialized();
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user signed in');
@@ -264,6 +308,7 @@ class FirebaseAuthService {
     required String email,
     required String password,
   }) async {
+    await _ensureFirebaseInitialized();
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user signed in');
@@ -311,6 +356,7 @@ class FirebaseAuthService {
     required bool termsConsent,
     required bool parentalConsent,
   }) async {
+    await _ensureFirebaseInitialized();
     try {
       await _firestore.collection('users').doc(uid).update({
         'gdprConsentProvided': gdprConsent,
@@ -328,6 +374,7 @@ class FirebaseAuthService {
 
   // Email Verification
   Future<void> sendEmailVerification() async {
+    await _ensureFirebaseInitialized();
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user signed in');
@@ -343,6 +390,7 @@ class FirebaseAuthService {
   }
 
   Future<void> reloadUser() async {
+    await _ensureFirebaseInitialized();
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('No user signed in');
@@ -359,6 +407,7 @@ class FirebaseAuthService {
 
   // Password Reset
   Future<void> sendPasswordResetEmail(String email) async {
+    await _ensureFirebaseInitialized();
     try {
       await _auth.sendPasswordResetEmail(email: email);
       _logger.i('Password reset email sent to: $email');
@@ -370,6 +419,7 @@ class FirebaseAuthService {
 
   // Anonymous Authentication
   Future<AuthUser> signInAnonymously() async {
+    await _ensureFirebaseInitialized();
     try {
       final userCredential = await _auth.signInAnonymously();
 
@@ -397,6 +447,7 @@ class FirebaseAuthService {
 
   // Sign Out
   Future<void> signOut() async {
+    await _ensureFirebaseInitialized();
     try {
       await Future.wait([
         _auth.signOut(),
@@ -411,6 +462,7 @@ class FirebaseAuthService {
 
   // Private helper methods
   Future<void> _saveAuthUserToFirestore(AuthUser authUser) async {
+    await _ensureFirebaseInitialized();
     try {
       await _firestore.collection('users').doc(authUser.uid).set({
         'uid': authUser.uid,
@@ -434,6 +486,7 @@ class FirebaseAuthService {
   }
 
   Future<void> _updateAuthUserInFirestore(AuthUser authUser) async {
+    await _ensureFirebaseInitialized();
     try {
       await _firestore.collection('users').doc(authUser.uid).update({
         'authMethods': authUser.authMethods,
