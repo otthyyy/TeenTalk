@@ -134,7 +134,7 @@ class DesignTokens {
   static const Curve curveDefault = Curves.easeInOut;
   static const Curve curveEmphasized = Curves.easeOutCubic;
   static const Curve curveDecelerate = Curves.decelerate;
-  static const Curve curveAccelerate = Curves.accelerate;
+  static const Curve curveAccelerate = Curves.easeIn;
   
   static BoxShadow get shadowSm => BoxShadow(
     color: Colors.black.withOpacity(0.05),

@@ -178,7 +178,7 @@ class AppTheme {
       side: BorderSide.none,
     ),
     
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: DesignTokens.lightSurface,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.08),
@@ -419,7 +419,7 @@ class AppTheme {
       side: BorderSide.none,
     ),
     
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: DesignTokens.darkSurface,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.3),
