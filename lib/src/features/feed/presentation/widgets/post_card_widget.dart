@@ -1,68 +1,178 @@
 import 'package:flutter/material.dart';
 import '../../../comments/data/models/comment.dart';
 
-class PostCardWidget extends StatelessWidget {
+class PostCardWidget extends StatefulWidget {
   final Post post;
-  final String currentUserId;
+  final String? currentUserId;
   final VoidCallback onComments;
   final VoidCallback onLike;
   final VoidCallback onUnlike;
   final VoidCallback onReport;
+  final bool isNew;
 
   const PostCardWidget({
     super.key,
     required this.post,
-    required this.currentUserId,
+    this.currentUserId,
     required this.onComments,
     required this.onLike,
     required this.onUnlike,
     required this.onReport,
+    this.isNew = false,
   });
+
+  @override
+  State<PostCardWidget> createState() => _PostCardWidgetState();
+}
+
+class _PostCardWidgetState extends State<PostCardWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  bool _isLikeAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    if (widget.isNew) {
+      _shimmerController.repeat();
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          _shimmerController.stop();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLiked = post.likedBy.contains(currentUserId);
+    final isLiked = widget.currentUserId != null &&
+        widget.post.likedBy.contains(widget.currentUserId);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(theme),
-            const SizedBox(height: 12),
-            _buildContent(theme),
-            const SizedBox(height: 12),
-            _buildFooter(theme, isLiked),
-          ],
+    return AnimatedBuilder(
+      animation: _shimmerController,
+      builder: (context, child) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: widget.isNew
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.primary.withOpacity(0.1),
+                      theme.colorScheme.secondary.withOpacity(0.05),
+                    ],
+                    stops: [
+                      _shimmerController.value - 0.3,
+                      _shimmerController.value + 0.3,
+                    ],
+                  )
+                : null,
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.surface,
+                theme.colorScheme.surface.withOpacity(0.95),
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(theme),
+                const SizedBox(height: 12),
+                _buildContent(theme),
+                if (widget.post.imageUrl != null) ...[
+                  const SizedBox(height: 12),
+                  _buildImage(theme),
+                ],
+                const SizedBox(height: 12),
+                _buildFooter(theme, isLiked),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader(ThemeData theme) {
+    final accentColor = _getUserAccentColor(theme);
+
     return Row(
       children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: theme.colorScheme.primaryContainer,
-          child: post.isAnonymous
-              ? Icon(
-                  Icons.person_outline,
-                  color: theme.colorScheme.onPrimaryContainer,
-                )
-              : Text(
-                  post.authorNickname.isNotEmpty
-                      ? post.authorNickname[0].toUpperCase()
-                      : 'A',
-                  style: TextStyle(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                accentColor,
+                accentColor.withOpacity(0.7),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: accentColor.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.transparent,
+            child: widget.post.isAnonymous
+                ? Icon(
+                    Icons.person_outline,
+                    color: theme.colorScheme.onPrimary,
+                  )
+                : Text(
+                    widget.post.authorNickname.isNotEmpty
+                        ? widget.post.authorNickname[0].toUpperCase()
+                        : 'A',
+                    style: TextStyle(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -70,14 +180,16 @@ class PostCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                post.isAnonymous ? 'Anonymous' : post.authorNickname,
+                widget.post.isAnonymous
+                    ? 'Anonymous'
+                    : widget.post.authorNickname,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                _formatTimestamp(post.createdAt),
+                _formatTimestamp(widget.post.createdAt),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -88,7 +200,7 @@ class PostCardWidget extends StatelessWidget {
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'report') {
-              onReport();
+              widget.onReport();
             }
           },
           itemBuilder: (context) => [
@@ -110,46 +222,108 @@ class PostCardWidget extends StatelessWidget {
 
   Widget _buildContent(ThemeData theme) {
     return Text(
-      post.content,
-      style: theme.textTheme.bodyMedium,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+      widget.post.content,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        height: 1.4,
+      ),
+    );
+  }
+
+  Widget _buildImage(ThemeData theme) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(
+        widget.post.imageUrl!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 200,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            height: 200,
+            color: theme.colorScheme.surfaceVariant,
+            child: Center(
+              child: Icon(
+                Icons.broken_image_outlined,
+                size: 48,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildFooter(ThemeData theme, bool isLiked) {
     return Row(
       children: [
-        InkWell(
-          onTap: isLiked ? onUnlike : onLike,
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isLiked ? Icons.favorite : Icons.favorite_border,
-                  size: 20,
-                  color: isLiked ? theme.colorScheme.error : theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  post.likeCount.toString(),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+        AnimatedScale(
+          scale: _isLikeAnimating ? 1.2 : 1.0,
+          duration: const Duration(milliseconds: 150),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                _isLikeAnimating = true;
+              });
+              Future.delayed(const Duration(milliseconds: 150), () {
+                if (mounted) {
+                  setState(() {
+                    _isLikeAnimating = false;
+                  });
+                }
+              });
+
+              if (isLiked) {
+                widget.onUnlike();
+              } else {
+                widget.onLike();
+              }
+            },
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              decoration: BoxDecoration(
+                gradient: isLiked
+                    ? LinearGradient(
+                        colors: [
+                          theme.colorScheme.error,
+                          theme.colorScheme.error.withOpacity(0.8),
+                        ],
+                      )
+                    : null,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    size: 20,
+                    color: isLiked
+                        ? Colors.white
+                        : theme.colorScheme.onSurfaceVariant,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.post.likeCount.toString(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isLiked
+                          ? Colors.white
+                          : theme.colorScheme.onSurfaceVariant,
+                      fontWeight: isLiked ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         const SizedBox(width: 16),
         InkWell(
-          onTap: onComments,
+          onTap: widget.onComments,
           borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -160,7 +334,7 @@ class PostCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  post.commentCount.toString(),
+                  widget.post.commentCount.toString(),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -171,21 +345,44 @@ class PostCardWidget extends StatelessWidget {
         ),
         const Spacer(),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
           decoration: BoxDecoration(
-            color: theme.colorScheme.secondaryContainer,
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary.withOpacity(0.2),
+                theme.colorScheme.secondary.withOpacity(0.2),
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            post.section.toUpperCase(),
+            widget.post.section.toUpperCase(),
             style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSecondaryContainer,
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
       ],
     );
+  }
+
+  Color _getUserAccentColor(ThemeData theme) {
+    if (widget.post.isAnonymous) {
+      return theme.colorScheme.secondary;
+    }
+
+    final hash = widget.post.authorId.hashCode;
+    final colors = [
+      theme.colorScheme.primary,
+      theme.colorScheme.secondary,
+      theme.colorScheme.tertiary,
+      const Color(0xFF10B981),
+      const Color(0xFFF59E0B),
+      const Color(0xFF3B82F6),
+    ];
+
+    return colors[hash.abs() % colors.length];
   }
 
   String _formatTimestamp(DateTime dateTime) {
