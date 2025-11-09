@@ -246,7 +246,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Icons.send_rounded,
                           color: !_hasText
                               ? theme.colorScheme.onSurface.withOpacity(0.4)
-                              : AppTheme.lightOnPrimary,
+                              : theme.colorScheme.onPrimary,
                         ),
                       ),
                     ),

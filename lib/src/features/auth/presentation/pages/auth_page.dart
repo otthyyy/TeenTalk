@@ -56,7 +56,7 @@ class _AuthPageState extends ConsumerState<AuthPage> with TickerProviderStateMix
               ? (widget.isSignUp
                   ? localizations?.authSignUp ?? 'Sign Up'
                   : localizations?.authSignIn ?? 'Sign In')
-              : localizations?.appName ?? 'TeenTalk',
+              : 'TeenTalk',
         ),
         centerTitle: true,
       ),
