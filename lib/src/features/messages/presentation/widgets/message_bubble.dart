@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../data/models/direct_message.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -105,7 +104,7 @@ class MessageBubble extends StatelessWidget {
                     message.content,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: isCurrentUser
-                          ? AppTheme.lightOnPrimary
+                          ? theme.colorScheme.onPrimary
                           : theme.colorScheme.onSurface,
                       height: 1.4,
                     ),
@@ -119,7 +118,7 @@ class MessageBubble extends StatelessWidget {
                         _formatTime(message.createdAt),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: isCurrentUser
-                              ? AppTheme.lightOnPrimary.withOpacity(0.7)
+                              ? theme.colorScheme.onPrimary.withOpacity(0.7)
                               : theme.colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ),
@@ -131,8 +130,8 @@ class MessageBubble extends StatelessWidget {
                               : Icons.done_rounded,
                           size: 14,
                           color: message.isRead
-                              ? AppTheme.accentColor
-                              : AppTheme.lightOnPrimary.withOpacity(0.7),
+                              ? theme.colorScheme.tertiary
+                              : theme.colorScheme.onPrimary.withOpacity(0.7),
                         ),
                       ],
                     ],

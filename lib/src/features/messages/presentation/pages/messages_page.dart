@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../data/models/conversation.dart';
+import '../../data/repositories/direct_messages_repository.dart';
 import '../providers/direct_messages_provider.dart';
 import '../widgets/conversation_list_item.dart';
 import '../widgets/conversation_skeleton_loader.dart';

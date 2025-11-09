@@ -42,15 +42,17 @@ class CommentsState {
     bool? isLoading,
     bool? isLoadingMore,
     String? error,
+    bool clearError = false,
     DocumentSnapshot? lastDocument,
+    bool clearLastDocument = false,
     bool? hasMore,
   }) {
     return CommentsState(
       comments: comments ?? this.comments,
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-      error: error,
-      lastDocument: lastDocument ?? this.lastDocument,
+      error: clearError ? null : error ?? this.error,
+      lastDocument: clearLastDocument ? null : lastDocument ?? this.lastDocument,
       hasMore: hasMore ?? this.hasMore,
     );
   }
@@ -70,9 +72,9 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
     }
 
     try {
-      state = state.copyWith(isLoading: true, error: null);
+      state = state.copyWith(isLoading: true, clearError: true);
 
-      final comments = await _repository.getCommentsByPostId(
+      final (comments, lastDoc) = await _repository.getCommentsByPostId(
         postId: _postId,
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
@@ -82,17 +84,17 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         state = state.copyWith(
           isLoading: false,
           hasMore: false,
+          clearLastDocument: true,
         );
         return;
       }
 
       final allComments = refresh ? comments : [...state.comments, ...comments];
-      final newLastDocument = comments.length < 20 ? null : comments.last;
 
       state = state.copyWith(
         comments: allComments,
         isLoading: false,
-        lastDocument: newLastDocument,
+        lastDocument: lastDoc,
         hasMore: comments.length == 20,
       );
     } catch (e) {
@@ -109,7 +111,7 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
     state = state.copyWith(isLoadingMore: true);
 
     try {
-      final comments = await _repository.getCommentsByPostId(
+      final (comments, lastDoc) = await _repository.getCommentsByPostId(
         postId: _postId,
         lastDocument: state.lastDocument,
         limit: 20,
@@ -119,17 +121,17 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         state = state.copyWith(
           isLoadingMore: false,
           hasMore: false,
+          clearLastDocument: true,
         );
         return;
       }
 
       final allComments = [...state.comments, ...comments];
-      final newLastDocument = comments.length < 20 ? null : comments.last;
 
       state = state.copyWith(
         comments: allComments,
         isLoadingMore: false,
-        lastDocument: newLastDocument,
+        lastDocument: lastDoc,
         hasMore: comments.length == 20,
       );
     } catch (e) {
@@ -255,7 +257,7 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
   }
 
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith(clearError: true);
   }
 }
 
