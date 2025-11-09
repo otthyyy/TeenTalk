@@ -8,6 +8,7 @@ import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/presentation/widgets/comments_list_widget.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card_widget.dart';
 import '../widgets/skeleton_loader_widget.dart';
@@ -186,9 +187,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               collapseMode: CollapseMode.parallax,
             ),
             actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_outlined),
+              NotificationBadge(
+                onTap: () {
+                  context.push('/notifications');
+                },
               ),
             ],
           ),

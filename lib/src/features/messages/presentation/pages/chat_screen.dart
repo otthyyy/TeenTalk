@@ -153,7 +153,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               },
               loading: () => Center(
                 child: CircularProgressIndicator(
-                  color: AppTheme.primaryColor,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               error: (error, stackTrace) => Center(
@@ -237,7 +237,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         decoration: BoxDecoration(
                           color: !_hasText
                               ? theme.colorScheme.surfaceVariant
-                              : AppTheme.primaryColor,
+                              : theme.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         width: 44,
