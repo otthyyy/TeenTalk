@@ -19,9 +19,12 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   bool _isAnonymous = false;
   File? _selectedImage;
   bool _isUploading = false;
-  String _selectedSection = 'Spotted';
+  String _selectedSection = 'spotted';
   
-  final List<String> _sections = ['Spotted', 'Question', 'Meme', 'Discussion', 'Announcement'];
+  final List<Map<String, String>> _sections = [
+    {'value': 'spotted', 'label': 'Spotted'},
+    {'value': 'general', 'label': 'General'},
+  ];
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
@@ -224,15 +227,15 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: _sections.map((section) {
-                        final isSelected = section == _selectedSection;
+                        final isSelected = section['value'] == _selectedSection;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
-                            label: Text(section),
+                            label: Text(section['label']!),
                             selected: isSelected,
                             onSelected: (selected) {
                               setState(() {
-                                _selectedSection = section;
+                                _selectedSection = section['value']!;
                               });
                             },
                           ),
