@@ -138,6 +138,15 @@ class NotificationService {
     await batch.commit();
   }
 
+  Stream<QuerySnapshot> getNotificationsStream(String userId, {int limit = 100}) {
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots();
+  }
+
   Stream<QuerySnapshot> getUnreadNotificationsStream(String userId) {
     return _firestore
         .collection('notifications')

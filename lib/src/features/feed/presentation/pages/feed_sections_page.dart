@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card_widget.dart';
 import '../widgets/skeleton_loader_widget.dart';
@@ -86,11 +88,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              // Show notifications
+          NotificationBadge(
+            onTap: () {
+              context.push('/notifications');
             },
-            icon: const Icon(Icons.notifications_outlined),
           ),
         ],
       ),

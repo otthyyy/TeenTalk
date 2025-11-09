@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/comment.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/comments_list_widget.dart';
@@ -50,11 +51,10 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
       appBar: AppBar(
         title: const Text('TeenTalk Feed'),
         actions: [
-          IconButton(
-            onPressed: () {
-              // Show notifications
+          NotificationBadge(
+            onTap: () {
+              context.push('/notifications');
             },
-            icon: const Icon(Icons.notifications_outlined),
           ),
         ],
       ),
