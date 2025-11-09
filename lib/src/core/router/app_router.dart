@@ -14,6 +14,7 @@ import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.d
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
+import 'package:teen_talk_app/src/core/theme/decorations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -137,36 +138,56 @@ class MainNavigationShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider);
     final isAdmin = userProfile.value?.isAdmin ?? false;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context, isAdmin),
-        onTap: (index) => _onItemTapped(index, context, isAdmin),
-        type: BottomNavigationBarType.fixed,
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Feed',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
-            activeIcon: Icon(Icons.message),
-            label: 'Messages',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          if (isAdmin)
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.admin_panel_settings_outlined),
-              activeIcon: Icon(Icons.admin_panel_settings),
-              label: 'Admin',
+    return Container(
+      decoration: AppDecorations.surfaceGradientBackground(isDark: isDark),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: child,
+        extendBody: true,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: AppDecorations.glassContainer(
+            isDark: isDark,
+            borderRadius: 28,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 6,
             ),
-        ],
+            child: BottomNavigationBar(
+              currentIndex: _calculateSelectedIndex(context, isAdmin),
+              onTap: (index) => _onItemTapped(index, context, isAdmin),
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              items: [
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home_rounded),
+                  label: 'Feed',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.message_outlined),
+                  activeIcon: Icon(Icons.message_rounded),
+                  label: 'Messages',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Profile',
+                ),
+                if (isAdmin)
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.admin_panel_settings_outlined),
+                    activeIcon: Icon(Icons.admin_panel_settings_rounded),
+                    label: 'Admin',
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
