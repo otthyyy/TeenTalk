@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../data/models/conversation.dart';
 
@@ -146,13 +145,13 @@ class ConversationListItem extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.secondaryColor,
+                              color: theme.colorScheme.secondary,
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
                               unreadCount > 99 ? '99+' : '$unreadCount',
                               style: theme.textTheme.labelSmall?.copyWith(
-                                color: AppTheme.lightOnPrimary,
+                                color: theme.colorScheme.onSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

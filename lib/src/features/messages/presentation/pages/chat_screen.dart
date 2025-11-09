@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../data/repositories/direct_messages_repository.dart';
 import '../providers/direct_messages_provider.dart';
 import '../widgets/message_bubble.dart';
 

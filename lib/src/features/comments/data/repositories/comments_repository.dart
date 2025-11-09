@@ -6,7 +6,7 @@ class CommentsRepository {
   static const String _commentsCollection = 'comments';
   static const String _postsCollection = 'posts';
 
-  Future<List<Comment>> getCommentsByPostId({
+  Future<(List<Comment>, DocumentSnapshot?)> getCommentsByPostId({
     required String postId,
     DocumentSnapshot? lastDocument,
     int limit = 20,
@@ -24,13 +24,16 @@ class CommentsRepository {
 
     final QuerySnapshot snapshot = await query.get();
     
-    return snapshot.docs.map((doc) {
+    final comments = snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Comment.fromJson({
         ...data,
         'id': doc.id,
       });
     }).toList();
+
+    final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+    return (comments, lastDoc);
   }
 
   Future<Comment?> getCommentById(String commentId) async {

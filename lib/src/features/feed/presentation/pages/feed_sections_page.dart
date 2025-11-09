@@ -53,34 +53,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
 
-    _trendingSubscription = ref.listen<FeedState>(
-      schoolAwareFeedProvider(FeedSection.spotted.value),
-      (previous, next) {
-        final sortedPosts = [...next.posts]
-          ..sort((a, b) {
-            final likeComparison = b.likeCount.compareTo(a.likeCount);
-            if (likeComparison != 0) return likeComparison;
-            return b.createdAt.compareTo(a.createdAt);
-          });
-        final spotlightCandidates = sortedPosts.take(5).toList();
-
-        if (!mounted) {
-          return;
-        }
-
-        if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
-          setState(() {
-            _trendingPosts = spotlightCandidates;
-            if (_trendingPosts.isEmpty) {
-              _trendingIndex = 0;
-            } else {
-              _trendingIndex = _trendingIndex % _trendingPosts.length;
-            }
-          });
-        }
-      },
-    );
-
     _trendingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (!mounted || _trendingPosts.length < 2) return;
       setState(() {
@@ -89,6 +61,35 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _trendingSubscription = ref.listenManual<FeedState>(
+        schoolAwareFeedProvider(FeedSection.spotted.value),
+        (previous, next) {
+          final sortedPosts = [...next.posts]
+            ..sort((a, b) {
+              final likeComparison = b.likeCount.compareTo(a.likeCount);
+              if (likeComparison != 0) return likeComparison;
+              return b.createdAt.compareTo(a.createdAt);
+            });
+          final spotlightCandidates = sortedPosts.take(5).toList();
+
+          if (!mounted) {
+            return;
+          }
+
+          if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
+            setState(() {
+              _trendingPosts = spotlightCandidates;
+              if (_trendingPosts.isEmpty) {
+                _trendingIndex = 0;
+              } else {
+                _trendingIndex = _trendingIndex % _trendingPosts.length;
+              }
+            });
+          }
+        },
+        fireImmediately: true,
+      );
+
       ref
           .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
           .loadPosts(
@@ -373,7 +374,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                userProfile!.school,
+                                userProfile!.school ?? '',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -496,9 +497,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       ),
       body: CommentsListWidget(
         postId: _selectedPostId!,
-        currentUserId: authState.user!.uid,
-        currentUserNickname: userProfile.nickname,
-        currentUserIsAnonymous: false,
       ),
     );
   }
