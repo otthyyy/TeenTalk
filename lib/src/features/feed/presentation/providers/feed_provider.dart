@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 import '../../../auth/data/services/firebase_auth_service.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -51,6 +52,7 @@ class FeedState {
 
 class FeedNotifier extends StateNotifier<FeedState> {
   final PostsRepository _repository;
+  final Logger _logger = Logger();
   StreamSubscription? _postsSubscription;
 
   FeedNotifier(this._repository) : super(const FeedState());
@@ -183,8 +185,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }).toList();
 
       state = state.copyWith(posts: updatedPosts);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+    } catch (error, stackTrace) {
+      _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
+      state = state.copyWith(
+        error: 'We couldn\'t register your like. Please try again.',
+      );
     }
   }
 
@@ -204,8 +209,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }).toList();
 
       state = state.copyWith(posts: updatedPosts);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+    } catch (error, stackTrace) {
+      _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
+      state = state.copyWith(
+        error: 'We couldn\'t update your like. Please check your connection and try again.',
+      );
     }
   }
 
