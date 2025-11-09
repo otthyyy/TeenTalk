@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/constants/brescia_schools.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../profile/domain/models/user_profile.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../providers/comments_provider.dart';
 
 class CommentInputWidget extends ConsumerStatefulWidget {
   final String postId;
-  final String currentUserId;
-  final String currentUserNickname;
-  final bool currentUserIsAnonymous;
   final String? replyToCommentId;
   final String? replyToAuthorNickname;
   final VoidCallback? onCommentPosted;
+  final VoidCallback? onCancelReply;
 
   const CommentInputWidget({
     super.key,
     required this.postId,
-    required this.currentUserId,
-    required this.currentUserNickname,
-    required this.currentUserIsAnonymous,
     this.replyToCommentId,
     this.replyToAuthorNickname,
     this.onCommentPosted,
+    this.onCancelReply,
   });
 
   @override
@@ -27,17 +28,20 @@ class CommentInputWidget extends ConsumerStatefulWidget {
 }
 
 class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
-  final _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   bool _isAnonymous = false;
   bool _isSubmitting = false;
+  bool _hasInitializedPreferences = false;
 
   @override
   void initState() {
     super.initState();
-    _isAnonymous = widget.currentUserIsAnonymous;
-    
     if (widget.replyToAuthorNickname != null) {
-      _textController.text = '@${widget.replyToAuthorNickname} ';
+      final prefill = '@${widget.replyToAuthorNickname} ';
+      _textController.text = prefill;
+      _textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: prefill.length),
+      );
     }
   }
 
@@ -47,175 +51,300 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
     super.dispose();
   }
 
+  void _initializePreferences(UserProfile? profile) {
+    if (_hasInitializedPreferences) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      setState(() {
+        _isAnonymous = profile?.allowAnonymousPosts ?? false;
+        _hasInitializedPreferences = true;
+      });
+
+      final selectedSchool = ref.read(selectedCommentSchoolProvider);
+      final preferredSchool = profile?.school;
+      if ((selectedSchool == null || selectedSchool.isEmpty) &&
+          preferredSchool != null &&
+          preferredSchool.isNotEmpty) {
+        ref.read(selectedCommentSchoolProvider.notifier).state = preferredSchool;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          top: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
-          ),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.replyToAuthorNickname != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-              margin: const EdgeInsets.only(bottom: 8.0),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8.0),
+    final authState = ref.watch(authStateProvider);
+    final profileAsync = ref.watch(userProfileProvider);
+    final selectedSchool = ref.watch(selectedCommentSchoolProvider);
+
+    return profileAsync.when(
+      data: (profile) {
+        _initializePreferences(profile);
+
+        final isAuthenticated = authState.user != null && profile != null;
+        final canSubmit = isAuthenticated &&
+            !_isSubmitting &&
+            _textController.text.trim().isNotEmpty &&
+            (selectedSchool != null && selectedSchool.isNotEmpty);
+
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border(
+              top: BorderSide(
+                color: theme.colorScheme.outline.withOpacity(0.2),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.reply,
-                    size: 16,
-                    color: theme.colorScheme.onPrimaryContainer,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.replyToAuthorNickname != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Replying to ${widget.replyToAuthorNickname}',
-                      style: theme.textTheme.bodySmall?.copyWith(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.reply,
+                        size: 18,
                         color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Replying to ${widget.replyToAuthorNickname}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: widget.onCancelReply,
+                        icon: Icon(
+                          Icons.close,
+                          size: 16,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                        tooltip: 'Cancel reply',
+                      ),
+                    ],
+                  ),
+                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      maxLines: null,
+                      textCapitalization: TextCapitalization.sentences,
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        hintText: widget.replyToCommentId != null
+                            ? 'Write a reply...'
+                            : 'Write a comment...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      // Clear reply context
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      size: 16,
-                      color: theme.colorScheme.onPrimaryContainer,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
+                  const SizedBox(width: 8),
+                  IconButton.filled(
+                    onPressed: canSubmit ? _submitComment : null,
+                    icon: _isSubmitting
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: theme.colorScheme.onPrimary,
+                            ),
+                          )
+                        : const Icon(Icons.send),
+                    tooltip: 'Send',
                   ),
                 ],
               ),
-            ),
-          ],
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _textController,
-                  maxLines: null,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: widget.replyToCommentId != null
-                        ? 'Write a reply...'
-                        : 'Write a comment...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.0),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 12.0,
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.visibility_off,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Post anonymously',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-                ),
+                  const Spacer(),
+                  Switch(
+                    value: _isAnonymous,
+                    onChanged: isAuthenticated
+                        ? (value) {
+                            setState(() {
+                              _isAnonymous = value;
+                            });
+                          }
+                        : null,
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              IconButton.filled(
-                onPressed: _isSubmitting || _textController.text.trim().isEmpty
-                    ? null
-                    : _submitComment,
-                icon: _isSubmitting
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: theme.colorScheme.onPrimary,
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.school,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'School',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: selectedSchool?.isEmpty == true ? null : selectedSchool,
+                      isDense: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                      )
-                    : const Icon(Icons.send),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 10.0,
+                        ),
+                      ),
+                      hint: const Text('Select your school'),
+                      items: BresciaSchools.schools.map((school) {
+                        return DropdownMenuItem(
+                          value: school,
+                          child: Text(
+                            school,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: isAuthenticated
+                          ? (value) {
+                              ref.read(selectedCommentSchoolProvider.notifier).state = value;
+                            }
+                          : null,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(
-                Icons.visibility_off,
-                size: 16,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Post anonymously',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              if (!isAuthenticated) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 16,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Sign in to join the conversation.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const Spacer(),
-              Switch(
-                value: _isAnonymous,
-                onChanged: (value) {
-                  setState(() {
-                    _isAnonymous = value;
-                  });
-                },
-              ),
+              ],
             ],
           ),
-        ],
+        );
+      },
+      loading: () => const Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stackTrace) => Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline),
+            const SizedBox(height: 8),
+            Text('Unable to load profile information: $error'),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _submitComment() async {
     final content = _textController.text.trim();
-    if (content.isEmpty) return;
+    final school = ref.read(selectedCommentSchoolProvider);
+    final authState = ref.read(authStateProvider);
+    final userProfile = ref.read(userProfileProvider).value;
+
+    if (content.isEmpty || school == null || school.isEmpty || authState.user == null || userProfile == null) {
+      return;
+    }
 
     setState(() {
       _isSubmitting = true;
     });
 
     try {
-      final commentsNotifier = ref.read(commentsProvider(widget.postId).notifier);
-      
-      await commentsNotifier.addComment(
-        authorId: widget.currentUserId,
-        authorNickname: widget.currentUserNickname,
+      final notifier = ref.read(commentsProvider(widget.postId).notifier);
+      await notifier.addComment(
+        authorId: authState.user!.uid,
+        authorNickname: userProfile.nickname,
         isAnonymous: _isAnonymous,
         content: content,
+        school: school,
         replyToCommentId: widget.replyToCommentId,
       );
 
+      if (!mounted) return;
+
       _textController.clear();
       widget.onCommentPosted?.call();
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.replyToCommentId != null ? 'Reply posted!' : 'Comment posted!',
-            ),
-            duration: const Duration(seconds: 2),
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.replyToCommentId != null ? 'Reply posted!' : 'Comment posted!',
           ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to post comment: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to post comment: $error'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
