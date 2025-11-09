@@ -18,6 +18,8 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService();
 });
 
+final selectedCommentSchoolProvider = StateProvider<String?>((ref) => null);
+
 class CommentsState {
   final List<Comment> comments;
   final bool isLoading;
@@ -143,6 +145,7 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
     required String authorNickname,
     required bool isAnonymous,
     required String content,
+    required String school,
     String? replyToCommentId,
   }) async {
     try {
@@ -152,6 +155,7 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         authorNickname: authorNickname,
         isAnonymous: isAnonymous,
         content: content,
+        school: school,
         replyToCommentId: replyToCommentId,
       );
 

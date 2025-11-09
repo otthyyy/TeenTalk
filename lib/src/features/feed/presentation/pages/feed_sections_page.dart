@@ -7,6 +7,9 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../comments/presentation/widgets/comments_bottom_sheet.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../comments/presentation/widgets/comments_list_widget.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/feed_provider.dart';
@@ -32,6 +35,9 @@ class FeedSectionsPage extends ConsumerStatefulWidget {
 }
 
 class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
+  final ScrollController _scrollController = ScrollController();
     with SingleTickerProviderStateMixin {
   late ScrollController _scrollController;
   late AnimationController _headerAnimationController;
@@ -146,6 +152,25 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             ? _buildCommentsView()
             : _buildFeedView(theme),
       ),
+      body: TabBarView(
+        controller: _tabController,
+        children: FeedSection.values.map((section) {
+          return _buildFeedView(section);
+        }).toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showCreatePostDialog(
+          FeedSection.values[_tabController.index].value,
+        ),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildFeedView(FeedSection section) {
+    final postsState = ref.watch(schoolAwareFeedProvider(section.value));
+    final authState = ref.watch(authStateProvider);
+    final currentUserId = authState.user?.uid ?? '';
       floatingActionButton: _showComments
           ? null
           : FloatingActionButton.extended(
@@ -279,6 +304,44 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                             post.id,
                             authState.user!.uid,
                           );
+                        }
+
+                        final post = postsState.posts[index];
+                        return PostCardWidget(
+                          key: ValueKey(post.id),
+                          post: post,
+                          currentUserId: currentUserId,
+                          onComments: () async {
+                            await CommentsBottomSheet.show(
+                              context: context,
+                              postId: post.id,
+                              initialCommentCount: post.commentCount,
+                            );
+                            if (mounted) {
+                              await ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
+                                    refresh: true,
+                                    section: section.value,
+                                  );
+                            }
+                          },
+                          onLike: () {
+                            ref.read(schoolAwareFeedProvider(section.value).notifier).likePost(
+                                  post.id,
+                                  currentUserId,
+                                );
+                          },
+                          onUnlike: () {
+                            ref.read(schoolAwareFeedProvider(section.value).notifier).unlikePost(
+                                  post.id,
+                                  currentUserId,
+                                );
+                          },
+                          onReport: () {
+                            _showReportDialog(post, section);
+                          },
+                        );
+                      },
+                    ),
                     },
                     onReport: () {
                       _showReportDialog(post);
@@ -539,6 +602,120 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     );
   }
 
+  void _showCreatePostDialog(String section) {
+    final authState = ref.read(authStateProvider);
+    final userProfileAsync = ref.read(userProfileProvider);
+    
+    if (authState.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please log in to create a post'),
+        ),
+      );
+      return;
+    }
+
+    userProfileAsync.when(
+      data: (userProfile) {
+        if (userProfile == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please complete your profile first'),
+            ),
+          );
+          return;
+        }
+
+        final TextEditingController contentController = TextEditingController();
+        bool isAnonymous = false;
+
+        showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return Dialog(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Create Post in ${FeedSection.values.firstWhere((s) => s.value == section).label}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                icon: const Icon(Icons.close),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Expanded(
+                            child: TextField(
+                              controller: contentController,
+                              maxLines: null,
+                              expands: true,
+                              decoration: const InputDecoration(
+                                hintText: 'What\'s on your mind?',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              const Text('Post anonymously'),
+                              const Spacer(),
+                              Switch(
+                                value: isAnonymous,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isAnonymous = value;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (contentController.text.trim().isNotEmpty) {
+                                  Navigator.of(context).pop();
+                                  await ref.read(schoolAwareFeedProvider(section).notifier).addPost(
+                                        authorId: authState.user!.uid,
+                                        authorNickname: userProfile.nickname,
+                                        isAnonymous: isAnonymous,
+                                        content: contentController.text.trim(),
+                                        section: section,
+                                        school: userProfile.school,
+                                      );
+                                }
+                              },
+                              child: const Text('Post'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
   void _showCreatePostDialog() {
     final authState = ref.read(authStateProvider);
     final userProfile = ref.read(userProfileProvider).value;
@@ -600,6 +777,20 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               child: const Text('Sign In'),
             ),
           ],
+        );
+      },
+      loading: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Loading profile...'),
+          ),
+        );
+      },
+      error: (error, stack) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading profile: $error'),
+          ),
         );
       },
     );
