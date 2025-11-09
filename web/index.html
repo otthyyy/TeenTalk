@@ -32,14 +32,6 @@
   <title>teen_talk_app</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- Firebase JS SDKs -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-functions-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
   <script>
     window.firebaseConfig = {
       apiKey: 'AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE',
@@ -75,5 +67,8 @@
       });
     });
   </script>
+  <!-- Firebase JS SDKs - Load at the end for better performance -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js"></script>
 </body>
 </html>
