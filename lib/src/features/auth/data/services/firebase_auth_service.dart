@@ -3,40 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
-import 'package:teen_talk_app/firebase_options.dart';
 import 'package:teen_talk_app/utils/error_handler.dart';
 
 import '../models/auth_user.dart';
 
 class FirebaseAuthService {
-  FirebaseAuthService() {
-    _initialization ??= _initializeFirebase();
-  }
-
-  static Future<void>? _initialization;
-
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final Logger _logger = Logger();
 
   FirebaseAuth get _auth => FirebaseAuth.instance;
   FirebaseFirestore get _firestore => FirebaseFirestore.instance;
-
-  static Future<void> _initializeFirebase() async {
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
-  }
-
-  Future<void> _ensureFirebaseInitialized() async {
-    try {
-      await (_initialization ??= _initializeFirebase());
-    } catch (e, stackTrace) {
-      _logger.e('Failed to initialize Firebase', error: e, stackTrace: stackTrace);
-      rethrow;
-    }
-  }
 
   Stream<User?> get authStateChanges {
     return Stream.fromFuture(_ensureFirebaseInitialized()).asyncExpand((_) {
@@ -46,10 +22,18 @@ class FirebaseAuthService {
 
   User? get currentUser {
     if (Firebase.apps.isEmpty) {
-      _logger.w('Firebase accessed before initialization. Returning null currentUser.');
+      _logger.w('Firebase not initialized. Returning null currentUser.');
       return null;
     }
     return _auth.currentUser;
+  }
+
+  Future<void> _ensureFirebaseInitialized() async {
+    if (Firebase.apps.isEmpty) {
+      const message = 'Firebase has not been initialized. Call Firebase.initializeApp() before using FirebaseAuthService.';
+      _logger.e(message);
+      throw StateError(message);
+    }
   }
 
   Future<AuthUser?> getCurrentAuthUser() async {
