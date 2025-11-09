@@ -45,13 +45,15 @@ class UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      uid: json['uid'] as String,
-      nickname: json['nickname'] as String,
+      uid: json['uid'] as String? ?? '',
+      nickname: json['nickname'] as String? ?? '',
       nicknameVerified: json['nicknameVerified'] as bool? ?? false,
       gender: json['gender'] as String?,
       school: json['school'] as String?,
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
       lastNicknameChangeAt: json['lastNicknameChangeAt'] != null
           ? (json['lastNicknameChangeAt'] as Timestamp).toDate()
           : null,
@@ -104,15 +106,27 @@ class UserProfile {
   }
 
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      return UserProfile(
+        uid: doc.id,
+        nickname: '',
+        nicknameVerified: false,
+        createdAt: DateTime.now(),
+        privacyConsentGiven: false,
+        privacyConsentTimestamp: DateTime.now(),
+      );
+    }
     return UserProfile(
       uid: doc.id,
-      nickname: data['nickname'] as String,
+      nickname: data['nickname'] as String? ?? '',
       nicknameVerified: data['nicknameVerified'] as bool? ?? false,
       gender: data['gender'] as String?,
       school: data['school'] as String?,
       anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
       lastNicknameChangeAt: data['lastNicknameChangeAt'] != null
           ? (data['lastNicknameChangeAt'] as Timestamp).toDate()
           : null,
