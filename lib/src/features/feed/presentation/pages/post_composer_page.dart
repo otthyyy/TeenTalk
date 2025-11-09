@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
@@ -16,8 +19,11 @@ class PostComposerPage extends ConsumerStatefulWidget {
 class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   final _contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final Logger _logger = Logger();
   bool _isAnonymous = false;
-  File? _selectedImage;
+  File? _selectedImageFile;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageName;
   bool _isUploading = false;
   String _selectedSection = 'spotted';
   
@@ -35,21 +41,68 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await _imagePicker.pickImage(
+      final XFile? pickedFile = await _imagePicker.pickImage(
         source: source,
         maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 85,
       );
 
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
+      if (pickedFile == null) {
+        _logger.i('User cancelled image selection');
+        return;
       }
-    } catch (e) {
+
+      if (!mounted) return;
+
+      if (kIsWeb) {
+        // Web platform: use bytes
+        final bytes = await pickedFile.readAsBytes();
+        setState(() {
+          _selectedImageBytes = bytes;
+          _selectedImageName = pickedFile.name;
+          _selectedImageFile = null;
+        });
+        _logger.i('Image selected on web: ${pickedFile.name}');
+      } else {
+        // Mobile/Desktop platform: use File
+        final file = File(pickedFile.path);
+        
+        // Verify file exists
+        if (!await file.exists()) {
+          throw Exception('Selected image file does not exist');
+        }
+
+        // Check file size (max 5MB)
+        final fileSize = await file.length();
+        if (fileSize > 5 * 1024 * 1024) {
+          throw Exception('Image size must be less than 5MB');
+        }
+
+        setState(() {
+          _selectedImageFile = file;
+          _selectedImageName = pickedFile.name;
+          _selectedImageBytes = null;
+        });
+        _logger.i('Image selected on mobile: ${pickedFile.path}');
+      }
+    } on Exception catch (e, stackTrace) {
+      _logger.e('Failed to pick image', error: e, stackTrace: stackTrace);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e, stackTrace) {
+      _logger.e('Unexpected error picking image', error: e, stackTrace: stackTrace);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to select image. Please check app permissions.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -77,14 +130,16 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 _pickImage(ImageSource.gallery);
               },
             ),
-            if (_selectedImage != null)
+            if (_selectedImageFile != null || _selectedImageBytes != null)
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
                 title: const Text('Remove Image', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.of(context).pop();
                   setState(() {
-                    _selectedImage = null;
+                    _selectedImageFile = null;
+                    _selectedImageBytes = null;
+                    _selectedImageName = null;
                   });
                 },
               ),
@@ -121,12 +176,20 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     try {
       final repository = PostsRepository();
       
+      // Only pass imageFile on non-web platforms
+      File? imageFileToUpload;
+      if (!kIsWeb && _selectedImageFile != null) {
+        imageFileToUpload = _selectedImageFile;
+      }
+      
       await repository.createPost(
         authorId: authState.user!.uid,
         authorNickname: userProfile.nickname,
         isAnonymous: _isAnonymous,
         content: _contentController.text.trim(),
-        imageFile: _selectedImage,
+        imageFile: imageFileToUpload,
+        imageBytes: kIsWeb ? _selectedImageBytes : null,
+        imageName: _selectedImageName,
         section: _selectedSection,
         school: userProfile.school,
       );
@@ -142,12 +205,15 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         // Navigate back to feed and trigger refresh
         Navigator.of(context).pop(true);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
       if (mounted) {
+        final errorMessage = e.toString().replaceFirst('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create post: $e'),
+            content: Text('Failed to create post: $errorMessage'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -278,7 +344,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             ),
             
             // Image preview
-            if (_selectedImage != null)
+            if (_selectedImageFile != null || _selectedImageBytes != null)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(8),
@@ -290,20 +356,46 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(
-                        _selectedImage!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                      child: _selectedImageBytes != null
+                          ? Image.memory(
+                              _selectedImageBytes!,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              _selectedImageFile!,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                     ),
+                    if (_selectedImageName != null)
+                      Positioned(
+                        left: 12,
+                        bottom: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _selectedImageName!,
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
                     Positioned(
                       top: 8,
                       right: 8,
                       child: IconButton(
                         onPressed: () {
                           setState(() {
-                            _selectedImage = null;
+                            _selectedImageFile = null;
+                            _selectedImageBytes = null;
+                            _selectedImageName = null;
                           });
                         },
                         icon: const Icon(Icons.close, color: Colors.white),
