@@ -27,8 +27,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthLoading = authState.isLoading;
       final isAuthenticated = authState.user != null;
       final isProfileLoading = userProfile.isLoading;
-      final hasProfile = userProfile.value != null;
-      final isAdminUser = userProfile.value?.isAdmin ?? false;
+      final profile = userProfile.value;
+      final hasProfile = profile != null;
+      final isProfileComplete = profile?.isProfileComplete ?? false;
+      final isAdminUser = profile?.isAdmin ?? false;
 
       final path = state.uri.path;
       final isOnAuthPage = path == '/auth' || path == '/auth/signup';
@@ -43,7 +45,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isOnAuthPage ? null : '/auth';
       }
 
-      if (isAuthenticated && !hasProfile) {
+      if (isAuthenticated && (!hasProfile || !isProfileComplete)) {
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
@@ -51,7 +53,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/feed';
       }
 
-      if (isAuthenticated && hasProfile && (isOnAuthPage || isOnOnboardingPage)) {
+      if (isAuthenticated && hasProfile && isProfileComplete && (isOnAuthPage || isOnOnboardingPage)) {
         return '/feed';
       }
 
@@ -151,45 +153,47 @@ class MainNavigationShell extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: child,
-        extendBody: true,
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: AppDecorations.glassContainer(
-            isDark: isDark,
-            borderRadius: 28,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 6,
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _calculateSelectedIndex(context, isAdmin),
-              onTap: (index) => _onItemTapped(index, context, isAdmin),
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              items: [
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home_rounded),
-                  label: 'Feed',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.message_outlined),
-                  activeIcon: Icon(Icons.message_rounded),
-                  label: 'Messages',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  activeIcon: Icon(Icons.person_rounded),
-                  label: 'Profile',
-                ),
-                if (isAdmin)
+        extendBody: false,
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: AppDecorations.glassContainer(
+              isDark: isDark,
+              borderRadius: 28,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 6,
+              ),
+              child: BottomNavigationBar(
+                currentIndex: _calculateSelectedIndex(context, isAdmin),
+                onTap: (index) => _onItemTapped(index, context, isAdmin),
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                items: [
                   const BottomNavigationBarItem(
-                    icon: Icon(Icons.admin_panel_settings_outlined),
-                    activeIcon: Icon(Icons.admin_panel_settings_rounded),
-                    label: 'Admin',
+                    icon: Icon(Icons.home_outlined),
+                    activeIcon: Icon(Icons.home_rounded),
+                    label: 'Feed',
                   ),
-              ],
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.message_outlined),
+                    activeIcon: Icon(Icons.message_rounded),
+                    label: 'Messages',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outline),
+                    activeIcon: Icon(Icons.person_rounded),
+                    label: 'Profile',
+                  ),
+                  if (isAdmin)
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.admin_panel_settings_outlined),
+                      activeIcon: Icon(Icons.admin_panel_settings_rounded),
+                      label: 'Admin',
+                    ),
+                ],
+              ),
             ),
           ),
         ),

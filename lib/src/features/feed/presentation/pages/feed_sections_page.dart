@@ -139,6 +139,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final provider = schoolAwareFeedProvider(_selectedSection.value);
+    final fabBottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     ref.listen<FeedState>(provider, (previous, next) {
       if (next.error != null && next.error!.isNotEmpty && previous?.error != next.error) {
@@ -163,10 +164,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       ),
       floatingActionButton: _showComments
           ? null
-          : FloatingActionButton.extended(
-              onPressed: _showCreatePostDialog,
-              icon: const Icon(Icons.add),
-              label: const Text('Post'),
+          : Padding(
+              padding: EdgeInsets.only(bottom: fabBottomPadding),
+              child: FloatingActionButton.extended(
+                onPressed: _showCreatePostDialog,
+                icon: const Icon(Icons.add),
+                label: const Text('Post'),
+              ),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
@@ -176,9 +180,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final postsState = ref.watch(schoolAwareFeedProvider(_selectedSection.value));
     final authState = ref.watch(authStateProvider);
     final userProfile = ref.watch(userProfileProvider).value;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return RefreshIndicator(
-      onRefresh: () async {
+
         await ref
             .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
             .loadPosts(
@@ -305,8 +310,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                     postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
               ),
             ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 80),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 120 + bottomInset),
           ),
         ],
       ),

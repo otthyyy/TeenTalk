@@ -98,6 +98,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         parentalConsentGiven: _isMinor == true ? _parentalConsentGiven : null,
         parentalConsentTimestamp:
             _isMinor == true && _parentalConsentGiven ? now : null,
+        onboardingComplete: true,
         allowAnonymousPosts: _allowAnonymousPosts,
         profileVisible: _profileVisible,
       );

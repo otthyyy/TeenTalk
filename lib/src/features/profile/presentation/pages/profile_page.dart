@@ -13,6 +13,7 @@ class ProfilePage extends ConsumerWidget {
     final profileAsync = ref.watch(userProfileProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 32;
 
     return Scaffold(
       body: profileAsync.when(
@@ -39,7 +40,7 @@ class ProfilePage extends ConsumerWidget {
                       _buildConsentCard(context, profile, isDark),
                       const SizedBox(height: 24),
                       _buildSignOutButton(context, ref),
-                      const SizedBox(height: 16),
+                      SizedBox(height: bottomPadding),
                     ],
                   ),
                 ),

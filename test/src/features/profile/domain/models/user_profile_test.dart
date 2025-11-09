@@ -25,6 +25,7 @@ void main() {
         'guardianContact': null,
         'parentalConsentGiven': null,
         'parentalConsentTimestamp': null,
+        'onboardingComplete': null,
         'allowAnonymousPosts': null,
         'profileVisible': null,
         'updatedAt': null,
@@ -44,6 +45,7 @@ void main() {
       expect(profile.lastNicknameChangeAt, isNull);
       expect(profile.privacyConsentGiven, isFalse);
       expect(profile.privacyConsentTimestamp.day, now.day);
+      expect(profile.onboardingComplete, isFalse);
       expect(profile.allowAnonymousPosts, isTrue);
       expect(profile.profileVisible, isTrue);
       expect(profile.updatedAt, isNull);
@@ -67,6 +69,7 @@ void main() {
         'guardianContact': null,
         'parentalConsentGiven': null,
         'parentalConsentTimestamp': null,
+        'onboardingComplete': null,
         'allowAnonymousPosts': null,
         'profileVisible': null,
         'updatedAt': null,
@@ -81,6 +84,7 @@ void main() {
       expect(profile.anonymousPostsCount, 0);
       expect(profile.createdAt, now);
       expect(profile.privacyConsentTimestamp.day, now.day);
+      expect(profile.onboardingComplete, isFalse);
       expect(profile.allowAnonymousPosts, isTrue);
       expect(profile.profileVisible, isTrue);
     });
@@ -106,6 +110,7 @@ void main() {
       expect(json['lastNicknameChangeAt'], isA<Timestamp>());
       expect(json['parentalConsentTimestamp'], isA<Timestamp>());
       expect(json['updatedAt'], isA<Timestamp>());
+      expect(json['onboardingComplete'], isFalse);
     });
   });
 }
