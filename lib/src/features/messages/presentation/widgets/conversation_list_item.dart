@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../profile/domain/models/user_profile.dart';
 import '../../data/models/conversation.dart';
 
 class ConversationListItem extends StatelessWidget {
   final Conversation conversation;
-  final String otherUserId;
-  final String? otherUserDisplayName;
-  final String? otherUserPhotoUrl;
+  final UserProfile? otherUserProfile;
+  final String? otherUserId;
+  final int unreadCount;
+  final bool isProfileLoading;
   final VoidCallback onTap;
 
   const ConversationListItem({
     super.key,
     required this.conversation,
+    required this.otherUserProfile,
     required this.otherUserId,
-    this.otherUserDisplayName,
-    this.otherUserPhotoUrl,
+    this.unreadCount = 0,
+    this.isProfileLoading = false,
     required this.onTap,
   });
 
@@ -36,37 +40,71 @@ class ConversationListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final displayName = otherUserProfile?.nickname ?? otherUserId ?? 'Unknown user';
+    final initial = displayName.trim().isNotEmpty
+        ? displayName.trim()[0].toUpperCase()
+        : '?';
+    final lastMessagePreview = conversation.lastMessage?.trim().isNotEmpty == true
+        ? conversation.lastMessage!.trim()
+        : 'Say hi!';
+
     return Material(
+      color: theme.colorScheme.surface,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundImage: otherUserPhotoUrl != null
-                    ? NetworkImage(otherUserPhotoUrl!)
-                    : null,
-                child: otherUserPhotoUrl == null
-                    ? const Icon(Icons.person)
-                    : null,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                    child: Text(
+                      initial,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  if (isProfileLoading)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: theme.colorScheme.surface.withOpacity(0.5),
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(
-                            otherUserDisplayName ?? 'Unknown User',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                            displayName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -74,53 +112,48 @@ class ConversationListItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          _formatTime(conversation.lastMessageTime),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
+                          _formatTime(conversation.lastMessageTime ?? conversation.updatedAt),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(
-                            conversation.lastMessage ?? 'No messages yet',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: conversation.unreadCount > 0
-                                  ? Colors.black87
-                                  : Colors.grey[600],
-                              fontWeight: conversation.unreadCount > 0
-                                  ? FontWeight.w500
-                                  : FontWeight.normal,
+                            lastMessagePreview,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: unreadCount > 0
+                                  ? theme.colorScheme.onSurface
+                                  : theme.colorScheme.onSurface.withOpacity(0.7),
+                              fontWeight:
+                                  unreadCount > 0 ? FontWeight.w600 : FontWeight.w400,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (conversation.unreadCount > 0) ...[
-                          const SizedBox(width: 8),
+                        if (unreadCount > 0) ...[
+                          const SizedBox(width: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
+                              horizontal: 10,
+                              vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(12),
+                              color: AppTheme.secondaryColor,
+                              borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
-                              conversation.unreadCount > 99
-                                  ? '99+'
-                                  : '${conversation.unreadCount}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                              unreadCount > 99 ? '99+' : '$unreadCount',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: AppTheme.lightOnPrimary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
