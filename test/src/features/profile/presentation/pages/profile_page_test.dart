@@ -68,6 +68,7 @@ void main() {
         privacyConsentGiven: true,
         privacyConsentTimestamp: DateTime(2024, 1, 1),
         anonymousPostsCount: 5,
+        onboardingComplete: true,
         allowAnonymousPosts: true,
         profileVisible: true,
       );

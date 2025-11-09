@@ -15,6 +15,7 @@ class UserProfile {
   final String? guardianContact;
   final bool? parentalConsentGiven;
   final DateTime? parentalConsentTimestamp;
+  final bool onboardingComplete;
   final bool allowAnonymousPosts;
   final bool profileVisible;
   final DateTime? updatedAt;
@@ -36,6 +37,7 @@ class UserProfile {
     this.guardianContact,
     this.parentalConsentGiven,
     this.parentalConsentTimestamp,
+    this.onboardingComplete = false,
     this.allowAnonymousPosts = true,
     this.profileVisible = true,
     this.updatedAt,
@@ -67,6 +69,7 @@ class UserProfile {
       parentalConsentTimestamp: json['parentalConsentTimestamp'] != null
           ? (json['parentalConsentTimestamp'] as Timestamp).toDate()
           : null,
+      onboardingComplete: json['onboardingComplete'] as bool? ?? false,
       allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
       profileVisible: json['profileVisible'] as bool? ?? true,
       updatedAt: json['updatedAt'] != null
@@ -97,6 +100,7 @@ class UserProfile {
       'parentalConsentTimestamp': parentalConsentTimestamp != null
           ? Timestamp.fromDate(parentalConsentTimestamp!)
           : null,
+      'onboardingComplete': onboardingComplete,
       'allowAnonymousPosts': allowAnonymousPosts,
       'profileVisible': profileVisible,
       'updatedAt': Timestamp.fromDate(DateTime.now()),
@@ -140,6 +144,7 @@ class UserProfile {
       parentalConsentTimestamp: data['parentalConsentTimestamp'] != null
           ? (data['parentalConsentTimestamp'] as Timestamp).toDate()
           : null,
+      onboardingComplete: data['onboardingComplete'] as bool? ?? false,
       allowAnonymousPosts: data['allowAnonymousPosts'] as bool? ?? true,
       profileVisible: data['profileVisible'] as bool? ?? true,
       updatedAt: data['updatedAt'] != null
@@ -152,6 +157,14 @@ class UserProfile {
 
   static Map<String, dynamic> toFirestore(UserProfile profile) {
     return profile.toJson();
+  }
+
+  bool get isProfileComplete {
+    final hasNickname = nickname.isNotEmpty && nicknameVerified;
+    final hasSchool = school != null && school!.trim().isNotEmpty;
+    final hasGender = gender != null && gender!.trim().isNotEmpty;
+    final hasAgeInfo = isMinor != null;
+    return onboardingComplete && hasNickname && hasSchool && hasGender && hasAgeInfo && privacyConsentGiven;
   }
 
   UserProfile copyWith({
@@ -169,6 +182,7 @@ class UserProfile {
     String? guardianContact,
     bool? parentalConsentGiven,
     DateTime? parentalConsentTimestamp,
+    bool? onboardingComplete,
     bool? allowAnonymousPosts,
     bool? profileVisible,
     DateTime? updatedAt,
@@ -192,6 +206,7 @@ class UserProfile {
       parentalConsentGiven: parentalConsentGiven ?? this.parentalConsentGiven,
       parentalConsentTimestamp:
           parentalConsentTimestamp ?? this.parentalConsentTimestamp,
+      onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       allowAnonymousPosts: allowAnonymousPosts ?? this.allowAnonymousPosts,
       profileVisible: profileVisible ?? this.profileVisible,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -219,6 +234,7 @@ class UserProfile {
         other.guardianContact == guardianContact &&
         other.parentalConsentGiven == parentalConsentGiven &&
         other.parentalConsentTimestamp == parentalConsentTimestamp &&
+        other.onboardingComplete == onboardingComplete &&
         other.allowAnonymousPosts == allowAnonymousPosts &&
         other.profileVisible == profileVisible &&
         other.updatedAt == updatedAt &&
@@ -242,6 +258,7 @@ class UserProfile {
         guardianContact.hashCode ^
         parentalConsentGiven.hashCode ^
         parentalConsentTimestamp.hashCode ^
+        onboardingComplete.hashCode ^
         allowAnonymousPosts.hashCode ^
         profileVisible.hashCode ^
         updatedAt.hashCode ^
