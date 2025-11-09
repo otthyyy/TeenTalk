@@ -194,15 +194,11 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                final targetUri = Uri(
-                  path: '/auth',
-                  queryParameters: widget.isSignUp
-                      ? null
-                      : {
-                          'signup': 'true',
-                        },
-                );
-                context.go(targetUri.toString());
+                if (widget.isSignUp) {
+                  context.go('/auth');
+                } else {
+                  context.go('/auth/signup');
+                }
               },
               child: Text(
                 widget.isSignUp
