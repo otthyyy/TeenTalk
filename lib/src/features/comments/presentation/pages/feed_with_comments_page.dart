@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/models/comment.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/comments_list_widget.dart';
@@ -53,10 +54,10 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
       appBar: AppBar(
         title: const Text('TeenTalk Feed'),
         actions: [
-          IconButton(
-            onPressed: () {
+          NotificationBadge(
+            onTap: () {
+              context.push('/notifications');
             },
-            icon: const Icon(Icons.notifications_outlined),
           ),
         ],
       ),
