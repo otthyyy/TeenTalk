@@ -63,11 +63,11 @@ class ConversationListItem extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 28,
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                     child: Text(
                       initial,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        color: AppTheme.primaryColor,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

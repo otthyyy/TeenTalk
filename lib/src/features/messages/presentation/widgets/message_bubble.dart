@@ -28,13 +28,13 @@ class MessageBubble extends StatelessWidget {
           if (!isCurrentUser) ...[
             CircleAvatar(
               radius: 14,
-              backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
               child: Text(
                 (senderName?.isNotEmpty ?? false)
                     ? senderName![0].toUpperCase()
                     : '?',
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppTheme.primaryColor,
+                  color: theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -52,7 +52,7 @@ class MessageBubble extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isCurrentUser
-                    ? AppTheme.primaryColor
+                    ? theme.colorScheme.primary
                     : theme.colorScheme.surfaceVariant.withOpacity(0.5),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),

@@ -39,7 +39,7 @@ class MessagesPage extends ConsumerWidget {
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   border: Border(
                     bottom: BorderSide(
                       color: theme.colorScheme.surfaceVariant,
@@ -51,7 +51,7 @@ class MessagesPage extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.mark_chat_unread_rounded,
-                      color: AppTheme.primaryColor,
+                      color: theme.colorScheme.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -60,7 +60,7 @@ class MessagesPage extends ConsumerWidget {
                           ? '1 unread message'
                           : '$unreadCount unread messages',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.primaryColor,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -285,7 +285,7 @@ class MessagesPage extends ConsumerWidget {
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
+                backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
