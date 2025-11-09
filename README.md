@@ -189,6 +189,30 @@ flutter pub upgrade
 flutter pub outdated
 ```
 
+## 🐛 Bug Fixes
+
+See [docs/BUG_FIXES.md](docs/BUG_FIXES.md) for detailed information about critical bug fixes including:
+
+1. **Like/Unlike Error Handling**: Fixed unhandled exceptions when liking posts
+2. **ref.listen Assertion**: Fixed Riverpod ref.listen usage in widgets
+3. **Image Upload Crashes**: Added web support and comprehensive error handling
+4. **UI Overlap**: Fixed bottom navigation covering content on various devices
+
+## 📱 Permissions
+
+### Android
+The app requires the following permissions (already configured in `AndroidManifest.xml`):
+- `CAMERA` - For taking photos
+- `READ_EXTERNAL_STORAGE` - For selecting images from gallery
+- `WRITE_EXTERNAL_STORAGE` - For saving images
+- `INTERNET` - For network operations
+
+### iOS
+The following permissions are configured in `Info.plist`:
+- `NSCameraUsageDescription` - Camera access for photos
+- `NSPhotoLibraryUsageDescription` - Photo library access for image selection
+- `NSPhotoLibraryAddUsageDescription` - Photo library write access
+
 ## 🔍 Code Analysis
 
 Run static analysis to ensure code quality:

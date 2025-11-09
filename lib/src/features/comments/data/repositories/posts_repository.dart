@@ -3,8 +3,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
+import 'dart:typed_data';
 import '../models/comment.dart';
 
+/// Repository for managing posts in Firestore.
+/// 
+/// IMPORTANT: Ensure Firestore security rules allow:
+/// - Read access to posts collection for authenticated users
+/// - Write access to posts collection for authenticated users
+/// - Update access to likedBy and likeCount fields for authenticated users
+/// - Transaction access for atomic updates on like/unlike operations
+/// 
+/// Example security rule for likes:
+/// ```
+/// allow update: if request.auth != null 
+///   && request.resource.data.keys().hasOnly(['likedBy', 'likeCount', 'updatedAt'])
+///   && request.auth.uid in request.resource.data.likedBy;
+/// ```
 class PostsRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -68,27 +83,51 @@ class PostsRepository {
     });
   }
 
-  Future<String?> uploadPostImage(File imageFile) async {
+  Future<String?> uploadPostImage(File? imageFile, {Uint8List? imageBytes, String? imageName}) async {
     try {
+      if (imageFile == null && imageBytes == null) {
+        return null;
+      }
+
       // Validate image size
-      final fileSize = await imageFile.length();
+      int fileSize;
+      if (imageFile != null) {
+        fileSize = await imageFile.length();
+      } else {
+        fileSize = imageBytes!.length;
+      }
+
       if (fileSize > _maxImageSizeBytes) {
         throw Exception('Image size exceeds 5MB limit');
       }
 
       // Generate unique filename
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'post_${timestamp}_${imageFile.path.split('/').last}';
+      String fileName;
+      if (imageFile != null) {
+        fileName = 'post_${timestamp}_${imageFile.path.split('/').last}';
+      } else {
+        fileName = 'post_${timestamp}_${imageName ?? 'image.jpg'}';
+      }
       
       // Upload to Firebase Storage
       final ref = _storage.ref().child('$_imagesFolder/$fileName');
-      final uploadTask = await ref.putFile(imageFile);
+      UploadTask uploadTask;
+      final metadata = SettableMetadata(contentType: _inferImageContentType(fileName));
       
-      // Get download URL
-      final downloadUrl = await uploadTask.ref.getDownloadURL();
+      if (imageFile != null) {
+        uploadTask = ref.putFile(imageFile, metadata);
+      } else {
+        uploadTask = ref.putData(imageBytes!, metadata);
+      }
+      
+      // Wait for upload and get download URL
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
       return downloadUrl;
-    } catch (e) {
-      throw Exception('Failed to upload image: $e');
+    } catch (e, stackTrace) {
+      _logger.e('Failed to upload image', error: e, stackTrace: stackTrace);
+      throw Exception('Failed to upload image. Please check your network connection.');
     }
   }
 
@@ -119,52 +158,63 @@ class PostsRepository {
     required bool isAnonymous,
     required String content,
     File? imageFile,
+    Uint8List? imageBytes,
+    String? imageName,
     String section = 'spotted',
     String? school,
   }) async {
-    // Validate content
-    await validatePostContent(content);
+    try {
+      // Validate content
+      await validatePostContent(content);
 
-    final now = DateTime.now();
-    final mentionedUserIds = _extractMentionedUserIds(content);
-    String? imageUrl;
+      final now = DateTime.now();
+      final mentionedUserIds = _extractMentionedUserIds(content);
+      String? imageUrl;
 
-    // Upload image if provided
-    if (imageFile != null) {
-      imageUrl = await uploadPostImage(imageFile);
+      // Upload image if provided
+      if (imageFile != null || imageBytes != null) {
+        imageUrl = await uploadPostImage(
+          imageFile,
+          imageBytes: imageBytes,
+          imageName: imageName,
+        );
+      }
+
+      final postData = {
+        'authorId': authorId,
+        'authorNickname': authorNickname,
+        'isAnonymous': isAnonymous,
+        'content': content,
+        'section': section,
+        'school': school,
+        'createdAt': now.toIso8601String(),
+        'updatedAt': now.toIso8601String(),
+        'likeCount': 0,
+        'likedBy': <String>[],
+        'commentCount': 0,
+        'mentionedUserIds': mentionedUserIds,
+        'isModerated': false,
+        if (imageUrl != null) 'imageUrl': imageUrl,
+      };
+
+      final docRef = await _firestore.collection(_postsCollection).add(postData);
+      
+      // Update user's anonymous posts count if applicable
+      if (isAnonymous) {
+        await _updateAnonymousPostsCount(authorId);
+      }
+
+      // Trigger moderation pipeline (placeholder)
+      await _triggerModerationPipeline(docRef.id, content, imageUrl);
+
+      return Post.fromJson({
+        ...postData,
+        'id': docRef.id,
+      });
+    } catch (e, stackTrace) {
+      _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
+      throw Exception('Unable to create post at this time. Please try again.');
     }
-
-    final postData = {
-      'authorId': authorId,
-      'authorNickname': authorNickname,
-      'isAnonymous': isAnonymous,
-      'content': content,
-      'section': section,
-      'school': school,
-      'createdAt': now.toIso8601String(),
-      'updatedAt': now.toIso8601String(),
-      'likeCount': 0,
-      'likedBy': <String>[],
-      'commentCount': 0,
-      'mentionedUserIds': mentionedUserIds,
-      'isModerated': false,
-      if (imageUrl != null) 'imageUrl': imageUrl,
-    };
-
-    final docRef = await _firestore.collection(_postsCollection).add(postData);
-    
-    // Update user's anonymous posts count if applicable
-    if (isAnonymous) {
-      await _updateAnonymousPostsCount(authorId);
-    }
-
-    // Trigger moderation pipeline (placeholder)
-    await _triggerModerationPipeline(docRef.id, content, imageUrl);
-
-    return Post.fromJson({
-      ...postData,
-      'id': docRef.id,
-    });
   }
 
   Future<void> updatePost({
@@ -186,49 +236,65 @@ class PostsRepository {
   }
 
   Future<void> likePost(String postId, String userId) async {
-    final postRef = _firestore.collection(_postsCollection).doc(postId);
+    try {
+      final postRef = _firestore.collection(_postsCollection).doc(postId);
 
-    await _firestore.runTransaction((transaction) async {
-      final postDoc = await transaction.get(postRef);
-      
-      if (!postDoc.exists) return;
+      await _firestore.runTransaction((transaction) async {
+        final postDoc = await transaction.get(postRef);
+        
+        if (!postDoc.exists) {
+          _logger.w('Attempted to like non-existent post: $postId');
+          throw Exception('Post not found');
+        }
 
-      final data = postDoc.data() as Map<String, dynamic>;
-      final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
-      final currentLikeCount = data['likeCount'] as int? ?? 0;
+        final data = postDoc.data() as Map<String, dynamic>;
+        final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
+        final currentLikeCount = data['likeCount'] as int? ?? 0;
 
-      if (!likedBy.contains(userId)) {
-        likedBy.add(userId);
-        transaction.update(postRef, {
-          'likedBy': likedBy,
-          'likeCount': currentLikeCount + 1,
-          'updatedAt': DateTime.now().toIso8601String(),
-        });
-      }
-    });
+        if (!likedBy.contains(userId)) {
+          likedBy.add(userId);
+          transaction.update(postRef, {
+            'likedBy': likedBy,
+            'likeCount': currentLikeCount + 1,
+            'updatedAt': DateTime.now().toIso8601String(),
+          });
+        }
+      });
+    } catch (e, stackTrace) {
+      _logger.e('Failed to like post $postId', error: e, stackTrace: stackTrace);
+      throw Exception('Failed to like post. Please check your connection and try again.');
+    }
   }
 
   Future<void> unlikePost(String postId, String userId) async {
-    final postRef = _firestore.collection(_postsCollection).doc(postId);
+    try {
+      final postRef = _firestore.collection(_postsCollection).doc(postId);
 
-    await _firestore.runTransaction((transaction) async {
-      final postDoc = await transaction.get(postRef);
-      
-      if (!postDoc.exists) return;
+      await _firestore.runTransaction((transaction) async {
+        final postDoc = await transaction.get(postRef);
+        
+        if (!postDoc.exists) {
+          _logger.w('Attempted to unlike non-existent post: $postId');
+          throw Exception('Post not found');
+        }
 
-      final data = postDoc.data() as Map<String, dynamic>;
-      final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
-      final currentLikeCount = data['likeCount'] as int? ?? 0;
+        final data = postDoc.data() as Map<String, dynamic>;
+        final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
+        final currentLikeCount = data['likeCount'] as int? ?? 0;
 
-      if (likedBy.contains(userId)) {
-        likedBy.remove(userId);
-        transaction.update(postRef, {
-          'likedBy': likedBy,
-          'likeCount': (currentLikeCount - 1).clamp(0, double.infinity).toInt(),
-          'updatedAt': DateTime.now().toIso8601String(),
-        });
-      }
-    });
+        if (likedBy.contains(userId)) {
+          likedBy.remove(userId);
+          transaction.update(postRef, {
+            'likedBy': likedBy,
+            'likeCount': (currentLikeCount - 1).clamp(0, double.infinity).toInt(),
+            'updatedAt': DateTime.now().toIso8601String(),
+          });
+        }
+      });
+    } catch (e, stackTrace) {
+      _logger.e('Failed to unlike post $postId', error: e, stackTrace: stackTrace);
+      throw Exception('Failed to update like status. Please try again later.');
+    }
   }
 
   Future<void> reportPost(String postId, String reason) async {
@@ -305,6 +371,23 @@ class PostsRepository {
     } catch (e) {
       // Log error but don't fail the post creation
       _logger.e('Failed to trigger moderation pipeline: $e');
+    }
+  }
+
+  String _inferImageContentType(String fileName) {
+    final extension = fileName.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'heic':
+      case 'heif':
+        return 'image/heic';
+      default:
+        return 'image/jpeg';
     }
   }
 

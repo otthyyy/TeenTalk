@@ -138,6 +138,21 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final provider = schoolAwareFeedProvider(_selectedSection.value);
+
+    ref.listen<FeedState>(provider, (previous, next) {
+      if (next.error != null && next.error!.isNotEmpty && previous?.error != next.error) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(next.error!),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        ref.read(provider.notifier).clearError();
+      }
+    });
 
     return Scaffold(
       body: AnimatedSwitcher(
@@ -153,6 +168,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               icon: const Icon(Icons.add),
               label: const Text('Post'),
             ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 

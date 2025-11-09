@@ -36,18 +36,6 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(commentsProvider(widget.postId).notifier).loadComments();
     });
-
-    ref.listen<AsyncValue<UserProfile?>>(userProfileProvider, (previous, next) {
-      next.whenData((profile) {
-        final selectedSchool = ref.read(selectedCommentSchoolProvider);
-        final preferredSchool = profile?.school;
-        if ((selectedSchool == null || selectedSchool.isEmpty) &&
-            preferredSchool != null &&
-            preferredSchool.isNotEmpty) {
-          ref.read(selectedCommentSchoolProvider.notifier).state = preferredSchool;
-        }
-      });
-    });
   }
 
   @override
@@ -96,6 +84,24 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    ref.listen<AsyncValue<UserProfile?>>(userProfileProvider, (previous, next) {
+      next.whenData((profile) {
+        final preferredSchool = profile?.school;
+        if (preferredSchool == null || preferredSchool.isEmpty) {
+          return;
+        }
+        final selectedSchool = ref.read(selectedCommentSchoolProvider);
+        if (selectedSchool == null || selectedSchool.isEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              ref.read(selectedCommentSchoolProvider.notifier).state = preferredSchool;
+            }
+          });
+        }
+      });
+    });
+
     final commentsState = ref.watch(commentsProvider(widget.postId));
     final authState = ref.watch(authStateProvider);
     final profileAsync = ref.watch(userProfileProvider);
