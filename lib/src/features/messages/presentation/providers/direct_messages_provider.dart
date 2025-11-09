@@ -2,9 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/direct_message.dart';
 import '../../data/models/conversation.dart';
 import '../../data/repositories/direct_messages_repository.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../profile/data/repositories/user_repository.dart';
+import '../../../profile/domain/models/user_profile.dart';
 
-// Get current user ID from auth (you should inject this from your auth provider)
-final currentUserIdProvider = StateProvider<String?>((ref) => null);
+final currentUserIdProvider = Provider<String?>((ref) {
+  final authState = ref.watch(authStateChangesProvider);
+  return authState.maybeWhen(
+    data: (user) => user?.uid,
+    orElse: () => ref.read(firebaseAuthServiceProvider).currentUser?.uid,
+  );
+});
+
+final userProfileByIdProvider = StreamProvider.family<UserProfile?, String>((ref, userId) {
+  final repository = ref.watch(userRepositoryProvider);
+  return repository.watchUserProfile(userId);
+});
 
 // Get conversations for current user
 final conversationsProvider = StreamProvider<List<Conversation>>((ref) async* {

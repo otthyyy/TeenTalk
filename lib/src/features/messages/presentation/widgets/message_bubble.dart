@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../data/models/direct_message.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -15,123 +16,133 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment:
-          isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        child: Row(
-          mainAxisAlignment:
-              isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (!isCurrentUser)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: CircleAvatar(
-                  radius: 16,
-                  child: Text(
-                    (senderName?.isNotEmpty ?? false)
-                        ? senderName![0].toUpperCase()
-                        : 'U',
-                  ),
-                ),
-              ),
-            Flexible(
-              child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.7,
-                ),
-                decoration: BoxDecoration(
-                  color: isCurrentUser
-                      ? Colors.blue[600]
-                      : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (message.imageUrl != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            message.imageUrl!,
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 150,
-                                height: 150,
-                                color: Colors.grey[400],
-                                child: const Icon(Icons.image_not_supported),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    Text(
-                      message.content,
-                      style: TextStyle(
-                        color:
-                            isCurrentUser ? Colors.white : Colors.black87,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _formatTime(message.createdAt),
-                          style: TextStyle(
-                            color: isCurrentUser
-                                ? Colors.white70
-                                : Colors.grey[700],
-                            fontSize: 12,
-                          ),
-                        ),
-                        if (isCurrentUser) ...[
-                          const SizedBox(width: 4),
-                          Icon(
-                            message.isRead
-                                ? Icons.done_all
-                                : Icons.done,
-                            size: 14,
-                            color: message.isRead
-                                ? Colors.lightBlue
-                                : Colors.white70,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      child: Row(
+        mainAxisAlignment:
+            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isCurrentUser) ...[
+            CircleAvatar(
+              radius: 14,
+              backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+              child: Text(
+                (senderName?.isNotEmpty ?? false)
+                    ? senderName![0].toUpperCase()
+                    : '?',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            if (isCurrentUser)
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: CircleAvatar(
-                  radius: 16,
-                  child: const Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: Colors.white,
-                  ),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: isCurrentUser
+                    ? AppTheme.primaryColor
+                    : theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(isCurrentUser ? 18 : 4),
+                  bottomRight: Radius.circular(isCurrentUser ? 4 : 18),
                 ),
               ),
-          ],
-        ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (message.imageUrl != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          message.imageUrl!,
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 200,
+                              height: 200,
+                              color: theme.colorScheme.surfaceVariant,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.broken_image_outlined,
+                                    size: 48,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Image unavailable',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  Text(
+                    message.content,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: isCurrentUser
+                          ? AppTheme.lightOnPrimary
+                          : theme.colorScheme.onSurface,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        _formatTime(message.createdAt),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: isCurrentUser
+                              ? AppTheme.lightOnPrimary.withOpacity(0.7)
+                              : theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                      if (isCurrentUser) ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          message.isRead
+                              ? Icons.done_all_rounded
+                              : Icons.done_rounded,
+                          size: 14,
+                          color: message.isRead
+                              ? AppTheme.accentColor
+                              : AppTheme.lightOnPrimary.withOpacity(0.7),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isCurrentUser) const SizedBox(width: 8),
+        ],
       ),
     );
   }

@@ -42,17 +42,39 @@ class DirectMessagesRepository {
     
     if (!conversationDoc.exists) {
       final now = DateTime.now();
+      final participantIds = [senderId, receiverId]..sort();
+      final unreadCounts = {
+        senderId: 0,
+        receiverId: 1,
+      };
       batch.set(conversationRef, {
-        'userId1': senderId,
-        'userId2': receiverId,
+        'userId1': participantIds[0],
+        'userId2': participantIds[1],
+        'participantIds': participantIds,
         'createdAt': Timestamp.fromDate(now),
         'updatedAt': Timestamp.fromDate(now),
         'unreadCount': 1,
+        'unreadCounts': unreadCounts,
       });
     } else {
-      // Increment unread count if receiver has unread messages
+      final data = conversationDoc.data() as Map<String, dynamic>;
+      final rawUnreadCounts =
+          (data['unreadCounts'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+      final unreadCounts = rawUnreadCounts.map(
+        (key, value) => MapEntry(key, (value as num).toInt()),
+      );
+      unreadCounts[senderId] = 0;
+      unreadCounts[receiverId] = (unreadCounts[receiverId] ?? 0) + 1;
+      
+      final participantIds = data['participantIds'] != null
+          ? List<String>.from(data['participantIds'] as List)
+          : [data['userId1'] as String, data['userId2'] as String];
+      
       batch.update(conversationRef, {
         'updatedAt': Timestamp.fromDate(DateTime.now()),
+        'unreadCounts': unreadCounts,
+        'unreadCount': unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
+        if (data['participantIds'] == null) 'participantIds': participantIds,
       });
     }
 
@@ -88,8 +110,7 @@ class DirectMessagesRepository {
   Stream<List<Conversation>> watchConversations(String userId) {
     return _firestore
         .collection('conversations')
-        .where('userId1', isEqualTo: userId)
-        .orderBy('lastMessageTime', descending: true)
+        .where('participantIds', arrayContains: userId)
         .snapshots()
         .asyncMap((snapshot) async {
       final conversations = <Conversation>[];
@@ -97,6 +118,11 @@ class DirectMessagesRepository {
         final conv = Conversation.fromFirestore(doc);
         conversations.add(conv);
       }
+      conversations.sort((a, b) {
+        final aTime = a.lastMessageTime ?? a.createdAt;
+        final bTime = b.lastMessageTime ?? b.createdAt;
+        return bTime.compareTo(aTime);
+      });
       return conversations;
     });
   }
@@ -145,8 +171,8 @@ class DirectMessagesRepository {
     });
   }
 
-  /// Mark all messages in a conversation as read
-  Future<void> markConversationAsRead(String conversationId) async {
+  /// Mark all messages in a conversation as read for a specific user
+  Future<void> markConversationAsRead(String conversationId, String userId) async {
     final messagesRef = _firestore
         .collection('conversations')
         .doc(conversationId)
@@ -162,10 +188,22 @@ class DirectMessagesRepository {
       });
     }
 
-    // Reset unread count
-    batch.update(_firestore.collection('conversations').doc(conversationId), {
-      'unreadCount': 0,
-    });
+    final conversationRef = _firestore.collection('conversations').doc(conversationId);
+    final conversationDoc = await conversationRef.get();
+    if (conversationDoc.exists) {
+      final data = conversationDoc.data() as Map<String, dynamic>;
+      final rawUnreadCounts =
+          (data['unreadCounts'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+      final unreadCounts = rawUnreadCounts.map(
+        (key, value) => MapEntry(key, (value as num).toInt()),
+      );
+      unreadCounts[userId] = 0;
+      
+      batch.update(conversationRef, {
+        'unreadCounts': unreadCounts,
+        'unreadCount': unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
+      });
+    }
 
     await batch.commit();
   }
@@ -264,12 +302,16 @@ class DirectMessagesRepository {
   Future<int> getUnreadCount(String userId) async {
     final snapshot = await _firestore
         .collection('conversations')
-        .where('userId2', isEqualTo: userId)
+        .where('participantIds', arrayContains: userId)
         .get();
 
     int totalUnread = 0;
     for (final doc in snapshot.docs) {
-      totalUnread += (doc['unreadCount'] as int?) ?? 0;
+      final data = doc.data();
+      final unreadCounts = (data['unreadCounts'] as Map<String, dynamic>?)
+              ?.map((key, value) => MapEntry(key, (value as num).toInt())) ??
+          {};
+      totalUnread += unreadCounts[userId] ?? 0;
     }
     return totalUnread;
   }
