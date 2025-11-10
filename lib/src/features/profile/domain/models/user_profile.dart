@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 
 class UserProfile {
   final String uid;
@@ -6,6 +7,10 @@ class UserProfile {
   final bool nicknameVerified;
   final String? gender;
   final String? school;
+  final String? schoolYear;
+  final List<String> interests;
+  final List<String> clubs;
+  final List<String> searchKeywords;
   final int anonymousPostsCount;
   final DateTime createdAt;
   final DateTime? lastNicknameChangeAt;
@@ -28,6 +33,10 @@ class UserProfile {
     required this.nicknameVerified,
     this.gender,
     this.school,
+    this.schoolYear,
+    this.interests = const [],
+    this.clubs = const [],
+    this.searchKeywords = const [],
     this.anonymousPostsCount = 0,
     required this.createdAt,
     this.lastNicknameChangeAt,
@@ -46,12 +55,25 @@ class UserProfile {
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
+    final nickname = json['nickname'] as String? ?? '';
+    final school = json['school'] as String?;
+    final schoolYear = json['schoolYear'] as String?;
+    final interests = _normalizeStringList(json['interests']);
+    final clubs = _normalizeStringList(json['clubs']);
+    final searchKeywords = _normalizeStringList(json['searchKeywords']);
+
     return UserProfile(
       uid: json['uid'] as String? ?? '',
-      nickname: json['nickname'] as String? ?? '',
+      nickname: nickname,
       nicknameVerified: json['nicknameVerified'] as bool? ?? false,
       gender: json['gender'] as String?,
-      school: json['school'] as String?,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      searchKeywords: searchKeywords.isNotEmpty
+          ? searchKeywords
+          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
@@ -87,6 +109,10 @@ class UserProfile {
       'nicknameVerified': nicknameVerified,
       'gender': gender,
       'school': school,
+      'schoolYear': schoolYear,
+      'interests': interests,
+      'clubs': clubs,
+      'searchKeywords': searchKeywords,
       'anonymousPostsCount': anonymousPostsCount,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastNicknameChangeAt': lastNicknameChangeAt != null
@@ -121,12 +147,25 @@ class UserProfile {
         privacyConsentTimestamp: DateTime.now(),
       );
     }
+    final nickname = data['nickname'] as String? ?? '';
+    final school = data['school'] as String?;
+    final schoolYear = data['schoolYear'] as String?;
+    final interests = _normalizeStringList(data['interests']);
+    final clubs = _normalizeStringList(data['clubs']);
+    final searchKeywords = _normalizeStringList(data['searchKeywords']);
+
     return UserProfile(
       uid: doc.id,
-      nickname: data['nickname'] as String? ?? '',
+      nickname: nickname,
       nicknameVerified: data['nicknameVerified'] as bool? ?? false,
       gender: data['gender'] as String?,
-      school: data['school'] as String?,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      searchKeywords: searchKeywords.isNotEmpty
+          ? searchKeywords
+          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
       anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
@@ -159,12 +198,19 @@ class UserProfile {
     return profile.toJson();
   }
 
+  List<String> generateSearchKeywords() {
+    return buildSearchKeywords(nickname, school, schoolYear, interests, clubs);
+  }
+
   bool get isProfileComplete {
     final hasNickname = nickname.isNotEmpty && nicknameVerified;
     final hasSchool = school != null && school!.trim().isNotEmpty;
     final hasGender = gender != null && gender!.trim().isNotEmpty;
     final hasAgeInfo = isMinor != null;
-    return onboardingComplete && hasNickname && hasSchool && hasGender && hasAgeInfo && privacyConsentGiven;
+    final hasSchoolYear = schoolYear != null && schoolYear!.trim().isNotEmpty;
+    final hasInterests = interests.isNotEmpty;
+    return onboardingComplete && hasNickname && hasSchool && hasGender && hasAgeInfo && 
+           hasSchoolYear && hasInterests && privacyConsentGiven;
   }
 
   UserProfile copyWith({
@@ -173,6 +219,10 @@ class UserProfile {
     bool? nicknameVerified,
     String? gender,
     String? school,
+    String? schoolYear,
+    List<String>? interests,
+    List<String>? clubs,
+    List<String>? searchKeywords,
     int? anonymousPostsCount,
     DateTime? createdAt,
     DateTime? lastNicknameChangeAt,
@@ -195,6 +245,10 @@ class UserProfile {
       nicknameVerified: nicknameVerified ?? this.nicknameVerified,
       gender: gender ?? this.gender,
       school: school ?? this.school,
+      schoolYear: schoolYear ?? this.schoolYear,
+      interests: interests ?? this.interests,
+      clubs: clubs ?? this.clubs,
+      searchKeywords: searchKeywords ?? this.searchKeywords,
       anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
       createdAt: createdAt ?? this.createdAt,
       lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
@@ -215,6 +269,8 @@ class UserProfile {
     );
   }
 
+  static const ListEquality<String> _listEquality = ListEquality<String>();
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -225,6 +281,10 @@ class UserProfile {
         other.nicknameVerified == nicknameVerified &&
         other.gender == gender &&
         other.school == school &&
+        other.schoolYear == schoolYear &&
+        _listEquality.equals(other.interests, interests) &&
+        _listEquality.equals(other.clubs, clubs) &&
+        _listEquality.equals(other.searchKeywords, searchKeywords) &&
         other.anonymousPostsCount == anonymousPostsCount &&
         other.createdAt == createdAt &&
         other.lastNicknameChangeAt == lastNicknameChangeAt &&
@@ -249,6 +309,10 @@ class UserProfile {
         nicknameVerified.hashCode ^
         gender.hashCode ^
         school.hashCode ^
+        schoolYear.hashCode ^
+        _listEquality.hash(interests) ^
+        _listEquality.hash(clubs) ^
+        _listEquality.hash(searchKeywords) ^
         anonymousPostsCount.hashCode ^
         createdAt.hashCode ^
         lastNicknameChangeAt.hashCode ^
@@ -264,5 +328,39 @@ class UserProfile {
         updatedAt.hashCode ^
         isAdmin.hashCode ^
         isModerator.hashCode;
+  }
+
+  static List<String> _normalizeStringList(dynamic value) {
+    if (value == null) return const [];
+    if (value is List) {
+      return List<String>.from(value);
+    }
+    return const [];
+  }
+
+  static List<String> buildSearchKeywords(
+    String nickname,
+    String? school,
+    String? schoolYear,
+    List<String> interests,
+    List<String> clubs,
+  ) {
+    final keywords = <String>{};
+    if (nickname.isNotEmpty) {
+      keywords.add(nickname.toLowerCase());
+    }
+    if (school != null && school.isNotEmpty) {
+      keywords.add(school.toLowerCase());
+    }
+    if (schoolYear != null && schoolYear.isNotEmpty) {
+      keywords.add(schoolYear.toLowerCase());
+    }
+    for (final interest in interests) {
+      keywords.add(interest.toLowerCase());
+    }
+    for (final club in clubs) {
+      keywords.add(club.toLowerCase());
+    }
+    return keywords.toList();
   }
 }
