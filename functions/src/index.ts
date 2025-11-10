@@ -11,6 +11,8 @@ export * from "./functions/commentCounters";
 export * from "./functions/moderationQueue";
 export * from "./functions/pushNotifications";
 export * from "./functions/dataCleanup";
+export * from "./functions/extendedAnalytics";
+export * from "./functions/rateLimits";
 
 // Health check function for emulator testing
 export const healthCheck = functions.https.onCall(async (data, context) => {
@@ -26,7 +28,7 @@ export const healthCheck = functions.https.onCall(async (data, context) => {
     timestamp: admin.firestore.Timestamp.now(),
     userId: context.auth.uid,
   };
-admin.initializeApp();
+});
 
 const REPORT_THRESHOLD = 3;
 
@@ -168,7 +170,7 @@ async function createAuditLog(
 export const cleanupOldReports = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("UTC")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -223,28 +225,42 @@ export const getModerationStats = functions.https.onCall(async (data, context) =
 
   try {
     const pendingReports = await admin.firestore()
-      .collection("reportedContent")
+      .collection("reports")
       .where("status", "==", "pending")
       .count()
       .get();
 
-    const hiddenContent = await admin.firestore()
-      .collection("moderationQueue")
-      .where("status", "==", "hidden")
+    const resolvedReports = await admin.firestore()
+      .collection("reports")
+      .where("status", "==", "resolved")
       .count()
       .get();
 
-    const removedContent = await admin.firestore()
-      .collection("moderationQueue")
-      .where("status", "==", "removed")
+    const dismissedReports = await admin.firestore()
+      .collection("reports")
+      .where("status", "==", "dismissed")
+      .count()
+      .get();
+
+    const flaggedPosts = await admin.firestore()
+      .collection("posts")
+      .where("isModerated", "==", true)
+      .count()
+      .get();
+
+    const flaggedComments = await admin.firestore()
+      .collection("comments")
+      .where("isModerated", "==", true)
       .count()
       .get();
 
     return {
-      pendingReports: pendingReports.data().count,
-      hiddenContent: hiddenContent.data().count,
-      removedContent: removedContent.data().count,
-      reportThreshold: REPORT_THRESHOLD,
+      activeReportCount: pendingReports.data().count || 0,
+      resolvedReportCount: resolvedReports.data().count || 0,
+      dismissedReportCount: dismissedReports.data().count || 0,
+      flaggedPostCount: flaggedPosts.data().count || 0,
+      flaggedCommentCount: flaggedComments.data().count || 0,
+      userBanCount: 0,
     };
   } catch (error) {
     functions.logger.error("Error getting moderation stats:", error);

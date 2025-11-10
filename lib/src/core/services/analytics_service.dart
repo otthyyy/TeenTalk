@@ -1,0 +1,122 @@
+import 'package:flutter/foundation.dart';
+
+class AnalyticsService {
+  void logEvent(String eventName, {Map<String, dynamic>? parameters}) {
+    if (kDebugMode) {
+      print('[Analytics] Event: $eventName, Parameters: $parameters');
+    }
+  }
+
+  void logTrustBadgeView(String trustLevel, String location) {
+    logEvent(
+      'trust_badge_view',
+      parameters: {
+        'trust_level': trustLevel,
+        'location': location,
+      },
+    );
+  }
+
+  void logTrustBadgeTap(String trustLevel, String location) {
+    logEvent(
+      'trust_badge_tap',
+      parameters: {
+        'trust_level': trustLevel,
+        'location': location,
+      },
+    );
+  }
+
+  void logLowTrustWarning(String userId, String context) {
+    logEvent(
+      'low_trust_warning',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  void logLowTrustWarningDismiss(String userId, String context) {
+    logEvent(
+      'low_trust_warning_dismiss',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  void logLowTrustWarningProceed(String userId, String context) {
+    logEvent(
+      'low_trust_warning_proceed',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:logger/logger.dart';
+
+class AnalyticsService {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  final Logger _logger = Logger();
+  
+  Future<void> logRateLimitHit({
+    required String contentType,
+    required String limitType,
+    required int submissionCount,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'rate_limit_hit',
+        parameters: {
+          'content_type': contentType,
+          'limit_type': limitType,
+          'submission_count': submissionCount,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+      _logger.i('Logged rate limit hit: $contentType, $limitType');
+    } catch (e) {
+      _logger.e('Failed to log rate limit hit: $e');
+    }
+  }
+  
+  Future<void> logRateLimitWarning({
+    required String contentType,
+    required int remainingSubmissions,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'rate_limit_warning',
+        parameters: {
+          'content_type': contentType,
+          'remaining_submissions': remainingSubmissions,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+      _logger.i('Logged rate limit warning: $contentType, remaining: $remainingSubmissions');
+    } catch (e) {
+      _logger.e('Failed to log rate limit warning: $e');
+    }
+  }
+  
+  Future<void> logContentSubmission({
+    required String contentType,
+    required bool isAnonymous,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'content_submission',
+        parameters: {
+          'content_type': contentType,
+          'is_anonymous': isAnonymous,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      _logger.e('Failed to log content submission: $e');
+    }
+  }
+}

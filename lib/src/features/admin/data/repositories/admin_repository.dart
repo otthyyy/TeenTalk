@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../models/report.dart';
+import '../models/extended_analytics.dart';
 
 class AdminRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
   static const String _reportsCollection = 'reports';
   static const String _moderationDecisionsCollection = 'moderationDecisions';
   static const String _postsCollection = 'posts';
@@ -122,44 +125,10 @@ class AdminRepository {
 
   Future<AdminAnalytics> getAnalytics() async {
     try {
-      final reportsSnapshot = await _firestore
-          .collection(_reportsCollection)
-          .where('status', isEqualTo: 'pending')
-          .count()
-          .get();
-
-      final resolvedSnapshot = await _firestore
-          .collection(_reportsCollection)
-          .where('status', isEqualTo: 'resolved')
-          .count()
-          .get();
-
-      final dismissedSnapshot = await _firestore
-          .collection(_reportsCollection)
-          .where('status', isEqualTo: 'dismissed')
-          .count()
-          .get();
-
-      final flaggedPostsSnapshot = await _firestore
-          .collection(_postsCollection)
-          .where('isModerated', isEqualTo: true)
-          .count()
-          .get();
-
-      final flaggedCommentsSnapshot = await _firestore
-          .collection(_commentsCollection)
-          .where('isModerated', isEqualTo: true)
-          .count()
-          .get();
-
-      return AdminAnalytics(
-        activeReportCount: reportsSnapshot.count ?? 0,
-        flaggedPostCount: flaggedPostsSnapshot.count ?? 0,
-        flaggedCommentCount: flaggedCommentsSnapshot.count ?? 0,
-        userBanCount: 0,
-        resolvedReportCount: resolvedSnapshot.count ?? 0,
-        dismissedReportCount: dismissedSnapshot.count ?? 0,
-      );
+      final callable = _functions.httpsCallable('getModerationStats');
+      final result = await callable.call();
+      final data = result.data as Map<String, dynamic>;
+      return AdminAnalytics.fromJson(data);
     } catch (e) {
       return const AdminAnalytics(
         activeReportCount: 0,
@@ -209,5 +178,34 @@ class AdminRepository {
         'id': doc.id,
       });
     }).toList();
+  }
+
+  Future<ExtendedAnalytics> getExtendedAnalytics({
+    DateTime? startDate,
+    DateTime? endDate,
+    String? school,
+  }) async {
+    try {
+      final callable = _functions.httpsCallable('getExtendedAnalytics');
+      final result = await callable.call({
+        if (startDate != null) 'startDate': startDate.toIso8601String(),
+        if (endDate != null) 'endDate': endDate.toIso8601String(),
+        if (school != null) 'school': school,
+      });
+
+      return ExtendedAnalytics.fromJson(
+        result.data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      return const ExtendedAnalytics(
+        dailyMetrics: [],
+        schoolMetrics: [],
+        reportReasons: {},
+        totalUsers: 0,
+        activeUsers: 0,
+        totalPosts: 0,
+        totalComments: 0,
+      );
+    }
   }
 }

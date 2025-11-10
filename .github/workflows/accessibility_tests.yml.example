@@ -1,0 +1,39 @@
+name: Accessibility Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Run accessibility tests
+        run: flutter test test/a11y/
+      
+      - name: Check golden files
+        run: |
+          flutter test --update-goldens test/a11y/
+          git diff --exit-code test/a11y/goldens/ || \
+            (echo "Golden files need to be updated. Run 'flutter test --update-goldens test/a11y/' locally" && exit 1)
+      
+      - name: Upload golden diff artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: golden-diffs
+          path: test/a11y/failures/

@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/providers/feed_provider.dart';
 import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
+import 'package:teen_talk_app/src/features/feed/domain/models/feed_sort_option.dart';
 
 void main() {
   group('FeedProvider Tests', () {
@@ -23,33 +25,36 @@ void main() {
     });
 
     test('initial state should be empty', () {
-      final notifier = container.read(feedProvider('spotted').notifier);
+      container.read(feedProvider('spotted').notifier);
       final state = container.read(feedProvider('spotted'));
       
       expect(state.posts.isEmpty, true);
       expect(state.isLoading, false);
       expect(state.error, null);
+      expect(state.sortOption, FeedSortOption.newest);
     });
   });
 }
 
 class MockPostsRepository extends PostsRepository {
   @override
-  Future<List<Post>> getPosts({
+  Future<(List<Post>, DocumentSnapshot?)> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
+    String? school,
+    FeedSortOption sortOption = FeedSortOption.newest,
   }) async {
-    // Mock implementation
-    return [];
+    return ([], null);
   }
 
   @override
   Stream<List<Post>> getPostsStream({
     String? section,
+    String? school,
     int limit = 20,
+    FeedSortOption sortOption = FeedSortOption.newest,
   }) {
-    // Mock implementation
     return Stream.value([]);
   }
 }

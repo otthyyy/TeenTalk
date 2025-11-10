@@ -16,6 +16,8 @@ import '../widgets/skeleton_loader_widget.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/segmented_control.dart';
 import '../widgets/post_search_delegate.dart';
+import '../widgets/feed_filter_chips.dart';
+import '../../domain/models/feed_sort_option.dart';
 
 enum FeedSection {
   spotted('spotted', 'Spotted'),
@@ -73,8 +75,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
         (previous, next) {
           final sortedPosts = [...next.posts]
             ..sort((a, b) {
+              final engagementComparison =
+                  b.engagementScore.compareTo(a.engagementScore);
+              if (engagementComparison != 0) return engagementComparison;
+
               final likeComparison = b.likeCount.compareTo(a.likeCount);
               if (likeComparison != 0) return likeComparison;
+
               return b.createdAt.compareTo(a.createdAt);
             });
           final spotlightCandidates = sortedPosts.take(5).toList();
@@ -206,6 +213,14 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     showSearch(
       context: context,
       delegate: PostSearchDelegate(posts),
+  void _onSortOptionSelected(FeedSortOption option) {
+    final notifier =
+        ref.read(schoolAwareFeedProvider(_selectedSection.value).notifier);
+    unawaited(
+      notifier.updateSortOption(
+        option,
+        section: _selectedSection.value,
+      ),
     );
   }
 
@@ -258,7 +273,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return RefreshIndicator(
-
+      onRefresh: () async {
         await ref
             .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
             .loadPosts(
@@ -279,7 +294,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             automaticallyImplyLeading: false,
             backgroundColor: theme.colorScheme.surface,
             flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeroHeader(theme, userProfile),
+              background: _buildHeroHeader(
+                theme,
+                userProfile,
+                postsState.sortOption,
+              ),
               collapseMode: CollapseMode.parallax,
             ),
             actions: [
@@ -299,6 +318,34 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                 },
               ),
             ],
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: '${_selectedSection.label} feed posts list',
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 280,
+              pinned: true,
+              stretch: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: theme.colorScheme.surface,
+              flexibleSpace: FlexibleSpaceBar(
+                background: _buildHeroHeader(theme, userProfile),
+                collapseMode: CollapseMode.parallax,
+              ),
+              actions: [
+                NotificationBadge(
+                  onTap: () {
+                    context.push('/notifications');
+                  },
+                ),
+              ],
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -317,6 +364,22 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                     labelBuilder: (section) => section.label,
                   ),
                 ),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sort by',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FeedFilterChips(
+                    selectedOption: postsState.sortOption,
+                    onOptionSelected: _onSortOptionSelected,
+                  ),
+                ],
               ),
             ),
           ),
@@ -336,92 +399,135 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             )
           else if (postsState.posts.isEmpty)
             SliverToBoxAdapter(
-              child: SizedBox(
-                height: 400,
-                child: EmptyStateWidget(section: _selectedSection),
-              ),
-            )
-          else
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index == postsState.posts.length) {
-                    return postsState.isLoadingMore
-                        ? const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : const SizedBox.shrink();
-                  }
-
-                  final post = postsState.posts[index];
-                  final isNew =
-                      DateTime.now().difference(post.createdAt).inMinutes < 5;
-
-                  return PostCardWidget(
-                    key: ValueKey(post.id),
-                    post: post,
-                    currentUserId: authState.user?.uid,
-                    isNew: isNew,
-                    onComments: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      setState(() {
-                        _selectedPostId = post.id;
-                        _showComments = true;
-                      });
-                    },
-                    onLike: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      ref
-                          .read(schoolAwareFeedProvider(_selectedSection.value)
-                              .notifier)
-                          .likePost(
-                            post.id,
-                            authState.user!.uid,
-                          );
-                    },
-                    onUnlike: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      ref
-                          .read(schoolAwareFeedProvider(_selectedSection.value)
-                              .notifier)
-                          .unlikePost(
-                            post.id,
-                            authState.user!.uid,
-                          );
-                    },
-                    onReport: () {
-                      _showReportDialog(post);
-                    },
-                  );
-                },
-                childCount:
-                    postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SegmentedControl<FeedSection>(
+                  values: FeedSection.values,
+                  selectedValue: _selectedSection,
+                  onChanged: _onSectionChanged,
+                  labelBuilder: (section) => section.label,
+                ),
               ),
             ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: 120 + bottomInset),
-          ),
-        ],
+            if (postsState.isLoading && postsState.posts.isEmpty)
+              const SliverToBoxAdapter(
+                child: SkeletonLoader(),
+              )
+            else if (postsState.error != null)
+              SliverToBoxAdapter(
+                child: _buildErrorView(postsState.error!, theme),
+              )
+            else if (postsState.posts.isEmpty)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 400,
+                  child: EmptyStateWidget(section: _selectedSection),
+                ),
+              )
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index == postsState.posts.length) {
+                      return postsState.isLoadingMore
+                          ? const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : const SizedBox.shrink();
+                    }
+
+                    final post = postsState.posts[index];
+                    final isNew =
+                        DateTime.now().difference(post.createdAt).inMinutes < 5;
+
+                    return PostCardWidget(
+                      key: ValueKey(post.id),
+                      post: post,
+                      currentUserId: authState.user?.uid,
+                      isNew: isNew,
+                      onComments: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        setState(() {
+                          _selectedPostId = post.id;
+                          _showComments = true;
+                        });
+                      },
+                      onLike: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        ref
+                            .read(schoolAwareFeedProvider(_selectedSection.value)
+                                .notifier)
+                            .likePost(
+                              post.id,
+                              authState.user!.uid,
+                            );
+                      },
+                      onUnlike: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        ref
+                            .read(schoolAwareFeedProvider(_selectedSection.value)
+                                .notifier)
+                            .unlikePost(
+                              post.id,
+                              authState.user!.uid,
+                            );
+                      },
+                      onReport: () {
+                        _showReportDialog(post);
+                      },
+                    );
+                  },
+                  childCount:
+                      postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: SizedBox(height: 120 + bottomInset),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHeroHeader(ThemeData theme, UserProfile? userProfile) {
+  Widget _buildHeroHeader(
+    ThemeData theme,
+    UserProfile? userProfile,
+    FeedSortOption sortOption,
+  ) {
     return AnimatedBuilder(
       animation: _headerAnimationController,
       builder: (context, child) {
+        IconData badgeIcon;
+        String badgeText;
+
+        switch (sortOption) {
+          case FeedSortOption.newest:
+            badgeIcon = Icons.access_time;
+            badgeText = 'Latest';
+            break;
+          case FeedSortOption.mostLiked:
+            badgeIcon = Icons.favorite;
+            badgeText = 'Most Liked';
+            break;
+          case FeedSortOption.trending:
+            badgeIcon = Icons.trending_up;
+            badgeText = 'Trending Now';
+            break;
+        }
+
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -521,13 +627,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  Icons.trending_up,
+                                  badgeIcon,
                                   size: 16,
                                   color: theme.colorScheme.primary,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Trending Now',
+                                  badgeText,
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,

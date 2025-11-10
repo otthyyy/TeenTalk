@@ -124,6 +124,7 @@ class Post {
   final String? imageUrl;
   final String section;
   final String? school;
+  final double engagementScore;
 
   const Post({
     required this.id,
@@ -141,6 +142,7 @@ class Post {
     this.imageUrl,
     this.section = 'spotted',
     this.school,
+    this.engagementScore = 0.0,
   });
 
   Post copyWith({
@@ -159,6 +161,7 @@ class Post {
     String? imageUrl,
     String? section,
     String? school,
+    double? engagementScore,
   }) {
     return Post(
       id: id ?? this.id,
@@ -176,6 +179,7 @@ class Post {
       imageUrl: imageUrl ?? this.imageUrl,
       section: section ?? this.section,
       school: school ?? this.school,
+      engagementScore: engagementScore ?? this.engagementScore,
     );
   }
 
@@ -196,6 +200,7 @@ class Post {
       imageUrl: json['imageUrl'] as String?,
       section: json['section'] as String? ?? 'spotted',
       school: json['school'] as String?,
+      engagementScore: (json['engagementScore'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -215,5 +220,6 @@ class Post {
     'imageUrl': imageUrl,
     'section': section,
     'school': school,
+    'engagementScore': engagementScore,
   };
 }

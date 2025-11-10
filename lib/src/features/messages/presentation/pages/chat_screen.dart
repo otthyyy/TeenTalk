@@ -3,6 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/direct_messages_repository.dart';
 import '../providers/direct_messages_provider.dart';
 import '../widgets/message_bubble.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../profile/domain/models/user_profile.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/services/analytics_provider.dart';
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../profile/domain/models/trust_level_localizations.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -23,6 +29,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   late final TextEditingController _messageController;
   bool _hasText = false;
+  bool _lowTrustWarningShown = false;
 
   @override
   void initState() {
@@ -30,6 +37,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _messageController = TextEditingController();
     _messageController.addListener(_onTextChanged);
     _markConversationAsRead();
+    _checkForLowTrustWarning();
+  }
+
+  void _checkForLowTrustWarning() {
+    Future.microtask(() {
+      if (!mounted) return;
+      final otherUserProfileAsync = ref.read(userProfileByIdProvider(widget.otherUserId));
+      otherUserProfileAsync.whenData((otherUserProfile) {
+        if (otherUserProfile != null &&
+            otherUserProfile.trustLevel.isLowTrust &&
+            !_lowTrustWarningShown) {
+          _showLowTrustWarning(otherUserProfile);
+          _lowTrustWarningShown = true;
+        }
+      });
+    });
   }
 
   void _onTextChanged() {
@@ -49,6 +72,65 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         repository.markConversationAsRead(widget.conversationId, currentUserId);
       }
     });
+  }
+
+  void _showLowTrustWarning(UserProfile otherUserProfile) {
+    if (!mounted) return;
+
+    final localization = AppLocalizations.of(context);
+    final analytics = ref.read(analyticsServiceProvider);
+    analytics.logLowTrustWarning(widget.otherUserId, 'direct_message');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.warning_amber_rounded, size: 48),
+        title: Text(
+          localization?.trustLowTrustWarningTitle ?? 'New User',
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TrustBadge(
+              trustLevel: otherUserProfile.trustLevel,
+              showLabel: true,
+              size: 20,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              localization?.trustLowTrustWarningDescription ??
+                  'This user is new to the community. Please be cautious when interacting.',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              analytics.logLowTrustWarningDismiss(
+                widget.otherUserId,
+                'direct_message',
+              );
+              Navigator.of(context).maybePop();
+            },
+            child: Text(
+              localization?.trustLowTrustWarningCancel ?? 'Cancel',
+            ),
+          ),
+          FilledButton(
+            onPressed: () {
+              analytics.logLowTrustWarningProceed(
+                widget.otherUserId,
+                'direct_message',
+              );
+              Navigator.of(context).maybePop();
+            },
+            child: Text(
+              localization?.trustLowTrustWarningProceed ?? 'Continue',
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
