@@ -9,6 +9,8 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/data/repositories/posts_repository.dart';
 import '../../../profile/data/repositories/user_repository.dart';
+import '../../domain/models/feed_sort_option.dart';
+import '../../data/services/filter_preferences_service.dart';
 
 final feedRepositoryProvider = Provider<PostsRepository>((ref) {
   return PostsRepository();
@@ -21,6 +23,7 @@ class FeedState {
   final String? error;
   final bool hasMore;
   final DocumentSnapshot? lastDocument;
+  final FeedSortOption sortOption;
 
   const FeedState({
     this.posts = const [],
@@ -29,6 +32,7 @@ class FeedState {
     this.error,
     this.hasMore = true,
     this.lastDocument,
+    this.sortOption = FeedSortOption.newest,
   });
 
   FeedState copyWith({
@@ -38,6 +42,7 @@ class FeedState {
     String? error,
     bool? hasMore,
     DocumentSnapshot? lastDocument,
+    FeedSortOption? sortOption,
   }) {
     return FeedState(
       posts: posts ?? this.posts,
@@ -46,6 +51,7 @@ class FeedState {
       error: error,
       hasMore: hasMore ?? this.hasMore,
       lastDocument: lastDocument ?? this.lastDocument,
+      sortOption: sortOption ?? this.sortOption,
     );
   }
 }
@@ -54,6 +60,13 @@ class FeedNotifier extends StateNotifier<FeedState> {
   final PostsRepository _repository;
   final Logger _logger = Logger();
   StreamSubscription? _postsSubscription;
+  String? _currentSection;
+  String? _currentSchool;
+  FeedSortOption _currentSortOption = FeedSortOption.newest;
+
+  String? get currentSection => _currentSection;
+  String? get currentSchool => _currentSchool;
+  FeedSortOption get currentSortOption => _currentSortOption;
 
   FeedNotifier(this._repository) : super(const FeedState());
 
@@ -63,9 +76,19 @@ class FeedNotifier extends StateNotifier<FeedState> {
     super.dispose();
   }
 
-  Future<void> loadPosts({bool refresh = false, String? section, String? school}) async {
+  Future<void> loadPosts({
+    bool refresh = false,
+    String? section,
+    String? school,
+    FeedSortOption? sortOption,
+  }) async {
+    final effectiveSortOption = sortOption ?? state.sortOption;
+
     if (refresh) {
-      state = const FeedState(isLoading: true);
+      state = FeedState(
+        isLoading: true,
+        sortOption: effectiveSortOption,
+      );
     } else if (state.isLoading || state.isLoadingMore) {
       return;
     }
@@ -73,11 +96,23 @@ class FeedNotifier extends StateNotifier<FeedState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
+      if (section != null) {
+        _currentSection = section;
+      }
+      if (school != null) {
+        _currentSchool = school;
+      }
+      _currentSortOption = effectiveSortOption;
+
+      final resolvedSection = _currentSection;
+      final resolvedSchool = _currentSchool;
+
       final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
-        section: section,
-        school: school,
+        section: resolvedSection,
+        school: resolvedSchool,
+        sortOption: effectiveSortOption,
       );
 
       if (posts.isEmpty) {
@@ -95,10 +130,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
         isLoading: false,
         lastDocument: lastDoc,
         hasMore: posts.length == 20,
+        sortOption: effectiveSortOption,
       );
 
       // Set up real-time updates
-      _setupRealtimeUpdates(section, school);
+      _setupRealtimeUpdates(resolvedSection, resolvedSchool);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -107,16 +143,36 @@ class FeedNotifier extends StateNotifier<FeedState> {
     }
   }
 
-  Future<void> loadMorePosts({String? school}) async {
+  Future<void> loadMorePosts({
+    String? section,
+    String? school,
+    FeedSortOption? sortOption,
+  }) async {
     if (!state.hasMore || state.isLoadingMore || state.isLoading) return;
 
     state = state.copyWith(isLoadingMore: true);
+
+    if (section != null) {
+      _currentSection = section;
+    }
+    if (school != null) {
+      _currentSchool = school;
+    }
+    if (sortOption != null) {
+      _currentSortOption = sortOption;
+    }
+
+    final resolvedSection = _currentSection;
+    final resolvedSchool = _currentSchool;
+    final resolvedSort = _currentSortOption;
 
     try {
       final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: state.lastDocument,
         limit: 20,
-        school: school,
+        section: resolvedSection,
+        school: resolvedSchool,
+        sortOption: resolvedSort,
       );
 
       if (posts.isEmpty) {
@@ -134,6 +190,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
         isLoadingMore: false,
         lastDocument: lastDoc,
         hasMore: posts.length == 20,
+        sortOption: resolvedSort,
       );
     } catch (e) {
       state = state.copyWith(
@@ -217,11 +274,35 @@ class FeedNotifier extends StateNotifier<FeedState> {
     }
   }
 
+  Future<void> updateSortOption(
+    FeedSortOption option, {
+    String? section,
+    String? school,
+  }) async {
+    if (option == _currentSortOption &&
+        (section == null || section == _currentSection) &&
+        (school == null || school == _currentSchool)) {
+      return;
+    }
+
+    await loadPosts(
+      refresh: true,
+      section: section ?? _currentSection,
+      school: school ?? _currentSchool,
+      sortOption: option,
+    );
+  }
+
   void _setupRealtimeUpdates(String? section, String? school) {
     _postsSubscription?.cancel();
     
     _postsSubscription = _repository
-        .getPostsStream(section: section, school: school, limit: 50)
+        .getPostsStream(
+          section: section,
+          school: school,
+          limit: 50,
+          sortOption: _currentSortOption,
+        )
         .listen((realtimePosts) {
       if (state.posts.isNotEmpty && realtimePosts.isNotEmpty) {
         // Merge real-time updates with existing posts
@@ -265,6 +346,7 @@ final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedS
 class SchoolAwareFeedNotifier extends FeedNotifier {
   final UserRepository _userRepository;
   final FirebaseAuthService _authService;
+  final FilterPreferencesService _preferencesService = FilterPreferencesService();
   
   SchoolAwareFeedNotifier(
     PostsRepository repository, 
@@ -273,41 +355,87 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
   ) : super(repository);
 
   @override
-  Future<void> loadPosts({bool refresh = false, String? section, String? school}) async {
-    // Get current user's school if not provided
-    if (school == null) {
+  Future<void> loadPosts({
+    bool refresh = false,
+    String? section,
+    String? school,
+    FeedSortOption? sortOption,
+  }) async {
+    String? effectiveSchool = school;
+    FeedSortOption? effectiveSortOption = sortOption;
+
+    if (effectiveSchool == null) {
       final user = _authService.currentUser;
       if (user != null) {
         try {
           final userProfile = await _userRepository.getUserProfile(user.uid);
-          school = userProfile?.school;
+          effectiveSchool = userProfile?.school;
         } catch (e) {
-          // If we can't get user profile, proceed without school filtering
-          school = null;
+          effectiveSchool = null;
         }
       }
     }
+
+    if (effectiveSortOption == null && section != null) {
+      try {
+        effectiveSortOption = await _preferencesService.getSortOrder(section);
+      } catch (e) {
+        effectiveSortOption = FeedSortOption.newest;
+      }
+    }
     
-    await super.loadPosts(refresh: refresh, section: section, school: school);
+    await super.loadPosts(
+      refresh: refresh,
+      section: section,
+      school: effectiveSchool,
+      sortOption: effectiveSortOption,
+    );
   }
 
   @override
-  Future<void> loadMorePosts({String? school}) async {
-    // Get current user's school if not provided
-    if (school == null) {
+  Future<void> loadMorePosts({
+    String? section,
+    String? school,
+    FeedSortOption? sortOption,
+  }) async {
+    String? effectiveSchool = school;
+
+    if (effectiveSchool == null) {
       final user = _authService.currentUser;
       if (user != null) {
         try {
           final userProfile = await _userRepository.getUserProfile(user.uid);
-          school = userProfile?.school;
+          effectiveSchool = userProfile?.school;
         } catch (e) {
-          // If we can't get user profile, proceed without school filtering
-          school = null;
+          effectiveSchool = null;
         }
       }
     }
     
-    await super.loadMorePosts(school: school);
+    await super.loadMorePosts(
+      section: section,
+      school: effectiveSchool,
+      sortOption: sortOption,
+    );
+  }
+
+  @override
+  Future<void> updateSortOption(
+    FeedSortOption option, {
+    String? section,
+    String? school,
+  }) async {
+    final targetSection = section ?? currentSection;
+
+    if (targetSection != null) {
+      await _preferencesService.saveSortOrder(targetSection, option);
+    }
+
+    await super.updateSortOption(
+      option,
+      section: section ?? currentSection,
+      school: school ?? currentSchool,
+    );
   }
 
   @override

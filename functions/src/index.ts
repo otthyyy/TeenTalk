@@ -12,6 +12,7 @@ export * from "./functions/moderationQueue";
 export * from "./functions/pushNotifications";
 export * from "./functions/dataCleanup";
 export * from "./functions/extendedAnalytics";
+export * from "./functions/rateLimits";
 
 // Health check function for emulator testing
 export const healthCheck = functions.https.onCall(async (data, context) => {
@@ -169,7 +170,7 @@ async function createAuditLog(
 export const cleanupOldReports = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("UTC")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 

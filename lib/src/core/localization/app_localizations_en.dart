@@ -236,4 +236,72 @@ class AppLocalizationsEN extends AppLocalizations {
   String get moderationRemoveContent => 'Remove Content';
   @override
   String get moderationContentHidden => 'This content has been hidden by moderators';
+
+  @override
+  String get trustBadgeNewcomerLabel => 'Newcomer';
+  @override
+  String get trustBadgeMemberLabel => 'Member';
+  @override
+  String get trustBadgeTrustedLabel => 'Trusted';
+  @override
+  String get trustBadgeVeteranLabel => 'Veteran';
+  @override
+  String get trustBadgeNewcomerDescription => 'New to the community';
+  @override
+  String get trustBadgeMemberDescription => 'Active community member';
+  @override
+  String get trustBadgeTrustedDescription => 'Trusted community member';
+  @override
+  String get trustBadgeVeteranDescription => 'Long-standing community member';
+  @override
+  String get trustInfoLearnMore => 'Learn more about trust levels';
+  @override
+  String get trustBadgeTooltip => 'Trust badge indicates community standing';
+  @override
+  String get trustLowTrustWarningTitle => 'New User';
+  @override
+  String get trustLowTrustWarningDescription => 'This user is new to the community. Please be cautious when interacting.';
+  @override
+  String get trustLowTrustWarningProceed => 'Continue';
+  @override
+  String get trustLowTrustWarningCancel => 'Cancel';
+  String get rateLimitTitle => 'Posting Limit Reached';
+  @override
+  String get rateLimitPostsExceeded => 'You have posted too many times. Please wait before posting again.';
+  @override
+  String get rateLimitCommentsExceeded => 'You have commented too many times. Please wait before commenting again.';
+  @override
+  String get rateLimitCooldownMessage => 'To prevent spam, there is a cooldown period between posts and comments.';
+  @override
+  String get rateLimitNearLimitWarning => 'You are approaching the posting limit. Please slow down.';
+  @override
+  String get rateLimitRemainingPosts => 'Remaining posts';
+  @override
+  String get rateLimitRemainingComments => 'Remaining comments';
+  @override
+  String get rateLimitViewGuidelines => 'View Community Guidelines';
+  @override
+  String get rateLimitGuidelinesLink => 'Learn more about our community guidelines';
+  @override
+  String get rateLimitOkay => 'Okay';
+
+  @override
+  String cooldownTimer(int seconds) {
+    if (seconds < 60) {
+      return 'Wait $seconds second${seconds == 1 ? '' : 's'}';
+    } else {
+      final minutes = (seconds / 60).floor();
+      final remainingSeconds = seconds % 60;
+      if (remainingSeconds == 0) {
+        return 'Wait $minutes minute${minutes == 1 ? '' : 's'}';
+      } else {
+        return 'Wait $minutes minute${minutes == 1 ? '' : 's'} and $remainingSeconds second${remainingSeconds == 1 ? '' : 's'}';
+      }
+    }
+  }
+
+  @override
+  String remainingCount(int count, String type) {
+    return '$count $type remaining';
+  }
 }

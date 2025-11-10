@@ -236,4 +236,74 @@ class AppLocalizationsES extends AppLocalizations {
   String get moderationRemoveContent => 'Eliminar Contenido';
   @override
   String get moderationContentHidden => 'Este contenido ha sido ocultado por los moderadores';
+
+  @override
+  String get trustBadgeNewcomerLabel => 'Recién Llegado';
+  @override
+  String get trustBadgeMemberLabel => 'Miembro';
+  @override
+  String get trustBadgeTrustedLabel => 'De Confianza';
+  @override
+  String get trustBadgeVeteranLabel => 'Veterano';
+  @override
+  String get trustBadgeNewcomerDescription => 'Nuevo en la comunidad';
+  @override
+  String get trustBadgeMemberDescription => 'Miembro activo de la comunidad';
+  @override
+  String get trustBadgeTrustedDescription => 'Miembro de confianza de la comunidad';
+  @override
+  String get trustBadgeVeteranDescription => 'Miembro antiguo de la comunidad';
+  @override
+  String get trustInfoLearnMore => 'Más información sobre los niveles de confianza';
+  @override
+  String get trustBadgeTooltip => 'La insignia de confianza indica la reputación en la comunidad';
+  @override
+  String get trustLowTrustWarningTitle => 'Usuario Nuevo';
+  @override
+  String get trustLowTrustWarningDescription => 'Este usuario es nuevo en la comunidad. Por favor ten precaución al interactuar.';
+  @override
+  String get trustLowTrustWarningProceed => 'Continuar';
+  @override
+  String get trustLowTrustWarningCancel => 'Cancelar';
+  String get rateLimitTitle => 'Límite de publicación alcanzado';
+  @override
+  String get rateLimitPostsExceeded => 'Has publicado demasiadas veces. Espera antes de crear otra publicación.';
+  @override
+  String get rateLimitCommentsExceeded => 'Has enviado demasiados comentarios. Espera antes de comentar nuevamente.';
+  @override
+  String get rateLimitCooldownMessage => 'Para prevenir el spam, existe un periodo de espera entre publicaciones y comentarios.';
+  @override
+  String get rateLimitNearLimitWarning => 'Estás cerca del límite de publicación. Reduce un poco el ritmo.';
+  @override
+  String get rateLimitRemainingPosts => 'Publicaciones restantes';
+  @override
+  String get rateLimitRemainingComments => 'Comentarios restantes';
+  @override
+  String get rateLimitViewGuidelines => 'Ver las Reglas de la Comunidad';
+  @override
+  String get rateLimitGuidelinesLink => 'Conoce más sobre nuestras reglas de la comunidad';
+  @override
+  String get rateLimitOkay => 'Entendido';
+
+  @override
+  String cooldownTimer(int seconds) {
+    if (seconds < 60) {
+      return 'Espera $seconds segundo${seconds == 1 ? '' : 's'}';
+    } else {
+      final minutes = (seconds / 60).floor();
+      final remainingSeconds = seconds % 60;
+      final minuteLabel = 'minuto' + (minutes == 1 ? '' : 's');
+      if (remainingSeconds == 0) {
+        return 'Espera $minutes $minuteLabel';
+      } else {
+        final secondLabel = 'segundo' + (remainingSeconds == 1 ? '' : 's');
+        return 'Espera $minutes $minuteLabel y $remainingSeconds $secondLabel';
+      }
+    }
+  }
+
+  @override
+  String remainingCount(int count, String type) {
+    return 'Quedan $count $type';
+  }
 }
