@@ -83,7 +83,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/feed',
-            builder: (context, state) => const FeedPage(),
+            builder: (context, state) {
+              final openComments = state.uri.queryParameters['openComments'] == 'true';
+              final postId = state.uri.queryParameters['postId'];
+              return FeedPage(
+                openCommentsForPost: openComments && postId != null ? postId : null,
+              );
+            },
             routes: [
               GoRoute(
                 path: 'compose',
