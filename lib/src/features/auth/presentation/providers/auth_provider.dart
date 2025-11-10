@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/auth_form_state.dart';
 import '../../data/models/auth_user.dart';
 import '../../data/services/firebase_auth_service.dart';
+import '../../../../core/analytics/analytics_provider.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/analytics/analytics_constants.dart';
 
 final firebaseAuthServiceProvider = Provider((ref) {
   return FirebaseAuthService();
@@ -18,13 +21,16 @@ final currentAuthUserProvider = FutureProvider<AuthUser?>((ref) async {
 
 final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   final authService = ref.watch(firebaseAuthServiceProvider);
-  return AuthStateNotifier(authService);
+  final analyticsService = ref.watch(analyticsServiceProvider);
+  return AuthStateNotifier(authService, analyticsService);
 });
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
   final FirebaseAuthService _authService;
+  final AnalyticsService _analyticsService;
 
-  AuthStateNotifier(this._authService) : super(AuthState.initial()) {
+  AuthStateNotifier(this._authService, this._analyticsService) 
+      : super(AuthState.initial()) {
     _init();
   }
 
@@ -63,6 +69,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         password: password,
         displayName: displayName,
       );
+      await _analyticsService.logSignUp(AnalyticsAuthMethods.email);
+      await _analyticsService.logSignIn(AnalyticsAuthMethods.email);
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
@@ -88,6 +96,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         email: email,
         password: password,
       );
+      await _analyticsService.logSignIn(AnalyticsAuthMethods.email);
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
@@ -106,6 +115,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final user = await _authService.signInWithGoogle();
+      await _analyticsService.logSignIn(AnalyticsAuthMethods.google);
+      if (_isNewUser(user)) {
+        await _analyticsService.logSignUp(AnalyticsAuthMethods.google);
+      }
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
@@ -158,6 +171,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         verificationId: verificationId,
         otp: otp,
       );
+      await _analyticsService.logSignIn(AnalyticsAuthMethods.phone);
+      if (_isNewUser(user)) {
+        await _analyticsService.logSignUp(AnalyticsAuthMethods.phone);
+      }
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
@@ -177,6 +194,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final user = await _authService.signInAnonymously();
+      await _analyticsService.logSignIn(AnalyticsAuthMethods.anonymous);
+      if (_isNewUser(user)) {
+        await _analyticsService.logSignUp(AnalyticsAuthMethods.anonymous);
+      }
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: true,
@@ -271,6 +292,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   Future<void> signOut() async {
     try {
+      await _analyticsService.logSignOut();
       await _authService.signOut();
       state = AuthState.initial();
     } catch (e) {
@@ -281,5 +303,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   void clearError() {
     state = state.copyWith(error: null);
+  }
+
+  bool _isNewUser(AuthUser user) {
+    final accountAge = DateTime.now().difference(user.createdAt);
+    return accountAge.inMinutes < 5;
   }
 }

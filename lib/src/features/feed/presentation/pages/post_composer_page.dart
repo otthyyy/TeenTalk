@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
+import '../../../core/analytics/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/providers/rate_limit_provider.dart';
 import 'package:teen_talk_app/src/core/providers/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';

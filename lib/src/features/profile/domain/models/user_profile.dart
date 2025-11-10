@@ -18,6 +18,7 @@ class UserProfile {
   final bool onboardingComplete;
   final bool allowAnonymousPosts;
   final bool profileVisible;
+  final bool analyticsEnabled;
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
@@ -40,6 +41,7 @@ class UserProfile {
     this.onboardingComplete = false,
     this.allowAnonymousPosts = true,
     this.profileVisible = true,
+    this.analyticsEnabled = true,
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
@@ -72,6 +74,7 @@ class UserProfile {
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
       allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
       profileVisible: json['profileVisible'] as bool? ?? true,
+      analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
       updatedAt: json['updatedAt'] != null
           ? (json['updatedAt'] as Timestamp).toDate()
           : null,
@@ -103,6 +106,7 @@ class UserProfile {
       'onboardingComplete': onboardingComplete,
       'allowAnonymousPosts': allowAnonymousPosts,
       'profileVisible': profileVisible,
+      'analyticsEnabled': analyticsEnabled,
       'updatedAt': Timestamp.fromDate(DateTime.now()),
       'isAdmin': isAdmin,
       'isModerator': isModerator,
@@ -147,6 +151,7 @@ class UserProfile {
       onboardingComplete: data['onboardingComplete'] as bool? ?? false,
       allowAnonymousPosts: data['allowAnonymousPosts'] as bool? ?? true,
       profileVisible: data['profileVisible'] as bool? ?? true,
+      analyticsEnabled: data['analyticsEnabled'] as bool? ?? true,
       updatedAt: data['updatedAt'] != null
           ? (data['updatedAt'] as Timestamp).toDate()
           : null,
@@ -185,6 +190,7 @@ class UserProfile {
     bool? onboardingComplete,
     bool? allowAnonymousPosts,
     bool? profileVisible,
+    bool? analyticsEnabled,
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
@@ -209,6 +215,7 @@ class UserProfile {
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       allowAnonymousPosts: allowAnonymousPosts ?? this.allowAnonymousPosts,
       profileVisible: profileVisible ?? this.profileVisible,
+      analyticsEnabled: analyticsEnabled ?? this.analyticsEnabled,
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
@@ -237,6 +244,7 @@ class UserProfile {
         other.onboardingComplete == onboardingComplete &&
         other.allowAnonymousPosts == allowAnonymousPosts &&
         other.profileVisible == profileVisible &&
+        other.analyticsEnabled == analyticsEnabled &&
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
         other.isModerator == isModerator;
@@ -261,6 +269,7 @@ class UserProfile {
         onboardingComplete.hashCode ^
         allowAnonymousPosts.hashCode ^
         profileVisible.hashCode ^
+        analyticsEnabled.hashCode ^
         updatedAt.hashCode ^
         isAdmin.hashCode ^
         isModerator.hashCode;
