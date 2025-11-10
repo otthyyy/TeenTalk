@@ -13,6 +13,8 @@ import '../widgets/post_card_widget.dart';
 import '../widgets/skeleton_loader_widget.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/segmented_control.dart';
+import '../widgets/feed_filter_chips.dart';
+import '../../domain/models/feed_sort_option.dart';
 
 enum FeedSection {
   spotted('spotted', 'Spotted'),
@@ -66,8 +68,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
         (previous, next) {
           final sortedPosts = [...next.posts]
             ..sort((a, b) {
+              final engagementComparison =
+                  b.engagementScore.compareTo(a.engagementScore);
+              if (engagementComparison != 0) return engagementComparison;
+
               final likeComparison = b.likeCount.compareTo(a.likeCount);
               if (likeComparison != 0) return likeComparison;
+
               return b.createdAt.compareTo(a.createdAt);
             });
           final spotlightCandidates = sortedPosts.take(5).toList();
@@ -135,6 +142,17 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
         );
   }
 
+  void _onSortOptionSelected(FeedSortOption option) {
+    final notifier =
+        ref.read(schoolAwareFeedProvider(_selectedSection.value).notifier);
+    unawaited(
+      notifier.updateSortOption(
+        option,
+        section: _selectedSection.value,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -191,6 +209,33 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               section: _selectedSection.value,
             );
       },
+      child: CustomScrollView(
+        controller: _scrollController,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 280,
+            pinned: true,
+            stretch: true,
+            automaticallyImplyLeading: false,
+            backgroundColor: theme.colorScheme.surface,
+            flexibleSpace: FlexibleSpaceBar(
+              background: _buildHeroHeader(
+                theme,
+                userProfile,
+                postsState.sortOption,
+              ),
+              collapseMode: CollapseMode.parallax,
+            ),
+            actions: [
+              NotificationBadge(
+                onTap: () {
+                  context.push('/notifications');
+                },
+              ),
+            ],
       child: Semantics(
         container: true,
         explicitChildNodes: true,
@@ -219,6 +264,37 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                 ),
               ],
             ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sort by',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FeedFilterChips(
+                    selectedOption: postsState.sortOption,
+                    onOptionSelected: _onSortOptionSelected,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (postsState.isLoading && postsState.posts.isEmpty)
+            const SliverToBoxAdapter(
+              child: SkeletonLoader(),
+            )
+          else if (postsState.error != null)
+            SliverToBoxAdapter(
+              child: _buildErrorView(postsState.error!, theme),
+            )
+          else if (postsState.posts.isEmpty)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -323,10 +399,32 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     );
   }
 
-  Widget _buildHeroHeader(ThemeData theme, UserProfile? userProfile) {
+  Widget _buildHeroHeader(
+    ThemeData theme,
+    UserProfile? userProfile,
+    FeedSortOption sortOption,
+  ) {
     return AnimatedBuilder(
       animation: _headerAnimationController,
       builder: (context, child) {
+        IconData badgeIcon;
+        String badgeText;
+
+        switch (sortOption) {
+          case FeedSortOption.newest:
+            badgeIcon = Icons.access_time;
+            badgeText = 'Latest';
+            break;
+          case FeedSortOption.mostLiked:
+            badgeIcon = Icons.favorite;
+            badgeText = 'Most Liked';
+            break;
+          case FeedSortOption.trending:
+            badgeIcon = Icons.trending_up;
+            badgeText = 'Trending Now';
+            break;
+        }
+
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -426,13 +524,13 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  Icons.trending_up,
+                                  badgeIcon,
                                   size: 16,
                                   color: theme.colorScheme.primary,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Trending Now',
+                                  badgeText,
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
