@@ -183,7 +183,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return RefreshIndicator(
-
+      onRefresh: () async {
         await ref
             .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
             .loadPosts(
@@ -191,129 +191,134 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               section: _selectedSection.value,
             );
       },
-      child: CustomScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: '${_selectedSection.label} feed posts list',
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 280,
+              pinned: true,
+              stretch: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: theme.colorScheme.surface,
+              flexibleSpace: FlexibleSpaceBar(
+                background: _buildHeroHeader(theme, userProfile),
+                collapseMode: CollapseMode.parallax,
+              ),
+              actions: [
+                NotificationBadge(
+                  onTap: () {
+                    context.push('/notifications');
+                  },
+                ),
+              ],
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SegmentedControl<FeedSection>(
+                  values: FeedSection.values,
+                  selectedValue: _selectedSection,
+                  onChanged: _onSectionChanged,
+                  labelBuilder: (section) => section.label,
+                ),
+              ),
+            ),
+            if (postsState.isLoading && postsState.posts.isEmpty)
+              const SliverToBoxAdapter(
+                child: SkeletonLoader(),
+              )
+            else if (postsState.error != null)
+              SliverToBoxAdapter(
+                child: _buildErrorView(postsState.error!, theme),
+              )
+            else if (postsState.posts.isEmpty)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 400,
+                  child: EmptyStateWidget(section: _selectedSection),
+                ),
+              )
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index == postsState.posts.length) {
+                      return postsState.isLoadingMore
+                          ? const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : const SizedBox.shrink();
+                    }
+
+                    final post = postsState.posts[index];
+                    final isNew =
+                        DateTime.now().difference(post.createdAt).inMinutes < 5;
+
+                    return PostCardWidget(
+                      key: ValueKey(post.id),
+                      post: post,
+                      currentUserId: authState.user?.uid,
+                      isNew: isNew,
+                      onComments: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        setState(() {
+                          _selectedPostId = post.id;
+                          _showComments = true;
+                        });
+                      },
+                      onLike: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        ref
+                            .read(schoolAwareFeedProvider(_selectedSection.value)
+                                .notifier)
+                            .likePost(
+                              post.id,
+                              authState.user!.uid,
+                            );
+                      },
+                      onUnlike: () {
+                        if (authState.user == null) {
+                          _showAuthRequiredDialog();
+                          return;
+                        }
+                        ref
+                            .read(schoolAwareFeedProvider(_selectedSection.value)
+                                .notifier)
+                            .unlikePost(
+                              post.id,
+                              authState.user!.uid,
+                            );
+                      },
+                      onReport: () {
+                        _showReportDialog(post);
+                      },
+                    );
+                  },
+                  childCount:
+                      postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: SizedBox(height: 120 + bottomInset),
+            ),
+          ],
         ),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 280,
-            pinned: true,
-            stretch: true,
-            automaticallyImplyLeading: false,
-            backgroundColor: theme.colorScheme.surface,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeroHeader(theme, userProfile),
-              collapseMode: CollapseMode.parallax,
-            ),
-            actions: [
-              NotificationBadge(
-                onTap: () {
-                  context.push('/notifications');
-                },
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SegmentedControl<FeedSection>(
-                values: FeedSection.values,
-                selectedValue: _selectedSection,
-                onChanged: _onSectionChanged,
-                labelBuilder: (section) => section.label,
-              ),
-            ),
-          ),
-          if (postsState.isLoading && postsState.posts.isEmpty)
-            const SliverToBoxAdapter(
-              child: SkeletonLoader(),
-            )
-          else if (postsState.error != null)
-            SliverToBoxAdapter(
-              child: _buildErrorView(postsState.error!, theme),
-            )
-          else if (postsState.posts.isEmpty)
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 400,
-                child: EmptyStateWidget(section: _selectedSection),
-              ),
-            )
-          else
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index == postsState.posts.length) {
-                    return postsState.isLoadingMore
-                        ? const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : const SizedBox.shrink();
-                  }
-
-                  final post = postsState.posts[index];
-                  final isNew =
-                      DateTime.now().difference(post.createdAt).inMinutes < 5;
-
-                  return PostCardWidget(
-                    key: ValueKey(post.id),
-                    post: post,
-                    currentUserId: authState.user?.uid,
-                    isNew: isNew,
-                    onComments: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      setState(() {
-                        _selectedPostId = post.id;
-                        _showComments = true;
-                      });
-                    },
-                    onLike: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      ref
-                          .read(schoolAwareFeedProvider(_selectedSection.value)
-                              .notifier)
-                          .likePost(
-                            post.id,
-                            authState.user!.uid,
-                          );
-                    },
-                    onUnlike: () {
-                      if (authState.user == null) {
-                        _showAuthRequiredDialog();
-                        return;
-                      }
-                      ref
-                          .read(schoolAwareFeedProvider(_selectedSection.value)
-                              .notifier)
-                          .unlikePost(
-                            post.id,
-                            authState.user!.uid,
-                          );
-                    },
-                    onReport: () {
-                      _showReportDialog(post);
-                    },
-                  );
-                },
-                childCount:
-                    postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
-              ),
-            ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: 120 + bottomInset),
-          ),
-        ],
       ),
     );
   }

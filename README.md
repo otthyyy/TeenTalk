@@ -128,7 +128,24 @@ flutter test --coverage
 
 # Run specific test file
 flutter test test/widget_test.dart
+
+# Run accessibility tests
+flutter test test/a11y/
+
+# Update golden test files
+flutter test --update-goldens test/a11y/
 ```
+
+### Accessibility Testing
+
+The app includes comprehensive accessibility tests to ensure features remain accessible:
+
+- **Semantic Label Tests**: Verify screen reader labels are present
+- **Golden Tests**: Check UI rendering at 1.3x and 2.0x text scales
+- **Overflow Tests**: Ensure no text overflow at increased scales
+- **Color Contrast Tests**: Validate WCAG AA contrast requirements
+
+See [docs/ACCESSIBILITY_TESTING.md](docs/ACCESSIBILITY_TESTING.md) for detailed information.
 
 ## 📱 Features
 
