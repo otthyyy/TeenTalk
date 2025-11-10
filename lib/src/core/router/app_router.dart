@@ -7,6 +7,7 @@ import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_
 import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
+import 'package:teen_talk_app/src/features/offline_sync/presentation/pages/sync_queue_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/crashlytics_test_page.dart';
 import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
@@ -114,15 +115,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const BetaFeedbackFormPage(),
           ),
           GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfilePage(),
-            routes: [
-              GoRoute(
-                path: 'edit',
-                builder: (context, state) => const ProfileEditPage(),
-              ),
-            ],
-          ),
+             path: '/profile',
+             builder: (context, state) => const ProfilePage(),
+             routes: [
+               GoRoute(
+                 path: 'edit',
+                 builder: (context, state) => const ProfileEditPage(),
+               ),
+               GoRoute(
+                 path: 'sync-queue',
+                 builder: (context, state) => const SyncQueuePage(),
+               ),
+             ],
+           ),
           GoRoute(
             path: '/admin',
             builder: (context, state) => const AdminPage(),
