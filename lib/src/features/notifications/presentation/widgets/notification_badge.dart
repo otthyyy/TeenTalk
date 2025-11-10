@@ -13,15 +13,22 @@ class NotificationBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(unreadNotificationCountProvider);
+    final semanticLabel = unreadCount > 0
+        ? 'Notifications, $unreadCount unread'
+        : 'Notifications';
 
-    return IconButton(
-      onPressed: onTap,
-      icon: Badge(
-        isLabelVisible: unreadCount > 0,
-        label: Text(
-          unreadCount > 99 ? '99+' : unreadCount.toString(),
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: IconButton(
+        onPressed: onTap,
+        icon: Badge(
+          isLabelVisible: unreadCount > 0,
+          label: Text(
+            unreadCount > 99 ? '99+' : unreadCount.toString(),
+          ),
+          child: const Icon(Icons.notifications_outlined),
         ),
-        child: const Icon(Icons.notifications_outlined),
       ),
     );
   }
