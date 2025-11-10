@@ -14,6 +14,7 @@ import '../widgets/skeleton_loader_widget.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/segmented_control.dart';
 import '../widgets/feed_filter_chips.dart';
+import '../widgets/offline_banner.dart';
 import '../../domain/models/feed_sort_option.dart';
 
 enum FeedSection {
@@ -263,6 +264,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                   },
                 ),
               ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: OfflineBanner(
+              lastSyncedAt: postsState.lastSyncedAt,
             ),
           ),
           SliverToBoxAdapter(

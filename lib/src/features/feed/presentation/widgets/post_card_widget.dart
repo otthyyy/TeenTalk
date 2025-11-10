@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/services/analytics_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
-import '../../../../common/widgets/trust_badge.dart';
-import '../../../../core/services/analytics_provider.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
@@ -311,24 +313,29 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
       image: true,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          widget.post.imageUrl!,
+        child: CachedNetworkImage(
+          imageUrl: widget.post.imageUrl!,
           fit: BoxFit.cover,
           width: double.infinity,
           height: 200,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 200,
-              color: theme.colorScheme.surfaceVariant,
-              child: Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+          placeholder: (context, url) => Container(
+            height: 200,
+            color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            height: 200,
+            color: theme.colorScheme.surfaceVariant,
+            child: Center(
+              child: Icon(
+                Icons.broken_image_outlined,
+                size: 48,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

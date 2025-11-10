@@ -4,13 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
+import '../../../../core/providers/connectivity_provider.dart';
+import '../../../../core/providers/feed_cache_provider.dart';
+import '../../../../core/services/connectivity_service.dart';
+import '../../../../core/services/feed_cache_service.dart';
 import '../../../auth/data/services/firebase_auth_service.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/data/repositories/posts_repository.dart';
 import '../../../profile/data/repositories/user_repository.dart';
-import '../../domain/models/feed_sort_option.dart';
 import '../../data/services/filter_preferences_service.dart';
+import '../../domain/models/feed_sort_option.dart';
 
 final feedRepositoryProvider = Provider<PostsRepository>((ref) {
   return PostsRepository();
@@ -24,6 +28,8 @@ class FeedState {
   final bool hasMore;
   final DocumentSnapshot? lastDocument;
   final FeedSortOption sortOption;
+  final bool isOffline;
+  final DateTime? lastSyncedAt;
 
   const FeedState({
     this.posts = const [],
@@ -33,6 +39,8 @@ class FeedState {
     this.hasMore = true,
     this.lastDocument,
     this.sortOption = FeedSortOption.newest,
+    this.isOffline = false,
+    this.lastSyncedAt,
   });
 
   FeedState copyWith({
@@ -43,6 +51,8 @@ class FeedState {
     bool? hasMore,
     DocumentSnapshot? lastDocument,
     FeedSortOption? sortOption,
+    bool? isOffline,
+    DateTime? lastSyncedAt,
   }) {
     return FeedState(
       posts: posts ?? this.posts,
@@ -52,14 +62,21 @@ class FeedState {
       hasMore: hasMore ?? this.hasMore,
       lastDocument: lastDocument ?? this.lastDocument,
       sortOption: sortOption ?? this.sortOption,
+      isOffline: isOffline ?? this.isOffline,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );
   }
 }
 
 class FeedNotifier extends StateNotifier<FeedState> {
   final PostsRepository _repository;
+  final FeedCacheService _cacheService;
+  final ConnectivityService _connectivityService;
   final Logger _logger = Logger();
+
   StreamSubscription? _postsSubscription;
+  StreamSubscription<bool>? _connectivitySubscription;
+
   String? _currentSection;
   String? _currentSchool;
   FeedSortOption _currentSortOption = FeedSortOption.newest;
@@ -68,11 +85,31 @@ class FeedNotifier extends StateNotifier<FeedState> {
   String? get currentSchool => _currentSchool;
   FeedSortOption get currentSortOption => _currentSortOption;
 
-  FeedNotifier(this._repository) : super(const FeedState());
+  FeedNotifier(
+    this._repository,
+    this._cacheService,
+    this._connectivityService,
+  ) : super(const FeedState()) {
+    _connectivitySubscription = _connectivityService.connectivityStream.listen((isConnected) {
+      state = state.copyWith(isOffline: !isConnected);
+
+      if (isConnected && state.posts.isEmpty) {
+        unawaited(
+          loadPosts(
+            refresh: true,
+            section: _currentSection,
+            school: _currentSchool,
+            sortOption: _currentSortOption,
+          ),
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {
     _postsSubscription?.cancel();
+    _connectivitySubscription?.cancel();
     super.dispose();
   }
 
@@ -88,6 +125,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
       state = FeedState(
         isLoading: true,
         sortOption: effectiveSortOption,
+        isOffline: !_connectivityService.isConnected,
       );
     } else if (state.isLoading || state.isLoadingMore) {
       return;
@@ -104,8 +142,37 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
       _currentSortOption = effectiveSortOption;
 
-      final resolvedSection = _currentSection;
+      final resolvedSection = _currentSection ?? 'spotted';
       final resolvedSchool = _currentSchool;
+
+      if (!_connectivityService.isConnected) {
+        final cacheEntry = await _cacheService.getCachedPosts(
+          sortOption: effectiveSortOption,
+          section: resolvedSection,
+          school: resolvedSchool,
+        );
+
+        if (cacheEntry != null && cacheEntry.posts.isNotEmpty) {
+          _logger.i('Loaded ${cacheEntry.posts.length} posts from cache (offline mode)');
+          state = state.copyWith(
+            posts: cacheEntry.posts,
+            isLoading: false,
+            hasMore: false,
+            sortOption: effectiveSortOption,
+            isOffline: true,
+            lastSyncedAt: cacheEntry.lastSyncedAt,
+          );
+        } else {
+          state = state.copyWith(
+            posts: [],
+            isLoading: false,
+            hasMore: false,
+            isOffline: true,
+            error: 'No cached posts available offline',
+          );
+        }
+        return;
+      }
 
       final (posts, lastDoc) = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
@@ -123,6 +190,13 @@ class FeedNotifier extends StateNotifier<FeedState> {
         return;
       }
 
+      await _cacheService.cachePosts(
+        posts,
+        sortOption: effectiveSortOption,
+        section: resolvedSection,
+        school: resolvedSchool,
+      );
+
       final allPosts = refresh ? posts : [...state.posts, ...posts];
 
       state = state.copyWith(
@@ -131,11 +205,36 @@ class FeedNotifier extends StateNotifier<FeedState> {
         lastDocument: lastDoc,
         hasMore: posts.length == 20,
         sortOption: effectiveSortOption,
+        isOffline: false,
+        lastSyncedAt: DateTime.now(),
       );
 
-      // Set up real-time updates
       _setupRealtimeUpdates(resolvedSection, resolvedSchool);
     } catch (e) {
+      _logger.e('Error loading posts', error: e);
+
+      if (!_connectivityService.isConnected) {
+        final resolvedSection = _currentSection ?? 'spotted';
+        final cacheEntry = await _cacheService.getCachedPosts(
+          sortOption: effectiveSortOption,
+          section: resolvedSection,
+          school: _currentSchool,
+        );
+
+        if (cacheEntry != null && cacheEntry.posts.isNotEmpty) {
+          _logger.i('Fallback to cache after error');
+          state = state.copyWith(
+            posts: cacheEntry.posts,
+            isLoading: false,
+            hasMore: false,
+            isOffline: true,
+            lastSyncedAt: cacheEntry.lastSyncedAt,
+            error: null,
+          );
+          return;
+        }
+      }
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -150,6 +249,11 @@ class FeedNotifier extends StateNotifier<FeedState> {
   }) async {
     if (!state.hasMore || state.isLoadingMore || state.isLoading) return;
 
+    if (!_connectivityService.isConnected) {
+      state = state.copyWith(isOffline: true);
+      return;
+    }
+
     state = state.copyWith(isLoadingMore: true);
 
     if (section != null) {
@@ -162,7 +266,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
       _currentSortOption = sortOption;
     }
 
-    final resolvedSection = _currentSection;
+    final resolvedSection = _currentSection ?? 'spotted';
     final resolvedSchool = _currentSchool;
     final resolvedSort = _currentSortOption;
 
@@ -183,6 +287,13 @@ class FeedNotifier extends StateNotifier<FeedState> {
         return;
       }
 
+      await _cacheService.cachePosts(
+        [...state.posts, ...posts],
+        sortOption: resolvedSort,
+        section: resolvedSection,
+        school: resolvedSchool,
+      );
+
       final allPosts = [...state.posts, ...posts];
 
       state = state.copyWith(
@@ -191,6 +302,7 @@ class FeedNotifier extends StateNotifier<FeedState> {
         lastDocument: lastDoc,
         hasMore: posts.length == 20,
         sortOption: resolvedSort,
+        lastSyncedAt: DateTime.now(),
       );
     } catch (e) {
       state = state.copyWith(
@@ -327,7 +439,14 @@ class FeedNotifier extends StateNotifier<FeedState> {
 final feedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, String>(
   (ref, section) {
     final repository = ref.watch(feedRepositoryProvider);
-    return FeedNotifier(repository);
+    final cacheService = ref.watch(feedCacheServiceProvider);
+    final connectivityService = ref.watch(connectivityServiceProvider);
+
+    return FeedNotifier(
+      repository,
+      cacheService,
+      connectivityService,
+    );
   },
 );
 
@@ -337,9 +456,16 @@ final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedS
     final repository = ref.watch(feedRepositoryProvider);
     final userRepository = ref.watch(userRepositoryProvider);
     final authService = ref.watch(firebaseAuthServiceProvider);
+    final cacheService = ref.watch(feedCacheServiceProvider);
+    final connectivityService = ref.watch(connectivityServiceProvider);
     
-    // Create a custom notifier that handles school filtering
-    return SchoolAwareFeedNotifier(repository, userRepository, authService);
+    return SchoolAwareFeedNotifier(
+      repository,
+      cacheService,
+      connectivityService,
+      userRepository,
+      authService,
+    );
   },
 );
 
@@ -349,10 +475,16 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
   final FilterPreferencesService _preferencesService = FilterPreferencesService();
   
   SchoolAwareFeedNotifier(
-    PostsRepository repository, 
-    this._userRepository, 
+    PostsRepository repository,
+    FeedCacheService cacheService,
+    ConnectivityService connectivityService,
+    this._userRepository,
     this._authService,
-  ) : super(repository);
+  ) : super(
+          repository,
+          cacheService,
+          connectivityService,
+        );
 
   @override
   Future<void> loadPosts({
