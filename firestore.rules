@@ -294,27 +294,38 @@ service cloud.firestore {
     match /moderationQueue/{contentId} {
       // Moderators can read all items in queue
       allow read: if isModerator();
-      
+
       // System can create moderation items (via Cloud Functions or client when creating reports)
       allow create: if isAuthenticated();
-      
+
       // Moderators can update moderation status
       allow update: if isModerator();
-      
+
       // Only admins can delete from moderation queue
       allow delete: if isAdmin();
-      
+
       // Audit Logs subcollection - restricted to admins and moderators only
       match /auditLogs/{logId} {
         // Only moderators can read audit logs
         allow read: if isModerator();
-        
+
         // System can create audit logs (via Cloud Functions)
         allow create: if isAuthenticated();
-        
+
         // No updates or deletes allowed for audit logs (immutable)
         allow update, delete: if false;
       }
+    }
+
+    // Beta feedback collection rules
+    match /betaFeedback/{feedbackId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isModerator());
+      allow create: if isAuthenticated() &&
+        request.auth.uid == request.resource.data.userId &&
+        request.resource.data.createdAt is timestamp;
+      allow update: if isModerator();
+      allow delete: if isAdmin();
     }
 
     // Reports collection rules (admin only)

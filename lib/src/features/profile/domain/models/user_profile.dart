@@ -26,6 +26,9 @@ class UserProfile {
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
+  final bool isBetaTester;
+  final bool? betaConsentGiven;
+  final DateTime? betaConsentTimestamp;
   final bool crashReportingEnabled;
 
   const UserProfile({
@@ -53,6 +56,9 @@ class UserProfile {
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
+    this.isBetaTester = false,
+    this.betaConsentGiven,
+    this.betaConsentTimestamp,
     this.crashReportingEnabled = true,
   });
 
@@ -94,6 +100,11 @@ class UserProfile {
           : null,
       isAdmin: json['isAdmin'] as bool? ?? false,
       isModerator: json['isModerator'] as bool? ?? false,
+      isBetaTester: json['isBetaTester'] as bool? ?? false,
+      betaConsentGiven: json['betaConsentGiven'] as bool?,
+      betaConsentTimestamp: json['betaConsentTimestamp'] != null
+          ? (json['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
       crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
     );
   }
@@ -128,6 +139,11 @@ class UserProfile {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
       'isAdmin': isAdmin,
       'isModerator': isModerator,
+      'isBetaTester': isBetaTester,
+      'betaConsentGiven': betaConsentGiven,
+      'betaConsentTimestamp': betaConsentTimestamp != null
+          ? Timestamp.fromDate(betaConsentTimestamp!)
+          : null,
       'crashReportingEnabled': crashReportingEnabled,
     };
   }
@@ -181,6 +197,11 @@ class UserProfile {
           : null,
       isAdmin: data['isAdmin'] as bool? ?? false,
       isModerator: data['isModerator'] as bool? ?? false,
+      isBetaTester: data['isBetaTester'] as bool? ?? false,
+      betaConsentGiven: data['betaConsentGiven'] as bool?,
+      betaConsentTimestamp: data['betaConsentTimestamp'] != null
+          ? (data['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
       crashReportingEnabled: data['crashReportingEnabled'] as bool? ?? true,
     );
   }
@@ -222,6 +243,9 @@ class UserProfile {
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
+    bool? isBetaTester,
+    bool? betaConsentGiven,
+    DateTime? betaConsentTimestamp,
     bool? crashReportingEnabled,
   }) {
     return UserProfile(
@@ -251,6 +275,9 @@ class UserProfile {
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
+      isBetaTester: isBetaTester ?? this.isBetaTester,
+      betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
+      betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
       crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
     );
   }
@@ -284,6 +311,9 @@ class UserProfile {
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
         other.isModerator == isModerator &&
+        other.isBetaTester == isBetaTester &&
+        other.betaConsentGiven == betaConsentGiven &&
+        other.betaConsentTimestamp == betaConsentTimestamp;
         other.crashReportingEnabled == crashReportingEnabled;
   }
 
@@ -313,6 +343,9 @@ class UserProfile {
         updatedAt.hashCode ^
         isAdmin.hashCode ^
         isModerator.hashCode ^
+        isBetaTester.hashCode ^
+        betaConsentGiven.hashCode ^
+        betaConsentTimestamp.hashCode;
         crashReportingEnabled.hashCode;
   }
 }
