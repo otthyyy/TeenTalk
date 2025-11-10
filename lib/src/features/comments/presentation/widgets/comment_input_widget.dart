@@ -1,7 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/brescia_schools.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/providers/analytics_provider.dart';
+import '../../../../core/providers/rate_limit_provider.dart';
+import '../../../../core/services/rate_limit_service.dart';
+import '../../../../core/widgets/rate_limit_dialog.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
@@ -32,6 +39,7 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
   bool _isAnonymous = false;
   bool _isSubmitting = false;
   bool _hasInitializedPreferences = false;
+  bool _hasWarnedNearLimit = false;
 
   @override
   void initState() {
@@ -75,21 +83,51 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
     final profileAsync = ref.watch(userProfileProvider);
     final selectedSchool = ref.watch(selectedCommentSchoolProvider);
+    final rateLimitStatus = ref.watch(commentRateLimitStatusProvider);
 
     return profileAsync.when(
       data: (profile) {
         _initializePreferences(profile);
 
         final isAuthenticated = authState.user != null && profile != null;
-        final canSubmit = isAuthenticated &&
-            !_isSubmitting &&
-            _textController.text.trim().isNotEmpty &&
-            (selectedSchool != null && selectedSchool.isNotEmpty);
+        
+        return rateLimitStatus.when(
+          data: (status) {
+            if (status.isNearLimit && !_hasWarnedNearLimit && isAuthenticated) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  ref.read(analyticsServiceProvider).logRateLimitWarning(
+                    contentType: 'comment',
+                    remainingSubmissions: math.min(
+                      status.remainingPerMinute,
+                      status.remainingPerHour,
+                    ),
+                  );
+                  setState(() => _hasWarnedNearLimit = true);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n?.rateLimitNearLimitWarning ?? 'Approaching comment limit',
+                      ),
+                      backgroundColor: theme.colorScheme.tertiary,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              });
+            }
 
-        return Container(
+            final canSubmit = isAuthenticated &&
+                !_isSubmitting &&
+                status.canSubmit &&
+                _textController.text.trim().isNotEmpty &&
+                (selectedSchool != null && selectedSchool.isNotEmpty);
+
+            return Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
@@ -141,6 +179,10 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                     ],
                   ),
                 ),
+              if (!status.canSubmit)
+                _buildCommentCooldownBanner(status, theme, l10n)
+              else if (status.isNearLimit)
+                _buildCommentWarningBanner(theme, l10n),
               Row(
                 children: [
                   Expanded(
@@ -280,6 +322,10 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
             ],
           ),
         );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => const Center(child: Text('Loading...')),
+        );
       },
       loading: () => const Padding(
         padding: EdgeInsets.all(24.0),
@@ -299,13 +345,88 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
     );
   }
 
+  Widget _buildCommentCooldownBanner(RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.timer_off, size: 18, color: theme.colorScheme.onErrorContainer),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              status.cooldownDuration != null
+                  ? l10n?.cooldownTimer(status.cooldownDuration!.inSeconds) ?? 'Wait...'
+                  : l10n?.rateLimitCommentsExceeded ?? 'Too many comments',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommentWarningBanner(ThemeData theme, AppLocalizations? l10n) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 18, color: theme.colorScheme.onTertiaryContainer),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              l10n?.rateLimitNearLimitWarning ?? 'Nearing limit',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onTertiaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _submitComment() async {
     final content = _textController.text.trim();
     final school = ref.read(selectedCommentSchoolProvider);
     final authState = ref.read(authStateProvider);
     final userProfile = ref.read(userProfileProvider).value;
+    final rateLimitService = ref.read(rateLimitServiceProvider);
+    final analyticsService = ref.read(analyticsServiceProvider);
 
     if (content.isEmpty || school == null || school.isEmpty || authState.user == null || userProfile == null) {
+      return;
+    }
+
+    final rateLimitStatus = rateLimitService.checkLimit(ContentType.comment);
+    if (!rateLimitStatus.canSubmit) {
+      await analyticsService.logRateLimitHit(
+        contentType: 'comment',
+        limitType: rateLimitStatus.reason ?? 'unknown',
+        submissionCount: rateLimitService.getSubmissionCount(
+          ContentType.comment,
+          const Duration(hours: 1),
+        ),
+      );
+      
+      if (mounted) {
+        RateLimitDialog.show(
+          context,
+          contentType: 'comment',
+          cooldownDuration: rateLimitStatus.cooldownDuration,
+        );
+      }
       return;
     }
 
@@ -324,6 +445,13 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
         replyToCommentId: widget.replyToCommentId,
       );
 
+      rateLimitService.recordSubmission(ContentType.comment);
+      
+      await analyticsService.logContentSubmission(
+        contentType: 'comment',
+        isAnonymous: _isAnonymous,
+      );
+
       if (!mounted) return;
 
       _textController.clear();
@@ -339,12 +467,33 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
       );
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to post comment: $error'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      
+      final errorMessage = error.toString().toLowerCase();
+      
+      if (errorMessage.contains('rate') || 
+          errorMessage.contains('limit') ||
+          errorMessage.contains('too many')) {
+        await analyticsService.logRateLimitHit(
+          contentType: 'comment',
+          limitType: 'backend',
+          submissionCount: rateLimitService.getSubmissionCount(
+            ContentType.comment,
+            const Duration(hours: 1),
+          ),
+        );
+        
+        RateLimitDialog.show(
+          context,
+          contentType: 'comment',
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to post comment: $error'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {

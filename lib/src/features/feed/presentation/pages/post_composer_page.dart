@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -9,6 +10,11 @@ import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repo
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import '../../../core/analytics/analytics_provider.dart';
+import 'package:teen_talk_app/src/core/providers/rate_limit_provider.dart';
+import 'package:teen_talk_app/src/core/providers/analytics_provider.dart';
+import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';
+import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
+import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 
 class PostComposerPage extends ConsumerStatefulWidget {
   const PostComposerPage({super.key});
@@ -27,6 +33,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   String? _selectedImageName;
   bool _isUploading = false;
   String _selectedSection = 'spotted';
+  bool _hasWarnedNearLimit = false;
   
   final List<Map<String, String>> _sections = [
     {'value': 'spotted', 'label': 'Spotted'},
@@ -155,6 +162,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
 
     final authState = ref.read(authStateProvider);
     final userProfile = ref.read(userProfileProvider).value;
+    final rateLimitService = ref.read(rateLimitServiceProvider);
+    final analyticsService = ref.read(analyticsServiceProvider);
     
     if (authState.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -167,6 +176,28 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete your profile first')),
       );
+      return;
+    }
+
+    final rateLimitStatus = rateLimitService.checkLimit(ContentType.post);
+    if (!rateLimitStatus.canSubmit) {
+      await analyticsService.logRateLimitHit(
+        contentType: 'post',
+        limitType: rateLimitStatus.reason ?? 'unknown',
+        submissionCount: rateLimitService.getSubmissionCount(
+          ContentType.post,
+          const Duration(hours: 1),
+        ),
+      );
+      
+      if (mounted) {
+        RateLimitDialog.show(
+          context,
+          contentType: 'post',
+          cooldownDuration: rateLimitStatus.cooldownDuration,
+          onViewGuidelines: _showPostingGuidelines,
+        );
+      }
       return;
     }
 
@@ -195,6 +226,13 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         school: userProfile.school,
       );
 
+      rateLimitService.recordSubmission(ContentType.post);
+      
+      await analyticsService.logContentSubmission(
+        contentType: 'post',
+        isAnonymous: _isAnonymous,
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -210,13 +248,33 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
       if (mounted) {
         final errorMessage = e.toString().replaceFirst('Exception: ', '');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create post: $errorMessage'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 4),
-          ),
-        );
+        
+        if (errorMessage.toLowerCase().contains('rate') || 
+            errorMessage.toLowerCase().contains('limit') ||
+            errorMessage.toLowerCase().contains('too many')) {
+          await analyticsService.logRateLimitHit(
+            contentType: 'post',
+            limitType: 'backend',
+            submissionCount: rateLimitService.getSubmissionCount(
+              ContentType.post,
+              const Duration(hours: 1),
+            ),
+          );
+          
+          RateLimitDialog.show(
+            context,
+            contentType: 'post',
+            onViewGuidelines: _showPostingGuidelines,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to create post: $errorMessage'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {
@@ -264,6 +322,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final rateLimitStatus = ref.watch(postRateLimitStatusProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -275,12 +335,46 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            // Section selection
-            Container(
+      body: rateLimitStatus.when(
+        data: (status) {
+          if (status.isNearLimit && !_hasWarnedNearLimit) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                ref.read(analyticsServiceProvider).logRateLimitWarning(
+                  contentType: 'post',
+                  remainingSubmissions: math.min(
+                    status.remainingPerMinute,
+                    status.remainingPerHour,
+                  ),
+                );
+                setState(() => _hasWarnedNearLimit = true);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n?.rateLimitNearLimitWarning ?? 
+                        'Approaching posting limit'),
+                    backgroundColor: theme.colorScheme.tertiary,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            });
+          }
+
+          final config = ref.read(rateLimitServiceProvider).getConfig(ContentType.post);
+
+          return Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                if (!status.canSubmit) _buildCooldownBanner(status, theme, l10n),
+                if (status.canSubmit && status.isNearLimit) 
+                  _buildWarningBanner(status, theme, l10n),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: _buildRateLimitProgress(status, config, theme, l10n),
+                ),
+                // Section selection
+                Container(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,7 +536,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
               padding: const EdgeInsets.all(16),
               width: double.infinity,
               child: FilledButton(
-                onPressed: _isUploading ? null : _submitPost,
+                onPressed: _isUploading || !status.canSubmit ? null : _submitPost,
                 child: _isUploading
                     ? const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -456,7 +550,14 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                           Text('Posting...'),
                         ],
                       )
-                    : const Text('Post'),
+                    : Text(
+                        status.canSubmit
+                            ? 'Post'
+                            : l10n?.cooldownTimer(
+                                  status.cooldownDuration?.inSeconds ?? 0,
+                                ) ??
+                                'Cooldown active',
+                      ),
               ),
             ),
           ],
@@ -464,4 +565,118 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ),
     );
   }
-}
+}        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) {
+          _logger.w('Failed to load rate limit status: $error');
+          return const Center(child: Text('Loading...'));
+        },
+      ),
+    );
+  }
+
+  Widget _buildCooldownBanner(RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.block, color: theme.colorScheme.onErrorContainer),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  l10n?.rateLimitPostsExceeded ?? 'Posting limit reached',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onErrorContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (status.cooldownDuration != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              l10n?.cooldownTimer(status.cooldownDuration!.inSeconds) ??
+                  'Please wait...',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWarningBanner(RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: theme.colorScheme.onTertiaryContainer),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              l10n?.rateLimitNearLimitWarning ?? 'Approaching posting limit',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onTertiaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRateLimitProgress(
+    RateLimitStatus status,
+    RateLimitConfig config,
+    ThemeData theme,
+    AppLocalizations? l10n,
+  ) {
+    final minuteProgress = status.remainingPerMinute / config.maxPerMinute;
+    final hourProgress = status.remainingPerHour / config.maxPerHour;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                '${status.remainingPerMinute}/${config.maxPerMinute} per minute',
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${status.remainingPerHour}/${config.maxPerHour} per hour',
+                style: theme.textTheme.bodySmall,
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LinearProgressIndicator(
+          value: math.min(minuteProgress, hourProgress).clamp(0, 1),
+          backgroundColor: theme.colorScheme.surfaceVariant,
+          color: status.isNearLimit ? theme.colorScheme.tertiary : theme.colorScheme.primary,
+        ),
+      ],
+    );
+  }
