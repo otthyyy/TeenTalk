@@ -312,4 +312,23 @@ class AppLocalizationsIT extends AppLocalizations {
   String remainingCount(int count, String type) {
     return 'Ancora $count $type';
   }
+
+  @override
+  String get legalPrivacyPolicyTitle => 'Informativa sulla Privacy';
+  @override
+  String get legalTermsOfServiceTitle => 'Termini di Servizio';
+  @override
+  String get legalUnavailableTitle => 'Documento non trovato';
+  @override
+  String get legalUnavailableMessage => 'Il documento legale richiesto non è disponibile.';
+  @override
+  String get legalLoadError => 'Impossibile caricare il documento.';
+  @override
+  String get legalReload => 'Ricarica';
+  @override
+  String get legalLinkOpenError => 'Impossibile aprire il link.';
+  @override
+  String get legalViewPrivacy => 'Apri Informativa sulla Privacy';
+  @override
+  String get legalViewTerms => 'Apri Termini di Servizio';
 }
