@@ -64,6 +64,10 @@ dependencies:
   # UI
   provider: ^6.1.0
   
+  # Tutorial
+  tutorial_coach_mark: ^1.2.11
+  shared_preferences: ^2.2.2
+  
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
   

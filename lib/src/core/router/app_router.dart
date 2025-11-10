@@ -15,6 +15,7 @@ import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboard
 import 'package:teen_talk_app/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
+import 'package:teen_talk_app/src/features/tutorial/presentation/providers/tutorial_provider.dart';
 import 'package:teen_talk_app/src/core/theme/decorations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -147,6 +148,7 @@ class MainNavigationShell extends ConsumerWidget {
     final isAdmin = userProfile.value?.isAdmin ?? false;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final tutorialAnchors = ref.watch(tutorialAnchorsProvider);
 
     return Container(
       decoration: AppDecorations.surfaceGradientBackground(isDark: isDark),
@@ -176,14 +178,20 @@ class MainNavigationShell extends ConsumerWidget {
                     activeIcon: Icon(Icons.home_rounded),
                     label: 'Feed',
                   ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.message_outlined),
-                    activeIcon: Icon(Icons.message_rounded),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.message_outlined,
+                      key: tutorialAnchors.messagesNavKey,
+                    ),
+                    activeIcon: const Icon(Icons.message_rounded),
                     label: 'Messages',
                   ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline),
-                    activeIcon: Icon(Icons.person_rounded),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person_outline,
+                      key: tutorialAnchors.profileNavKey,
+                    ),
+                    activeIcon: const Icon(Icons.person_rounded),
                     label: 'Profile',
                   ),
                   if (isAdmin)
