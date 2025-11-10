@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class UserProfile {
   final String uid;
@@ -6,6 +7,9 @@ class UserProfile {
   final bool nicknameVerified;
   final String? gender;
   final String? school;
+  final int? schoolYear;
+  final List<String> interests;
+  final double trustLevel;
   final int anonymousPostsCount;
   final DateTime createdAt;
   final DateTime? lastNicknameChangeAt;
@@ -28,6 +32,9 @@ class UserProfile {
     required this.nicknameVerified,
     this.gender,
     this.school,
+    this.schoolYear,
+    this.interests = const [],
+    this.trustLevel = 0.0,
     this.anonymousPostsCount = 0,
     required this.createdAt,
     this.lastNicknameChangeAt,
@@ -52,6 +59,11 @@ class UserProfile {
       nicknameVerified: json['nicknameVerified'] as bool? ?? false,
       gender: json['gender'] as String?,
       school: json['school'] as String?,
+      schoolYear: json['schoolYear'] as int?,
+      interests: json['interests'] != null
+          ? List<String>.from(json['interests'] as List)
+          : [],
+      trustLevel: (json['trustLevel'] as num?)?.toDouble() ?? 0.0,
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
@@ -87,6 +99,9 @@ class UserProfile {
       'nicknameVerified': nicknameVerified,
       'gender': gender,
       'school': school,
+      'schoolYear': schoolYear,
+      'interests': interests,
+      'trustLevel': trustLevel,
       'anonymousPostsCount': anonymousPostsCount,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastNicknameChangeAt': lastNicknameChangeAt != null
@@ -127,6 +142,11 @@ class UserProfile {
       nicknameVerified: data['nicknameVerified'] as bool? ?? false,
       gender: data['gender'] as String?,
       school: data['school'] as String?,
+      schoolYear: data['schoolYear'] as int?,
+      interests: data['interests'] != null
+          ? List<String>.from(data['interests'] as List)
+          : [],
+      trustLevel: (data['trustLevel'] as num?)?.toDouble() ?? 0.0,
       anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
@@ -173,6 +193,9 @@ class UserProfile {
     bool? nicknameVerified,
     String? gender,
     String? school,
+    int? schoolYear,
+    List<String>? interests,
+    double? trustLevel,
     int? anonymousPostsCount,
     DateTime? createdAt,
     DateTime? lastNicknameChangeAt,
@@ -195,6 +218,9 @@ class UserProfile {
       nicknameVerified: nicknameVerified ?? this.nicknameVerified,
       gender: gender ?? this.gender,
       school: school ?? this.school,
+      schoolYear: schoolYear ?? this.schoolYear,
+      interests: interests ?? this.interests,
+      trustLevel: trustLevel ?? this.trustLevel,
       anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
       createdAt: createdAt ?? this.createdAt,
       lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
@@ -225,6 +251,9 @@ class UserProfile {
         other.nicknameVerified == nicknameVerified &&
         other.gender == gender &&
         other.school == school &&
+        other.schoolYear == schoolYear &&
+        listEquals(other.interests, interests) &&
+        other.trustLevel == trustLevel &&
         other.anonymousPostsCount == anonymousPostsCount &&
         other.createdAt == createdAt &&
         other.lastNicknameChangeAt == lastNicknameChangeAt &&
@@ -249,6 +278,9 @@ class UserProfile {
         nicknameVerified.hashCode ^
         gender.hashCode ^
         school.hashCode ^
+        schoolYear.hashCode ^
+        Object.hashAll(interests) ^
+        trustLevel.hashCode ^
         anonymousPostsCount.hashCode ^
         createdAt.hashCode ^
         lastNicknameChangeAt.hashCode ^
