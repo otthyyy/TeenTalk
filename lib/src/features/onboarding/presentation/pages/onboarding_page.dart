@@ -7,6 +7,7 @@ import '../widgets/privacy_preferences_step.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/data/repositories/user_repository.dart';
 import '../../../auth/data/auth_service.dart';
+import '../../../../core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -29,7 +30,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   bool _privacyConsentGiven = false;
   bool _allowAnonymousPosts = true;
   bool _profileVisible = true;
+  bool _analyticsEnabled = true;
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(analyticsServiceProvider).logOnboardingStarted();
+    });
+  }
 
   @override
   void dispose() {
@@ -39,6 +49,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   void _nextStep() {
     if (_currentStep < 3) {
+      final stepNames = ['nickname', 'personal_info', 'consent', 'privacy'];
+      ref.read(analyticsServiceProvider).logOnboardingStepCompleted(
+        stepNumber: _currentStep + 1,
+        stepName: stepNames[_currentStep],
+      );
       setState(() => _currentStep++);
       _pageController.animateToPage(
         _currentStep,
@@ -101,9 +116,24 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         onboardingComplete: true,
         allowAnonymousPosts: _allowAnonymousPosts,
         profileVisible: _profileVisible,
+        analyticsEnabled: _analyticsEnabled,
       );
 
       await ref.read(userRepositoryProvider).createUserProfile(profile);
+      final analyticsService = ref.read(analyticsServiceProvider);
+      await analyticsService.setUserProperties(
+        school: _school,
+        isMinor: _isMinor ?? false,
+        hasParentalConsent: _parentalConsentGiven,
+      );
+      await analyticsService.logOnboardingCompleted(
+        school: _school ?? 'unknown',
+        isMinor: _isMinor ?? false,
+      );
+
+      if (!_analyticsEnabled) {
+        await analyticsService.setEnabled(false);
+      }
 
       if (mounted) {
         context.go('/feed');
@@ -172,10 +202,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 PrivacyPreferencesStep(
                   allowAnonymousPosts: _allowAnonymousPosts,
                   profileVisible: _profileVisible,
+                  analyticsEnabled: _analyticsEnabled,
                   onAllowAnonymousPostsChanged: (value) =>
                       setState(() => _allowAnonymousPosts = value),
                   onProfileVisibleChanged: (value) =>
                       setState(() => _profileVisible = value),
+                  onAnalyticsEnabledChanged: (value) =>
+                      setState(() => _analyticsEnabled = value),
                   onComplete: _completeOnboarding,
                   onBack: _previousStep,
                   isSubmitting: _isSubmitting,

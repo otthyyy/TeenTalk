@@ -65,9 +65,8 @@ export const validateNicknameUniqueness = functions.https.onCall(
  */
 export const onUserCreated = functions.firestore
   .document("users/{userId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap) => {
     const userData = snap.data();
-    const userId = context.params.userId;
 
     try {
       const nicknameLowercase = userData.nicknameLowercase;
