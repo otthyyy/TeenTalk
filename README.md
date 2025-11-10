@@ -206,6 +206,18 @@ flutter pub upgrade
 flutter pub outdated
 ```
 
+## 📊 Crash Reporting
+
+Firebase Crashlytics is integrated to provide real-time crash reporting and stability monitoring.
+
+See [docs/CRASHLYTICS_INTEGRATION.md](docs/CRASHLYTICS_INTEGRATION.md) for:
+- Monitoring crashes in Firebase console
+- Testing crash reporting
+- Symbol upload configuration for Android/iOS
+- Privacy and opt-out information
+
+Privacy statement: [docs/PRIVACY_STATEMENT_CRASHLYTICS.md](docs/PRIVACY_STATEMENT_CRASHLYTICS.md)
+
 ## 🐛 Bug Fixes
 
 See [docs/BUG_FIXES.md](docs/BUG_FIXES.md) for detailed information about critical bug fixes including:

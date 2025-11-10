@@ -23,6 +23,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   String? _school;
   bool _allowAnonymousPosts = true;
   bool _profileVisible = true;
+  bool _crashReportingEnabled = true;
   bool _isSubmitting = false;
   bool _isCheckingNickname = false;
   bool? _isNicknameAvailable;
@@ -55,6 +56,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           _school = profile.school;
           _allowAnonymousPosts = profile.allowAnonymousPosts;
           _profileVisible = profile.profileVisible;
+          _crashReportingEnabled = profile.crashReportingEnabled;
         });
 
         final canChange =
@@ -166,6 +168,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         'school': _school,
         'allowAnonymousPosts': _allowAnonymousPosts,
         'profileVisible': _profileVisible,
+        'crashReportingEnabled': _crashReportingEnabled,
       };
 
       final newNickname = _nicknameController.text.trim();
@@ -531,6 +534,41 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                 child: Icon(
                                   Icons.person,
                                   color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: SwitchListTile(
+                              value: _crashReportingEnabled,
+                              onChanged: (value) {
+                                setState(() => _crashReportingEnabled = value);
+                              },
+                              title: const Text(
+                                'Crash Reporting',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: const Text(
+                                'Help improve the app by sending crash reports',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              secondary: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.bug_report,
+                                  color: Colors.orange,
                                 ),
                               ),
                               shape: RoundedRectangleBorder(

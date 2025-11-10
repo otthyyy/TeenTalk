@@ -8,6 +8,7 @@ import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_scre
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
+import 'package:teen_talk_app/src/features/admin/presentation/pages/crashlytics_test_page.dart';
 import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.dart';
@@ -124,6 +125,10 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'moderation',
                 builder: (context, state) => const ModerationQueuePage(),
+              ),
+              GoRoute(
+                path: 'crashlytics-test',
+                builder: (context, state) => const CrashlyticsTestPage(),
               ),
             ],
           ),

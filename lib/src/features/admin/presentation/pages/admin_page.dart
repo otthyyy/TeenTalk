@@ -21,6 +21,13 @@ class _AdminPageState extends ConsumerState<AdminPage> {
       appBar: AppBar(
         title: const Text('Admin Panel'),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bug_report_outlined),
+            tooltip: 'Crashlytics Test',
+            onPressed: () => context.push('/admin/crashlytics-test'),
+          ),
+        ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
