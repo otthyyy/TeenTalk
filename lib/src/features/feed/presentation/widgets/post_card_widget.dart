@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
@@ -123,7 +124,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(theme),
+                    _buildHeader(context, theme),
                     const SizedBox(height: 12),
                     _buildContent(theme),
                     if (widget.post.imageUrl != null) ...[
@@ -142,15 +143,19 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget _buildHeader(BuildContext context, ThemeData theme) {
     final accentColor = _getUserAccentColor(theme);
+    final isAnonymous = widget.post.isAnonymous;
 
     return Semantics(
-      label: 'Post by ${widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname}, ${_formatTimestamp(widget.post.createdAt)}',
+      label:
+          'Post by ${isAnonymous ? 'Anonymous' : widget.post.authorNickname}, ${_formatTimestamp(widget.post.createdAt)}',
       child: Row(
         children: [
           Semantics(
-            label: widget.post.isAnonymous ? 'Anonymous user avatar' : '${widget.post.authorNickname} avatar',
+            label: isAnonymous
+                ? 'Anonymous user avatar'
+                : '${widget.post.authorNickname} avatar',
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -173,7 +178,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: Colors.transparent,
-                child: widget.post.isAnonymous
+                child: isAnonymous
                     ? Icon(
                         Icons.person_outline,
                         color: theme.colorScheme.onPrimary,
@@ -195,65 +200,70 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.post.isAnonymous
-                      ? 'Anonymous'
-                      : widget.post.authorNickname,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.post.isAnonymous
-                        ? 'Anonymous'
-                        : widget.post.authorNickname,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (!widget.post.isAnonymous) ...[
-                    const SizedBox(width: 8),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final authorProfileAsync = ref.watch(
-                          userProfileByIdProvider(widget.post.authorId),
-                        );
-                        return authorProfileAsync.when(
-                          data: (authorProfile) {
-                            if (authorProfile == null) return const SizedBox.shrink();
-                            return TrustBadge(
-                              trustLevel: authorProfile.trustLevel,
-                              showLabel: false,
-                              size: 16,
-                              onTap: () {
-                                ref.read(analyticsServiceProvider).logTrustBadgeTap(
-                                      authorProfile.trustLevel.name,
-                                      'post_card',
-                                    );
-                              },
-                            );
+                Row(
+                  children: [
+                    if (isAnonymous)
+                      Text(
+                        'Anonymous',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    else
+                      Semantics(
+                        button: true,
+                        link: true,
+                        label: 'View profile of ${widget.post.authorNickname}',
+                        child: InkWell(
+                          onTap: () {
+                            context.push('/users/${widget.post.authorId}');
                           },
-                          loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
-                        );
-                      },
-                    ),
+                          borderRadius: BorderRadius.circular(4),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            child: Text(
+                              widget.post.authorNickname,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (!isAnonymous) ...[
+                      const SizedBox(width: 8),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final authorProfileAsync =
+                              ref.watch(userProfileByIdProvider(widget.post.authorId));
+                          return authorProfileAsync.when(
+                            data: (authorProfile) {
+                              if (authorProfile == null) {
+                                return const SizedBox.shrink();
+                              }
+                              return TrustBadge(
+                                trustLevel: authorProfile.trustLevel,
+                                showLabel: false,
+                                size: 16,
+                                onTap: () {
+                                  ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                                        authorProfile.trustLevel.name,
+                                        'post_card',
+                                      );
+                                },
+                              );
+                            },
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                    ],
                   ],
-                ],
-              ),
-              const SizedBox(height: 2),
-              Text(
-                _formatTimestamp(widget.post.createdAt),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 2),
                 Text(
