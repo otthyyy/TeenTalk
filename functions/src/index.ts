@@ -11,6 +11,7 @@ export * from "./functions/commentCounters";
 export * from "./functions/moderationQueue";
 export * from "./functions/pushNotifications";
 export * from "./functions/dataCleanup";
+export * from "./functions/rateLimits";
 
 // Health check function for emulator testing
 export const healthCheck = functions.https.onCall(async (data, context) => {
@@ -26,7 +27,7 @@ export const healthCheck = functions.https.onCall(async (data, context) => {
     timestamp: admin.firestore.Timestamp.now(),
     userId: context.auth.uid,
   };
-admin.initializeApp();
+});
 
 const REPORT_THRESHOLD = 3;
 
@@ -168,7 +169,7 @@ async function createAuditLog(
 export const cleanupOldReports = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("UTC")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
