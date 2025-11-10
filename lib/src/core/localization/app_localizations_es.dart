@@ -236,4 +236,47 @@ class AppLocalizationsES extends AppLocalizations {
   String get moderationRemoveContent => 'Eliminar Contenido';
   @override
   String get moderationContentHidden => 'Este contenido ha sido ocultado por los moderadores';
+
+  @override
+  String get rateLimitTitle => 'Límite de publicación alcanzado';
+  @override
+  String get rateLimitPostsExceeded => 'Has publicado demasiadas veces. Espera antes de crear otra publicación.';
+  @override
+  String get rateLimitCommentsExceeded => 'Has enviado demasiados comentarios. Espera antes de comentar nuevamente.';
+  @override
+  String get rateLimitCooldownMessage => 'Para prevenir el spam, existe un periodo de espera entre publicaciones y comentarios.';
+  @override
+  String get rateLimitNearLimitWarning => 'Estás cerca del límite de publicación. Reduce un poco el ritmo.';
+  @override
+  String get rateLimitRemainingPosts => 'Publicaciones restantes';
+  @override
+  String get rateLimitRemainingComments => 'Comentarios restantes';
+  @override
+  String get rateLimitViewGuidelines => 'Ver las Reglas de la Comunidad';
+  @override
+  String get rateLimitGuidelinesLink => 'Conoce más sobre nuestras reglas de la comunidad';
+  @override
+  String get rateLimitOkay => 'Entendido';
+
+  @override
+  String cooldownTimer(int seconds) {
+    if (seconds < 60) {
+      return 'Espera $seconds segundo${seconds == 1 ? '' : 's'}';
+    } else {
+      final minutes = (seconds / 60).floor();
+      final remainingSeconds = seconds % 60;
+      final minuteLabel = 'minuto' + (minutes == 1 ? '' : 's');
+      if (remainingSeconds == 0) {
+        return 'Espera $minutes $minuteLabel';
+      } else {
+        final secondLabel = 'segundo' + (remainingSeconds == 1 ? '' : 's');
+        return 'Espera $minutes $minuteLabel y $remainingSeconds $secondLabel';
+      }
+    }
+  }
+
+  @override
+  String remainingCount(int count, String type) {
+    return 'Quedan $count $type';
+  }
 }
