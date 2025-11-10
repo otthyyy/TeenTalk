@@ -271,3 +271,45 @@ class AppLocalizationsIT extends AppLocalizations {
   @override
   String get trustLowTrustWarningCancel => 'Annulla';
 }
+  String get rateLimitTitle => 'Limite di pubblicazione raggiunto';
+  @override
+  String get rateLimitPostsExceeded => 'Hai pubblicato troppe volte. Attendi prima di creare un altro post.';
+  @override
+  String get rateLimitCommentsExceeded => 'Hai inviato troppi commenti. Attendi prima di commentare di nuovo.';
+  @override
+  String get rateLimitCooldownMessage => 'Per prevenire lo spam, è previsto un periodo di attesa tra post e commenti.';
+  @override
+  String get rateLimitNearLimitWarning => 'Stai per raggiungere il limite di pubblicazione. Rallenta un po\'.';
+  @override
+  String get rateLimitRemainingPosts => 'Post rimanenti';
+  @override
+  String get rateLimitRemainingComments => 'Commenti rimanenti';
+  @override
+  String get rateLimitViewGuidelines => 'Consulta le Linee Guida della Community';
+  @override
+  String get rateLimitGuidelinesLink => 'Scopri di più sulle nostre linee guida';
+  @override
+  String get rateLimitOkay => 'Ho capito';
+
+  @override
+  String cooldownTimer(int seconds) {
+    if (seconds < 60) {
+      return 'Attendi $seconds second${seconds == 1 ? 'o' : 'i'}';
+    } else {
+      final minutes = (seconds / 60).floor();
+      final remainingSeconds = seconds % 60;
+      final minuteLabel = 'minuto' + (minutes == 1 ? '' : 'i');
+      if (remainingSeconds == 0) {
+        return 'Attendi $minutes $minuteLabel';
+      } else {
+        final secondLabel = 'second' + (remainingSeconds == 1 ? 'o' : 'i');
+        return 'Attendi $minutes $minuteLabel e $remainingSeconds $secondLabel';
+      }
+    }
+  }
+
+  @override
+  String remainingCount(int count, String type) {
+    return 'Ancora $count $type';
+  }
+}

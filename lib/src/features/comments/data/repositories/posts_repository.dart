@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import '../models/comment.dart';
+import '../../../feed/domain/models/feed_sort_option.dart';
 
 /// Repository for managing posts in Firestore.
 /// 
@@ -35,6 +36,7 @@ class PostsRepository {
     int limit = 20,
     String? section,
     String? school,
+    FeedSortOption sortOption = FeedSortOption.newest,
   }) async {
     Query query = _firestore
         .collection(_postsCollection)
@@ -48,7 +50,20 @@ class PostsRepository {
       query = query.where('school', isEqualTo: school);
     }
 
-    query = query.orderBy('createdAt', descending: true).limit(limit);
+    query = query.orderBy(
+      sortOption.primaryOrderField,
+      descending: sortOption.isDescending,
+    );
+
+    final secondaryOrderField = sortOption.secondaryOrderField;
+    if (secondaryOrderField != null) {
+      query = query.orderBy(
+        secondaryOrderField,
+        descending: sortOption.isDescending,
+      );
+    }
+
+    query = query.limit(limit);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
@@ -395,6 +410,7 @@ class PostsRepository {
     String? section,
     String? school,
     int limit = 20,
+    FeedSortOption sortOption = FeedSortOption.newest,
   }) {
     Query query = _firestore
         .collection(_postsCollection)
@@ -408,7 +424,20 @@ class PostsRepository {
       query = query.where('school', isEqualTo: school);
     }
 
-    query = query.orderBy('createdAt', descending: true).limit(limit);
+    query = query.orderBy(
+      sortOption.primaryOrderField,
+      descending: sortOption.isDescending,
+    );
+
+    final secondaryOrderField = sortOption.secondaryOrderField;
+    if (secondaryOrderField != null) {
+      query = query.orderBy(
+        secondaryOrderField,
+        descending: sortOption.isDescending,
+      );
+    }
+
+    query = query.limit(limit);
 
     return query.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {

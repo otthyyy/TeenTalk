@@ -153,6 +153,19 @@ abstract class AppLocalizations {
   String get trustLowTrustWarningDescription;
   String get trustLowTrustWarningProceed;
   String get trustLowTrustWarningCancel;
+  // Rate Limit Strings
+  String get rateLimitTitle;
+  String get rateLimitPostsExceeded;
+  String get rateLimitCommentsExceeded;
+  String get rateLimitCooldownMessage;
+  String get rateLimitNearLimitWarning;
+  String get rateLimitRemainingPosts;
+  String get rateLimitRemainingComments;
+  String get rateLimitViewGuidelines;
+  String get rateLimitGuidelinesLink;
+  String get rateLimitOkay;
+  String cooldownTimer(int seconds);
+  String remainingCount(int count, String type);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

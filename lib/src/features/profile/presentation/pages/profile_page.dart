@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../data/repositories/user_repository.dart';
+import '../../domain/models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
@@ -42,6 +45,8 @@ class ProfilePage extends ConsumerWidget {
                       _buildPrivacySettingsCard(context, profile, isDark),
                       const SizedBox(height: 16),
                       _buildConsentCard(context, profile, isDark),
+                      const SizedBox(height: 16),
+                      _buildBetaProgramCard(context, ref, profile, isDark),
                       const SizedBox(height: 24),
                       _buildSignOutButton(context, ref),
                       SizedBox(height: bottomPadding),
@@ -443,6 +448,14 @@ class ProfilePage extends ConsumerWidget {
                 profile.profileVisible ? 'Visible' : 'Hidden',
                 profile.profileVisible,
               ),
+              const Divider(),
+              _buildAnimatedSettingRow(
+                context,
+                Icons.bug_report,
+                'Crash Reporting',
+                profile.crashReportingEnabled ? 'Enabled' : 'Disabled',
+                profile.crashReportingEnabled,
+              ),
             ],
           ),
         ),
@@ -500,6 +513,397 @@ class ProfilePage extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBetaProgramCard(BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.science_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Beta Program',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Get early access to TeenTalk features and help us ship a better experience by sharing your feedback.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile.adaptive(
+              value: profile.isBetaTester,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) async => _handleBetaToggle(context, ref, profile, value),
+              activeColor: theme.colorScheme.primary,
+              title: const Text('Join TeenTalk Beta'),
+              subtitle: const Text(
+                'Receive testing builds via Firebase App Distribution and share feedback directly from the app.',
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                profile.betaConsentGiven == true
+                    ? Icons.verified_user
+                    : Icons.privacy_tip_outlined,
+                color: theme.colorScheme.primary,
+              ),
+              title: Text(
+                profile.betaConsentGiven == true ? 'Consent captured' : 'Consent required',
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                profile.betaConsentGiven == true && profile.betaConsentTimestamp != null
+                    ? 'Accepted on ${DateFormat('MMM dd, yyyy').format(profile.betaConsentTimestamp!)}. You can opt-out at any time.'
+                    : 'Review and accept the beta consent notice before participating. Guardians must approve minors.',
+              ),
+            ),
+            if (profile.isBetaTester) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => context.push('/beta-feedback'),
+                    icon: const Icon(Icons.feedback_outlined),
+                    label: const Text('Send Feedback'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => _showBetaInstructionsSheet(context),
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: const Text('View Tester Guide'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withOpacity(isDark ? 0.15 : 0.35),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Beta builds are distributed through Firebase App Distribution to the "Internal" and "School Ambassadors" groups. Ensure your invitation email stays active to keep receiving builds.',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleBetaToggle(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile profile,
+    bool enable,
+  ) async {
+    final userRepository = ref.read(userRepositoryProvider);
+
+    if (enable && profile.betaConsentGiven != true) {
+      final accepted = await _showBetaConsentDialog(context);
+      if (!accepted) {
+        return;
+      }
+    }
+
+    final updates = <String, dynamic>{
+      'isBetaTester': enable,
+    };
+
+    if (enable && profile.betaConsentGiven != true) {
+      updates['betaConsentGiven'] = true;
+      updates['betaConsentTimestamp'] = Timestamp.fromDate(DateTime.now());
+    }
+
+    try {
+      await userRepository.updateUserProfile(profile.uid, updates);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  enable
+                      ? "You're now part of the TeenTalk beta program!"
+                      : 'You have left the beta program.',
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text('Unable to update beta status. Please try again.'),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<bool> _showBetaConsentDialog(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (dialogContext) {
+            bool consentChecked = false;
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text('Beta Testing Consent'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Thanks for volunteering to test TeenTalk. Please review the key points before opting in.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInstructionItem(
+                          context,
+                          Icons.warning_amber_rounded,
+                          'Pre-release software',
+                          'Beta builds may contain bugs or incomplete features. Provide detailed feedback when something breaks.',
+                        ),
+                        _buildInstructionItem(
+                          context,
+                          Icons.privacy_tip_outlined,
+                          'Privacy promise',
+                          'Feedback is stored securely in Firestore and only used to improve TeenTalk beta quality.',
+                        ),
+                        _buildInstructionItem(
+                          context,
+                          Icons.family_restroom,
+                          'Guardian approval',
+                          'If you are under 18, confirm that your guardian agrees to your participation in the beta program.',
+                        ),
+                        CheckboxListTile(
+                          value: consentChecked,
+                          onChanged: (value) => setState(() => consentChecked = value ?? false),
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: const Text('I consent to participate in the TeenTalk beta program.'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: consentChecked
+                          ? () => Navigator.of(dialogContext).pop(true)
+                          : null,
+                      child: const Text('Accept & Join'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ) ??
+        false;
+  }
+
+  Future<void> _showBetaInstructionsSheet(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        final theme = Theme.of(bottomSheetContext);
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(bottomSheetContext).padding.bottom + 24,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'TeenTalk Beta Tester Guide',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'A detailed handbook lives in docs/beta/tester-guide.md. Use this quick overview to get started.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Getting set up',
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.mail_outline,
+                  'Accept the invitation',
+                  'Open the Firebase App Distribution invite email and log in with the same email tied to your TeenTalk profile.',
+                ),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.download_rounded,
+                  'Install the tester app',
+                  'Use Firebase App Tester (Android) or TestFlight (iOS) to download the latest TeenTalk beta build.',
+                ),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.assignment_turned_in_outlined,
+                  'Complete the dry run',
+                  'Run through the smoke checklist (login, posting, messaging, notifications) and note any issues.',
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Sharing feedback',
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.feedback_outlined,
+                  'Use the in-app form',
+                  'Tap “Send Feedback” to report bugs or suggestions. Include device details, screenshots, and steps to reproduce.',
+                ),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.archive_outlined,
+                  'Track responses',
+                  'All submissions are stored in the betaFeedback Firestore collection. Our team responds via the app or email.',
+                ),
+                _buildInstructionItem(
+                  bottomSheetContext,
+                  Icons.privacy_tip,
+                  'Manage consent',
+                  'Opt-out at any time from the profile beta card. This stops new distributions to your tester email.',
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => Navigator.of(bottomSheetContext).pop(),
+                  icon: const Icon(Icons.check_circle_outline),
+                  label: const Text('Got it'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInstructionItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String description,
+  ) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: theme.colorScheme.primary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
