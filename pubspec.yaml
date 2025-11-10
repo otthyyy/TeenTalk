@@ -63,6 +63,10 @@ dependencies:
   
   # UI
   provider: ^6.1.0
+  fl_chart: ^0.66.0
+  csv: ^6.0.0
+  path_provider: ^2.1.1
+  share_plus: ^7.2.1
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0

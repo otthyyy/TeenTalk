@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/providers/admin_providers.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/widgets/reports_list_widget.dart';
-import 'package:teen_talk_app/src/features/admin/presentation/widgets/analytics_widget.dart';
+import 'package:teen_talk_app/src/features/admin/presentation/widgets/enhanced_analytics_widget.dart';
 
 class AdminPage extends ConsumerStatefulWidget {
   const AdminPage({super.key});
@@ -26,7 +26,7 @@ class _AdminPageState extends ConsumerState<AdminPage> {
         index: _selectedIndex,
         children: const [
           ReportsListWidget(),
-          AnalyticsWidget(),
+          EnhancedAnalyticsWidget(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
