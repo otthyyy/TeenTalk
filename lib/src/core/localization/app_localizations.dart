@@ -138,6 +138,21 @@ abstract class AppLocalizations {
   String get moderationRemoveContent;
   String get moderationContentHidden;
 
+  // Trust & Safety Strings
+  String get trustBadgeNewcomerLabel;
+  String get trustBadgeMemberLabel;
+  String get trustBadgeTrustedLabel;
+  String get trustBadgeVeteranLabel;
+  String get trustBadgeNewcomerDescription;
+  String get trustBadgeMemberDescription;
+  String get trustBadgeTrustedDescription;
+  String get trustBadgeVeteranDescription;
+  String get trustInfoLearnMore;
+  String get trustBadgeTooltip;
+  String get trustLowTrustWarningTitle;
+  String get trustLowTrustWarningDescription;
+  String get trustLowTrustWarningProceed;
+  String get trustLowTrustWarningCancel;
   // Rate Limit Strings
   String get rateLimitTitle;
   String get rateLimitPostsExceeded;

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'trust_level.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -31,6 +32,7 @@ class UserProfile {
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
+  final TrustLevel trustLevel;
   final bool isBetaTester;
   final bool? betaConsentGiven;
   final DateTime? betaConsentTimestamp;
@@ -63,6 +65,7 @@ class UserProfile {
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
+    this.trustLevel = TrustLevel.newcomer,
     this.isBetaTester = false,
     this.betaConsentGiven,
     this.betaConsentTimestamp,
@@ -121,6 +124,7 @@ class UserProfile {
           : null,
       isAdmin: json['isAdmin'] as bool? ?? false,
       isModerator: json['isModerator'] as bool? ?? false,
+      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
       isBetaTester: json['isBetaTester'] as bool? ?? false,
       betaConsentGiven: json['betaConsentGiven'] as bool?,
       betaConsentTimestamp: json['betaConsentTimestamp'] != null
@@ -162,6 +166,7 @@ class UserProfile {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
       'isAdmin': isAdmin,
       'isModerator': isModerator,
+      'trustLevel': trustLevel.toJson(),
       'isBetaTester': isBetaTester,
       'betaConsentGiven': betaConsentGiven,
       'betaConsentTimestamp': betaConsentTimestamp != null
@@ -234,6 +239,7 @@ class UserProfile {
           : null,
       isAdmin: data['isAdmin'] as bool? ?? false,
       isModerator: data['isModerator'] as bool? ?? false,
+      trustLevel: TrustLevel.fromString(data['trustLevel'] as String?),
       isBetaTester: data['isBetaTester'] as bool? ?? false,
       betaConsentGiven: data['betaConsentGiven'] as bool?,
       betaConsentTimestamp: data['betaConsentTimestamp'] != null
@@ -291,6 +297,7 @@ class UserProfile {
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
+    TrustLevel? trustLevel,
     bool? isBetaTester,
     bool? betaConsentGiven,
     DateTime? betaConsentTimestamp,
@@ -325,6 +332,7 @@ class UserProfile {
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
+      trustLevel: trustLevel ?? this.trustLevel,
       isBetaTester: isBetaTester ?? this.isBetaTester,
       betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
       betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
@@ -366,6 +374,7 @@ class UserProfile {
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
         other.isModerator == isModerator &&
+        other.trustLevel == trustLevel;
         other.isBetaTester == isBetaTester &&
         other.betaConsentGiven == betaConsentGiven &&
         other.betaConsentTimestamp == betaConsentTimestamp;
@@ -401,6 +410,7 @@ class UserProfile {
         updatedAt.hashCode ^
         isAdmin.hashCode ^
         isModerator.hashCode ^
+        trustLevel.hashCode;
         isBetaTester.hashCode ^
         betaConsentGiven.hashCode ^
         betaConsentTimestamp.hashCode;

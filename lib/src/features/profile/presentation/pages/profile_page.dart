@@ -7,6 +7,10 @@ import '../../data/repositories/user_repository.dart';
 import '../../domain/models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/services/analytics_provider.dart';
+import '../../domain/models/trust_level_localizations.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -175,18 +179,32 @@ class ProfilePage extends ConsumerWidget {
                     color: Colors.white,
                   ),
                 ),
-                if (profile.nicknameVerified)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.verified, size: 16, color: Colors.white),
-                      SizedBox(width: 4),
-                      Text(
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (profile.nicknameVerified) ...[
+                      const Icon(Icons.verified, size: 16, color: Colors.white),
+                      const SizedBox(width: 4),
+                      const Text(
                         'Verified',
                         style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
+                      const SizedBox(width: 8),
                     ],
-                  ),
+                    TrustBadge(
+                      trustLevel: profile.trustLevel,
+                      showLabel: true,
+                      size: 16,
+                      onTap: () {
+                        ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                              profile.trustLevel.name,
+                              'profile_page',
+                            );
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

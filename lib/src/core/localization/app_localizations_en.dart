@@ -238,6 +238,33 @@ class AppLocalizationsEN extends AppLocalizations {
   String get moderationContentHidden => 'This content has been hidden by moderators';
 
   @override
+  String get trustBadgeNewcomerLabel => 'Newcomer';
+  @override
+  String get trustBadgeMemberLabel => 'Member';
+  @override
+  String get trustBadgeTrustedLabel => 'Trusted';
+  @override
+  String get trustBadgeVeteranLabel => 'Veteran';
+  @override
+  String get trustBadgeNewcomerDescription => 'New to the community';
+  @override
+  String get trustBadgeMemberDescription => 'Active community member';
+  @override
+  String get trustBadgeTrustedDescription => 'Trusted community member';
+  @override
+  String get trustBadgeVeteranDescription => 'Long-standing community member';
+  @override
+  String get trustInfoLearnMore => 'Learn more about trust levels';
+  @override
+  String get trustBadgeTooltip => 'Trust badge indicates community standing';
+  @override
+  String get trustLowTrustWarningTitle => 'New User';
+  @override
+  String get trustLowTrustWarningDescription => 'This user is new to the community. Please be cautious when interacting.';
+  @override
+  String get trustLowTrustWarningProceed => 'Continue';
+  @override
+  String get trustLowTrustWarningCancel => 'Cancel';
   String get rateLimitTitle => 'Posting Limit Reached';
   @override
   String get rateLimitPostsExceeded => 'You have posted too many times. Please wait before posting again.';
