@@ -13,6 +13,7 @@ import 'package:teen_talk_app/src/features/auth/presentation/pages/auth_page.dar
 import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.dart';
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:teen_talk_app/src/features/beta_feedback/presentation/pages/beta_feedback_form_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import 'package:teen_talk_app/src/core/theme/decorations.dart';
@@ -106,6 +107,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: '/beta-feedback',
+            builder: (context, state) => const BetaFeedbackFormPage(),
           ),
           GoRoute(
             path: '/profile',

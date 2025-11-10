@@ -21,6 +21,9 @@ class UserProfile {
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
+  final bool isBetaTester;
+  final bool? betaConsentGiven;
+  final DateTime? betaConsentTimestamp;
 
   const UserProfile({
     required this.uid,
@@ -43,6 +46,9 @@ class UserProfile {
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
+    this.isBetaTester = false,
+    this.betaConsentGiven,
+    this.betaConsentTimestamp,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -77,6 +83,11 @@ class UserProfile {
           : null,
       isAdmin: json['isAdmin'] as bool? ?? false,
       isModerator: json['isModerator'] as bool? ?? false,
+      isBetaTester: json['isBetaTester'] as bool? ?? false,
+      betaConsentGiven: json['betaConsentGiven'] as bool?,
+      betaConsentTimestamp: json['betaConsentTimestamp'] != null
+          ? (json['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -106,6 +117,11 @@ class UserProfile {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
       'isAdmin': isAdmin,
       'isModerator': isModerator,
+      'isBetaTester': isBetaTester,
+      'betaConsentGiven': betaConsentGiven,
+      'betaConsentTimestamp': betaConsentTimestamp != null
+          ? Timestamp.fromDate(betaConsentTimestamp!)
+          : null,
     };
   }
 
@@ -152,6 +168,11 @@ class UserProfile {
           : null,
       isAdmin: data['isAdmin'] as bool? ?? false,
       isModerator: data['isModerator'] as bool? ?? false,
+      isBetaTester: data['isBetaTester'] as bool? ?? false,
+      betaConsentGiven: data['betaConsentGiven'] as bool?,
+      betaConsentTimestamp: data['betaConsentTimestamp'] != null
+          ? (data['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -188,6 +209,9 @@ class UserProfile {
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
+    bool? isBetaTester,
+    bool? betaConsentGiven,
+    DateTime? betaConsentTimestamp,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -212,6 +236,9 @@ class UserProfile {
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
+      isBetaTester: isBetaTester ?? this.isBetaTester,
+      betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
+      betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
     );
   }
 
@@ -239,7 +266,10 @@ class UserProfile {
         other.profileVisible == profileVisible &&
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
-        other.isModerator == isModerator;
+        other.isModerator == isModerator &&
+        other.isBetaTester == isBetaTester &&
+        other.betaConsentGiven == betaConsentGiven &&
+        other.betaConsentTimestamp == betaConsentTimestamp;
   }
 
   @override
@@ -263,6 +293,9 @@ class UserProfile {
         profileVisible.hashCode ^
         updatedAt.hashCode ^
         isAdmin.hashCode ^
-        isModerator.hashCode;
+        isModerator.hashCode ^
+        isBetaTester.hashCode ^
+        betaConsentGiven.hashCode ^
+        betaConsentTimestamp.hashCode;
   }
 }
