@@ -241,4 +241,33 @@ class AppLocalizationsIT extends AppLocalizations {
   String get moderationRemoveContent => 'Rimuovi Contenuto';
   @override
   String get moderationContentHidden => 'Contenuto Nascosto';
+
+  @override
+  String get trustBadgeNewcomerLabel => 'Nuovo Arrivato';
+  @override
+  String get trustBadgeMemberLabel => 'Membro';
+  @override
+  String get trustBadgeTrustedLabel => 'Fidato';
+  @override
+  String get trustBadgeVeteranLabel => 'Veterano';
+  @override
+  String get trustBadgeNewcomerDescription => 'Nuovo nella comunità';
+  @override
+  String get trustBadgeMemberDescription => 'Membro attivo della comunità';
+  @override
+  String get trustBadgeTrustedDescription => 'Membro fidato della comunità';
+  @override
+  String get trustBadgeVeteranDescription => 'Membro storico della comunità';
+  @override
+  String get trustInfoLearnMore => 'Ulteriori informazioni sui livelli di fiducia';
+  @override
+  String get trustBadgeTooltip => 'Il badge di fiducia indica la reputazione nella comunità';
+  @override
+  String get trustLowTrustWarningTitle => 'Utente Nuovo';
+  @override
+  String get trustLowTrustWarningDescription => 'Questo utente è nuovo nella comunità. Interagisci con cautela.';
+  @override
+  String get trustLowTrustWarningProceed => 'Continua';
+  @override
+  String get trustLowTrustWarningCancel => 'Annulla';
 }

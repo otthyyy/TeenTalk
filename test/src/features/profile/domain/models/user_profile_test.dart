@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:teen_talk_app/src/features/profile/domain/models/trust_level.dart';
 import 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart';
 
 dynamic _timestampFromDate(DateTime date) => Timestamp.fromDate(date);
@@ -31,6 +32,7 @@ void main() {
         'updatedAt': null,
         'isAdmin': null,
         'isModerator': null,
+        'trustLevel': null,
       };
 
       final profile = UserProfile.fromJson(json);
@@ -51,6 +53,7 @@ void main() {
       expect(profile.updatedAt, isNull);
       expect(profile.isAdmin, isFalse);
       expect(profile.isModerator, isFalse);
+      expect(profile.trustLevel, TrustLevel.newcomer);
     });
 
     test('fromFirestore handles missing fields safely', () {
@@ -75,6 +78,7 @@ void main() {
         'updatedAt': null,
         'isAdmin': null,
         'isModerator': null,
+        'trustLevel': null,
       }, 'doc-123');
 
       final profile = UserProfile.fromFirestore(doc);
@@ -87,6 +91,7 @@ void main() {
       expect(profile.onboardingComplete, isFalse);
       expect(profile.allowAnonymousPosts, isTrue);
       expect(profile.profileVisible, isTrue);
+      expect(profile.trustLevel, TrustLevel.newcomer);
     });
 
     test('toJson converts DateTime fields to Timestamp', () {
@@ -102,6 +107,7 @@ void main() {
         lastNicknameChangeAt: updatedAt,
         parentalConsentTimestamp: updatedAt,
         updatedAt: updatedAt,
+        trustLevel: TrustLevel.trusted,
       );
 
       final json = profile.toJson();
@@ -111,6 +117,7 @@ void main() {
       expect(json['parentalConsentTimestamp'], isA<Timestamp>());
       expect(json['updatedAt'], isA<Timestamp>());
       expect(json['onboardingComplete'], isFalse);
+      expect(json['trustLevel'], 'trusted');
     });
   });
 }

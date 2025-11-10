@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../profile/domain/models/user_profile.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/services/analytics_provider.dart';
 
-class PostCardWidget extends StatefulWidget {
+class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
   final String? currentUserId;
   final VoidCallback onComments;
@@ -22,10 +27,10 @@ class PostCardWidget extends StatefulWidget {
   });
 
   @override
-  State<PostCardWidget> createState() => _PostCardWidgetState();
+  ConsumerState<PostCardWidget> createState() => _PostCardWidgetState();
 }
 
-class _PostCardWidgetState extends State<PostCardWidget>
+class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _shimmerController;
   bool _isLikeAnimating = false;
@@ -179,13 +184,45 @@ class _PostCardWidgetState extends State<PostCardWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.post.isAnonymous
-                    ? 'Anonymous'
-                    : widget.post.authorNickname,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+              Row(
+                children: [
+                  Text(
+                    widget.post.isAnonymous
+                        ? 'Anonymous'
+                        : widget.post.authorNickname,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (!widget.post.isAnonymous) ...[
+                    const SizedBox(width: 8),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final authorProfileAsync = ref.watch(
+                          userProfileByIdProvider(widget.post.authorId),
+                        );
+                        return authorProfileAsync.when(
+                          data: (authorProfile) {
+                            if (authorProfile == null) return const SizedBox.shrink();
+                            return TrustBadge(
+                              trustLevel: authorProfile.trustLevel,
+                              showLabel: false,
+                              size: 16,
+                              onTap: () {
+                                ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                                      authorProfile.trustLevel.name,
+                                      'post_card',
+                                    );
+                              },
+                            );
+                          },
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                        );
+                      },
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 2),
               Text(
