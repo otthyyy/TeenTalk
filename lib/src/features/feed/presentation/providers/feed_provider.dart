@@ -107,29 +107,31 @@ class FeedNotifier extends StateNotifier<FeedState> {
       final resolvedSection = _currentSection;
       final resolvedSchool = _currentSchool;
 
-      final (posts, lastDoc) = await _repository.getPosts(
+      final result = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
         section: resolvedSection,
         school: resolvedSchool,
         sortOption: effectiveSortOption,
+        forceRefresh: refresh,
       );
 
-      if (posts.isEmpty) {
+      if (result.posts.isEmpty && refresh) {
         state = state.copyWith(
           isLoading: false,
           hasMore: false,
+          posts: [],
         );
         return;
       }
 
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
+      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
 
       state = state.copyWith(
         posts: allPosts,
         isLoading: false,
-        lastDocument: lastDoc,
-        hasMore: posts.length == 20,
+        lastDocument: result.lastDocument,
+        hasMore: result.hasMore,
         sortOption: effectiveSortOption,
       );
 
@@ -167,15 +169,16 @@ class FeedNotifier extends StateNotifier<FeedState> {
     final resolvedSort = _currentSortOption;
 
     try {
-      final (posts, lastDoc) = await _repository.getPosts(
+      final result = await _repository.getPosts(
         lastDocument: state.lastDocument,
         limit: 20,
         section: resolvedSection,
         school: resolvedSchool,
         sortOption: resolvedSort,
+        forceRefresh: true,
       );
 
-      if (posts.isEmpty) {
+      if (result.posts.isEmpty) {
         state = state.copyWith(
           isLoadingMore: false,
           hasMore: false,
@@ -183,13 +186,13 @@ class FeedNotifier extends StateNotifier<FeedState> {
         return;
       }
 
-      final allPosts = [...state.posts, ...posts];
+      final mergedPosts = [...state.posts, ...result.posts];
 
       state = state.copyWith(
-        posts: allPosts,
+        posts: mergedPosts,
         isLoadingMore: false,
-        lastDocument: lastDoc,
-        hasMore: posts.length == 20,
+        lastDocument: result.lastDocument,
+        hasMore: result.hasMore,
         sortOption: resolvedSort,
       );
     } catch (e) {

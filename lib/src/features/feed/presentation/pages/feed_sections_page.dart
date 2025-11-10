@@ -40,6 +40,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   String? _selectedPostId;
   bool _showComments = false;
   Timer? _trendingTimer;
+  Timer? _trendingDebounce;
   int _trendingIndex = 0;
   List<Post> _trendingPosts = [];
   ProviderSubscription<FeedState>? _trendingSubscription;
@@ -66,33 +67,34 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       _trendingSubscription = ref.listenManual<FeedState>(
         schoolAwareFeedProvider(FeedSection.spotted.value),
         (previous, next) {
-          final sortedPosts = [...next.posts]
-            ..sort((a, b) {
-              final engagementComparison =
-                  b.engagementScore.compareTo(a.engagementScore);
-              if (engagementComparison != 0) return engagementComparison;
+          _trendingDebounce?.cancel();
+          _trendingDebounce = Timer(const Duration(milliseconds: 500), () {
+            if (!mounted) return;
+            
+            final sortedPosts = [...next.posts]
+              ..sort((a, b) {
+                final engagementComparison =
+                    b.engagementScore.compareTo(a.engagementScore);
+                if (engagementComparison != 0) return engagementComparison;
 
-              final likeComparison = b.likeCount.compareTo(a.likeCount);
-              if (likeComparison != 0) return likeComparison;
+                final likeComparison = b.likeCount.compareTo(a.likeCount);
+                if (likeComparison != 0) return likeComparison;
 
-              return b.createdAt.compareTo(a.createdAt);
-            });
-          final spotlightCandidates = sortedPosts.take(5).toList();
+                return b.createdAt.compareTo(a.createdAt);
+              });
+            final spotlightCandidates = sortedPosts.take(5).toList();
 
-          if (!mounted) {
-            return;
-          }
-
-          if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
-            setState(() {
-              _trendingPosts = spotlightCandidates;
-              if (_trendingPosts.isEmpty) {
-                _trendingIndex = 0;
-              } else {
-                _trendingIndex = _trendingIndex % _trendingPosts.length;
-              }
-            });
-          }
+            if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
+              setState(() {
+                _trendingPosts = spotlightCandidates;
+                if (_trendingPosts.isEmpty) {
+                  _trendingIndex = 0;
+                } else {
+                  _trendingIndex = _trendingIndex % _trendingPosts.length;
+                }
+              });
+            }
+          });
         },
         fireImmediately: true,
       );
@@ -109,6 +111,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   @override
   void dispose() {
     _trendingTimer?.cancel();
+    _trendingDebounce?.cancel();
     _trendingSubscription?.close();
     _scrollController.dispose();
     _headerAnimationController.dispose();
