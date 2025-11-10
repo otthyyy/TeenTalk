@@ -56,6 +56,9 @@ dependencies:
   # Logging
   logger: ^2.0.2
   
+  # Preferences
+  shared_preferences: ^2.2.2
+  
   # Localization
   intl: ^0.18.1
   flutter_localizations:
