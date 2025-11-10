@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'trust_level.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import '../../../../core/utils/search_keywords_generator.dart';
 
 class UserProfile {
   final String uid;
@@ -13,9 +14,6 @@ class UserProfile {
   final List<String> interests;
   final List<String> clubs;
   final List<String> searchKeywords;
-  final int? schoolYear;
-  final List<String> interests;
-  final double trustLevel;
   final int anonymousPostsCount;
   final DateTime createdAt;
   final DateTime? lastNicknameChangeAt;
@@ -48,7 +46,6 @@ class UserProfile {
     this.interests = const [],
     this.clubs = const [],
     this.searchKeywords = const [],
-    this.trustLevel = 0.0,
     this.anonymousPostsCount = 0,
     required this.createdAt,
     this.lastNicknameChangeAt,
@@ -91,13 +88,14 @@ class UserProfile {
       clubs: clubs,
       searchKeywords: searchKeywords.isNotEmpty
           ? searchKeywords
-          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
-      school: json['school'] as String?,
-      schoolYear: json['schoolYear'] as int?,
-      interests: json['interests'] != null
-          ? List<String>.from(json['interests'] as List)
-          : [],
-      trustLevel: (json['trustLevel'] as num?)?.toDouble() ?? 0.0,
+          : buildSearchKeywords(
+              nickname,
+              school,
+              schoolYear,
+              interests,
+              clubs,
+              json['gender'] as String?,
+            ),
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
       createdAt: json['createdAt'] != null
           ? (json['createdAt'] as Timestamp).toDate()
@@ -145,7 +143,6 @@ class UserProfile {
       'interests': interests,
       'clubs': clubs,
       'searchKeywords': searchKeywords,
-      'trustLevel': trustLevel,
       'anonymousPostsCount': anonymousPostsCount,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastNicknameChangeAt': lastNicknameChangeAt != null
@@ -206,13 +203,14 @@ class UserProfile {
       clubs: clubs,
       searchKeywords: searchKeywords.isNotEmpty
           ? searchKeywords
-          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
-      school: data['school'] as String?,
-      schoolYear: data['schoolYear'] as int?,
-      interests: data['interests'] != null
-          ? List<String>.from(data['interests'] as List)
-          : [],
-      trustLevel: (data['trustLevel'] as num?)?.toDouble() ?? 0.0,
+          : buildSearchKeywords(
+              nickname,
+              school,
+              schoolYear,
+              interests,
+              clubs,
+              data['gender'] as String?,
+            ),
       anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
@@ -254,7 +252,14 @@ class UserProfile {
   }
 
   List<String> generateSearchKeywords() {
-    return buildSearchKeywords(nickname, school, schoolYear, interests, clubs);
+    return buildSearchKeywords(
+      nickname,
+      school,
+      schoolYear,
+      interests,
+      clubs,
+      gender,
+    );
   }
 
   bool get isProfileComplete {
@@ -264,8 +269,14 @@ class UserProfile {
     final hasAgeInfo = isMinor != null;
     final hasSchoolYear = schoolYear != null && schoolYear!.trim().isNotEmpty;
     final hasInterests = interests.isNotEmpty;
-    return onboardingComplete && hasNickname && hasSchool && hasGender && hasAgeInfo && 
-           hasSchoolYear && hasInterests && privacyConsentGiven;
+    return onboardingComplete &&
+        hasNickname &&
+        hasSchool &&
+        hasGender &&
+        hasAgeInfo &&
+        hasSchoolYear &&
+        hasInterests &&
+        privacyConsentGiven;
   }
 
   UserProfile copyWith({
@@ -278,9 +289,6 @@ class UserProfile {
     List<String>? interests,
     List<String>? clubs,
     List<String>? searchKeywords,
-    int? schoolYear,
-    List<String>? interests,
-    double? trustLevel,
     int? anonymousPostsCount,
     DateTime? createdAt,
     DateTime? lastNicknameChangeAt,
@@ -313,7 +321,6 @@ class UserProfile {
       interests: interests ?? this.interests,
       clubs: clubs ?? this.clubs,
       searchKeywords: searchKeywords ?? this.searchKeywords,
-      trustLevel: trustLevel ?? this.trustLevel,
       anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
       createdAt: createdAt ?? this.createdAt,
       lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
@@ -336,7 +343,8 @@ class UserProfile {
       isBetaTester: isBetaTester ?? this.isBetaTester,
       betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
       betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
-      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
+      crashReportingEnabled:
+          crashReportingEnabled ?? this.crashReportingEnabled,
     );
   }
 
@@ -356,8 +364,6 @@ class UserProfile {
         _listEquality.equals(other.interests, interests) &&
         _listEquality.equals(other.clubs, clubs) &&
         _listEquality.equals(other.searchKeywords, searchKeywords) &&
-        listEquals(other.interests, interests) &&
-        other.trustLevel == trustLevel &&
         other.anonymousPostsCount == anonymousPostsCount &&
         other.createdAt == createdAt &&
         other.lastNicknameChangeAt == lastNicknameChangeAt &&
@@ -374,10 +380,10 @@ class UserProfile {
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
         other.isModerator == isModerator &&
-        other.trustLevel == trustLevel;
+        other.trustLevel == trustLevel &&
         other.isBetaTester == isBetaTester &&
         other.betaConsentGiven == betaConsentGiven &&
-        other.betaConsentTimestamp == betaConsentTimestamp;
+        other.betaConsentTimestamp == betaConsentTimestamp &&
         other.crashReportingEnabled == crashReportingEnabled;
   }
 
@@ -392,8 +398,6 @@ class UserProfile {
         _listEquality.hash(interests) ^
         _listEquality.hash(clubs) ^
         _listEquality.hash(searchKeywords) ^
-        Object.hashAll(interests) ^
-        trustLevel.hashCode ^
         anonymousPostsCount.hashCode ^
         createdAt.hashCode ^
         lastNicknameChangeAt.hashCode ^
@@ -410,10 +414,10 @@ class UserProfile {
         updatedAt.hashCode ^
         isAdmin.hashCode ^
         isModerator.hashCode ^
-        trustLevel.hashCode;
+        trustLevel.hashCode ^
         isBetaTester.hashCode ^
         betaConsentGiven.hashCode ^
-        betaConsentTimestamp.hashCode;
+        betaConsentTimestamp.hashCode ^
         crashReportingEnabled.hashCode;
   }
 
@@ -431,23 +435,15 @@ class UserProfile {
     String? schoolYear,
     List<String> interests,
     List<String> clubs,
+    String? gender,
   ) {
-    final keywords = <String>{};
-    if (nickname.isNotEmpty) {
-      keywords.add(nickname.toLowerCase());
-    }
-    if (school != null && school.isNotEmpty) {
-      keywords.add(school.toLowerCase());
-    }
-    if (schoolYear != null && schoolYear.isNotEmpty) {
-      keywords.add(schoolYear.toLowerCase());
-    }
-    for (final interest in interests) {
-      keywords.add(interest.toLowerCase());
-    }
-    for (final club in clubs) {
-      keywords.add(club.toLowerCase());
-    }
-    return keywords.toList();
+    return SearchKeywordsGenerator.generateUserKeywords(
+      nickname: nickname,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      gender: gender,
+    );
   }
 }
