@@ -49,6 +49,7 @@ dependencies:
   cloud_functions: ^4.5.0
   firebase_analytics: ^10.7.0
   firebase_messaging: ^14.7.0
+  firebase_crashlytics: ^3.4.0
   
   # Image Handling
   image_picker: ^1.0.4

@@ -21,6 +21,7 @@ class UserProfile {
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
+  final bool crashReportingEnabled;
 
   const UserProfile({
     required this.uid,
@@ -43,6 +44,7 @@ class UserProfile {
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
+    this.crashReportingEnabled = true,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -77,6 +79,7 @@ class UserProfile {
           : null,
       isAdmin: json['isAdmin'] as bool? ?? false,
       isModerator: json['isModerator'] as bool? ?? false,
+      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
     );
   }
 
@@ -106,6 +109,7 @@ class UserProfile {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
       'isAdmin': isAdmin,
       'isModerator': isModerator,
+      'crashReportingEnabled': crashReportingEnabled,
     };
   }
 
@@ -152,6 +156,7 @@ class UserProfile {
           : null,
       isAdmin: data['isAdmin'] as bool? ?? false,
       isModerator: data['isModerator'] as bool? ?? false,
+      crashReportingEnabled: data['crashReportingEnabled'] as bool? ?? true,
     );
   }
 
@@ -188,6 +193,7 @@ class UserProfile {
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
+    bool? crashReportingEnabled,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -212,6 +218,7 @@ class UserProfile {
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
+      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
     );
   }
 
@@ -239,7 +246,8 @@ class UserProfile {
         other.profileVisible == profileVisible &&
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
-        other.isModerator == isModerator;
+        other.isModerator == isModerator &&
+        other.crashReportingEnabled == crashReportingEnabled;
   }
 
   @override
@@ -263,6 +271,7 @@ class UserProfile {
         profileVisible.hashCode ^
         updatedAt.hashCode ^
         isAdmin.hashCode ^
-        isModerator.hashCode;
+        isModerator.hashCode ^
+        crashReportingEnabled.hashCode;
   }
 }
