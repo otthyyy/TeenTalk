@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/nickname_step.dart';
 import '../widgets/personal_info_step.dart';
+import '../widgets/interests_step.dart';
 import '../widgets/consent_step.dart';
 import '../widgets/privacy_preferences_step.dart';
 import '../../../profile/domain/models/user_profile.dart';
@@ -24,6 +25,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   String _nickname = '';
   String? _gender;
   String? _school;
+  String? _schoolYear;
+  List<String> _interests = [];
+  List<String> _clubs = [];
   bool? _isMinor;
   String? _guardianContact;
   bool _parentalConsentGiven = false;
@@ -48,6 +52,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   void _nextStep() {
+    if (_currentStep < 4) {
     if (_currentStep < 3) {
       final stepNames = ['nickname', 'personal_info', 'consent', 'privacy'];
       ref.read(analyticsServiceProvider).logOnboardingStepCompleted(
@@ -97,13 +102,38 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         return;
       }
 
+      if (_schoolYear == null || _schoolYear!.trim().isEmpty) {
+        _showError('Please select your school year');
+        setState(() => _isSubmitting = false);
+        return;
+      }
+
+      if (_interests.isEmpty) {
+        _showError('Please select at least one interest');
+        setState(() => _isSubmitting = false);
+        return;
+      }
+
+      final trimmedNickname = _nickname.trim();
+      final interests = List<String>.from(_interests);
+      final clubs = List<String>.from(_clubs);
       final now = DateTime.now();
       final profile = UserProfile(
         uid: user.uid,
-        nickname: _nickname,
+        nickname: trimmedNickname,
         nicknameVerified: true,
         gender: _gender,
         school: _school,
+        schoolYear: _schoolYear,
+        interests: interests,
+        clubs: clubs,
+        searchKeywords: UserProfile.buildSearchKeywords(
+          trimmedNickname,
+          _school,
+          _schoolYear,
+          interests,
+          clubs,
+        ),
         anonymousPostsCount: 0,
         createdAt: now,
         privacyConsentGiven: _privacyConsentGiven,
@@ -164,7 +194,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       body: Column(
         children: [
           LinearProgressIndicator(
-            value: (_currentStep + 1) / 4,
+            value: (_currentStep + 1) / 5,
           ),
           Expanded(
             child: PageView(
@@ -181,6 +211,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   initialSchool: _school,
                   onGenderChanged: (gender) => setState(() => _gender = gender),
                   onSchoolChanged: (school) => setState(() => _school = school),
+                  onNext: _nextStep,
+                  onBack: _previousStep,
+                ),
+                InterestsStep(
+                  initialSchoolYear: _schoolYear,
+                  initialInterests: _interests,
+                  initialClubs: _clubs,
+                  onSchoolYearChanged: (schoolYear) =>
+                      setState(() => _schoolYear = schoolYear),
+                  onInterestsChanged: (interests) =>
+                      setState(() => _interests = interests),
+                  onClubsChanged: (clubs) => setState(() => _clubs = clubs),
                   onNext: _nextStep,
                   onBack: _previousStep,
                 ),

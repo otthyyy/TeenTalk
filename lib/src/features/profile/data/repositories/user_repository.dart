@@ -46,6 +46,7 @@ class UserRepository {
 
     final data = UserProfile.toFirestore(profile);
     data['nicknameLowercase'] = profile.nickname.trim().toLowerCase();
+    data['searchKeywords'] = profile.generateSearchKeywords();
 
     batch.set(userRef, data);
     await batch.commit();
@@ -62,9 +63,55 @@ class UserRepository {
         if (!isAvailable) {
           return false;
         }
-        updates['nicknameLowercase'] = newNickname.trim().toLowerCase();
+        final normalizedNickname = newNickname.trim();
+        updates['nickname'] = normalizedNickname;
+        updates['nicknameLowercase'] = normalizedNickname.toLowerCase();
         updates['nicknameVerified'] = true;
         updates['lastNicknameChangeAt'] = Timestamp.fromDate(DateTime.now());
+      }
+
+      final keywordFields = {
+        'nickname',
+        'school',
+        'schoolYear',
+        'interests',
+        'clubs',
+      };
+
+      final shouldUpdateKeywords =
+          updates.keys.any((key) => keywordFields.contains(key));
+
+      if (shouldUpdateKeywords) {
+        final userDoc = await _firestore.collection('users').doc(uid).get();
+        if (!userDoc.exists) {
+          return false;
+        }
+
+        final currentProfile = UserProfile.fromFirestore(userDoc);
+
+        final nicknameForKeywords = updates.containsKey('nickname')
+            ? updates['nickname'] as String
+            : currentProfile.nickname;
+        final schoolForKeywords = updates.containsKey('school')
+            ? updates['school'] as String?
+            : currentProfile.school;
+        final schoolYearForKeywords = updates.containsKey('schoolYear')
+            ? updates['schoolYear'] as String?
+            : currentProfile.schoolYear;
+        final interestsForKeywords = updates.containsKey('interests')
+            ? (updates['interests'] as List?)?.whereType<String>().toList() ?? []
+            : currentProfile.interests;
+        final clubsForKeywords = updates.containsKey('clubs')
+            ? (updates['clubs'] as List?)?.whereType<String>().toList() ?? []
+            : currentProfile.clubs;
+
+        updates['searchKeywords'] = UserProfile.buildSearchKeywords(
+          nicknameForKeywords,
+          schoolForKeywords,
+          schoolYearForKeywords,
+          interestsForKeywords,
+          clubsForKeywords,
+        );
       }
 
       updates['updatedAt'] = Timestamp.fromDate(DateTime.now());

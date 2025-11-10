@@ -39,7 +39,27 @@ The onboarding flow is a multi-step wizard that collects user information after 
     - "Altro" (Other) option
 - Both fields are entirely optional and can be skipped
 
-#### Step 3: Consent & Privacy
+#### Step 3: School Year & Interests *(New)*
+- **Purpose**: Collect discovery metadata for advanced search
+- **Fields**:
+  - School Year (required dropdown):
+    - 9, 10, 11, 12, 13, University, Graduate
+  - Interests (required multi-select):
+    - Curated list of interests displayed as FilterChips
+    - Custom interests can be added via text input
+    - At least one interest is required to continue
+  - Clubs (optional multi-select):
+    - Curated list of clubs/activities displayed as FilterChips
+    - Custom clubs can be added via text input
+- **Validation**:
+  - Prevents progression without school year selection
+  - Requires at least one interest
+  - Provides error feedback via SnackBar
+- **Storage**:
+  - Values persisted on the `UserProfile`
+  - Search keywords auto-generated from selected values
+
+#### Step 4: Consent & Privacy
 - **Purpose**: Ensure GDPR compliance and parental consent for minors
 - **Features**:
   - Age confirmation (Under 18 / 18+)
@@ -53,7 +73,7 @@ The onboarding flow is a multi-step wizard that collects user information after 
     - GDPR rights information display
   - Consent timestamps recorded for compliance
 
-#### Step 4: Privacy Preferences
+#### Step 5: Privacy Preferences
 - **Purpose**: Allow users to control their visibility
 - **Settings**:
   - Allow Anonymous Posts (default: enabled)
@@ -73,6 +93,10 @@ The onboarding flow is a multi-step wizard that collects user information after 
   nicknameLowercase: String (auto-generated) - For uniqueness check
   gender: String? (optional) - User's gender
   school: String? (optional) - User's school
+  schoolYear: String? (required for complete profile) - Academic year or level
+  interests: List<String> (required for complete profile) - User interests
+  clubs: List<String> (optional) - User's clubs and activities
+  searchKeywords: List<String> (auto-generated) - Keywords for search indexing
   anonymousPostsCount: int (default: 0) - Counter for anonymous posts
   createdAt: Timestamp (required) - Account creation time
   lastNicknameChangeAt: Timestamp? - Last nickname change (for rate limiting)
@@ -85,6 +109,8 @@ The onboarding flow is a multi-step wizard that collects user information after 
   allowAnonymousPosts: bool (default: true) - Anonymous posting preference
   profileVisible: bool (default: true) - Profile visibility preference
   updatedAt: Timestamp - Last update time
+  isAdmin: bool (default: false) - Admin privileges flag
+  isModerator: bool (default: false) - Moderator privileges flag
 }
 ```
 
@@ -147,12 +173,14 @@ Redirects are automatic based on these states.
 ## Profile Editing
 
 ### ProfileEditPage Features
-- Edit all optional fields (gender, school)
+- Edit all optional fields (gender, school, clubs)
+- Update required discovery metadata (school year, interests)
 - Change nickname (with 30-day restriction)
 - Update privacy preferences
 - Real-time validation for nickname changes
 - Visual indication of nickname change restriction
 - Shows days remaining until next change allowed
+- Displays a completion reminder banner when profile metadata is missing
 
 ### Nickname Change Process
 1. Check if 30 days have passed since last change
