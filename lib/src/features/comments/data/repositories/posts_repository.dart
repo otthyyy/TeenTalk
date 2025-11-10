@@ -22,14 +22,22 @@ import '../../../feed/domain/models/feed_sort_option.dart';
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final Logger _logger = Logger();
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+  final Logger _logger;
   static const String _postsCollection = 'posts';
   static const String _imagesFolder = 'post_images';
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
+
+  PostsRepository({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+    Logger? logger,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _logger = logger ?? Logger();
 
   Future<(List<Post>, DocumentSnapshot?)> getPosts({
     DocumentSnapshot? lastDocument,
