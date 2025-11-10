@@ -71,6 +71,7 @@ dependencies:
   csv: ^6.0.0
   path_provider: ^2.1.1
   share_plus: ^7.2.1
+  flutter_windowmanager: ^0.2.0
   
   # Persistence
   shared_preferences: ^2.2.2

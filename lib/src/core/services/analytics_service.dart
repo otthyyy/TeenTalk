@@ -119,4 +119,16 @@ class AnalyticsService {
       _logger.e('Failed to log content submission: $e');
     }
   }
+
+  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
+    try {
+      await _analytics.logEvent(
+        name: eventName,
+        parameters: parameters,
+      );
+      _logger.i('Logged event: $eventName');
+    } catch (e) {
+      _logger.e('Failed to log event $eventName: $e');
+    }
+  }
 }

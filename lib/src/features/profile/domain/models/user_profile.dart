@@ -37,6 +37,7 @@ class UserProfile {
   final bool? betaConsentGiven;
   final DateTime? betaConsentTimestamp;
   final bool crashReportingEnabled;
+  final bool screenshotProtectionEnabled;
 
   const UserProfile({
     required this.uid,
@@ -70,6 +71,7 @@ class UserProfile {
     this.betaConsentGiven,
     this.betaConsentTimestamp,
     this.crashReportingEnabled = true,
+    this.screenshotProtectionEnabled = true,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -131,6 +133,8 @@ class UserProfile {
           ? (json['betaConsentTimestamp'] as Timestamp).toDate()
           : null,
       crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          json['screenshotProtectionEnabled'] as bool? ?? true,
     );
   }
 
@@ -173,6 +177,7 @@ class UserProfile {
           ? Timestamp.fromDate(betaConsentTimestamp!)
           : null,
       'crashReportingEnabled': crashReportingEnabled,
+      'screenshotProtectionEnabled': screenshotProtectionEnabled,
     };
   }
 
@@ -246,6 +251,8 @@ class UserProfile {
           ? (data['betaConsentTimestamp'] as Timestamp).toDate()
           : null,
       crashReportingEnabled: data['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          data['screenshotProtectionEnabled'] as bool? ?? true,
     );
   }
 
@@ -302,6 +309,7 @@ class UserProfile {
     bool? betaConsentGiven,
     DateTime? betaConsentTimestamp,
     bool? crashReportingEnabled,
+    bool? screenshotProtectionEnabled,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -337,6 +345,8 @@ class UserProfile {
       betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
       betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
       crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
+      screenshotProtectionEnabled:
+          screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
     );
   }
 
