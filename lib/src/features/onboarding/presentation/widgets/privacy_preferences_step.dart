@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class PrivacyPreferencesStep extends StatefulWidget {
   final bool allowAnonymousPosts;
   final bool profileVisible;
+  final bool analyticsEnabled;
   final Function(bool) onAllowAnonymousPostsChanged;
   final Function(bool) onProfileVisibleChanged;
+  final Function(bool) onAnalyticsEnabledChanged;
   final VoidCallback onComplete;
   final VoidCallback onBack;
   final bool isSubmitting;
@@ -13,8 +15,10 @@ class PrivacyPreferencesStep extends StatefulWidget {
     super.key,
     required this.allowAnonymousPosts,
     required this.profileVisible,
+    this.analyticsEnabled = true,
     required this.onAllowAnonymousPostsChanged,
     required this.onProfileVisibleChanged,
+    required this.onAnalyticsEnabledChanged,
     required this.onComplete,
     required this.onBack,
     required this.isSubmitting,
@@ -27,17 +31,20 @@ class PrivacyPreferencesStep extends StatefulWidget {
 class _PrivacyPreferencesStepState extends State<PrivacyPreferencesStep> {
   late bool _allowAnonymousPosts;
   late bool _profileVisible;
+  late bool _analyticsEnabled;
 
   @override
   void initState() {
     super.initState();
     _allowAnonymousPosts = widget.allowAnonymousPosts;
     _profileVisible = widget.profileVisible;
+    _analyticsEnabled = widget.analyticsEnabled;
   }
 
   void _handleComplete() {
     widget.onAllowAnonymousPostsChanged(_allowAnonymousPosts);
     widget.onProfileVisibleChanged(_profileVisible);
+    widget.onAnalyticsEnabledChanged(_analyticsEnabled);
     widget.onComplete();
   }
 
@@ -138,6 +145,43 @@ class _PrivacyPreferencesStepState extends State<PrivacyPreferencesStep> {
                           Expanded(
                             child: Text(
                               'Your profile will be hidden from other users',
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: SwitchListTile(
+                      value: _analyticsEnabled,
+                      onChanged: (value) {
+                        setState(() => _analyticsEnabled = value);
+                      },
+                      title: const Text('Allow Analytics'),
+                      subtitle: const Text(
+                        'Share anonymized usage analytics to help improve TeenTalk',
+                      ),
+                      secondary: const Icon(Icons.analytics_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (!_analyticsEnabled)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.privacy_tip_outlined, color: Colors.orange),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Analytics help us understand feature usage. Turning this off means fewer insights for improvements.',
                               style: TextStyle(color: Colors.orange),
                             ),
                           ),
