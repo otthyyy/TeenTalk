@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
 
 class PostCardWidget extends StatefulWidget {
   final Post post;
@@ -252,27 +253,13 @@ class _PostCardWidgetState extends State<PostCardWidget>
     return Semantics(
       label: 'Post image',
       image: true,
-      child: ClipRRect(
+      child: CachedImageWidget(
+        imageUrl: widget.post.imageUrl!,
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          widget.post.imageUrl!,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: 200,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 200,
-              color: theme.colorScheme.surfaceVariant,
-              child: Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            );
-          },
-        ),
+        enableInstrumentation: true,
       ),
     );
   }
