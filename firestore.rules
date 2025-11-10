@@ -76,12 +76,83 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isOwner(userId);
     }
     
+    // Rate limit helper functions
+    function getRateLimitDoc() {
+      return isAuthenticated()
+        ? get(/databases/$(database)/documents/rateLimits/$(request.auth.uid))
+        : null;
+    }
+
+    function canCreatePost() {
+      let rateLimitDoc = getRateLimitDoc();
+      if (rateLimitDoc == null || !rateLimitDoc.exists) {
+        return false;
+      }
+
+      let limit = rateLimitDoc.data.postLimit != null ? rateLimitDoc.data.postLimit : 50;
+      let count = rateLimitDoc.data.postsToday != null ? rateLimitDoc.data.postsToday : 0;
+      let resetAt = rateLimitDoc.data.resetPostsAt;
+
+      if (resetAt == null || !(resetAt is timestamp)) {
+        return count < limit;
+      }
+
+      if (resetAt.toMillis() <= request.time.toMillis()) {
+        return true;
+      }
+
+      return count < limit;
+    }
+
+    function canCreateComment() {
+      let rateLimitDoc = getRateLimitDoc();
+      if (rateLimitDoc == null || !rateLimitDoc.exists) {
+        return false;
+      }
+
+      let limit = rateLimitDoc.data.commentLimit != null ? rateLimitDoc.data.commentLimit : 30;
+      let count = rateLimitDoc.data.commentsThisHour != null ? rateLimitDoc.data.commentsThisHour : 0;
+      let resetAt = rateLimitDoc.data.resetCommentsAt;
+
+      if (resetAt == null || !(resetAt is timestamp)) {
+        return count < limit;
+      }
+
+      if (resetAt.toMillis() <= request.time.toMillis()) {
+        return true;
+      }
+
+      return count < limit;
+    }
+
+    function canSendMessage() {
+      let rateLimitDoc = getRateLimitDoc();
+      if (rateLimitDoc == null || !rateLimitDoc.exists) {
+        return false;
+      }
+
+      let limit = rateLimitDoc.data.messageLimit != null ? rateLimitDoc.data.messageLimit : 100;
+      let count = rateLimitDoc.data.messagesThisHour != null ? rateLimitDoc.data.messagesThisHour : 0;
+      let resetAt = rateLimitDoc.data.resetMessagesAt;
+
+      if (resetAt == null || !(resetAt is timestamp)) {
+        return count < limit;
+      }
+
+      if (resetAt.toMillis() <= request.time.toMillis()) {
+        return true;
+      }
+
+      return count < limit;
+    }
+    
     // Posts collection rules
     match /posts/{postId} {
       allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
       allow create: if isAuthenticated() &&
                        request.auth.uid == request.resource.data.authorId &&
-                       canAccessSchool(request.resource.data.school);
+                       canAccessSchool(request.resource.data.school) &&
+                       canCreatePost();
       allow update: if isAuthenticated() &&
                        (request.auth.uid == resource.data.authorId ||
                          isAdmin()) &&
@@ -97,7 +168,8 @@ service cloud.firestore {
       allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
       allow create: if isAuthenticated() &&
                        request.auth.uid == request.resource.data.authorId &&
-                       canAccessSchool(request.resource.data.school);
+                       canAccessSchool(request.resource.data.school) &&
+                       canCreateComment();
       allow update: if isAuthenticated() &&
                        (request.auth.uid == resource.data.authorId ||
                          isAdmin()) &&
@@ -108,13 +180,14 @@ service cloud.firestore {
                        canAccessSchool(resource.data.school);
     }
     
-    // Messages collection rules (placeholder for future implementation)
+    // Messages collection rules
     match /messages/{messageId} {
       allow read: if isAuthenticated() && 
                      (request.auth.uid == resource.data.senderId || 
                       request.auth.uid == resource.data.receiverId);
       allow create: if isAuthenticated() && 
-                       request.auth.uid == request.resource.data.senderId;
+                       request.auth.uid == request.resource.data.senderId &&
+                       canSendMessage();
       allow delete: if isAuthenticated() && 
                        request.auth.uid == resource.data.senderId;
     }
@@ -148,9 +221,10 @@ service cloud.firestore {
                        (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
                         request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
         
-        // Allow create if user is sender
+        // Allow create if user is sender and within rate limit
         allow create: if isAuthenticated() && 
-                         request.auth.uid == request.resource.data.senderId;
+                         request.auth.uid == request.resource.data.senderId &&
+                         canSendMessage();
         
         // Allow update if user is conversation participant (for marking as read)
         allow update: if isAuthenticated() && 
@@ -242,9 +316,6 @@ service cloud.firestore {
         allow update, delete: if false;
       }
     }
-    
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
 
     // Reports collection rules (admin only)
     match /reports/{reportId} {
@@ -259,6 +330,18 @@ service cloud.firestore {
       allow read: if isAuthenticated() && isAdmin();
       allow create: if isAuthenticated() && isAdmin();
       allow list: if isAuthenticated() && isAdmin();
+    }
+
+    // Rate Limits collection rules
+    match /rateLimits/{userId} {
+      // Users can read their own rate limit data
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Only system (Cloud Functions) can write rate limit data
+      allow create, update: if false;
+      
+      // Admins can delete rate limits (for resets)
+      allow delete: if isAdmin();
     }
 
     // Default deny all other collections
