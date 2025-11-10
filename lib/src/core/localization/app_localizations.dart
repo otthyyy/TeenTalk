@@ -166,6 +166,29 @@ abstract class AppLocalizations {
   String get rateLimitOkay;
   String cooldownTimer(int seconds);
   String remainingCount(int count, String type);
+  
+  // Accessibility Labels
+  String get a11yLikeButton;
+  String get a11yUnlikeButton;
+  String likeButtonWithCount(int count);
+  String unlikeButtonWithCount(int count);
+  String get a11yCommentButton;
+  String commentButtonWithCount(int count);
+  String get a11yShareButton;
+  String get a11yReportButton;
+  String get a11yMoreOptions;
+  String get a11yNotifications;
+  String get a11yNewPost;
+  String get a11yBackButton;
+  String get a11yCloseButton;
+  String postByAuthor(String author, String time);
+  String get a11yAnonymousAvatar;
+  String authorAvatar(String author);
+  String get a11yPostImage;
+  String postStats(int likes, int comments);
+  String sectionLabel(String section);
+  String get a11yProfilePicture;
+  String get a11yEditProfile;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

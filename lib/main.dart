@@ -81,6 +81,7 @@ class TeenTalkApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('en', ''),
         Locale('es', ''),
+        Locale('it', ''),
       ],
     );
   }

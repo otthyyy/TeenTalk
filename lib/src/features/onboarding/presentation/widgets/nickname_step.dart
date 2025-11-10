@@ -120,33 +120,42 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 32),
-            const Icon(
-              Icons.person_outline,
-              size: 80,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Choose Your Nickname',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This is how other users will see you',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
-              textAlign: TextAlign.center,
-            ),
+    return Semantics(
+      container: true,
+      label: 'Onboarding step: Choose your nickname. This is how other users will see you.',
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 32),
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.person_outline,
+                  size: 80,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Flexible(
+                child: Text(
+                  'Choose Your Nickname',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: Text(
+                  'This is how other users will see you',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             const SizedBox(height: 32),
             TextFormField(
               controller: _nicknameController,

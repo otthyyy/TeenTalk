@@ -265,6 +265,7 @@ class AppLocalizationsEN extends AppLocalizations {
   String get trustLowTrustWarningProceed => 'Continue';
   @override
   String get trustLowTrustWarningCancel => 'Cancel';
+  @override
   String get rateLimitTitle => 'Posting Limit Reached';
   @override
   String get rateLimitPostsExceeded => 'You have posted too many times. Please wait before posting again.';
@@ -304,4 +305,47 @@ class AppLocalizationsEN extends AppLocalizations {
   String remainingCount(int count, String type) {
     return '$count $type remaining';
   }
+  
+  @override
+  String get a11yLikeButton => 'Like post';
+  @override
+  String get a11yUnlikeButton => 'Unlike post';
+  @override
+  String likeButtonWithCount(int count) => 'Like post, $count ${count == 1 ? 'like' : 'likes'}';
+  @override
+  String unlikeButtonWithCount(int count) => 'Unlike post, $count ${count == 1 ? 'like' : 'likes'}';
+  @override
+  String get a11yCommentButton => 'View comments';
+  @override
+  String commentButtonWithCount(int count) => 'View comments, $count ${count == 1 ? 'comment' : 'comments'}';
+  @override
+  String get a11yShareButton => 'Share post';
+  @override
+  String get a11yReportButton => 'Report post';
+  @override
+  String get a11yMoreOptions => 'More options';
+  @override
+  String get a11yNotifications => 'Notifications';
+  @override
+  String get a11yNewPost => 'Create new post';
+  @override
+  String get a11yBackButton => 'Go back';
+  @override
+  String get a11yCloseButton => 'Close';
+  @override
+  String postByAuthor(String author, String time) => 'Post by $author, $time';
+  @override
+  String get a11yAnonymousAvatar => 'Anonymous user avatar';
+  @override
+  String authorAvatar(String author) => '$author avatar';
+  @override
+  String get a11yPostImage => 'Post image';
+  @override
+  String postStats(int likes, int comments) => '$likes ${likes == 1 ? 'like' : 'likes'}, $comments ${comments == 1 ? 'comment' : 'comments'}';
+  @override
+  String sectionLabel(String section) => 'Section: $section';
+  @override
+  String get a11yProfilePicture => 'Profile picture';
+  @override
+  String get a11yEditProfile => 'Edit profile';
 }
