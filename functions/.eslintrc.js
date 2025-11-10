@@ -7,10 +7,6 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "google",
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
@@ -24,14 +20,18 @@ module.exports = {
   },
   ignorePatterns: [
     "/lib/**/*",
+    "index.js",
+    ".eslintrc.js",
   ],
   plugins: [
     "@typescript-eslint",
     "import",
   ],
   rules: {
+    "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "max-len": ["error", {"code": 120}],
   },
   overrides: [
     {
@@ -45,9 +45,4 @@ module.exports = {
       },
     },
   ],
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
-    "max-len": ["error", {"code": 120}],
-  },
 };

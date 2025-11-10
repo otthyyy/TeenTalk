@@ -67,7 +67,6 @@ export const onUserCreated = functions.firestore
   .document("users/{userId}")
   .onCreate(async (snap, context) => {
     const userData = snap.data();
-    const userId = context.params.userId;
 
     try {
       const nicknameLowercase = userData.nicknameLowercase;

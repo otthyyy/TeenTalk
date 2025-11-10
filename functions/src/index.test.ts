@@ -1,4 +1,3 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {expect} from "chai";
 
@@ -14,8 +13,13 @@ describe("Cloud Functions Tests", () => {
   });
 
   afterEach(async () => {
-    // Clear database after each test
-    await db.clearPersistence();
+    const collections = await db.listCollections();
+    await Promise.all(
+      collections.map(async (collection) => {
+        const documents = await collection.listDocuments();
+        await Promise.all(documents.map((doc) => doc.delete()));
+      })
+    );
   });
 
   describe("nicknameValidation", () => {
@@ -65,10 +69,10 @@ describe("Cloud Functions Tests", () => {
       });
 
       // Query should return exactly one
-      let query = db
+      const query = db
         .collection("users")
         .where("nicknameLowercase", "==", nicknameLower);
-      let snapshot = await query.get();
+      const snapshot = await query.get();
 
       expect(snapshot.size).to.equal(1);
     });
@@ -332,7 +336,6 @@ describe("Cloud Functions Tests", () => {
   describe("Authorization and Access Control", () => {
     it("should prevent unauthorized post creation", async () => {
       const authorId = "author1";
-      const attackerId = "attacker1";
 
       try {
         // Try to create post as different user

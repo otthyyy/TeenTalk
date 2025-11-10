@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      run_integration_tests:
+        description: 'Run integration tests'
+        required: false
+        default: 'false'
+
+jobs:
+  flutter-analysis:
+    name: Flutter Analysis & Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Verify formatting
+        run: flutter format --set-exit-if-changed .
+      
+      - name: Analyze code
+        run: flutter analyze --fatal-infos --fatal-warnings
+      
+      - name: Run tests
+        run: flutter test --coverage --reporter expanded
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: flutter
+          name: flutter-coverage
+          fail_ci_if_error: false
+      
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-test-results
+          path: |
+            test/
+            coverage/
+
+  functions-lint-and-build:
+    name: Cloud Functions Lint & Build
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: functions
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: functions/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci || npm install
+      
+      - name: Run linter
+        run: npm run lint
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: functions-build
+          path: functions/lib/
+
+  integration-tests:
+    name: Integration Tests (Optional)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_integration_tests == 'true')
+    continue-on-error: true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Run integration tests
+        run: |
+          if [ -d "integration_test" ]; then
+            flutter test integration_test/
+          else
+            echo "No integration tests found, skipping..."
+          fi
+      
+      - name: Archive integration test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-results
+          path: integration_test/
+
+  all-checks-passed:
+    name: All CI Checks Passed
+    runs-on: ubuntu-latest
+    needs: [flutter-analysis, functions-lint-and-build]
+    if: always()
+    
+    steps:
+      - name: Check all job results
+        run: |
+          if [[ "${{ needs.flutter-analysis.result }}" != "success" ]] || \
+             [[ "${{ needs.functions-lint-and-build.result }}" != "success" ]]; then
+            echo "One or more required checks failed"
+            exit 1
+          fi
+          echo "All required checks passed successfully!"

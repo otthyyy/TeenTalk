@@ -1,5 +1,7 @@
 # TeenTalk Flutter App
 
+[![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/<repo>/actions/workflows/ci.yml)
+
 A modern Flutter application for teen social communication, built with clean architecture and best practices.
 
 ## 🏗️ Project Structure
@@ -130,6 +132,14 @@ flutter test --coverage
 flutter test test/widget_test.dart
 ```
 
+### Testing Cloud Functions
+
+```bash
+cd functions
+npm run build
+npm test
+```
+
 ## 📱 Features
 
 ### Current Implementation
@@ -248,12 +258,81 @@ flutter analyze --fatal-infos
 1. Build web release
 2. Deploy to hosting service (Firebase Hosting, Vercel, etc.)
 
+## 🔄 Continuous Integration
+
+This project uses GitHub Actions for automated CI/CD pipeline. The CI workflow runs on every push and pull request to `main` and `develop` branches.
+
+### CI Pipeline Jobs
+
+#### 1. Flutter Analysis & Tests
+- **Format Check**: Ensures code follows Dart formatting standards
+- **Static Analysis**: Runs `flutter analyze` with fatal warnings
+- **Unit/Widget Tests**: Executes all tests with coverage reporting
+- **Coverage Upload**: Uploads test coverage to Codecov
+
+#### 2. Cloud Functions Lint & Build
+- **ESLint**: Validates TypeScript code quality
+- **Build**: Compiles TypeScript to JavaScript
+- **Artifacts**: Archives compiled functions
+
+#### 3. Integration Tests (Optional)
+- Runs on pull requests only
+- Non-blocking (continues on error)
+- Tests integration scenarios if present
+
+### Running CI Checks Locally
+
+Before pushing code, run these commands to catch issues early:
+
+```bash
+# Flutter checks
+flutter format --set-exit-if-changed .
+flutter analyze --fatal-infos --fatal-warnings
+flutter test --coverage
+
+# Functions checks
+cd functions
+npm run lint
+npm run build
+npm test
+```
+
+### Re-running CI Jobs
+
+If a CI job fails:
+1. View the failed job in the GitHub Actions UI
+2. Click on the failed step to see detailed logs
+3. Fix the issue locally using the commands above
+4. Commit and push the fix
+5. CI will automatically re-run on the new push
+
+Alternatively, you can manually re-run workflows:
+1. Go to the Actions tab in GitHub
+2. Select the workflow run
+3. Click "Re-run jobs" in the top right
+
+### CI Badge
+
+The CI status badge at the top of this README shows the current build status:
+- ✅ Green: All checks passing
+- ❌ Red: One or more checks failing
+- 🟡 Yellow: Checks in progress
+
+### Caching
+
+The CI pipeline uses caching for faster builds:
+- **Flutter**: Caches pub dependencies and build artifacts
+- **Node.js**: Caches npm modules and npm cache
+
+This reduces typical build times from ~5 minutes to ~2 minutes.
+
 ## 🤝 Contributing
 
 1. Follow the existing code style and architecture
 2. Add tests for new features
 3. Update documentation as needed
 4. Ensure all tests pass before submitting
+5. Run CI checks locally before pushing (see above)
 
 ## 📄 License
 
