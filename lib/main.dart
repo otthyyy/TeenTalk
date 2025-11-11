@@ -4,15 +4,12 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,11 +17,13 @@ import 'firebase_options.dart';
 import 'src/core/localization/app_localizations.dart';
 import 'src/core/providers/crashlytics_provider.dart';
 import 'src/core/providers/feed_cache_provider.dart';
-import 'src/core/services/feed_cache_service.dart';
 import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
+import 'src/core/services/feed_cache_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
+import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 import 'src/services/push_notifications_controller.dart';
 import 'src/services/push_notifications_provider.dart';
 import 'src/services/push_notifications_service.dart';
@@ -40,8 +39,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   logger.d('Message data: ${message.data}');
   logger.d('Message notification: ${message.notification?.title}');
 }
-import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
-import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -110,7 +107,6 @@ Future<FeedCacheService?> _initializeFeedCache() async {
   }
 }
 
-class TeenTalkApp extends ConsumerWidget {
 class TeenTalkApp extends ConsumerStatefulWidget {
   const TeenTalkApp({super.key});
 
@@ -122,12 +118,6 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
   @override
   void initState() {
     super.initState();
-    
-    // Initialize push notifications after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final pushService = ref.read(pushNotificationsServiceProvider);
-      unawaited(pushService.initialize());
-    });
     _initializePushNotifications();
   }
 
@@ -155,24 +145,6 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
-      title: 'TeenTalk',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      routerConfig: router,
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('es', ''),
-        Locale('it', ''),
-      ],
     return ScreenshotProtectedContent(
       child: MaterialApp.router(
         title: 'TeenTalk',
@@ -181,7 +153,7 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
         routerConfig: router,
-        localizationsDelegates: [
+        localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -190,6 +162,7 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
         supportedLocales: const [
           Locale('en', ''),
           Locale('es', ''),
+          Locale('it', ''),
         ],
       ),
     );

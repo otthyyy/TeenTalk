@@ -53,7 +53,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   void _nextStep() {
     if (_currentStep < 4) {
-    if (_currentStep < 3) {
       final stepNames = ['nickname', 'personal_info', 'consent', 'privacy'];
       ref.read(analyticsServiceProvider).logOnboardingStepCompleted(
         stepNumber: _currentStep + 1,
@@ -133,6 +132,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           _schoolYear,
           interests,
           clubs,
+          _gender,
         ),
         anonymousPostsCount: 0,
         createdAt: now,

@@ -27,9 +27,8 @@ final likerProfilesProvider =
 
   final cache = ref.watch(_likerProfilesCacheProvider);
   final userRepository = ref.watch(userRepositoryProvider);
-  final blockedUsersAsync = ref.watch(blockedUsersProvider);
-  final blockedUsers = await blockedUsersAsync.future;
-  final blockedSet = blockedUsers.toSet();
+  final blockedUsersAsync = await ref.watch(blockedUsersProvider.future);
+  final blockedSet = blockedUsersAsync.toSet();
 
   final idsToFetch = uniqueLikerIds.where((id) => !cache.containsKey(id)).toList();
   final fetchedEntries = <String, UserProfile?>{};
