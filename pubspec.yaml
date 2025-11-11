@@ -121,6 +121,10 @@ dev_dependencies:
   mockito: ^5.4.0
   golden_toolkit: ^0.13.0
   fake_cloud_firestore: ^2.4.1
+  
+  # Branding Assets Generation
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -166,3 +170,49 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+# Flutter Launcher Icons Configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/branding/app_icon.png"
+    background_color: "#8B5CF6"
+    theme_color: "#8B5CF6"
+  windows:
+    generate: true
+    image_path: "assets/branding/app_icon.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/branding/app_icon.png"
+  linux:
+    generate: true
+    image_path: "assets/branding/app_icon.png"
+  image_path: "assets/branding/app_icon.png"
+  adaptive_icon_background: "#8B5CF6"
+  adaptive_icon_foreground: "assets/branding/splash_logo.png"
+  min_sdk_android: 21
+
+# Flutter Native Splash Configuration
+flutter_native_splash:
+  color: "#FBFBFB"
+  color_dark: "#0F0F1E"
+  background_image: assets/branding/splash_background_light.png
+  background_image_dark: assets/branding/splash_background_dark.png
+  image: assets/branding/splash_logo.png
+  image_dark: assets/branding/splash_logo.png
+  android_12:
+    color: "#8B5CF6"
+    color_dark: "#6D28D9"
+    image: assets/branding/splash_logo.png
+    image_dark: assets/branding/splash_logo.png
+    icon_background_color: "#FBFBFB"
+    icon_background_color_dark: "#0F0F1E"
+  web: true
+  android: true
+  ios: true
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center
