@@ -13,6 +13,8 @@ class AdminRepository {
 
   Future<List<Report>> getReports({
     String? status,
+    String? contentType,
+    String? severity,
     DateTime? startDate,
     DateTime? endDate,
     DocumentSnapshot? lastDocument,
@@ -22,6 +24,14 @@ class AdminRepository {
 
     if (status != null && status.isNotEmpty && status != 'all') {
       query = query.where('status', isEqualTo: status);
+    }
+
+    if (contentType != null && contentType.isNotEmpty && contentType != 'all') {
+      query = query.where('itemType', isEqualTo: contentType);
+    }
+
+    if (severity != null && severity.isNotEmpty && severity != 'all') {
+      query = query.where('severity', isEqualTo: severity);
     }
 
     if (startDate != null) {
@@ -92,6 +102,19 @@ class AdminRepository {
         'notes': notes,
         'createdAt': now.toIso8601String(),
       });
+    });
+  }
+
+  Future<void> processModerationAction({
+    required String reportId,
+    required String action,
+    String? reason,
+  }) async {
+    final callable = _functions.httpsCallable('processModerationAction');
+    await callable.call({
+      'reportId': reportId,
+      'action': action,
+      if (reason != null) 'reason': reason,
     });
   }
 
@@ -207,5 +230,65 @@ class AdminRepository {
         totalComments: 0,
       );
     }
+  }
+
+  Future<void> moderateUser({
+    required String userId,
+    required String action,
+    required String moderatorId,
+    required String reason,
+    String? reportId,
+  }) async {
+    final now = DateTime.now();
+    final userRef = _firestore.collection('users').doc(userId);
+
+    await _firestore.runTransaction((transaction) async {
+      DateTime? mutedUntil;
+      DateTime? suspendedUntil;
+      bool isWarned = false;
+
+      switch (action) {
+        case 'mute_24h':
+          mutedUntil = now.add(const Duration(hours: 24));
+          break;
+        case 'suspend_7d':
+          suspendedUntil = now.add(const Duration(days: 7));
+          break;
+        case 'warning':
+          isWarned = true;
+          break;
+      }
+
+      final updates = <String, dynamic>{
+        'updatedAt': now.toIso8601String(),
+      };
+
+      if (mutedUntil != null) {
+        updates['mutedUntil'] = mutedUntil.toIso8601String();
+      }
+
+      if (suspendedUntil != null) {
+        updates['suspendedUntil'] = suspendedUntil.toIso8601String();
+      }
+
+      if (isWarned) {
+        updates['warningCount'] = FieldValue.increment(1);
+        updates['lastWarningAt'] = now.toIso8601String();
+      }
+
+      transaction.update(userRef, updates);
+
+      final moderationLogRef = _firestore.collection('userModerationLog').doc();
+      transaction.set(moderationLogRef, {
+        'userId': userId,
+        'action': action,
+        'moderatorId': moderatorId,
+        'reason': reason,
+        'reportId': reportId,
+        'createdAt': now.toIso8601String(),
+        'mutedUntil': mutedUntil?.toIso8601String(),
+        'suspendedUntil': suspendedUntil?.toIso8601String(),
+      });
+    });
   }
 }

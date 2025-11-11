@@ -36,6 +36,7 @@ class UserProfile {
   final bool? betaConsentGiven;
   final DateTime? betaConsentTimestamp;
   final bool crashReportingEnabled;
+  final bool screenshotProtectionEnabled;
 
   const UserProfile({
     required this.uid,
@@ -69,6 +70,7 @@ class UserProfile {
     this.betaConsentGiven,
     this.betaConsentTimestamp,
     this.crashReportingEnabled = true,
+    this.screenshotProtectionEnabled = true,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -124,6 +126,12 @@ class UserProfile {
           _timestampToDate(json['betaConsentTimestamp']),
       crashReportingEnabled:
           json['crashReportingEnabled'] as bool? ?? true,
+      betaConsentTimestamp: json['betaConsentTimestamp'] != null
+          ? (json['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
+      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          json['screenshotProtectionEnabled'] as bool? ?? true,
     );
   }
 
@@ -170,6 +178,8 @@ class UserProfile {
           : null,
       'crashReportingEnabled': crashReportingEnabled,
     }..removeWhere((_, value) => value == null);
+      'screenshotProtectionEnabled': screenshotProtectionEnabled,
+    };
   }
 
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
@@ -189,6 +199,60 @@ class UserProfile {
       'uid': doc.id,
       ...data,
     });
+    return UserProfile(
+      uid: doc.id,
+      nickname: nickname,
+      nicknameVerified: data['nicknameVerified'] as bool? ?? false,
+      gender: data['gender'] as String?,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      searchKeywords: searchKeywords.isNotEmpty
+          ? searchKeywords
+          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
+      school: data['school'] as String?,
+      schoolYear: data['schoolYear'] as int?,
+      interests: data['interests'] != null
+          ? List<String>.from(data['interests'] as List)
+          : [],
+      trustLevel: (data['trustLevel'] as num?)?.toDouble() ?? 0.0,
+      anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      lastNicknameChangeAt: data['lastNicknameChangeAt'] != null
+          ? (data['lastNicknameChangeAt'] as Timestamp).toDate()
+          : null,
+      privacyConsentGiven: data['privacyConsentGiven'] as bool? ?? false,
+      privacyConsentTimestamp: data['privacyConsentTimestamp'] != null
+          ? (data['privacyConsentTimestamp'] as Timestamp).toDate()
+          : DateTime.now(),
+      isMinor: data['isMinor'] as bool?,
+      guardianContact: data['guardianContact'] as String?,
+      parentalConsentGiven: data['parentalConsentGiven'] as bool?,
+      parentalConsentTimestamp: data['parentalConsentTimestamp'] != null
+          ? (data['parentalConsentTimestamp'] as Timestamp).toDate()
+          : null,
+      onboardingComplete: data['onboardingComplete'] as bool? ?? false,
+      allowAnonymousPosts: data['allowAnonymousPosts'] as bool? ?? true,
+      profileVisible: data['profileVisible'] as bool? ?? true,
+      analyticsEnabled: data['analyticsEnabled'] as bool? ?? true,
+      updatedAt: data['updatedAt'] != null
+          ? (data['updatedAt'] as Timestamp).toDate()
+          : null,
+      isAdmin: data['isAdmin'] as bool? ?? false,
+      isModerator: data['isModerator'] as bool? ?? false,
+      trustLevel: TrustLevel.fromString(data['trustLevel'] as String?),
+      isBetaTester: data['isBetaTester'] as bool? ?? false,
+      betaConsentGiven: data['betaConsentGiven'] as bool?,
+      betaConsentTimestamp: data['betaConsentTimestamp'] != null
+          ? (data['betaConsentTimestamp'] as Timestamp).toDate()
+          : null,
+      crashReportingEnabled: data['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          data['screenshotProtectionEnabled'] as bool? ?? true,
+    );
   }
 
   static Map<String, dynamic> toFirestore(UserProfile profile) {
@@ -255,6 +319,7 @@ class UserProfile {
     bool? betaConsentGiven,
     DateTime? betaConsentTimestamp,
     bool? crashReportingEnabled,
+    bool? screenshotProtectionEnabled,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -291,6 +356,9 @@ class UserProfile {
       betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
       crashReportingEnabled:
           crashReportingEnabled ?? this.crashReportingEnabled,
+      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
+      screenshotProtectionEnabled:
+          screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
     );
   }
 
@@ -398,25 +466,139 @@ class UserProfile {
     List<String> clubs,
   ) {
     final keywords = <String>{};
-    if (nickname.isNotEmpty) {
-      keywords.add(nickname.toLowerCase());
+
+    void addKeyword(String? rawValue) {
+      if (rawValue == null) return;
+      final trimmed = rawValue.trim();
+      if (trimmed.isEmpty) return;
+
+      final lower = trimmed.toLowerCase();
+      keywords.add(lower);
+
+      final sanitized = _stripDiacritics(lower);
+      keywords.add(sanitized);
     }
-    if (school != null && school.isNotEmpty) {
-      keywords.add(school.toLowerCase());
-    }
-    if (schoolYear != null && schoolYear.isNotEmpty) {
-      keywords.add(schoolYear.toLowerCase());
-    }
+
+    addKeyword(nickname);
+    addKeyword(school);
+    addKeyword(schoolYear);
+
     for (final interest in interests) {
       if (interest.isNotEmpty) {
         keywords.add(interest.toLowerCase());
       }
+      addKeyword(interest);
     }
+
     for (final club in clubs) {
       if (club.isNotEmpty) {
         keywords.add(club.toLowerCase());
       }
     }
     return keywords.toList(growable: false);
+      addKeyword(club);
+    }
+
+    keywords.removeWhere((element) => element.trim().isEmpty);
+    return keywords.toList();
   }
+
+  static String _stripDiacritics(String value) {
+    final buffer = StringBuffer();
+    for (final rune in value.runes) {
+      final char = String.fromCharCode(rune);
+      buffer.write(_diacriticReplacements[char] ?? char);
+    }
+    return buffer.toString();
+  }
+
+  static const Map<String, String> _diacriticReplacements = {
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'ã': 'a',
+    'å': 'a',
+    'ā': 'a',
+    'ă': 'a',
+    'ą': 'a',
+    'ǎ': 'a',
+    'æ': 'ae',
+    'ç': 'c',
+    'ć': 'c',
+    'č': 'c',
+    'ĉ': 'c',
+    'ċ': 'c',
+    'ď': 'd',
+    'đ': 'd',
+    'ð': 'd',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'ē': 'e',
+    'ė': 'e',
+    'ę': 'e',
+    'ě': 'e',
+    'ğ': 'g',
+    'ĝ': 'g',
+    'ġ': 'g',
+    'ģ': 'g',
+    'ĥ': 'h',
+    'ħ': 'h',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ī': 'i',
+    'į': 'i',
+    'ı': 'i',
+    'ĵ': 'j',
+    'ķ': 'k',
+    'ĺ': 'l',
+    'ľ': 'l',
+    'ļ': 'l',
+    'ł': 'l',
+    'ñ': 'n',
+    'ń': 'n',
+    'ň': 'n',
+    'ņ': 'n',
+    'ŋ': 'n',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'õ': 'o',
+    'ő': 'o',
+    'ō': 'o',
+    'ø': 'o',
+    'œ': 'oe',
+    'ś': 's',
+    'š': 's',
+    'ş': 's',
+    'ș': 's',
+    'ŝ': 's',
+    'ť': 't',
+    'ţ': 't',
+    'ț': 't',
+    'ŧ': 't',
+    'þ': 'th',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ū': 'u',
+    'ů': 'u',
+    'ű': 'u',
+    'ŭ': 'u',
+    'ų': 'u',
+    'ŵ': 'w',
+    'ý': 'y',
+    'ÿ': 'y',
+    'ŷ': 'y',
+    'ž': 'z',
+    'ź': 'z',
+    'ż': 'z',
+    'ß': 'ss',
+  };
 }

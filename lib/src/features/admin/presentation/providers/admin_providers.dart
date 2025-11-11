@@ -14,6 +14,8 @@ final adminReportsProvider =
   final repository = ref.watch(adminRepositoryProvider);
   return repository.getReports(
     status: filter.status,
+    contentType: filter.contentType,
+    severity: filter.severity,
     startDate: filter.startDate,
     endDate: filter.endDate,
   );
@@ -65,22 +67,30 @@ final moderationDecisionsProvider =
 
 class AdminReportsFilter {
   final String status;
+  final String? contentType;
+  final String? severity;
   final DateTime? startDate;
   final DateTime? endDate;
 
   AdminReportsFilter({
     this.status = 'all',
+    this.contentType,
+    this.severity,
     this.startDate,
     this.endDate,
   });
 
   AdminReportsFilter copyWith({
     String? status,
+    String? contentType,
+    String? severity,
     DateTime? startDate,
     DateTime? endDate,
   }) {
     return AdminReportsFilter(
       status: status ?? this.status,
+      contentType: contentType ?? this.contentType,
+      severity: severity ?? this.severity,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
     );
