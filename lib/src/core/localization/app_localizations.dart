@@ -189,6 +189,17 @@ abstract class AppLocalizations {
   String sectionLabel(String section);
   String get a11yProfilePicture;
   String get a11yEditProfile;
+
+  // Legal Pages
+  String get legalPrivacyPolicyTitle;
+  String get legalTermsOfServiceTitle;
+  String get legalUnavailableTitle;
+  String get legalUnavailableMessage;
+  String get legalLoadError;
+  String get legalReload;
+  String get legalLinkOpenError;
+  String get legalViewPrivacy;
+  String get legalViewTerms;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

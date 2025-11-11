@@ -356,4 +356,23 @@ class AppLocalizationsIT extends AppLocalizations {
   String get a11yProfilePicture => 'Foto del profilo';
   @override
   String get a11yEditProfile => 'Modifica profilo';
+
+  @override
+  String get legalPrivacyPolicyTitle => 'Informativa sulla Privacy';
+  @override
+  String get legalTermsOfServiceTitle => 'Termini di Servizio';
+  @override
+  String get legalUnavailableTitle => 'Documento non trovato';
+  @override
+  String get legalUnavailableMessage => 'Il documento legale richiesto non è disponibile.';
+  @override
+  String get legalLoadError => 'Impossibile caricare il documento.';
+  @override
+  String get legalReload => 'Ricarica';
+  @override
+  String get legalLinkOpenError => 'Impossibile aprire il link.';
+  @override
+  String get legalViewPrivacy => 'Apri Informativa sulla Privacy';
+  @override
+  String get legalViewTerms => 'Apri Termini di Servizio';
 }

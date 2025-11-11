@@ -8,184 +8,161 @@ const messaging = admin.messaging();
  * Sends push notification when a user receives a comment on their post
  */
 export const onCommentNotification = functions.firestore
-  .document("posts/{postId}/comments/{commentId}")
+  .document("comments/{commentId}")
   .onCreate(async (snap, context) => {
     const commentData = snap.data();
-    const {postId} = context.params;
+    const commentId = context.params.commentId;
+    const postId = commentData.postId;
+    const replyToCommentId = commentData.replyToCommentId;
 
     try {
       // Get post details
       const postDoc = await db.collection("posts").doc(postId).get();
       if (!postDoc.exists) {
+        functions.logger.warn(`Post ${postId} not found for comment ${commentId}`);
         return;
       }
 
       const postData = postDoc.data()!;
       const postAuthorId = postData.authorId;
-
-      // Don't notify if commenting on own post
-      if (commentData.authorId === postAuthorId) {
-        return;
-      }
 
       // Get commenter details
       const commenterDoc = await db
         .collection("users")
         .doc(commentData.authorId)
         .get();
-      const commenterName = commenterDoc.data()?.displayName || "Someone";
+      const commenterName = commenterDoc.data()?.displayName || commenterDoc.data()?.nickname || "Someone";
 
-      // Get post author's FCM tokens
-      const userPrefsDoc = await db
-        .collection("users")
-        .doc(postAuthorId)
-        .collection("preferences")
-        .doc("notifications")
-        .get();
+      // Handle reply notification
+      if (replyToCommentId) {
+        const parentCommentDoc = await db.collection("comments").doc(replyToCommentId).get();
+        if (parentCommentDoc.exists) {
+          const parentCommentData = parentCommentDoc.data()!;
+          const parentCommentAuthorId = parentCommentData.authorId;
 
-      const prefs = userPrefsDoc.data() || {};
-
-      // Check if notifications are enabled
-      if (!prefs.commentsEnabled) {
-        return;
+          // Don't notify if replying to own comment
+          if (commentData.authorId !== parentCommentAuthorId) {
+            await sendNotification(
+              parentCommentAuthorId,
+              `${commenterName} replied to your comment`,
+              commentData.content.substring(0, 100),
+              "comment_reply",
+              {
+                postId,
+                commentId,
+                replyToCommentId,
+                authorId: commentData.authorId,
+              }
+            );
+          }
+        }
       }
 
-      // Get FCM tokens
-      const userDoc = await db.collection("users").doc(postAuthorId).get();
-      const userData = userDoc.data() || {};
-      const fcmTokens = userData.fcmTokens || [];
-
-      if (fcmTokens.length === 0) {
-        return;
+      // Notify post author (but not if they're commenting on their own post or already notified via reply)
+      if (commentData.authorId !== postAuthorId && (!replyToCommentId || postAuthorId !== commentData.authorId)) {
+        await sendNotification(
+          postAuthorId,
+          `${commenterName} commented on your post`,
+          commentData.content.substring(0, 100),
+          "comment",
+          {
+            postId,
+            commentId,
+            authorId: commentData.authorId,
+          }
+        );
       }
 
-      // Send notifications
-      const notificationTitle = `${commenterName} commented on your post`;
-      const notificationBody = commentData.content.substring(0, 100);
-
-      const message: admin.messaging.MulticastMessage = {
-        tokens: fcmTokens,
-        notification: {
-          title: notificationTitle,
-          body: notificationBody,
-        },
-        data: {
-          type: "comment",
-          postId,
-          commentId: context.params.commentId,
-          commenterId: commentData.authorId,
-        },
-      };
-
-      await messaging.sendMulticast(message);
-
-      // Store notification in database
-      await db
-        .collection("users")
-        .doc(postAuthorId)
-        .collection("notifications")
-        .add({
-          type: "comment",
-          title: notificationTitle,
-          body: notificationBody,
-          postId,
-          commentId: context.params.commentId,
-          commenterId: commentData.authorId,
-          createdAt: admin.firestore.Timestamp.now(),
-          read: false,
-        });
+      // Handle mentions
+      if (commentData.mentionedUserIds && Array.isArray(commentData.mentionedUserIds)) {
+        for (const mentionedUserId of commentData.mentionedUserIds) {
+          // Don't notify the commenter or if already notified
+          if (mentionedUserId !== commentData.authorId && mentionedUserId !== postAuthorId) {
+            await sendNotification(
+              mentionedUserId,
+              `${commenterName} mentioned you in a comment`,
+              commentData.content.substring(0, 100),
+              "comment_mention",
+              {
+                postId,
+                commentId,
+                authorId: commentData.authorId,
+              }
+            );
+          }
+        }
+      }
     } catch (error) {
-      console.error("Error sending comment notification:", error);
+      functions.logger.error("Error sending comment notification:", error);
     }
   });
 
 /**
  * Sends push notification when a user's post gets a like
+ * Watches for changes in the likedBy array to detect new likes
  */
 export const onPostLikeNotification = functions.firestore
-  .document("posts/{postId}/likes/{userId}")
-  .onCreate(async (snap, context) => {
-    const {postId, userId} = context.params;
+  .document("posts/{postId}")
+  .onUpdate(async (change, context) => {
+    const {postId} = context.params;
+    const beforeData = change.before.data();
+    const afterData = change.after.data();
 
     try {
-      // Get post details
-      const postDoc = await db.collection("posts").doc(postId).get();
-      if (!postDoc.exists) {
+      const beforeLikedBy = beforeData.likedBy || [];
+      const afterLikedBy = afterData.likedBy || [];
+
+      // Detect new likes
+      const newLikes = afterLikedBy.filter(
+        (userId: string) => !beforeLikedBy.includes(userId)
+      );
+
+      if (newLikes.length === 0) {
         return;
       }
 
-      const postData = postDoc.data()!;
-      const postAuthorId = postData.authorId;
+      const postAuthorId = afterData.authorId;
 
-      // Don't notify if user liked own post
-      if (userId === postAuthorId) {
-        return;
+      // Process each new like
+      for (const likerId of newLikes) {
+        // Don't notify if user liked own post
+        if (likerId === postAuthorId) {
+          continue;
+        }
+
+        // Check for duplicate notification (prevent spam)
+        const recentNotification = await db
+          .collection("notifications")
+          .where("userId", "==", postAuthorId)
+          .where("type", "==", "like")
+          .where("data.postId", "==", postId)
+          .where("data.likerId", "==", likerId)
+          .where("createdAt", ">=", new Date(Date.now() - 60000).toISOString()) // Last minute
+          .limit(1)
+          .get();
+
+        if (!recentNotification.empty) {
+          functions.logger.info(`Skipping duplicate like notification for post ${postId} by user ${likerId}`);
+          continue;
+        }
+
+        // Get liker details
+        const likerDoc = await db.collection("users").doc(likerId).get();
+        const likerName = likerDoc.data()?.displayName || likerDoc.data()?.nickname || "Someone";
+
+        await sendNotification(
+          postAuthorId,
+          `${likerName} liked your post`,
+          "Tap to view",
+          "like",
+          {
+            postId,
+            likerId,
+          }
+        );
       }
-
-      // Get user details
-      const userDoc = await db.collection("users").doc(userId).get();
-      const userName = userDoc.data()?.displayName || "Someone";
-
-      // Get post author's FCM tokens
-      const userPrefsDoc = await db
-        .collection("users")
-        .doc(postAuthorId)
-        .collection("preferences")
-        .doc("notifications")
-        .get();
-
-      const prefs = userPrefsDoc.data() || {};
-
-      // Check if notifications are enabled
-      if (!prefs.likesEnabled) {
-        return;
-      }
-
-      const postAuthorDoc = await db
-        .collection("users")
-        .doc(postAuthorId)
-        .get();
-      const postAuthorData = postAuthorDoc.data() || {};
-      const fcmTokens = postAuthorData.fcmTokens || [];
-
-      if (fcmTokens.length === 0) {
-        return;
-      }
-
-      // Send notifications
-      const notificationTitle = `${userName} liked your post`;
-
-      const message: admin.messaging.MulticastMessage = {
-        tokens: fcmTokens,
-        notification: {
-          title: notificationTitle,
-          body: "Tap to view",
-        },
-        data: {
-          type: "like",
-          postId,
-          userId,
-        },
-      };
-
-      await messaging.sendMulticast(message);
-
-      // Store notification in database
-      await db
-        .collection("users")
-        .doc(postAuthorId)
-        .collection("notifications")
-        .add({
-          type: "like",
-          title: notificationTitle,
-          body: "Tap to view",
-          postId,
-          userId,
-          createdAt: admin.firestore.Timestamp.now(),
-          read: false,
-        });
     } catch (error) {
-      console.error("Error sending like notification:", error);
+      functions.logger.error("Error sending like notification:", error);
     }
   });
 
@@ -193,29 +170,29 @@ export const onPostLikeNotification = functions.firestore
  * Sends direct message notification
  */
 export const onDirectMessageNotification = functions.firestore
-  .document("directMessages/{conversationId}/messages/{messageId}")
+  .document("conversations/{conversationId}/messages/{messageId}")
   .onCreate(async (snap, context) => {
     const messageData = snap.data();
-    const {conversationId} = context.params;
+    const {conversationId, messageId} = context.params;
 
     try {
       // Get conversation details
       const conversationDoc = await db
-        .collection("directMessages")
+        .collection("conversations")
         .doc(conversationId)
         .get();
       if (!conversationDoc.exists) {
+        functions.logger.warn(`Conversation ${conversationId} not found for message ${messageId}`);
         return;
       }
 
       const conversationData = conversationDoc.data()!;
       const participants = conversationData.participantIds || [];
 
-      // Find receiver
-      const receiverId = participants.find(
-        (id: string) => id !== messageData.senderId
-      );
-      if (!receiverId) {
+      // Find receiver(s)
+      const recipientIds = participants.filter((id: string) => id !== messageData.senderId);
+      if (recipientIds.length === 0) {
+        functions.logger.warn(`No recipients found for message ${messageId} in conversation ${conversationId}`);
         return;
       }
 
@@ -224,38 +201,23 @@ export const onDirectMessageNotification = functions.firestore
         .collection("users")
         .doc(messageData.senderId)
         .get();
-      const senderName = senderDoc.data()?.displayName || "Someone";
+      const senderName = senderDoc.data()?.displayName || senderDoc.data()?.nickname || "Someone";
 
-      // Get receiver's FCM tokens
-      const receiverDoc = await db
-        .collection("users")
-        .doc(receiverId)
-        .get();
-      const receiverData = receiverDoc.data() || {};
-      const fcmTokens = receiverData.fcmTokens || [];
-
-      if (fcmTokens.length === 0) {
-        return;
+      for (const recipientId of recipientIds) {
+        await sendNotification(
+          recipientId,
+          senderName,
+          messageData.content ? messageData.content.substring(0, 100) : "New message",
+          "message",
+          {
+            conversationId,
+            messageId,
+            senderId: messageData.senderId,
+          }
+        );
       }
-
-      // Send notification
-      const message: admin.messaging.MulticastMessage = {
-        tokens: fcmTokens,
-        notification: {
-          title: senderName,
-          body: messageData.content.substring(0, 100),
-        },
-        data: {
-          type: "message",
-          conversationId,
-          messageId: context.params.messageId,
-          senderId: messageData.senderId,
-        },
-      };
-
-      await messaging.sendMulticast(message);
     } catch (error) {
-      console.error("Error sending message notification:", error);
+      functions.logger.error("Error sending message notification:", error);
     }
   });
 
@@ -357,3 +319,114 @@ export const unregisterFCMToken = functions.https.onCall(
     }
   }
 );
+
+/**
+ * Helper function to send notification to a user
+ * Stores notification in Firestore and sends FCM push notification
+ */
+async function sendNotification(
+  userId: string,
+  title: string,
+  body: string,
+  type: string,
+  data: Record<string, string>
+): Promise<void> {
+  try {
+    // Store notification in top-level notifications collection
+    await db.collection("notifications").add({
+      userId,
+      type,
+      title,
+      body,
+      data,
+      createdAt: new Date().toISOString(),
+      read: false,
+    });
+
+    functions.logger.info(`Created notification for user ${userId}: ${type}`);
+
+    // Get user's FCM tokens
+    const userDoc = await db.collection("users").doc(userId).get();
+    if (!userDoc.exists) {
+      functions.logger.warn(`User ${userId} not found for notification`);
+      return;
+    }
+
+    const userData = userDoc.data()!;
+    let fcmTokens = userData.fcmTokens || [];
+
+    if (fcmTokens.length === 0) {
+      functions.logger.info(`User ${userId} has no FCM tokens registered`);
+      return;
+    }
+
+    // Filter out duplicate tokens
+    fcmTokens = Array.from(new Set(fcmTokens));
+
+    // Prepare FCM messages
+    const messages = fcmTokens.map((token: string) => ({
+      token,
+      notification: {
+        title,
+        body,
+      },
+      data: {
+        type,
+        ...data,
+      },
+      android: {
+        priority: "high" as const,
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: "default",
+            badge: 1,
+          },
+        },
+      },
+    }));
+
+    // Send messages and handle failures
+    const response = await messaging.sendEach(messages);
+
+    functions.logger.info(
+      `Sent ${response.successCount} notifications to user ${userId}, ${response.failureCount} failed`
+    );
+
+    // Remove invalid tokens
+    const invalidTokens: string[] = [];
+    response.responses.forEach((resp, idx) => {
+      if (!resp.success) {
+        const error = resp.error;
+        functions.logger.error(`Failed to send to token ${idx}:`, error);
+
+        // Check for invalid token errors
+        if (
+          error?.code === "messaging/invalid-registration-token" ||
+          error?.code === "messaging/registration-token-not-registered"
+        ) {
+          invalidTokens.push(fcmTokens[idx]);
+        }
+      }
+    });
+
+    // Clean up invalid tokens
+    if (invalidTokens.length > 0) {
+      const updatedTokens = fcmTokens.filter(
+        (token: string) => !invalidTokens.includes(token)
+      );
+      await db.collection("users").doc(userId).update({
+        fcmTokens: updatedTokens,
+      });
+      functions.logger.info(
+        `Removed ${invalidTokens.length} invalid tokens for user ${userId}`
+      );
+    }
+  } catch (error) {
+    functions.logger.error(
+      `Error sending notification to user ${userId}:`,
+      error
+    );
+  }
+}
