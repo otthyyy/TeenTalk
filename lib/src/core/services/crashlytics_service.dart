@@ -3,23 +3,29 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 class CrashlyticsService {
-  final FirebaseCrashlytics _crashlytics;
+  final FirebaseCrashlytics? _crashlytics;
   final Logger _logger;
   bool _isInitialized = false;
 
   CrashlyticsService({
     FirebaseCrashlytics? crashlytics,
     Logger? logger,
-  })  : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance,
+  })  : _crashlytics = kIsWeb ? null : (crashlytics ?? FirebaseCrashlytics.instance),
         _logger = logger ?? Logger();
 
   Future<void> initialize() async {
+    if (kIsWeb) {
+      _logger.i('Crashlytics is not supported on web platform');
+      _isInitialized = false;
+      return;
+    }
+
     try {
       if (kDebugMode) {
-        await _crashlytics.setCrashlyticsCollectionEnabled(false);
+        await _crashlytics!.setCrashlyticsCollectionEnabled(false);
         _logger.i('Crashlytics disabled in debug mode');
       } else {
-        await _crashlytics.setCrashlyticsCollectionEnabled(true);
+        await _crashlytics!.setCrashlyticsCollectionEnabled(true);
         _logger.i('Crashlytics enabled');
       }
       _isInitialized = true;
@@ -30,8 +36,9 @@ class CrashlyticsService {
   }
 
   Future<void> setCollectionEnabled(bool enabled) async {
+    if (kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.setCrashlyticsCollectionEnabled(enabled);
+      await _crashlytics!.setCrashlyticsCollectionEnabled(enabled);
       _logger.i('Crashlytics collection ${enabled ? "enabled" : "disabled"}');
     } catch (e) {
       _logger.e('Failed to set Crashlytics collection: $e');
@@ -39,36 +46,36 @@ class CrashlyticsService {
   }
 
   Future<void> setUserId(String userId) async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.setUserIdentifier(userId);
+      await _crashlytics!.setUserIdentifier(userId);
     } catch (e) {
       _logger.e('Failed to set user ID in Crashlytics: $e');
     }
   }
 
   Future<void> clearUserId() async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.setUserIdentifier('');
+      await _crashlytics!.setUserIdentifier('');
     } catch (e) {
       _logger.e('Failed to clear user ID in Crashlytics: $e');
     }
   }
 
   Future<void> setCustomKey(String key, dynamic value) async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.setCustomKey(key, value);
+      await _crashlytics!.setCustomKey(key, value);
     } catch (e) {
       _logger.e('Failed to set custom key in Crashlytics: $e');
     }
   }
 
   Future<void> log(String message) async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.log(message);
+      await _crashlytics!.log(message);
     } catch (e) {
       _logger.e('Failed to log message in Crashlytics: $e');
     }
@@ -80,9 +87,9 @@ class CrashlyticsService {
     dynamic reason,
     bool fatal = false,
   }) async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.recordError(
+      await _crashlytics!.recordError(
         exception,
         stackTrace,
         reason: reason,
@@ -94,18 +101,22 @@ class CrashlyticsService {
   }
 
   Future<void> recordFlutterError(FlutterErrorDetails details) async {
-    if (!_isInitialized) return;
+    if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics.recordFlutterError(details);
+      await _crashlytics!.recordFlutterError(details);
     } catch (e) {
       _logger.e('Failed to record Flutter error in Crashlytics: $e');
     }
   }
 
   Future<void> testCrash() async {
+    if (kIsWeb || _crashlytics == null) {
+      _logger.w('Test crash not available on web platform');
+      return;
+    }
     if (kDebugMode) {
       _logger.w('Test crash triggered (only works in release mode)');
-      await _crashlytics.setCrashlyticsCollectionEnabled(true);
+      await _crashlytics!.setCrashlyticsCollectionEnabled(true);
       throw Exception('Test crash from Crashlytics');
     } else {
       throw Exception('Test crash from Crashlytics');

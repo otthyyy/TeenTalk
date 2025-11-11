@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +40,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
+  final crashlyticsService = CrashlyticsService();
+
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -61,7 +62,6 @@ Future<void> main() async {
     // Set up background message handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    final crashlyticsService = CrashlyticsService();
     await crashlyticsService.initialize();
 
     final feedCacheService = await _initializeFeedCache();
@@ -90,8 +90,9 @@ Future<void> main() async {
       ),
     );
   }, (error, stackTrace) {
+    if (kIsWeb) return;
     unawaited(
-      FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true),
+      crashlyticsService.recordError(error, stackTrace, fatal: true),
     );
   });
 }
