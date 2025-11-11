@@ -22,14 +22,22 @@ import '../../../feed/domain/models/feed_sort_option.dart';
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final Logger _logger = Logger();
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+  final Logger _logger;
   static const String _postsCollection = 'posts';
   static const String _imagesFolder = 'post_images';
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
+
+  PostsRepository({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+    Logger? logger,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _logger = logger ?? Logger();
 
   Future<(List<Post>, DocumentSnapshot?)> getPosts({
     DocumentSnapshot? lastDocument,
@@ -454,5 +462,69 @@ class PostsRepository {
     final RegExp mentionRegex = RegExp(r'@(\w+)');
     final matches = mentionRegex.allMatches(content);
     return matches.map((match) => match.group(1)!).toList();
+  }
+
+  Future<(List<Post>, DocumentSnapshot?)> getPostsByAuthor({
+    required String authorId,
+    String? school,
+    DocumentSnapshot? lastDocument,
+    int limit = 20,
+  }) async {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('authorId', isEqualTo: authorId)
+        .where('isAnonymous', isEqualTo: false)
+        .where('isModerated', isEqualTo: false);
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    final QuerySnapshot snapshot = await query.get();
+    
+    final posts = snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return Post.fromJson({
+        ...data,
+        'id': doc.id,
+      });
+    }).toList();
+
+    final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+    return (posts, lastDoc);
+  }
+
+  Stream<List<Post>> getPostsStreamByAuthor({
+    required String authorId,
+    String? school,
+    int limit = 20,
+  }) {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('authorId', isEqualTo: authorId)
+        .where('isAnonymous', isEqualTo: false)
+        .where('isModerated', isEqualTo: false);
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Post.fromJson({
+          ...data,
+          'id': doc.id,
+        });
+      }).toList();
+    });
   }
 }
