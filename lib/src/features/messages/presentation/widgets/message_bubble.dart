@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/direct_message.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -66,38 +67,12 @@ class MessageBubble extends StatelessWidget {
                   if (message.imageUrl != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: ClipRRect(
+                      child: CachedImageWidget(
+                        imageUrl: message.imageUrl!,
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          message.imageUrl!,
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 200,
-                              height: 200,
-                              color: theme.colorScheme.surfaceVariant,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.broken_image_outlined,
-                                    size: 48,
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Image unavailable',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
                       ),
                     ),
                   Text(

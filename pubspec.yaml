@@ -53,6 +53,8 @@ dependencies:
   
   # Image Handling
   image_picker: ^1.0.4
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
   
   # Logging
   logger: ^2.0.2
@@ -76,6 +78,19 @@ dependencies:
   
   # Persistence
   shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Background Tasks
+  workmanager: ^0.5.2
+  background_fetch: ^1.2.4
+  
+  # Connectivity
+  connectivity_plus: ^5.0.2
+  
+  # Tutorial
+  tutorial_coach_mark: ^1.2.11
+  shared_preferences: ^2.2.2
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
@@ -98,6 +113,7 @@ dev_dependencies:
   # Code Generation
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
+  hive_generator: ^2.0.1
   # flutter_gen_runner: ^5.3.0
   
   # Testing

@@ -433,21 +433,131 @@ class UserProfile {
     List<String> clubs,
   ) {
     final keywords = <String>{};
-    if (nickname.isNotEmpty) {
-      keywords.add(nickname.toLowerCase());
+
+    void addKeyword(String? rawValue) {
+      if (rawValue == null) return;
+      final trimmed = rawValue.trim();
+      if (trimmed.isEmpty) return;
+
+      final lower = trimmed.toLowerCase();
+      keywords.add(lower);
+
+      final sanitized = _stripDiacritics(lower);
+      keywords.add(sanitized);
     }
-    if (school != null && school.isNotEmpty) {
-      keywords.add(school.toLowerCase());
-    }
-    if (schoolYear != null && schoolYear.isNotEmpty) {
-      keywords.add(schoolYear.toLowerCase());
-    }
+
+    addKeyword(nickname);
+    addKeyword(school);
+    addKeyword(schoolYear);
+
     for (final interest in interests) {
-      keywords.add(interest.toLowerCase());
+      addKeyword(interest);
     }
+
     for (final club in clubs) {
-      keywords.add(club.toLowerCase());
+      addKeyword(club);
     }
+
+    keywords.removeWhere((element) => element.trim().isEmpty);
     return keywords.toList();
   }
+
+  static String _stripDiacritics(String value) {
+    final buffer = StringBuffer();
+    for (final rune in value.runes) {
+      final char = String.fromCharCode(rune);
+      buffer.write(_diacriticReplacements[char] ?? char);
+    }
+    return buffer.toString();
+  }
+
+  static const Map<String, String> _diacriticReplacements = {
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'ã': 'a',
+    'å': 'a',
+    'ā': 'a',
+    'ă': 'a',
+    'ą': 'a',
+    'ǎ': 'a',
+    'æ': 'ae',
+    'ç': 'c',
+    'ć': 'c',
+    'č': 'c',
+    'ĉ': 'c',
+    'ċ': 'c',
+    'ď': 'd',
+    'đ': 'd',
+    'ð': 'd',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'ē': 'e',
+    'ė': 'e',
+    'ę': 'e',
+    'ě': 'e',
+    'ğ': 'g',
+    'ĝ': 'g',
+    'ġ': 'g',
+    'ģ': 'g',
+    'ĥ': 'h',
+    'ħ': 'h',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ī': 'i',
+    'į': 'i',
+    'ı': 'i',
+    'ĵ': 'j',
+    'ķ': 'k',
+    'ĺ': 'l',
+    'ľ': 'l',
+    'ļ': 'l',
+    'ł': 'l',
+    'ñ': 'n',
+    'ń': 'n',
+    'ň': 'n',
+    'ņ': 'n',
+    'ŋ': 'n',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'õ': 'o',
+    'ő': 'o',
+    'ō': 'o',
+    'ø': 'o',
+    'œ': 'oe',
+    'ś': 's',
+    'š': 's',
+    'ş': 's',
+    'ș': 's',
+    'ŝ': 's',
+    'ť': 't',
+    'ţ': 't',
+    'ț': 't',
+    'ŧ': 't',
+    'þ': 'th',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ū': 'u',
+    'ů': 'u',
+    'ű': 'u',
+    'ŭ': 'u',
+    'ų': 'u',
+    'ŵ': 'w',
+    'ý': 'y',
+    'ÿ': 'y',
+    'ŷ': 'y',
+    'ž': 'z',
+    'ź': 'z',
+    'ż': 'z',
+    'ß': 'ss',
+  };
 }
