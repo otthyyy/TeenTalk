@@ -8,6 +8,7 @@ import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/presentation/widgets/comments_list_widget.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
+import '../../../../core/providers/image_cache_provider.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../tutorial/presentation/widgets/app_tutorial.dart';
 import '../providers/feed_provider.dart';
@@ -189,6 +190,49 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
           .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
           .loadMorePosts();
     }
+
+    // Prefetch images for upcoming posts
+    _prefetchUpcomingImages();
+  }
+
+  void _prefetchUpcomingImages() {
+    final postsState = ref.read(schoolAwareFeedProvider(_selectedSection.value));
+    if (postsState.posts.isEmpty) return;
+
+    final scrollOffset = _scrollController.offset;
+    const averagePostHeight = 400.0; // Approximate height of a post card
+    var currentIndex = (scrollOffset / averagePostHeight).floor();
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= postsState.posts.length) {
+      currentIndex = postsState.posts.length - 1;
+    }
+
+    final prefetchService = ref.read(imagePrefetchServiceProvider);
+    prefetchService.prefetchPostImages(
+      posts: postsState.posts,
+      currentIndex: currentIndex,
+      lookAhead: 5,
+    );
+  }
+
+  void _prefetchInitialImages(List<Post> posts) {
+    if (posts.isEmpty) return;
+    final prefetchService = ref.read(imagePrefetchServiceProvider);
+    prefetchService.batchPrefetch(posts.take(6).toList());
+  }
+
+  void _prefetchAroundIndex(int index, List<Post> posts) {
+    if (posts.isEmpty) return;
+    final prefetchService = ref.read(imagePrefetchServiceProvider);
+    prefetchService.prefetchPostImages(
+      posts: posts,
+      currentIndex: index,
+      lookAhead: 3,
+    );
+  }
+
+  void _resetPrefetchTracking() {
+    ref.read(imagePrefetchServiceProvider).clearPrefetchTracking();
   }
 
   bool _trendingListsEqual(List<Post> a, List<Post> b) {
@@ -203,6 +247,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     setState(() {
       _selectedSection = section;
     });
+    _resetPrefetchTracking();
     ref.read(schoolAwareFeedProvider(section.value).notifier).loadPosts(
           refresh: true,
           section: section.value,
@@ -214,6 +259,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       context: context,
       delegate: PostSearchDelegate(posts),
   void _onSortOptionSelected(FeedSortOption option) {
+    _resetPrefetchTracking();
     final notifier =
         ref.read(schoolAwareFeedProvider(_selectedSection.value).notifier);
     unawaited(

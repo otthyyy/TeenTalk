@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
@@ -309,27 +310,13 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     return Semantics(
       label: 'Post image',
       image: true,
-      child: ClipRRect(
+      child: CachedImageWidget(
+        imageUrl: widget.post.imageUrl!,
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          widget.post.imageUrl!,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: 200,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 200,
-              color: theme.colorScheme.surfaceVariant,
-              child: Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            );
-          },
-        ),
+        enableInstrumentation: true,
       ),
     );
   }
