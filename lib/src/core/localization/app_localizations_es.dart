@@ -238,6 +238,33 @@ class AppLocalizationsES extends AppLocalizations {
   String get moderationContentHidden => 'Este contenido ha sido ocultado por los moderadores';
 
   @override
+  String get trustBadgeNewcomerLabel => 'Recién Llegado';
+  @override
+  String get trustBadgeMemberLabel => 'Miembro';
+  @override
+  String get trustBadgeTrustedLabel => 'De Confianza';
+  @override
+  String get trustBadgeVeteranLabel => 'Veterano';
+  @override
+  String get trustBadgeNewcomerDescription => 'Nuevo en la comunidad';
+  @override
+  String get trustBadgeMemberDescription => 'Miembro activo de la comunidad';
+  @override
+  String get trustBadgeTrustedDescription => 'Miembro de confianza de la comunidad';
+  @override
+  String get trustBadgeVeteranDescription => 'Miembro antiguo de la comunidad';
+  @override
+  String get trustInfoLearnMore => 'Más información sobre los niveles de confianza';
+  @override
+  String get trustBadgeTooltip => 'La insignia de confianza indica la reputación en la comunidad';
+  @override
+  String get trustLowTrustWarningTitle => 'Usuario Nuevo';
+  @override
+  String get trustLowTrustWarningDescription => 'Este usuario es nuevo en la comunidad. Por favor ten precaución al interactuar.';
+  @override
+  String get trustLowTrustWarningProceed => 'Continuar';
+  @override
+  String get trustLowTrustWarningCancel => 'Cancelar';
   String get rateLimitTitle => 'Límite de publicación alcanzado';
   @override
   String get rateLimitPostsExceeded => 'Has publicado demasiadas veces. Espera antes de crear otra publicación.';

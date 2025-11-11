@@ -26,7 +26,238 @@ service cloud.firestore {
     function isValidNickname(nickname) {
       return nickname.size() >= 3 && 
              nickname.size() <= 20 &&
-             nickname.matches('^[a-zA-Z0-9_]+$');
+             nickname.matches('^[a-zA-Z0-9_]+
+    // Users collection rules
+    match /users/{userId} {
+      // Allow read for authenticated users if profile is visible or it's their own profile
+      allow read: if isAuthenticated() && 
+                     (get(/databases/$(database)/documents/users/$(userId)).data.profileVisible == true || 
+                      isOwner(userId));
+      
+      // Allow create only for own user document with valid data
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidNickname(request.resource.data.nickname) &&
+                       request.resource.data.nicknameVerified == true &&
+                       request.resource.data.privacyConsentGiven == true &&
+                       request.resource.data.privacyConsentTimestamp is timestamp &&
+                       request.resource.data.createdAt is timestamp &&
+                       request.resource.data.anonymousPostsCount == 0 &&
+                       // Nickname lowercase must match
+                       request.resource.data.nicknameLowercase == request.resource.data.nickname.lower() &&
+                       hasRequiredProfileFields(request.resource.data) &&
+                       isValidProfileData(request.resource.data);
+      
+      // Allow update only for own user document
+      allow update: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidNickname(request.resource.data.nickname) &&
+                       // If nickname is being changed, check if 30 days have passed
+                       (!isNicknameChanged() || canChangeNickname()) &&
+                       // Nickname lowercase must match if nickname changed
+                       (!isNicknameChanged() || request.resource.data.nicknameLowercase == request.resource.data.nickname.lower()) &&
+                       // Prevent modification of certain fields
+                       request.resource.data.uid == resource.data.uid &&
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp &&
+                       isValidProfileData(request.resource.data);
+      
+      // Allow delete only for own user document (for account deletion)
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Posts collection rules
+    match /posts/{postId} {
+      allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == request.resource.data.authorId &&
+                       canAccessSchool(request.resource.data.school);
+      allow update: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+      allow delete: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+    }
+    
+    // Comments collection rules
+    match /comments/{commentId} {
+      allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
+      allow create: if isAuthenticated() &&
+                       request.auth.uid == request.resource.data.authorId &&
+                       canAccessSchool(request.resource.data.school);
+      allow update: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+      allow delete: if isAuthenticated() &&
+                       (request.auth.uid == resource.data.authorId ||
+                         isAdmin()) &&
+                       canAccessSchool(resource.data.school);
+    }
+    
+    // Messages collection rules (placeholder for future implementation)
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == resource.data.senderId || 
+                      request.auth.uid == resource.data.receiverId);
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.senderId;
+      allow delete: if isAuthenticated() && 
+                       request.auth.uid == resource.data.senderId;
+    }
+    
+    // Conversations collection rules
+    match /conversations/{conversationId} {
+      // Allow read if user is one of the conversation participants
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == resource.data.userId1 || 
+                      request.auth.uid == resource.data.userId2);
+      
+      // Allow create for conversation between two users
+      allow create: if isAuthenticated() && 
+                       (request.auth.uid == request.resource.data.userId1 || 
+                        request.auth.uid == request.resource.data.userId2);
+      
+      // Allow update for conversation participants
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Allow delete for conversation participants
+      allow delete: if isAuthenticated() && 
+                       (request.auth.uid == resource.data.userId1 || 
+                        request.auth.uid == resource.data.userId2);
+      
+      // Messages subcollection rules
+      match /messages/{messageId} {
+        // Allow read if user is conversation participant
+        allow read: if isAuthenticated() && 
+                       (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                        request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow create if user is sender
+        allow create: if isAuthenticated() && 
+                         request.auth.uid == request.resource.data.senderId;
+        
+        // Allow update if user is conversation participant (for marking as read)
+        allow update: if isAuthenticated() && 
+                         (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId1 || 
+                          request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId2);
+        
+        // Allow delete if user is sender
+        allow delete: if isAuthenticated() && 
+                        request.auth.uid == resource.data.senderId;
+      }
+    }
+    
+    // Blocks collection rules for managing blocked users
+    match /blocks/{userId} {
+      // Allow read own blocks
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Allow create own blocks document
+      allow create: if isAuthenticated() && isOwner(userId);
+      
+      // Blocked users subcollection rules
+      match /blockedUsers/{blockedUserId} {
+        // Allow read own blocked list
+        allow read: if isAuthenticated() && isOwner(userId);
+        
+        // Allow create to block a user
+        allow create: if isAuthenticated() && isOwner(userId);
+        
+        // Allow delete to unblock a user
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Helper function to check if user is moderator or admin
+    function isModerator() {
+      return isAuthenticated() && 
+             (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true ||
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true);
+    }
+    
+    // Reported Content collection rules
+    match /reportedContent/{reportId} {
+      // Allow authenticated users to read their own reports
+      allow read: if isAuthenticated() && 
+                     (resource.data.reporterId == request.auth.uid || isModerator());
+      
+      // Allow authenticated users to create reports
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.reporterId &&
+                       request.resource.data.status == 'pending' &&
+                       request.resource.data.createdAt is timestamp;
+      
+      // Only moderators can update reports
+      allow update: if isModerator();
+      
+      // Only admins can delete reports
+      allow delete: if isAdmin();
+    }
+    
+    // Moderation Queue collection rules
+    match /moderationQueue/{contentId} {
+      // Moderators can read all items in queue
+      allow read: if isModerator();
+      
+      // System can create moderation items (via Cloud Functions or client when creating reports)
+      allow create: if isAuthenticated();
+      
+      // Moderators can update moderation status
+      allow update: if isModerator();
+      
+      // Only admins can delete from moderation queue
+      allow delete: if isAdmin();
+      
+      // Audit Logs subcollection - restricted to admins and moderators only
+      match /auditLogs/{logId} {
+        // Only moderators can read audit logs
+        allow read: if isModerator();
+        
+        // System can create audit logs (via Cloud Functions)
+        allow create: if isAuthenticated();
+        
+        // No updates or deletes allowed for audit logs (immutable)
+        allow update, delete: if false;
+      }
+    }
+    
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Reports collection rules (admin only)
+    match /reports/{reportId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow update: if isAuthenticated() && isAdmin();
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Moderation decisions collection rules (admin only)
+    match /moderationDecisions/{decisionId} {
+      allow read: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isAdmin();
+      allow list: if isAuthenticated() && isAdmin();
+    }
+
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+);
     }
     
     // Helper function to check if nickname is being changed
@@ -38,6 +269,20 @@ service cloud.firestore {
     function canChangeNickname() {
       return !('lastNicknameChangeAt' in resource.data) ||
              (request.time.toMillis() - resource.data.lastNicknameChangeAt.toMillis()) >= 2592000000; // 30 days in milliseconds
+    }
+
+    // Helper function to validate profile data structure
+    function isValidProfileData(data) {
+      return (!('schoolYear' in data) || data.schoolYear is string) &&
+             (!('interests' in data) || (data.interests is list && data.interests.size() >= 1 && data.interests.size() <= 20)) &&
+             (!('clubs' in data) || (data.clubs is list && data.clubs.size() <= 20)) &&
+             (!('searchKeywords' in data) || (data.searchKeywords is list && data.searchKeywords.size() <= 50));
+    }
+
+    function hasRequiredProfileFields(data) {
+      return ('schoolYear' in data) && data.schoolYear is string &&
+             ('interests' in data) && data.interests is list && data.interests.size() >= 1 &&
+             ('searchKeywords' in data) && data.searchKeywords is list;
     }
     
     // Users collection rules
@@ -57,7 +302,9 @@ service cloud.firestore {
                        request.resource.data.createdAt is timestamp &&
                        request.resource.data.anonymousPostsCount == 0 &&
                        // Nickname lowercase must match
-                       request.resource.data.nicknameLowercase == request.resource.data.nickname.lower();
+                       request.resource.data.nicknameLowercase == request.resource.data.nickname.lower() &&
+                       hasRequiredProfileFields(request.resource.data) &&
+                       isValidProfileData(request.resource.data);
       
       // Allow update only for own user document
       allow update: if isAuthenticated() && 
@@ -70,7 +317,8 @@ service cloud.firestore {
                        // Prevent modification of certain fields
                        request.resource.data.uid == resource.data.uid &&
                        request.resource.data.createdAt == resource.data.createdAt &&
-                       request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp;
+                       request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp &&
+                       isValidProfileData(request.resource.data);
       
       // Allow delete only for own user document (for account deletion)
       allow delete: if isAuthenticated() && isOwner(userId);
@@ -294,27 +542,38 @@ service cloud.firestore {
     match /moderationQueue/{contentId} {
       // Moderators can read all items in queue
       allow read: if isModerator();
-      
+
       // System can create moderation items (via Cloud Functions or client when creating reports)
       allow create: if isAuthenticated();
-      
+
       // Moderators can update moderation status
       allow update: if isModerator();
-      
+
       // Only admins can delete from moderation queue
       allow delete: if isAdmin();
-      
+
       // Audit Logs subcollection - restricted to admins and moderators only
       match /auditLogs/{logId} {
         // Only moderators can read audit logs
         allow read: if isModerator();
-        
+
         // System can create audit logs (via Cloud Functions)
         allow create: if isAuthenticated();
-        
+
         // No updates or deletes allowed for audit logs (immutable)
         allow update, delete: if false;
       }
+    }
+
+    // Beta feedback collection rules
+    match /betaFeedback/{feedbackId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isModerator());
+      allow create: if isAuthenticated() &&
+        request.auth.uid == request.resource.data.userId &&
+        request.resource.data.createdAt is timestamp;
+      allow update: if isModerator();
+      allow delete: if isAdmin();
     }
 
     // Reports collection rules (admin only)

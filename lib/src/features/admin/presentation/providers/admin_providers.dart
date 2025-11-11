@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/features/admin/data/models/report.dart';
+import 'package:teen_talk_app/src/features/admin/data/models/extended_analytics.dart';
 import 'package:teen_talk_app/src/features/admin/data/repositories/admin_repository.dart';
 
 final adminRepositoryProvider = Provider((ref) => AdminRepository());
@@ -21,6 +22,22 @@ final adminReportsProvider =
 final adminAnalyticsProvider = FutureProvider<AdminAnalytics>((ref) async {
   final repository = ref.watch(adminRepositoryProvider);
   return repository.getAnalytics();
+});
+
+final analyticsFilterProvider = StateProvider<AnalyticsFilter>((ref) {
+  final now = DateTime.now();
+  final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+  return AnalyticsFilter(startDate: thirtyDaysAgo, endDate: now);
+});
+
+final extendedAnalyticsProvider = FutureProvider<ExtendedAnalytics>((ref) async {
+  final repository = ref.watch(adminRepositoryProvider);
+  final filter = ref.watch(analyticsFilterProvider);
+  return repository.getExtendedAnalytics(
+    startDate: filter.startDate,
+    endDate: filter.endDate,
+    school: filter.school,
+  );
 });
 
 final adminReportDetailsProvider =

@@ -7,6 +7,8 @@ import '../../data/repositories/user_repository.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../../core/constants/brescia_schools.dart';
 import '../../../../core/providers/image_cache_provider.dart';
+import '../../../../core/constants/user_interests.dart';
+import 'dart:async';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
   const ProfileEditPage({super.key});
@@ -22,6 +24,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   
   String? _gender;
   String? _school;
+  String? _schoolYear;
+  List<String> _interests = [];
+  List<String> _clubs = [];
   bool _allowAnonymousPosts = true;
   bool _profileVisible = true;
   bool _crashReportingEnabled = true;
@@ -40,10 +45,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     _loadProfile();
   }
 
+  final _customInterestController = TextEditingController();
+  final _customClubController = TextEditingController();
+
   @override
   void dispose() {
     _debounce?.cancel();
     _nicknameController.dispose();
+    _customInterestController.dispose();
+    _customClubController.dispose();
     super.dispose();
   }
 
@@ -56,6 +66,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           _nicknameController.text = profile.nickname;
           _gender = profile.gender;
           _school = profile.school;
+          _schoolYear = profile.schoolYear;
+          _interests = List<String>.from(profile.interests);
+          _clubs = List<String>.from(profile.clubs);
           _allowAnonymousPosts = profile.allowAnonymousPosts;
           _profileVisible = profile.profileVisible;
           _crashReportingEnabled = profile.crashReportingEnabled;
@@ -129,6 +142,64 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     }
   }
 
+  void _toggleInterest(String interest) {
+    setState(() {
+      if (_interests.contains(interest)) {
+        _interests = List<String>.from(_interests)..remove(interest);
+      } else {
+        _interests = List<String>.from(_interests)..add(interest);
+      }
+    });
+  }
+
+  void _toggleClub(String club) {
+    setState(() {
+      if (_clubs.contains(club)) {
+        _clubs = List<String>.from(_clubs)..remove(club);
+      } else {
+        _clubs = List<String>.from(_clubs)..add(club);
+      }
+    });
+  }
+
+  void _addCustomInterest() {
+    final value = _customInterestController.text.trim();
+    if (value.isEmpty) return;
+    if (_interests.contains(value)) {
+      _customInterestController.clear();
+      return;
+    }
+    setState(() {
+      _interests = List<String>.from(_interests)..add(value);
+      _customInterestController.clear();
+    });
+  }
+
+  void _addCustomClub() {
+    final value = _customClubController.text.trim();
+    if (value.isEmpty) return;
+    if (_clubs.contains(value)) {
+      _customClubController.clear();
+      return;
+    }
+    setState(() {
+      _clubs = List<String>.from(_clubs)..add(value);
+      _customClubController.clear();
+    });
+  }
+
+  void _removeCustomInterest(String interest) {
+    setState(() {
+      _interests = List<String>.from(_interests)..remove(interest);
+    });
+  }
+
+  void _removeCustomClub(String club) {
+    setState(() {
+      _clubs = List<String>.from(_clubs)..remove(club);
+    });
+  }
+
   String? _validateNickname(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Please enter a nickname';
@@ -162,12 +233,25 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     final profile = profileAsync.value;
     if (profile == null) return;
 
+    if (_schoolYear == null || _schoolYear!.trim().isEmpty) {
+      _showError('Please select your school year');
+      return;
+    }
+
+    if (_interests.isEmpty) {
+      _showError('Please select at least one interest');
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
     try {
       final updates = <String, dynamic>{
         'gender': _gender,
         'school': _school,
+        'schoolYear': _schoolYear,
+        'interests': List<String>.from(_interests),
+        'clubs': List<String>.from(_clubs),
         'allowAnonymousPosts': _allowAnonymousPosts,
         'profileVisible': _profileVisible,
         'crashReportingEnabled': _crashReportingEnabled,
@@ -193,8 +277,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         updates['nickname'] = newNickname;
       }
 
-      final success =
-          await ref.read(userRepositoryProvider).updateUserProfile(profile.uid, updates);
+      final success = await ref
+          .read(userRepositoryProvider)
+          .updateUserProfile(profile.uid, updates);
 
       if (!success && newNickname != _originalNickname) {
         _showError('Nickname is no longer available');
@@ -349,6 +434,36 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (!profile.isProfileComplete)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.orange.shade200,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info,
+                            color: Colors.orange.shade700,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Complete your profile by adding your school year and interests so others can discover you more easily.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: Colors.orange.shade900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
@@ -482,6 +597,178 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               setState(() => _school = value);
                             },
                           ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            value: _schoolYear,
+                            decoration: InputDecoration(
+                              labelText: 'School Year *',
+                              hintText: 'Select your year',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              prefixIcon: const Icon(Icons.calendar_today),
+                            ),
+                            items: UserInterests.schoolYears.map((year) {
+                              return DropdownMenuItem(
+                                value: year,
+                                child: Text(year),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() => _schoolYear = value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.interests_outlined, 
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Interests & Activities',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Select Your Interests *',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: UserInterests.interests.map((interest) {
+                              final isSelected = _interests.contains(interest);
+                              return FilterChip(
+                                label: Text(interest),
+                                selected: isSelected,
+                                onSelected: (_) => _toggleInterest(interest),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _customInterestController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Add custom interest',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    hintText: 'Type and press +',
+                                    isDense: true,
+                                  ),
+                                  onSubmitted: (_) => _addCustomInterest(),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: _addCustomInterest,
+                                icon: const Icon(Icons.add_circle),
+                                color: theme.colorScheme.primary,
+                              ),
+                            ],
+                          ),
+                          if (_interests.any((i) => !UserInterests.interests.contains(i))) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: _interests
+                                  .where((i) => !UserInterests.interests.contains(i))
+                                  .map((interest) {
+                                return Chip(
+                                  label: Text(interest),
+                                  onDeleted: () => _removeCustomInterest(interest),
+                                  deleteIcon: const Icon(Icons.close, size: 18),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                          Text(
+                            'Clubs (Optional)',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: UserInterests.clubs.map((club) {
+                              final isSelected = _clubs.contains(club);
+                              return FilterChip(
+                                label: Text(club),
+                                selected: isSelected,
+                                onSelected: (_) => _toggleClub(club),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _customClubController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Add custom club',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    hintText: 'Type and press +',
+                                    isDense: true,
+                                  ),
+                                  onSubmitted: (_) => _addCustomClub(),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: _addCustomClub,
+                                icon: const Icon(Icons.add_circle),
+                                color: theme.colorScheme.primary,
+                              ),
+                            ],
+                          ),
+                          if (_clubs.any((c) => !UserInterests.clubs.contains(c))) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: _clubs
+                                  .where((c) => !UserInterests.clubs.contains(c))
+                                  .map((club) {
+                                return Chip(
+                                  label: Text(club),
+                                  onDeleted: () => _removeCustomClub(club),
+                                  deleteIcon: const Icon(Icons.close, size: 18),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ],
                       ),
                     ),

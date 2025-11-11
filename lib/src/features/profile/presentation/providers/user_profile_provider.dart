@@ -19,3 +19,8 @@ final hasCompletedOnboardingProvider = Provider<bool>((ref) {
   final profile = userProfile.value;
   return profile != null;
 });
+
+final userProfileByIdProvider = StreamProvider.family<UserProfile?, String>((ref, userId) {
+  final userRepository = ref.watch(userRepositoryProvider);
+  return userRepository.watchUserProfile(userId);
+});
