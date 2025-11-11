@@ -479,7 +479,5 @@ contains the type: InvalidType(<invalid>).
 #13     listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
 <asynchronous suspension>
 The Dart compiler exited unexpectedly.
-Waiting for connection from debug service on Edge...               28,3s
+Waiting for connection from debug service on Edge...               53,0s
 Failed to compile application.
-
-C:\Users\othma\Desktop\TeenTalk>
