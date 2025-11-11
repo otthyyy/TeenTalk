@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 
-part 'queued_action.g.dart';
-
 enum QueuedActionType {
   post,
   comment,
@@ -118,5 +116,111 @@ class QueuedAction extends HiveObject {
           ? DateTime.parse(json['completedAt'] as String)
           : null,
     );
+  }
+}
+
+class QueuedActionAdapter extends TypeAdapter<QueuedAction> {
+  @override
+  final int typeId = 0;
+
+  @override
+  QueuedAction read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{};
+    for (var i = 0; i < numOfFields; i++) {
+      final fieldKey = reader.readByte();
+      fields[fieldKey] = reader.read();
+    }
+
+    final rawData = fields[3] as Map<dynamic, dynamic>?;
+    final data = rawData != null
+        ? rawData.map((key, value) => MapEntry(key as String, value))
+        : <String, dynamic>{};
+
+    return QueuedAction(
+      id: fields[0] as String,
+      type: fields[1] as QueuedActionType? ?? QueuedActionType.post,
+      status: fields[2] as QueuedActionStatus? ?? QueuedActionStatus.pending,
+      data: data,
+      createdAt: fields[4] as DateTime,
+      lastAttemptAt: fields[5] as DateTime?,
+      retryCount: fields[6] as int? ?? 0,
+      errorMessage: fields[7] as String?,
+      completedAt: fields[8] as DateTime?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, QueuedAction obj) {
+    writer
+      ..writeByte(9)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.type)
+      ..writeByte(2)
+      ..write(obj.status)
+      ..writeByte(3)
+      ..write(obj.data)
+      ..writeByte(4)
+      ..write(obj.createdAt)
+      ..writeByte(5)
+      ..write(obj.lastAttemptAt)
+      ..writeByte(6)
+      ..write(obj.retryCount)
+      ..writeByte(7)
+      ..write(obj.errorMessage)
+      ..writeByte(8)
+      ..write(obj.completedAt);
+  }
+}
+
+class QueuedActionTypeAdapter extends TypeAdapter<QueuedActionType> {
+  @override
+  final int typeId = 1;
+
+  @override
+  QueuedActionType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return QueuedActionType.post;
+      case 1:
+        return QueuedActionType.comment;
+      case 2:
+        return QueuedActionType.directMessage;
+      default:
+        return QueuedActionType.post;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, QueuedActionType obj) {
+    writer.writeByte(obj.index);
+  }
+}
+
+class QueuedActionStatusAdapter extends TypeAdapter<QueuedActionStatus> {
+  @override
+  final int typeId = 2;
+
+  @override
+  QueuedActionStatus read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return QueuedActionStatus.pending;
+      case 1:
+        return QueuedActionStatus.syncing;
+      case 2:
+        return QueuedActionStatus.failed;
+      case 3:
+        return QueuedActionStatus.completed;
+      default:
+        return QueuedActionStatus.pending;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, QueuedActionStatus obj) {
+    writer.writeByte(obj.index);
   }
 }

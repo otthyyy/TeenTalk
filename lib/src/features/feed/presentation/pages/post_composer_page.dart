@@ -724,3 +724,4 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ],
     );
   }
+}
