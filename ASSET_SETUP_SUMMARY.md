@@ -1,68 +1,60 @@
 # TeenTalk Asset Setup Summary
 
-## ✅ Completed Tasks
+## ✅ Branding Assets Updated
+- Added a dedicated `assets/branding/` directory containing production-ready TeenTalk visuals:
+  - `app_icon.png` – 1024×1024 gradient launcher icon source
+  - `splash_logo.png` – transparent 512×512 logo for center-aligned splash artwork
+  - `splash_background_light.png` – light mode gradient splash background
+  - `splash_background_dark.png` – dark mode gradient splash background
+- Updated `.gitignore` to exclude local Python virtual environments used for asset generation helpers.
 
-### Directory Structure Created
-- ✅ `assets/images/` directory created
-- ✅ `assets/icons/` directory created
+## ⚙️ Automated Asset Tooling
+- Added `flutter_launcher_icons` (^0.13.1) and `flutter_native_splash` (^2.3.10) to `dev_dependencies`.
+- Configured both tools directly in `pubspec.yaml` so assets can be regenerated from source PNGs at any time.
 
-### Placeholder Assets Added
-#### Images (assets/images/)
-- ✅ `logo.png.placeholder` (1x resolution)
-- ✅ `logo@2x.png.placeholder` (2x resolution)  
-- ✅ `logo@3x.png.placeholder` (3x resolution)
-- ✅ `splash.png.placeholder` (1x resolution)
-- ✅ `splash@2x.png.placeholder` (2x resolution)
-- ✅ `splash@3x.png.placeholder` (3x resolution)
+### Regenerating Launcher Icons
+```sh
+flutter pub run flutter_launcher_icons
+```
+Generates updated launcher/app icons for Android (adaptive + legacy), iOS, web (including favicon/PWA icons with theme color), macOS, Windows, and Linux.
 
-#### Icons (assets/icons/)
-- ✅ `home.png.placeholder` - Home navigation icon
-- ✅ `chat.png.placeholder` - Chat/messages navigation icon
-- ✅ `profile.png.placeholder` - Profile/user navigation icon
-- ✅ `settings.png.placeholder` - Settings navigation icon
+### Regenerating Native Splash Screens
+```sh
+flutter pub run flutter_native_splash:create
+```
+Creates branded splash screens for Android, Android 12+, iOS, and web using:
+- Gradient light & dark backgrounds
+- Centered TeenTalk chat badge logo
+- Dark mode overrides for high-contrast experiences
 
-### Configuration
-- ✅ `pubspec.yaml` already contains proper assets section:
-  ```yaml
-  assets:
-    - assets/images/
-    - assets/icons/
-  ```
+## 🔍 QA Checklist
+- Launch the app on Android, iOS, and web to confirm the new gradient splash appears instantly and respects light/dark themes.
+- Inspect launcher icons on high-DPI devices and pinned web apps for crisp edges and correct safe-zone spacing.
+- Re-run the generation commands above whenever branding updates occur; no manual editing of platform folders is required.
 
-### Documentation & Tools
-- ✅ `assets/README.md` - Comprehensive asset guidelines
-- ✅ `scripts/validate_assets.sh` - Asset structure validation script
-
-## 🎯 Acceptance Criteria Status
-
-- ✅ **Directories created and populated with placeholder assets** - All required directories and placeholder files created
-- ✅ **pubspec.yaml has proper assets section** - Already configured correctly
-- ⏳ **flutter pub get completes without errors** - Ready for testing when Flutter is available
-- ⏳ **flutter run builds without asset-related errors** - Ready for testing when Flutter is available
-
-## 📋 Next Steps for Development Team
-
-1. **Replace placeholder files**: Convert `.placeholder` files to actual PNG images
-2. **Run dependency update**: Execute `flutter pub get`
-3. **Test application**: Run `flutter run` on target platforms
-4. **Validate assets**: Use `./scripts/validate_assets.sh` to verify structure
-
-## 📁 Final Asset Structure
+## 📁 Updated Asset Structure
 ```
 assets/
 ├── README.md
-├── images/
-│   ├── logo.png.placeholder
-│   ├── logo@2x.png.placeholder
-│   ├── logo@3x.png.placeholder
-│   ├── splash.png.placeholder
-│   ├── splash@2x.png.placeholder
-│   └── splash@3x.png.placeholder
-└── icons/
-    ├── home.png.placeholder
-    ├── chat.png.placeholder
-    ├── profile.png.placeholder
-    └── settings.png.placeholder
+├── branding/
+│   ├── app_icon.png
+│   ├── splash_background_dark.png
+│   ├── splash_background_light.png
+│   └── splash_logo.png
+├── icons/
+│   ├── chat.png.placeholder
+│   ├── google.svg
+│   ├── home.png.placeholder
+│   ├── incognito.svg
+│   ├── profile.png.placeholder
+│   └── settings.png.placeholder
+└── images/
+    ├── logo.png.placeholder
+    ├── logo@2x.png.placeholder
+    ├── logo@3x.png.placeholder
+    ├── splash.png.placeholder
+    ├── splash@2x.png.placeholder
+    └── splash@3x.png.placeholder
 ```
 
-All requirements from the ticket have been successfully implemented!
+TeenTalk branding assets are now automated and ready for production releases across all supported platforms.

@@ -218,5 +218,22 @@ void main() {
       expect(find.text('Given'), findsWidgets);
       expect(find.text('parent@example.com'), findsOneWidget);
     });
+
+    testWidgets('shows legal document links in consent card', (tester) async {
+      final profile = UserProfile(
+        uid: 'test-uid',
+        nickname: 'TestUser',
+        nicknameVerified: false,
+        createdAt: DateTime(2024, 1, 1),
+        privacyConsentGiven: true,
+        privacyConsentTimestamp: DateTime(2024, 1, 1),
+      );
+
+      await tester.pumpWidget(createTestWidget(profile));
+      await tester.pump();
+
+      expect(find.text('View Privacy Policy'), findsOneWidget);
+      expect(find.text('View Terms of Service'), findsOneWidget);
+    });
   });
 }

@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,8 @@ import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
+import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -55,33 +58,62 @@ Future<void> main() async {
   });
 }
 
-class TeenTalkApp extends ConsumerWidget {
+class TeenTalkApp extends ConsumerStatefulWidget {
   const TeenTalkApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeenTalkApp> createState() => _TeenTalkAppState();
+}
+
+class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
+  @override
+  void initState() {
+    super.initState();
+    _initializePushNotifications();
+  }
+
+  Future<void> _initializePushNotifications() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!mounted) return;
+    
+    final router = ref.read(routerProvider);
+    final pushHandler = ref.read(pushNotificationHandlerProvider);
+    
+    pushHandler.initialize(router);
+    
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      await pushHandler.handleInitialMessage(initialMessage);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(crashlyticsSyncProvider);
     
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
-      title: 'TeenTalk',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      routerConfig: router,
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('es', ''),
-      ],
+    return ScreenshotProtectedContent(
+      child: MaterialApp.router(
+        title: 'TeenTalk',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: router,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('es', ''),
+        ],
+      ),
     );
   }
 }
