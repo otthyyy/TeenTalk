@@ -7,6 +7,7 @@ class Report {
   final String content;
   final String reason;
   final String status;
+  final String? severity;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -19,6 +20,7 @@ class Report {
     required this.content,
     required this.reason,
     required this.status,
+    this.severity,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -32,6 +34,7 @@ class Report {
     String? content,
     String? reason,
     String? status,
+    String? severity,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -44,6 +47,7 @@ class Report {
       content: content ?? this.content,
       reason: reason ?? this.reason,
       status: status ?? this.status,
+      severity: severity ?? this.severity,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -59,24 +63,26 @@ class Report {
       content: json['content'] as String,
       reason: json['reason'] as String,
       status: json['status'] as String? ?? 'pending',
+      severity: json['severity'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'itemId': itemId,
-    'itemType': itemType,
-    'authorId': authorId,
-    'authorNickname': authorNickname,
-    'content': content,
-    'reason': reason,
-    'status': status,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-  };
-}
+        'id': id,
+        'itemId': itemId,
+        'itemType': itemType,
+        'authorId': authorId,
+        'authorNickname': authorNickname,
+        'content': content,
+        'reason': reason,
+        'status': status,
+        'severity': severity,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+      };
+  }
 
 class ModerationDecision {
   final String id;

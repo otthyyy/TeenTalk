@@ -4,6 +4,7 @@ import '../../data/repositories/direct_messages_repository.dart';
 import '../providers/direct_messages_provider.dart';
 import '../widgets/message_bubble.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../offline_sync/services/offline_submission_helper.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
@@ -344,6 +345,43 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
+
+    final offlineHelper = ref.read(offlineSubmissionHelperProvider);
+    final currentUserId = ref.read(currentUserIdProvider);
+    
+    if (currentUserId == null) return;
+
+    final isOnline = await offlineHelper.isOnline();
+
+    if (!isOnline) {
+      final queuedId = await offlineHelper.enqueueDirectMessage(
+        senderId: currentUserId,
+        receiverId: widget.otherUserId,
+        text: text,
+      );
+
+      _messageController.clear();
+
+      if (mounted && context.mounted) {
+        if (queuedId != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Message queued. We'll send it when you're online."),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to queue message.'),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+      return;
+    }
 
     final notifier = ref.read(sendMessageProvider.notifier);
     await notifier.sendMessage(

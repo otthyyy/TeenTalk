@@ -77,3 +77,7 @@ functions/.runtimeconfig.json
 # Emulator
 emulator-data/
 emulator.log
+.emulator.pid
+
+# Python virtual environment
+.venv/

@@ -270,7 +270,8 @@ class AppLocalizationsIT extends AppLocalizations {
   String get trustLowTrustWarningProceed => 'Continua';
   @override
   String get trustLowTrustWarningCancel => 'Annulla';
-}
+  
+  @override
   String get rateLimitTitle => 'Limite di pubblicazione raggiunto';
   @override
   String get rateLimitPostsExceeded => 'Hai pubblicato troppe volte. Attendi prima di creare un altro post.';
@@ -312,4 +313,66 @@ class AppLocalizationsIT extends AppLocalizations {
   String remainingCount(int count, String type) {
     return 'Ancora $count $type';
   }
+  
+  @override
+  String get a11yLikeButton => 'Mi piace al post';
+  @override
+  String get a11yUnlikeButton => 'Rimuovi mi piace dal post';
+  @override
+  String likeButtonWithCount(int count) => 'Mi piace al post, $count ${count == 1 ? 'mi piace' : 'mi piace'}';
+  @override
+  String unlikeButtonWithCount(int count) => 'Rimuovi mi piace dal post, $count ${count == 1 ? 'mi piace' : 'mi piace'}';
+  @override
+  String get a11yCommentButton => 'Visualizza commenti';
+  @override
+  String commentButtonWithCount(int count) => 'Visualizza commenti, $count ${count == 1 ? 'commento' : 'commenti'}';
+  @override
+  String get a11yShareButton => 'Condividi post';
+  @override
+  String get a11yReportButton => 'Segnala post';
+  @override
+  String get a11yMoreOptions => 'Altre opzioni';
+  @override
+  String get a11yNotifications => 'Notifiche';
+  @override
+  String get a11yNewPost => 'Crea nuovo post';
+  @override
+  String get a11yBackButton => 'Indietro';
+  @override
+  String get a11yCloseButton => 'Chiudi';
+  @override
+  String postByAuthor(String author, String time) => 'Post di $author, $time';
+  @override
+  String get a11yAnonymousAvatar => 'Avatar utente anonimo';
+  @override
+  String authorAvatar(String author) => 'Avatar di $author';
+  @override
+  String get a11yPostImage => 'Immagine del post';
+  @override
+  String postStats(int likes, int comments) => '$likes ${likes == 1 ? 'mi piace' : 'mi piace'}, $comments ${comments == 1 ? 'commento' : 'commenti'}';
+  @override
+  String sectionLabel(String section) => 'Sezione: $section';
+  @override
+  String get a11yProfilePicture => 'Foto del profilo';
+  @override
+  String get a11yEditProfile => 'Modifica profilo';
+
+  @override
+  String get legalPrivacyPolicyTitle => 'Informativa sulla Privacy';
+  @override
+  String get legalTermsOfServiceTitle => 'Termini di Servizio';
+  @override
+  String get legalUnavailableTitle => 'Documento non trovato';
+  @override
+  String get legalUnavailableMessage => 'Il documento legale richiesto non è disponibile.';
+  @override
+  String get legalLoadError => 'Impossibile caricare il documento.';
+  @override
+  String get legalReload => 'Ricarica';
+  @override
+  String get legalLinkOpenError => 'Impossibile aprire il link.';
+  @override
+  String get legalViewPrivacy => 'Apri Informativa sulla Privacy';
+  @override
+  String get legalViewTerms => 'Apri Termini di Servizio';
 }

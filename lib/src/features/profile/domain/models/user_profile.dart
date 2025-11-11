@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'trust_level.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../core/utils/search_keywords_generator.dart';
+
+import 'trust_level.dart';
 
 class UserProfile {
   final String uid;
@@ -14,6 +15,8 @@ class UserProfile {
   final List<String> interests;
   final List<String> clubs;
   final List<String> searchKeywords;
+  final int trustScore;
+  final TrustLevel trustLevel;
   final int anonymousPostsCount;
   final DateTime createdAt;
   final DateTime? lastNicknameChangeAt;
@@ -30,11 +33,11 @@ class UserProfile {
   final DateTime? updatedAt;
   final bool isAdmin;
   final bool isModerator;
-  final TrustLevel trustLevel;
   final bool isBetaTester;
   final bool? betaConsentGiven;
   final DateTime? betaConsentTimestamp;
   final bool crashReportingEnabled;
+  final bool screenshotProtectionEnabled;
 
   const UserProfile({
     required this.uid,
@@ -46,6 +49,8 @@ class UserProfile {
     this.interests = const [],
     this.clubs = const [],
     this.searchKeywords = const [],
+    this.trustScore = 50,
+    this.trustLevel = TrustLevel.newcomer,
     this.anonymousPostsCount = 0,
     required this.createdAt,
     this.lastNicknameChangeAt,
@@ -62,11 +67,11 @@ class UserProfile {
     this.updatedAt,
     this.isAdmin = false,
     this.isModerator = false,
-    this.trustLevel = TrustLevel.newcomer,
     this.isBetaTester = false,
     this.betaConsentGiven,
     this.betaConsentTimestamp,
     this.crashReportingEnabled = true,
+    this.screenshotProtectionEnabled = true,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -96,39 +101,40 @@ class UserProfile {
               clubs,
               json['gender'] as String?,
             ),
+            ),
+      trustScore: json['trustScore'] as int? ?? 50,
+      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
-      createdAt: json['createdAt'] != null
-          ? (json['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      lastNicknameChangeAt: json['lastNicknameChangeAt'] != null
-          ? (json['lastNicknameChangeAt'] as Timestamp).toDate()
-          : null,
+      createdAt: _timestampToDate(json['createdAt']) ?? DateTime.now(),
+      lastNicknameChangeAt:
+          _timestampToDate(json['lastNicknameChangeAt']),
       privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
-      privacyConsentTimestamp: json['privacyConsentTimestamp'] != null
-          ? (json['privacyConsentTimestamp'] as Timestamp).toDate()
-          : DateTime.now(),
+      privacyConsentTimestamp:
+          _timestampToDate(json['privacyConsentTimestamp']) ?? DateTime.now(),
       isMinor: json['isMinor'] as bool?,
       guardianContact: json['guardianContact'] as String?,
       parentalConsentGiven: json['parentalConsentGiven'] as bool?,
-      parentalConsentTimestamp: json['parentalConsentTimestamp'] != null
-          ? (json['parentalConsentTimestamp'] as Timestamp).toDate()
-          : null,
+      parentalConsentTimestamp:
+          _timestampToDate(json['parentalConsentTimestamp']),
       onboardingComplete: json['onboardingComplete'] as bool? ?? false,
       allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
       profileVisible: json['profileVisible'] as bool? ?? true,
       analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
-      updatedAt: json['updatedAt'] != null
-          ? (json['updatedAt'] as Timestamp).toDate()
-          : null,
+      updatedAt: _timestampToDate(json['updatedAt']),
       isAdmin: json['isAdmin'] as bool? ?? false,
       isModerator: json['isModerator'] as bool? ?? false,
-      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
       isBetaTester: json['isBetaTester'] as bool? ?? false,
       betaConsentGiven: json['betaConsentGiven'] as bool?,
+      betaConsentTimestamp:
+          _timestampToDate(json['betaConsentTimestamp']),
+      crashReportingEnabled:
+          json['crashReportingEnabled'] as bool? ?? true,
       betaConsentTimestamp: json['betaConsentTimestamp'] != null
           ? (json['betaConsentTimestamp'] as Timestamp).toDate()
           : null,
       crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          json['screenshotProtectionEnabled'] as bool? ?? true,
     );
   }
 
@@ -143,13 +149,16 @@ class UserProfile {
       'interests': interests,
       'clubs': clubs,
       'searchKeywords': searchKeywords,
+      'trustScore': trustScore,
+      'trustLevel': trustLevel.toJson(),
       'anonymousPostsCount': anonymousPostsCount,
       'createdAt': Timestamp.fromDate(createdAt),
       'lastNicknameChangeAt': lastNicknameChangeAt != null
           ? Timestamp.fromDate(lastNicknameChangeAt!)
           : null,
       'privacyConsentGiven': privacyConsentGiven,
-      'privacyConsentTimestamp': Timestamp.fromDate(privacyConsentTimestamp),
+      'privacyConsentTimestamp':
+          Timestamp.fromDate(privacyConsentTimestamp),
       'isMinor': isMinor,
       'guardianContact': guardianContact,
       'parentalConsentGiven': parentalConsentGiven,
@@ -160,16 +169,19 @@ class UserProfile {
       'allowAnonymousPosts': allowAnonymousPosts,
       'profileVisible': profileVisible,
       'analyticsEnabled': analyticsEnabled,
-      'updatedAt': Timestamp.fromDate(DateTime.now()),
+      'updatedAt': updatedAt != null
+          ? Timestamp.fromDate(updatedAt!)
+          : null,
       'isAdmin': isAdmin,
       'isModerator': isModerator,
-      'trustLevel': trustLevel.toJson(),
       'isBetaTester': isBetaTester,
       'betaConsentGiven': betaConsentGiven,
       'betaConsentTimestamp': betaConsentTimestamp != null
           ? Timestamp.fromDate(betaConsentTimestamp!)
           : null,
       'crashReportingEnabled': crashReportingEnabled,
+    }..removeWhere((_, value) => value == null);
+      'screenshotProtectionEnabled': screenshotProtectionEnabled,
     };
   }
 
@@ -185,13 +197,11 @@ class UserProfile {
         privacyConsentTimestamp: DateTime.now(),
       );
     }
-    final nickname = data['nickname'] as String? ?? '';
-    final school = data['school'] as String?;
-    final schoolYear = data['schoolYear'] as String?;
-    final interests = _normalizeStringList(data['interests']);
-    final clubs = _normalizeStringList(data['clubs']);
-    final searchKeywords = _normalizeStringList(data['searchKeywords']);
 
+    return UserProfile.fromJson({
+      'uid': doc.id,
+      ...data,
+    });
     return UserProfile(
       uid: doc.id,
       nickname: nickname,
@@ -244,6 +254,8 @@ class UserProfile {
           ? (data['betaConsentTimestamp'] as Timestamp).toDate()
           : null,
       crashReportingEnabled: data['crashReportingEnabled'] as bool? ?? true,
+      screenshotProtectionEnabled:
+          data['screenshotProtectionEnabled'] as bool? ?? true,
     );
   }
 
@@ -269,6 +281,7 @@ class UserProfile {
     final hasAgeInfo = isMinor != null;
     final hasSchoolYear = schoolYear != null && schoolYear!.trim().isNotEmpty;
     final hasInterests = interests.isNotEmpty;
+
     return onboardingComplete &&
         hasNickname &&
         hasSchool &&
@@ -289,6 +302,8 @@ class UserProfile {
     List<String>? interests,
     List<String>? clubs,
     List<String>? searchKeywords,
+    int? trustScore,
+    TrustLevel? trustLevel,
     int? anonymousPostsCount,
     DateTime? createdAt,
     DateTime? lastNicknameChangeAt,
@@ -305,11 +320,11 @@ class UserProfile {
     DateTime? updatedAt,
     bool? isAdmin,
     bool? isModerator,
-    TrustLevel? trustLevel,
     bool? isBetaTester,
     bool? betaConsentGiven,
     DateTime? betaConsentTimestamp,
     bool? crashReportingEnabled,
+    bool? screenshotProtectionEnabled,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -321,6 +336,8 @@ class UserProfile {
       interests: interests ?? this.interests,
       clubs: clubs ?? this.clubs,
       searchKeywords: searchKeywords ?? this.searchKeywords,
+      trustScore: trustScore ?? this.trustScore,
+      trustLevel: trustLevel ?? this.trustLevel,
       anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
       createdAt: createdAt ?? this.createdAt,
       lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
@@ -339,12 +356,14 @@ class UserProfile {
       updatedAt: updatedAt ?? this.updatedAt,
       isAdmin: isAdmin ?? this.isAdmin,
       isModerator: isModerator ?? this.isModerator,
-      trustLevel: trustLevel ?? this.trustLevel,
       isBetaTester: isBetaTester ?? this.isBetaTester,
       betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
       betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
       crashReportingEnabled:
           crashReportingEnabled ?? this.crashReportingEnabled,
+      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
+      screenshotProtectionEnabled:
+          screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
     );
   }
 
@@ -353,6 +372,7 @@ class UserProfile {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
 
     return other is UserProfile &&
         other.uid == uid &&
@@ -364,6 +384,8 @@ class UserProfile {
         _listEquality.equals(other.interests, interests) &&
         _listEquality.equals(other.clubs, clubs) &&
         _listEquality.equals(other.searchKeywords, searchKeywords) &&
+        other.trustScore == trustScore &&
+        other.trustLevel == trustLevel &&
         other.anonymousPostsCount == anonymousPostsCount &&
         other.createdAt == createdAt &&
         other.lastNicknameChangeAt == lastNicknameChangeAt &&
@@ -419,14 +441,57 @@ class UserProfile {
         betaConsentGiven.hashCode ^
         betaConsentTimestamp.hashCode ^
         crashReportingEnabled.hashCode;
+    return Object.hashAll([
+      uid,
+      nickname,
+      nicknameVerified,
+      gender,
+      school,
+      schoolYear,
+      _listEquality.hash(interests),
+      _listEquality.hash(clubs),
+      _listEquality.hash(searchKeywords),
+      trustScore,
+      trustLevel,
+      anonymousPostsCount,
+      createdAt,
+      lastNicknameChangeAt,
+      privacyConsentGiven,
+      privacyConsentTimestamp,
+      isMinor,
+      guardianContact,
+      parentalConsentGiven,
+      parentalConsentTimestamp,
+      onboardingComplete,
+      allowAnonymousPosts,
+      profileVisible,
+      analyticsEnabled,
+      updatedAt,
+      isAdmin,
+      isModerator,
+      isBetaTester,
+      betaConsentGiven,
+      betaConsentTimestamp,
+      crashReportingEnabled,
+    ]);
   }
 
   static List<String> _normalizeStringList(dynamic value) {
     if (value == null) return const [];
-    if (value is List) {
-      return List<String>.from(value);
+    if (value is Iterable) {
+      return value.map((e) => e.toString()).toList(growable: false);
     }
     return const [];
+  }
+
+  static DateTime? _timestampToDate(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    }
+    if (value is DateTime) {
+      return value;
+    }
+    return null;
   }
 
   static List<String> buildSearchKeywords(
@@ -445,5 +510,140 @@ class UserProfile {
       clubs: clubs,
       gender: gender,
     );
+    final keywords = <String>{};
+
+    void addKeyword(String? rawValue) {
+      if (rawValue == null) return;
+      final trimmed = rawValue.trim();
+      if (trimmed.isEmpty) return;
+
+      final lower = trimmed.toLowerCase();
+      keywords.add(lower);
+
+      final sanitized = _stripDiacritics(lower);
+      keywords.add(sanitized);
+    }
+
+    addKeyword(nickname);
+    addKeyword(school);
+    addKeyword(schoolYear);
+
+    for (final interest in interests) {
+      if (interest.isNotEmpty) {
+        keywords.add(interest.toLowerCase());
+      }
+      addKeyword(interest);
+    }
+
+    for (final club in clubs) {
+      if (club.isNotEmpty) {
+        keywords.add(club.toLowerCase());
+      }
+    }
+    return keywords.toList(growable: false);
+      addKeyword(club);
+    }
+
+    keywords.removeWhere((element) => element.trim().isEmpty);
+    return keywords.toList();
   }
+
+  static String _stripDiacritics(String value) {
+    final buffer = StringBuffer();
+    for (final rune in value.runes) {
+      final char = String.fromCharCode(rune);
+      buffer.write(_diacriticReplacements[char] ?? char);
+    }
+    return buffer.toString();
+  }
+
+  static const Map<String, String> _diacriticReplacements = {
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'ã': 'a',
+    'å': 'a',
+    'ā': 'a',
+    'ă': 'a',
+    'ą': 'a',
+    'ǎ': 'a',
+    'æ': 'ae',
+    'ç': 'c',
+    'ć': 'c',
+    'č': 'c',
+    'ĉ': 'c',
+    'ċ': 'c',
+    'ď': 'd',
+    'đ': 'd',
+    'ð': 'd',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'ē': 'e',
+    'ė': 'e',
+    'ę': 'e',
+    'ě': 'e',
+    'ğ': 'g',
+    'ĝ': 'g',
+    'ġ': 'g',
+    'ģ': 'g',
+    'ĥ': 'h',
+    'ħ': 'h',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ī': 'i',
+    'į': 'i',
+    'ı': 'i',
+    'ĵ': 'j',
+    'ķ': 'k',
+    'ĺ': 'l',
+    'ľ': 'l',
+    'ļ': 'l',
+    'ł': 'l',
+    'ñ': 'n',
+    'ń': 'n',
+    'ň': 'n',
+    'ņ': 'n',
+    'ŋ': 'n',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'õ': 'o',
+    'ő': 'o',
+    'ō': 'o',
+    'ø': 'o',
+    'œ': 'oe',
+    'ś': 's',
+    'š': 's',
+    'ş': 's',
+    'ș': 's',
+    'ŝ': 's',
+    'ť': 't',
+    'ţ': 't',
+    'ț': 't',
+    'ŧ': 't',
+    'þ': 'th',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ū': 'u',
+    'ů': 'u',
+    'ű': 'u',
+    'ŭ': 'u',
+    'ų': 'u',
+    'ŵ': 'w',
+    'ý': 'y',
+    'ÿ': 'y',
+    'ŷ': 'y',
+    'ž': 'z',
+    'ź': 'z',
+    'ż': 'z',
+    'ß': 'ss',
+  };
 }
