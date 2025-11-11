@@ -1,66 +1,33 @@
-import 'package:flutter/foundation.dart';
-
-class AnalyticsService {
-  void logEvent(String eventName, {Map<String, dynamic>? parameters}) {
-    if (kDebugMode) {
-      print('[Analytics] Event: $eventName, Parameters: $parameters');
-    }
-  }
-
-  void logTrustBadgeView(String trustLevel, String location) {
-    logEvent(
-      'trust_badge_view',
-      parameters: {
-        'trust_level': trustLevel,
-        'location': location,
-      },
-    );
-  }
-
-  void logTrustBadgeTap(String trustLevel, String location) {
-    logEvent(
-      'trust_badge_tap',
-      parameters: {
-        'trust_level': trustLevel,
-        'location': location,
-      },
-    );
-  }
-
-  void logLowTrustWarning(String userId, String context) {
-    logEvent(
-      'low_trust_warning',
-      parameters: {
-        'user_id': userId,
-        'context': context,
-      },
-    );
-  }
-
-  void logLowTrustWarningDismiss(String userId, String context) {
-    logEvent(
-      'low_trust_warning_dismiss',
-      parameters: {
-        'user_id': userId,
-        'context': context,
-      },
-    );
-  }
-
-  void logLowTrustWarningProceed(String userId, String context) {
-    logEvent(
-      'low_trust_warning_proceed',
-      parameters: {
-        'user_id': userId,
-        'context': context,
-      },
-    );
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:logger/logger.dart';
 
 class AnalyticsService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   final Logger _logger = Logger();
+  
+  Future<void> logEvent({
+    required String name,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: name,
+        parameters: parameters,
+      );
+    } catch (e) {
+      _logger.e('Failed to log event $name: $e');
+    }
+  }
+
+  Future<void> logTrustBadgeTap(String trustLevel, String location) async {
+    await logEvent(
+      name: 'trust_badge_tap',
+      parameters: {
+        'trust_level': trustLevel,
+        'location': location,
+      },
+    );
+  }
   
   Future<void> logRateLimitHit({
     required String contentType,

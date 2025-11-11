@@ -463,4 +463,68 @@ class PostsRepository {
     final matches = mentionRegex.allMatches(content);
     return matches.map((match) => match.group(1)!).toList();
   }
+
+  Future<(List<Post>, DocumentSnapshot?)> getPostsByAuthor({
+    required String authorId,
+    String? school,
+    DocumentSnapshot? lastDocument,
+    int limit = 20,
+  }) async {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('authorId', isEqualTo: authorId)
+        .where('isAnonymous', isEqualTo: false)
+        .where('isModerated', isEqualTo: false);
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    final QuerySnapshot snapshot = await query.get();
+    
+    final posts = snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return Post.fromJson({
+        ...data,
+        'id': doc.id,
+      });
+    }).toList();
+
+    final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+    return (posts, lastDoc);
+  }
+
+  Stream<List<Post>> getPostsStreamByAuthor({
+    required String authorId,
+    String? school,
+    int limit = 20,
+  }) {
+    Query query = _firestore
+        .collection(_postsCollection)
+        .where('authorId', isEqualTo: authorId)
+        .where('isAnonymous', isEqualTo: false)
+        .where('isModerated', isEqualTo: false);
+
+    if (school != null) {
+      query = query.where('school', isEqualTo: school);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Post.fromJson({
+          ...data,
+          'id': doc.id,
+        });
+      }).toList();
+    });
+  }
 }

@@ -12,6 +12,7 @@ import '../../../../core/widgets/rate_limit_dialog.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../offline_sync/services/offline_submission_helper.dart';
 import '../providers/comments_provider.dart';
 
 class CommentInputWidget extends ConsumerStatefulWidget {
@@ -404,6 +405,7 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
     final userProfile = ref.read(userProfileProvider).value;
     final rateLimitService = ref.read(rateLimitServiceProvider);
     final analyticsService = ref.read(analyticsServiceProvider);
+    final offlineHelper = ref.read(offlineSubmissionHelperProvider);
 
     if (content.isEmpty || school == null || school.isEmpty || authState.user == null || userProfile == null) {
       return;
@@ -425,6 +427,45 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
           context,
           contentType: 'comment',
           cooldownDuration: rateLimitStatus.cooldownDuration,
+        );
+      }
+      return;
+    }
+
+    final isOnline = await offlineHelper.isOnline();
+
+    if (!isOnline) {
+      final queuedId = await offlineHelper.enqueueComment(
+        postId: widget.postId,
+        authorId: authState.user!.uid,
+        authorNickname: userProfile.nickname,
+        isAnonymous: _isAnonymous,
+        content: content,
+        school: school,
+        replyToCommentId: widget.replyToCommentId,
+      );
+
+      if (!mounted) return;
+
+      if (queuedId != null) {
+        _textController.clear();
+        widget.onCommentPosted?.call();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.replyToCommentId != null
+                  ? "Reply queued. We'll post it when you're online."
+                  : "Comment queued. We'll post it when you're online.",
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to queue comment. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
       return;
