@@ -12,6 +12,7 @@ import '../../../../core/providers/image_cache_provider.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../tutorial/presentation/widgets/app_tutorial.dart';
 import '../providers/feed_provider.dart';
+import '../providers/single_post_provider.dart';
 import '../widgets/post_card_widget.dart';
 import '../widgets/skeleton_loader_widget.dart';
 import '../widgets/empty_state_widget.dart';
@@ -31,7 +32,12 @@ enum FeedSection {
 }
 
 class FeedSectionsPage extends ConsumerStatefulWidget {
-  const FeedSectionsPage({super.key});
+  final String? openCommentsForPost;
+  
+  const FeedSectionsPage({
+    super.key,
+    this.openCommentsForPost,
+  });
 
   @override
   ConsumerState<FeedSectionsPage> createState() => _FeedSectionsPageState();
@@ -48,6 +54,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   int _trendingIndex = 0;
   List<Post> _trendingPosts = [];
   ProviderSubscription<FeedState>? _trendingSubscription;
+  String? _lastHandledDeepLinkPostId;
+  bool _isProcessingDeepLink = false;
   late final TutorialAnchors _tutorialAnchors;
   bool _tutorialActive = false;
   int _tutorialCheckAttempts = 0;
@@ -112,9 +120,79 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             refresh: true,
             section: _selectedSection.value,
           );
+      
+      if (widget.openCommentsForPost != null && 
+          _lastHandledDeepLinkPostId != widget.openCommentsForPost) {
+        _handleDeepLinkToPost(widget.openCommentsForPost!);
+      }
+    });
+  }
+  
+  @override
+  void didUpdateWidget(covariant FeedSectionsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.openCommentsForPost != null &&
+        widget.openCommentsForPost != oldWidget.openCommentsForPost &&
+        widget.openCommentsForPost != _lastHandledDeepLinkPostId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _handleDeepLinkToPost(widget.openCommentsForPost!);
+      });
+    }
+  }
+  
+  Future<void> _handleDeepLinkToPost(String postId) async {
+    if (_isProcessingDeepLink) return;
+    
+    setState(() {
+      _isProcessingDeepLink = true;
+      _lastHandledDeepLinkPostId = postId;
 
       _checkAndShowTutorial();
     });
+    
+    try {
+      final result = await ref.read(singlePostWithSchoolCheckProvider(postId).future);
+      
+      if (!mounted) return;
+      
+      if (result.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.error!),
+            behavior: SnackBarBehavior.floating,
+            action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+        return;
+      }
+      
+      if (result.post != null) {
+        setState(() {
+          _selectedPostId = postId;
+          _showComments = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load post: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessingDeepLink = false;
+        });
+      }
+    }
   }
 
   void _checkAndShowTutorial() {
