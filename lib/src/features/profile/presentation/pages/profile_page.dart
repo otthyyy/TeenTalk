@@ -7,6 +7,7 @@ import '../../data/repositories/user_repository.dart';
 import '../../domain/models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../legal/presentation/pages/legal_document_page.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -468,6 +469,7 @@ class ProfilePage extends ConsumerWidget {
 
   Widget _buildConsentCard(BuildContext context, dynamic profile, bool isDark) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -514,6 +516,22 @@ class ProfilePage extends ConsumerWidget {
                 ),
               ],
             ],
+            const Divider(),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.privacy_tip_outlined, color: theme.colorScheme.primary),
+              title: Text(localizations?.legalViewPrivacy ?? 'View Privacy Policy'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => _openLegalDocument(context, LegalDocumentType.privacyPolicy),
+            ),
+            const Divider(),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.gavel_outlined, color: theme.colorScheme.primary),
+              title: Text(localizations?.legalViewTerms ?? 'View Terms of Service'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => _openLegalDocument(context, LegalDocumentType.termsOfService),
+            ),
           ],
         ),
       ),
@@ -1140,4 +1158,9 @@ class ProfilePage extends ConsumerWidget {
         return gender;
     }
   }
+
+  void _openLegalDocument(BuildContext context, LegalDocumentType type) {
+    context.push('/legal/${type.routeSegment}');
+  }
 }
+

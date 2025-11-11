@@ -17,6 +17,7 @@ import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.d
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:teen_talk_app/src/features/beta_feedback/presentation/pages/beta_feedback_form_page.dart';
+import 'package:teen_talk_app/src/features/legal/presentation/pages/legal_document_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import 'package:teen_talk_app/src/features/tutorial/presentation/providers/tutorial_provider.dart';
@@ -78,6 +79,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingPage(),
+      ),
+      GoRoute(
+        path: '/legal/:document',
+        builder: (context, state) {
+          final documentSegment = state.pathParameters['document'];
+          final documentType = legalDocumentTypeFromRouteSegment(documentSegment);
+          if (documentType == null) {
+            return const LegalDocumentUnavailablePage();
+          }
+          return LegalDocumentPage(documentType: documentType);
+        },
       ),
       ShellRoute(
         builder: (context, state, child) {
