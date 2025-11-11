@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:logger/logger.dart';
@@ -18,12 +19,17 @@ class ScreenshotProtectionService {
   bool _isIosCaptureActive = false;
 
   Future<void> initialize() async {
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       await _setupIosScreenCaptureDetection();
     }
   }
 
   Future<void> enableProtection() async {
+    if (kIsWeb) {
+      _logger.i('Screenshot protection is not supported on web platform');
+      return;
+    }
+    
     try {
       if (Platform.isAndroid) {
         await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
@@ -40,6 +46,11 @@ class ScreenshotProtectionService {
   }
 
   Future<void> disableProtection() async {
+    if (kIsWeb) {
+      _logger.i('Screenshot protection is not supported on web platform');
+      return;
+    }
+    
     try {
       if (Platform.isAndroid) {
         await FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);

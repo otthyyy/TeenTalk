@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,9 @@ class _BetaFeedbackFormPageState extends ConsumerState<BetaFeedbackFormPage> {
   }
 
   String _getDeviceInfo() {
+    if (kIsWeb) {
+      return 'Platform: Web';
+    }
     return 'Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}';
   }
 
