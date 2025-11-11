@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import '../models/comment.dart';
 import '../../../feed/domain/models/feed_sort_option.dart';
+import '../../../feed/data/services/feed_cache_service.dart';
 
 /// Repository for managing posts in Firestore.
 /// 
@@ -22,6 +23,10 @@ import '../../../feed/domain/models/feed_sort_option.dart';
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final Logger _logger = Logger();
+  final FeedCacheService _cacheService = FeedCacheService();
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
   final Logger _logger;
@@ -31,6 +36,38 @@ class PostsRepository {
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
 
+  void invalidateCache({String? section, String? school}) {
+    if (section != null || school != null) {
+      _cacheService.invalidate(section: section, school: school);
+    } else {
+      _cacheService.clearAll();
+    }
+  }
+
+  Map<String, dynamic> getCacheMetrics() => _cacheService.getMetrics();
+
+  static const List<String> _listFields = [
+    'authorId',
+    'authorNickname',
+    'isAnonymous',
+    'content',
+    'createdAt',
+    'updatedAt',
+    'likeCount',
+    'likedBy',
+    'commentCount',
+    'imageUrl',
+    'section',
+    'school',
+    'engagementScore',
+  ];
+
+  Future<({
+    List<Post> posts,
+    DocumentSnapshot? lastDocument,
+    bool hasMore,
+    String? paginationToken,
+  })> getPosts({
   PostsRepository({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
@@ -45,7 +82,27 @@ class PostsRepository {
     String? section,
     String? school,
     FeedSortOption sortOption = FeedSortOption.newest,
+    bool forceRefresh = false,
   }) async {
+    final shouldUseCache = !forceRefresh && lastDocument == null;
+
+    if (shouldUseCache) {
+      final cached = _cacheService.get(
+        section: section,
+        school: school,
+        sortField: sortOption.primaryOrderField,
+      );
+      if (cached != null) {
+        _logger.d('Feed cache hit for section=$section sort=${sortOption.name}');
+        return (
+          posts: cached.posts,
+          lastDocument: cached.lastDocument,
+          hasMore: cached.hasMore,
+          paginationToken: cached.paginationToken,
+        );
+      }
+    }
+
     Query query = _firestore
         .collection(_postsCollection)
         .where('isModerated', isEqualTo: false);
@@ -72,13 +129,14 @@ class PostsRepository {
     }
 
     query = query.limit(limit);
+    query = query.select(_listFields);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
     }
 
     final QuerySnapshot snapshot = await query.get();
-    
+
     final posts = snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Post.fromJson({
@@ -87,8 +145,30 @@ class PostsRepository {
       });
     }).toList();
 
-    final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
-    return (posts, lastDoc);
+    final nextLastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : lastDocument;
+    final hasMore = snapshot.docs.length == limit;
+    final paginationToken = posts.isNotEmpty
+        ? '${posts.last.createdAt.toIso8601String()}_${posts.last.id}'
+        : null;
+
+    if (shouldUseCache && posts.isNotEmpty) {
+      _cacheService.set(
+        posts: posts,
+        hasMore: hasMore,
+        readCount: snapshot.docs.length,
+        lastDocument: nextLastDocument,
+        section: section,
+        school: school,
+        sortField: sortOption.primaryOrderField,
+      );
+    }
+
+    return (
+      posts: posts,
+      lastDocument: nextLastDocument,
+      hasMore: hasMore,
+      paginationToken: paginationToken,
+    );
   }
 
   Future<Post?> getPostById(String postId) async {

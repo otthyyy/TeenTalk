@@ -106,12 +106,18 @@ class MockPostsRepository extends PostsRepository {
   FeedSortOption? lastCalledSortOption;
 
   @override
-  Future<(List<Post>, DocumentSnapshot?)> getPosts({
+  Future<({
+    List<Post> posts,
+    DocumentSnapshot? lastDocument,
+    bool hasMore,
+    String? paginationToken,
+  })> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
     String? school,
     FeedSortOption sortOption = FeedSortOption.newest,
+    bool forceRefresh = false,
   }) async {
     lastCalledSortOption = sortOption;
     
@@ -145,7 +151,7 @@ class MockPostsRepository extends PostsRepository {
       ),
     ];
     
-    return (mockPosts, null);
+    return (posts: mockPosts, lastDocument: null, hasMore: false, paginationToken: null);
   }
 
   @override
