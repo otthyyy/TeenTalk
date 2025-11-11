@@ -587,11 +587,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                       postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
                 ),
               ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: 120 + bottomInset),
-            ),
-          ],
-        ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 120 + bottomInset),
+          ),
+        ],
       ),
     );
   }

@@ -33,7 +33,7 @@ class ProfilePage extends ConsumerWidget {
 
           return CustomScrollView(
             slivers: [
-              _buildGradientHeader(context, profile, isDark),
+              _buildGradientHeader(context, profile, isDark, ref),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -117,7 +117,12 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildGradientHeader(BuildContext context, dynamic profile, bool isDark) {
+  Widget _buildGradientHeader(
+    BuildContext context,
+    dynamic profile,
+    bool isDark,
+    WidgetRef ref,
+  ) {
     final theme = Theme.of(context);
     return SliverAppBar(
       expandedHeight: 220,
