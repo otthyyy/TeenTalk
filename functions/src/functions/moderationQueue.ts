@@ -169,6 +169,8 @@ export const getPendingModerations = functions.https.onCall(
 
 /**
  * Calculates priority based on report reason
+ * @param {string} reason - The reason for the report
+ * @return {number} Priority score (1-5)
  */
 function calculatePriority(reason: string): number {
   const priorityMap: {[key: string]: number} = {

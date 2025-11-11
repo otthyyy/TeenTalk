@@ -37,7 +37,7 @@ const REPORT_THRESHOLD = 3;
  * Cloud Function triggered when a new report is created
  * Checks if content should be auto-hidden based on report count
  */
-export const onReportCreated = functions.firestore
+export const onReportContentCreated = functions.firestore
   .document("reportedContent/{reportId}")
   .onCreate(async (snap, context) => {
     const report = snap.data();
@@ -133,6 +133,12 @@ export const onPostCreated = functions.firestore
 
 /**
  * Helper function to create audit logs
+ * @param {string} contentId - The content ID
+ * @param {string} originalAuthorId - The original author ID
+ * @param {string} action - The action performed
+ * @param {string | null} performedBy - The user who performed the action
+ * @param {string} reason - The reason for the action
+ * @return {Promise<void>} Promise that resolves when audit log is created
  */
 async function createAuditLog(
   contentId: string,
