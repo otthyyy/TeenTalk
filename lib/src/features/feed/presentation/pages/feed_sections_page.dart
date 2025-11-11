@@ -341,6 +341,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     showSearch(
       context: context,
       delegate: PostSearchDelegate(posts),
+    );
+  }
+
   void _onSortOptionSelected(FeedSortOption option) {
     _resetPrefetchTracking();
     final notifier =
@@ -447,33 +450,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                 },
               ),
             ],
-      child: Semantics(
-        container: true,
-        explicitChildNodes: true,
-        label: '${_selectedSection.label} feed posts list',
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            SliverAppBar(
-              expandedHeight: 280,
-              pinned: true,
-              stretch: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: theme.colorScheme.surface,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildHeroHeader(theme, userProfile),
-                collapseMode: CollapseMode.parallax,
-              ),
-              actions: const [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SyncStatusIndicator(),
-                ),
-              ],
-            ),
           ),
           SliverToBoxAdapter(
             child: OfflineBanner(
@@ -497,6 +473,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                     labelBuilder: (section) => section.label,
                   ),
                 ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -523,26 +504,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             ),
           ),
           if (postsState.isLoading && postsState.posts.isEmpty)
-            const SliverToBoxAdapter(
-              child: SkeletonLoader(),
-            )
-          else if (postsState.error != null)
-            SliverToBoxAdapter(
-              child: _buildErrorView(postsState.error!, theme),
-            )
-          else if (postsState.posts.isEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SegmentedControl<FeedSection>(
-                  values: FeedSection.values,
-                  selectedValue: _selectedSection,
-                  onChanged: _onSectionChanged,
-                  labelBuilder: (section) => section.label,
-                ),
-              ),
-            ),
-            if (postsState.isLoading && postsState.posts.isEmpty)
               const SliverToBoxAdapter(
                 child: SkeletonLoader(),
               )
