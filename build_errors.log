@@ -5,296 +5,9 @@ Warning: In index.html:49: Local variable for "serviceWorkerVersion" is deprecat
 https://docs.flutter.dev/platform-integration/web/initialization for more details.
 Warning: In index.html:58: "FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See
 https://docs.flutter.dev/platform-integration/web/initialization for more details.
-lib/main.dart:158:30: Error: Can't find ')' to match '('.
-    return MaterialApp.router(
-                             ^
-lib/main.dart:113:42: Error: Can't find '}' to match '{'.
-class TeenTalkApp extends ConsumerWidget {
-                                         ^
-lib/main.dart:43:1: Error: Directives must appear before any declarations.
-Try moving the directive before any declarations.
-import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
-^^^^^^
-lib/main.dart:44:1: Error: Directives must appear before any declarations.
-Try moving the directive before any declarations.
-import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
-^^^^^^
-lib/main.dart:114:1: Error: Classes can't be declared inside other classes.
-Try moving the class to the top-level.
-class TeenTalkApp extends ConsumerStatefulWidget {
-^^^^^
-lib/main.dart:114:19: Error: Expected a class member, but got 'extends'.
-class TeenTalkApp extends ConsumerStatefulWidget {
-                  ^^^^^^^
-lib/main.dart:114:27: Error: A method declaration needs an explicit list of parameters.
-Try adding a parameter list to the method declaration.
-class TeenTalkApp extends ConsumerStatefulWidget {
-                          ^^^^^^^^^^^^^^^^^^^^^^
-lib/main.dart:121:1: Error: Classes can't be declared inside other classes.
-Try moving the class to the top-level.
-class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
-^^^^^
-lib/main.dart:121:25: Error: Expected a class member, but got 'extends'.
-class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
-                        ^^^^^^^
-lib/main.dart:121:33: Error: A method declaration needs an explicit list of parameters.
-Try adding a parameter list to the method declaration.
-class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
-                                ^^^^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:386:24: Error: Can't find '}' to match '{'.
-        data: (status) {
-                       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:375:20: Error: Can't find ')' to match '('.
-    return Scaffold(
-                   ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:615:10: Error: Expected a declaration, but got '}'.
-}        },
-         ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:615:11: Error: Expected a declaration, but got ','.
-}        },
-          ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:9: Error: Variables must be declared using the
-keywords 'const', 'final', 'var' or a type name.
-Try adding the name of the type of the variable or the keyword 'var'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-        ^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:9: Error: Expected ';' after this.
-        loading: () => const Center(child: CircularProgressIndicator()),
-        ^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:16: Error: Expected a declaration, but got ':'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-               ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:18: Error: Expected a declaration, but got '('.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                 ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:19: Error: Expected a declaration, but got ')'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                  ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:21: Error: Expected a declaration, but got '=>'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                    ^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:24: Error: Can't have modifier 'const' here.
-Try removing 'const'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                       ^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:42: Error: Non-optional parameters can't have a
-default value.
-Try removing the default value or making the parameter optional.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                                         ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:72: Error: Expected '{' before this.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                                                                       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:72: Error: Expected a declaration, but got ','.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                                                                       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:9: Error: Variables must be declared using the
-keywords 'const', 'final', 'var' or a type name.
-Try adding the name of the type of the variable or the keyword 'var'.
-        error: (error, stackTrace) {
-        ^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:9: Error: Expected ';' after this.
-        error: (error, stackTrace) {
-        ^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:14: Error: Expected a declaration, but got ':'.
-        error: (error, stackTrace) {
-             ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:16: Error: Expected a declaration, but got '('.
-        error: (error, stackTrace) {
-               ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:17: Error: Variables must be declared using the
-keywords 'const', 'final', 'var' or a type name.
-Try adding the name of the type of the variable or the keyword 'var'.
-        error: (error, stackTrace) {
-                ^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:24: Error: Expected ';' after this.
-        error: (error, stackTrace) {
-                       ^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:34: Error: Expected a declaration, but got ')'.
-        error: (error, stackTrace) {
-                                 ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:36: Error: Expected a declaration, but got '{'.
-        error: (error, stackTrace) {
-                                   ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:620:10: Error: Expected a declaration, but got ','.
-        },
-         ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:621:7: Error: Expected a declaration, but got ')'.
-      ),
-      ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:621:8: Error: Expected a declaration, but got ','.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:622:5: Error: Expected a declaration, but got ')'.
-    );
-    ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:622:6: Error: Unexpected token ';'.
-    );
-     ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:623:3: Error: Expected a declaration, but got '}'.
-  }
-  ^
-lib/src/features/onboarding/presentation/pages/onboarding_page.dart:55:27: Error: Can't find '}' to match '{'.
-    if (_currentStep < 4) {
-                          ^
-Error: Couldn't resolve the package 'url_launcher' in 'package:url_launcher/url_launcher.dart'.
-lib/src/features/profile/domain/models/user_profile.dart:185:6: Error: Expected a class member, but got ';'.
-    };
-     ^
-lib/src/features/profile/domain/models/user_profile.dart:188:3: Error: Top-level declarations can't be declared to be
-'factory'.
-Try removing the keyword 'factory'.
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-  ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:188:11: Error: A function declaration needs an explicit list of
-parameters.
-Try adding a parameter list to the function declaration.
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-          ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:188:22: Error: Expected '{' before this.
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-                     ^
-lib/src/features/profile/domain/models/user_profile.dart:188:22: Error: Expected a declaration, but got '.'.
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-                     ^
-lib/src/features/profile/domain/models/user_profile.dart:262:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static Map<String, dynamic> toFirestore(UserProfile profile) {
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:370:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static const ListEquality<String> _listEquality = ListEquality<String>();
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:373:8: Error: Operators must be declared within a class.
-Try removing the operator, moving it to a class, or converting it to be a function.
-  bool operator ==(Object other) {
-       ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:479:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static List<String> _normalizeStringList(dynamic value) {
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:487:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static DateTime? _timestampToDate(dynamic value) {
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:497:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static List<String> buildSearchKeywords(
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:547:5: Error: A function declaration needs an explicit list of
-parameters.
-Try adding a parameter list to the function declaration.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-    ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:547:13: Error: Expected '{' before this.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-            ^
-lib/src/features/profile/domain/models/user_profile.dart:547:13: Error: Expected a declaration, but got '.'.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-            ^
-lib/src/features/profile/domain/models/user_profile.dart:547:26: Error: Expected an identifier, but got '('.
-Try inserting an identifier before '('.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-                         ^
-lib/src/features/profile/domain/models/user_profile.dart:547:36: Error: Expected ')' before this.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-                                   ^^
-lib/src/features/profile/domain/models/user_profile.dart:547:62: Error: Expected a function body or '=>'.
-Try adding {}.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-                                                             ^
-lib/src/features/profile/domain/models/user_profile.dart:548:5: Error: Variables must be declared using the keywords
-'const', 'final', 'var' or a type name.
-Try adding the name of the type of the variable or the keyword 'var'.
-    return keywords.toList();
-    ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:548:5: Error: 'return' can't be used as an identifier because
-it's a keyword.
-Try renaming this to be an identifier that isn't a keyword.
-    return keywords.toList();
-    ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:548:5: Error: Expected ';' after this.
-    return keywords.toList();
-    ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:548:12: Error: A function declaration needs an explicit list of
-parameters.
-Try adding a parameter list to the function declaration.
-    return keywords.toList();
-           ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:548:20: Error: Expected '{' before this.
-    return keywords.toList();
-                   ^
-lib/src/features/profile/domain/models/user_profile.dart:548:20: Error: Expected a declaration, but got '.'.
-    return keywords.toList();
-                   ^
-lib/src/features/profile/domain/models/user_profile.dart:548:29: Error: Expected a function body or '=>'.
-Try adding {}.
-    return keywords.toList();
-                            ^
-lib/src/features/profile/domain/models/user_profile.dart:549:3: Error: Expected a declaration, but got '}'.
-  }
-  ^
-lib/src/features/profile/domain/models/user_profile.dart:551:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static String _stripDiacritics(String value) {
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:560:3: Error: Can't have modifier 'static' here.
-Try removing 'static'.
-  static const Map<String, String> _diacriticReplacements = {
-  ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:649:1: Error: Expected a declaration, but got '}'.
-}
-^
-lib/src/features/comments/data/repositories/posts_repository.dart:71:15: Error: Can't find ')' to match '('.
-  })> getPosts({
-              ^
-lib/src/features/comments/data/repositories/posts_repository.dart:26:23: Error: Can't find '}' to match '{'.
-class PostsRepository {
-                      ^
-lib/src/features/comments/data/repositories/posts_repository.dart:77:9: Error: A named parameter can't start with an
-underscore ('_').
-        _storage = storage ?? FirebaseStorage.instance,
-        ^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:78:9: Error: A named parameter can't start with an
-underscore ('_').
-        _logger = logger ?? Logger();
-        ^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:78:37: Error: Expected '}' before this.
-        _logger = logger ?? Logger();
-                                    ^
-lib/src/features/comments/data/repositories/posts_repository.dart:635:2: Error: Expected '{' before this.
-}
- ^...
-lib/src/features/feed/presentation/pages/post_composer_page.dart:12:8: Error: Error when reading
-'lib/src/features/core/analytics/analytics_provider.dart': Impossibile trovare il percorso specificato.
-
-import '../../../core/analytics/analytics_provider.dart';
-       ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:192:20: Error: Can't find ')' to match '('.
-          Semantics(
-                   ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:191:19: Error: Can't find ']' to match '['.
-        children: [
-                  ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:190:17: Error: Can't find ')' to match '('.
-      child: Row(
-                ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:188:21: Error: Can't find ')' to match '('.
-    return Semantics(
-                    ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:46:41: Error: Can't find '}' to match '{'.
-    with SingleTickerProviderStateMixin {
-                                        ^
-lib/src/features/onboarding/presentation/widgets/nickname_step.dart:123:21: Error: Can't find ')' to match '('.
-    return Semantics(
-                    ^
-lib/src/features/legal/presentation/pages/legal_document_page.dart:4:8: Error: Not found:
-'package:url_launcher/url_launcher.dart'
-import 'package:url_launcher/url_launcher.dart';
-       ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:177:58: Error: Can't find ')' to match '('.
-      final (posts, lastDoc) = await _repository.getPosts(
-                                                         ^
+lib/src/features/feed/presentation/pages/post_composer_page.dart:26:70: Error: Can't find '}' to match '{'.
+class _PostComposerPageState extends ConsumerState<PostComposerPage> {
+                                                                     ^
 lib/src/features/profile/domain/models/trust_level_localizations.dart:1:8: Error: Error when reading
 'lib/src/features/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
 
@@ -305,77 +18,30 @@ lib/src/features/offline_sync/models/queued_action.dart:3:6: Error: Error when r
 
 part 'queued_action.g.dart';
      ^
-Error: Couldn't resolve the package 'flutter_dotenv' in 'package:flutter_dotenv/flutter_dotenv.dart'.
 lib/src/core/services/image_prefetch_service.dart:3:8: Error: Error when reading
 'lib/features/comments/data/models/comment.dart': Impossibile trovare il percorso specificato.
 
 import '../../../features/comments/data/models/comment.dart';
        ^
-lib/core/app_config.dart:1:8: Error: Not found: 'package:flutter_dotenv/flutter_dotenv.dart'
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-       ^
 lib/src/features/offline_sync/models/queued_action.dart:3:6: Error: Can't use
 'lib/src/features/offline_sync/models/queued_action.g.dart' as a part, because it has no 'part of' declaration.
 part 'queued_action.g.dart';
      ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:17: Error: 'error' is already declared in this
+lib/src/features/profile/domain/models/user_profile.dart:427:23: Error: '_normalizeStringList' is already declared in
+this scope.
+  static List<String> _normalizeStringList(dynamic value) {
+                      ^^^^^^^^^^^^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:391:23: Context: Previous declaration of
+'_normalizeStringList'.
+  static List<String> _normalizeStringList(dynamic value) {
+                      ^^^^^^^^^^^^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:435:20: Error: '_timestampToDate' is already declared in this
 scope.
-        error: (error, stackTrace) {
-                ^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:617:9: Context: Previous declaration of 'error'.
-        error: (error, stackTrace) {
-        ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:188:11: Error: 'UserProfile' is already declared in this scope.
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-          ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:8:7: Context: Previous declaration of 'UserProfile'.
-class UserProfile {
-      ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:548:12: Error: 'keywords' is already declared in this scope.
-    return keywords.toList();
-           ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:547:5: Context: Previous declaration of 'keywords'.
-    keywords.removeWhere((element) => element.trim().isEmpty);
-    ^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:31:27: Error: '_firestore' is already declared in this
-scope.
-  final FirebaseFirestore _firestore;
-                          ^^^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:27:27: Context: Previous declaration of '_firestore'.
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-                          ^^^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:32:25: Error: '_storage' is already declared in this
-scope.
-  final FirebaseStorage _storage;
-                        ^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:28:25: Context: Previous declaration of '_storage'.
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-                        ^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:33:16: Error: '_logger' is already declared in this
-scope.
-  final Logger _logger;
-               ^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:29:16: Context: Previous declaration of '_logger'.
-  final Logger _logger = Logger();
-               ^^^^^^^
-lib/src/core/services/analytics_service.dart:90:16: Error: 'logEvent' is already declared in this scope.
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
-               ^^^^^^^^
-lib/src/core/services/analytics_service.dart:8:16: Context: Previous declaration of 'logEvent'.
-  Future<void> logEvent({
-               ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:262:43: Error: 'UserProfile' isn't a type.
-  static Map<String, dynamic> toFirestore(UserProfile profile) {
-                                          ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:262:43: Context: This isn't a type.
-  static Map<String, dynamic> toFirestore(UserProfile profile) {
-                                          ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:295:3: Error: 'UserProfile' isn't a type.
-  UserProfile copyWith({
-  ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:295:3: Context: This isn't a type.
-  UserProfile copyWith({
-  ^^^^^^^^^^^
+  static DateTime? _timestampToDate(dynamic value) {
+                   ^^^^^^^^^^^^^^^^
+lib/src/features/profile/domain/models/user_profile.dart:399:20: Context: Previous declaration of '_timestampToDate'.
+  static DateTime? _timestampToDate(dynamic value) {
+                   ^^^^^^^^^^^^^^^^
 lib/src/features/profile/domain/models/trust_level_localizations.dart:4:47: Error: Type 'AppLocalizations' not found.
 String trustLevelLabel(TrustLevel trustLevel, AppLocalizations? localization) {
                                               ^^^^^^^^^^^^^^^^
@@ -392,157 +58,6 @@ lib/src/features/admin/data/services/analytics_export_service.dart:11:9: Error: 
 found.
   final AnalyticsExportDelegate _delegate = buildAnalyticsExportDelegate();
         ^^^^^^^^^^^^^^^^^^^^^^^
-lib/main.dart:113:7: Error: The non-abstract class 'TeenTalkApp' is missing implementations for these members:
- - ConsumerWidget.build
-Try to either
- - provide an implementation,
- - inherit an implementation from a superclass or mixin,
- - mark the class as abstract, or
- - provide a 'noSuchMethod' implementation.
-
-class TeenTalkApp extends ConsumerWidget {
-      ^^^^^^^^^^^
-../../AppData/Local/Pub/Cache/hosted/pub.dev/flutter_riverpod-2.6.1/lib/src/consumer.dart:466:10: Context:
-'ConsumerWidget.build' is defined here.
-  Widget build(BuildContext context, WidgetRef ref);
-         ^^^^^
-lib/src/core/router/app_router.dart:38:42: Error: The getter 'isProfileComplete' isn't defined for the type
-'UserProfile'.
- - 'UserProfile' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
- ('lib/src/features/profile/domain/models/user_profile.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isProfileComplete'.
-      final isProfileComplete = profile?.isProfileComplete ?? false;
-                                         ^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/single_post_provider.dart:9:21: Error: The method 'getPostById' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getPostById'.
-  return repository.getPostById(postId);
-                    ^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/single_post_provider.dart:16:33: Error: The method 'getPostById' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getPostById'.
-  final post = await repository.getPostById(postId);
-                                ^^^^^^^^^^^
-lib/src/core/services/image_cache_service.dart:12:37: Error: Method not found: 'DefaultCacheManager'.
-  static final customCacheManager = DefaultCacheManager();
-                                    ^^^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/liker_profiles_provider.dart:31:48: Error: The getter 'future' isn't
-defined for the type 'AsyncValue<List<String>>'.
- - 'AsyncValue' is from 'package:riverpod/src/common.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/riverpod-2.6.1/lib/src/common.dart').
- - 'List' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'future'.
-  final blockedUsers = await blockedUsersAsync.future;
-                                               ^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:76:22: Error: Undefined name 'firestore'.
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-                     ^^^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:76:20: Error: Can't assign to this.
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-                   ^
-lib/src/features/comments/data/repositories/posts_repository.dart:77:20: Error: Undefined name 'storage'.
-        _storage = storage ?? FirebaseStorage.instance,
-                   ^^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:78:29: Error: Constant expression expected.
-Try inserting 'const'.
-        _logger = logger ?? Logger();
-                            ^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:78:29: Error: Cannot invoke a non-'const' constructor
-where a const expression is expected.
-Try using a constructor or factory that is 'const'.
-        _logger = logger ?? Logger();
-                            ^^^^^^
-lib/src/features/comments/data/repositories/posts_repository.dart:78:19: Error: Undefined name 'logger'.
-        _logger = logger ?? Logger();
-                  ^^^^^^
-lib/main.dart:92:22: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
-Try using a constructor or factory that is 'const'.
-        child: const TeenTalkApp(),
-                     ^^^^^^^^^^^
-lib/main.dart:115:20: Error: Too many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-  const TeenTalkApp({super.key});
-                   ^
-lib/main.dart:113:7: Context: The class 'TeenTalkApp' has a constructor that takes no arguments.
-class TeenTalkApp extends ConsumerWidget {
-      ^
-lib/main.dart:118:3: Error: 'ConsumerState' isn't a type.
-  ConsumerState<TeenTalkApp> createState() => _TeenTalkAppState();
-  ^^^^^^^^^^^^^
-lib/main.dart:118:47: Error: The method '_TeenTalkAppState' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_TeenTalkAppState'.
-  ConsumerState<TeenTalkApp> createState() => _TeenTalkAppState();
-                                              ^^^^^^^^^^^^^^^^^
-lib/main.dart:124:11: Error: Superclass has no method named 'initState'.
-    super.initState();
-          ^^^^^^^^^
-lib/main.dart:131:5: Error: Local variable '_initializePushNotifications' can't be referenced before it is declared.
-    _initializePushNotifications();
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/main.dart:134:16: Context: This is the declaration of the variable '_initializePushNotifications'.
-  Future<void> _initializePushNotifications() async {
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/main.dart:176:5: Error: Unexpected token 'return'.
-    return ScreenshotProtectedContent(
-    ^^^^^^
-lib/main.dart:158:30: Error: Too many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-    return MaterialApp.router(
-                             ^
-../flutter/packages/flutter/lib/src/material/app.dart:272:9: Context: Found this candidate, but the arguments don't
-match.
-  const MaterialApp.router({
-        ^^^^^^^^^^^^^^^^^^
-lib/main.dart:128:27: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-      final pushService = ref.read(pushNotificationsServiceProvider);
-                          ^^^
-lib/main.dart:131:5: Error: The method '_initializePushNotifications' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_initializePushNotifications'.
-    _initializePushNotifications();
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/main.dart:137:10: Error: The getter 'mounted' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'mounted'.
-    if (!mounted) return;
-         ^^^^^^^
-lib/main.dart:139:20: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    final router = ref.read(routerProvider);
-                   ^^^
-lib/main.dart:140:25: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    final pushHandler = ref.read(pushNotificationHandlerProvider);
-                        ^^^
-lib/main.dart:152:5: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    ref.watch(crashlyticsSyncProvider);
-    ^^^
-lib/main.dart:153:5: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    ref.watch(pushNotificationsControllerProvider);
-    ^^^
-lib/main.dart:155:23: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    final themeMode = ref.watch(themeProvider);
-                      ^^^
-lib/main.dart:156:20: Error: The getter 'ref' isn't defined for the type 'TeenTalkApp'.
- - 'TeenTalkApp' is from 'package:teen_talk_app/main.dart' ('lib/main.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-    final router = ref.watch(routerProvider);
-                   ^^^
 lib/src/core/services/feed_cache_service.dart:47:25: Error: The getter 'schoolKey_' isn't defined for the type
 'FeedCacheService'.
  - 'FeedCacheService' is from 'package:teen_talk_app/src/core/services/feed_cache_service.dart'
@@ -570,31 +85,34 @@ lib/src/core/theme/app_theme.dart:492:5: Error: No named parameter with the name
 don't match.
   factory ThemeData({
           ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:264:24: Error: The method 'createPost' isn't defined
-for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'createPost'.
-      await repository.createPost(
-                       ^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:612:7: Error: Expected ';' after this.
-      ),
-      ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:612:8: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:612:8: Error: Unexpected token ';'.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:385:33: Error: Required named parameter 'error' must be
-provided.
-      body: rateLimitStatus.when(
-                                ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:616:44: Error: Constant expression expected.
-Try inserting 'const'.
-        loading: () => const Center(child: CircularProgressIndicator()),
-                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/src/features/feed/presentation/pages/post_composer_page.dart:185:30: Error: The method 'logRateLimitHit' isn't
+defined for the type 'AnalyticsService'.
+ - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
+ ('lib/src/core/analytics/analytics_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitHit'.
+      await analyticsService.logRateLimitHit(
+                             ^^^^^^^^^^^^^^^
+lib/src/features/feed/presentation/pages/post_composer_page.dart:277:30: Error: The method 'logContentSubmission' isn't
+defined for the type 'AnalyticsService'.
+ - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
+ ('lib/src/core/analytics/analytics_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'logContentSubmission'.
+      await analyticsService.logContentSubmission(
+                             ^^^^^^^^^^^^^^^^^^^^
+lib/src/features/feed/presentation/pages/post_composer_page.dart:301:34: Error: The method 'logRateLimitHit' isn't
+defined for the type 'AnalyticsService'.
+ - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
+ ('lib/src/core/analytics/analytics_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitHit'.
+          await analyticsService.logRateLimitHit(
+                                 ^^^^^^^^^^^^^^^
+lib/src/features/feed/presentation/pages/post_composer_page.dart:389:52: Error: The method 'logRateLimitWarning' isn't
+defined for the type 'AnalyticsService'.
+ - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
+ ('lib/src/core/analytics/analytics_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitWarning'.
+                ref.read(analyticsServiceProvider).logRateLimitWarning(
+                                                   ^^^^^^^^^^^^^^^^^^^
 lib/src/features/messages/presentation/pages/chat_screen.dart:47:46: Error: 'userProfileByIdProvider' is imported from
 both 'package:teen_talk_app/src/features/messages/presentation/providers/direct_messages_provider.dart' and
 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart'.
@@ -628,790 +146,11 @@ lib/src/features/profile/presentation/pages/profile_page.dart:204:25: Error: The
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
                         ref.read(analyticsServiceProvider).logTrustBadgeTap(
                         ^^^
-lib/src/features/profile/presentation/pages/profile_edit_page.dart:440:32: Error: The getter 'isProfileComplete' isn't
-defined for the type 'UserProfile'.
- - 'UserProfile' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
- ('lib/src/features/profile/domain/models/user_profile.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isProfileComplete'.
-                  if (!profile.isProfileComplete)
-                               ^^^^^^^^^^^^^^^^^
-lib/src/features/profile/presentation/pages/public_profile_page.dart:80:54: Error: The method 'getPostsByAuthor' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getPostsByAuthor'.
-      final (posts, lastDoc) = await postsRepository.getPostsByAuthor(
-                                                     ^^^^^^^^^^^^^^^^
 lib/src/features/profile/presentation/pages/public_profile_page.dart:163:40: Error: 'userProfileByIdProvider' is
 imported from both 'package:teen_talk_app/src/features/messages/presentation/providers/direct_messages_provider.dart'
 and 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart'.
     final userProfileAsync = ref.watch(userProfileByIdProvider(widget.userId));
                                        ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/presentation/pages/public_profile_page.dart:373:49: Error: The method 'likePost' isn't defined
-for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'likePost'.
-                          await postsRepository.likePost(post.id, currentUserId);
-                                                ^^^^^^^^
-lib/src/features/profile/presentation/pages/public_profile_page.dart:379:49: Error: The method 'unlikePost' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'unlikePost'.
-                          await postsRepository.unlikePost(post.id, currentUserId);
-                                                ^^^^^^^^^^
-lib/src/features/profile/presentation/pages/public_profile_page.dart:646:37: Error: The method 'reportPost' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'reportPost'.
-              await postsRepository.reportPost(postId, 'Inappropriate content');
-                                    ^^^^^^^^^^
-lib/src/features/onboarding/presentation/pages/onboarding_page.dart:130:37: Error: Member not found:
-'UserProfile.buildSearchKeywords'.
-        searchKeywords: UserProfile.buildSearchKeywords(
-                                    ^^^^^^^^^^^^^^^^^^^
-lib/src/features/legal/presentation/pages/legal_document_page.dart:151:15: Error: The method 'canLaunchUrl' isn't
-defined for the type '_LegalDocumentPageState'.
- - '_LegalDocumentPageState' is from
- 'package:teen_talk_app/src/features/legal/presentation/pages/legal_document_page.dart'
- ('lib/src/features/legal/presentation/pages/legal_document_page.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'canLaunchUrl'.
-    if (await canLaunchUrl(uri)) {
-              ^^^^^^^^^^^^
-lib/src/features/legal/presentation/pages/legal_document_page.dart:152:13: Error: The method 'launchUrl' isn't defined
-for the type '_LegalDocumentPageState'.
- - '_LegalDocumentPageState' is from
- 'package:teen_talk_app/src/features/legal/presentation/pages/legal_document_page.dart'
- ('lib/src/features/legal/presentation/pages/legal_document_page.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'launchUrl'.
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-            ^^^^^^^^^
-lib/src/features/legal/presentation/pages/legal_document_page.dart:152:34: Error: The getter 'LaunchMode' isn't defined
-for the type '_LegalDocumentPageState'.
- - '_LegalDocumentPageState' is from
- 'package:teen_talk_app/src/features/legal/presentation/pages/legal_document_page.dart'
- ('lib/src/features/legal/presentation/pages/legal_document_page.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'LaunchMode'.
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                 ^^^^^^^^^^
-lib/src/features/screenshot_protection/presentation/providers/screenshot_protection_providers.dart:74:32: Error: Too
-many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-      analyticsService.logEvent('screen_capture_detected', parameters: {
-                               ^
-lib/src/features/screenshot_protection/presentation/providers/screenshot_protection_providers.dart:82:32: Error: Too
-many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-      analyticsService.logEvent('screenshot_attempt_detected');
-                               ^
-lib/src/features/screenshot_protection/presentation/providers/screenshot_protection_providers.dart:89:32: Error: Too
-many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-      analyticsService.logEvent('screenshot_protection_enabled');
-                               ^
-lib/src/features/screenshot_protection/presentation/providers/screenshot_protection_providers.dart:92:32: Error: Too
-many positional arguments: 0 allowed, but 1 found.
-Try removing the extra positional arguments.
-      analyticsService.logEvent('screenshot_protection_disabled');
-                               ^
-lib/src/features/profile/data/repositories/user_repository.dart:29:26: Error: Member not found:
-'UserProfile.fromFirestore'.
-      return UserProfile.fromFirestore(doc);
-                         ^^^^^^^^^^^^^
-lib/src/features/profile/data/repositories/user_repository.dart:40:48: Error: Member not found:
-'UserProfile.fromFirestore'.
-        .map((doc) => doc.exists ? UserProfile.fromFirestore(doc) : null);
-                                               ^^^^^^^^^^^^^
-lib/src/features/profile/data/repositories/user_repository.dart:47:30: Error: Member not found:
-'UserProfile.toFirestore'.
-    final data = UserProfile.toFirestore(profile);
-                             ^^^^^^^^^^^
-lib/src/features/profile/data/repositories/user_repository.dart:49:38: Error: The method 'generateSearchKeywords' isn't
-defined for the type 'UserProfile'.
- - 'UserProfile' is from 'package:teen_talk_app/src/features/profile/domain/models/user_profile.dart'
- ('lib/src/features/profile/domain/models/user_profile.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'generateSearchKeywords'.
-    data['searchKeywords'] = profile.generateSearchKeywords();
-                                     ^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/data/repositories/user_repository.dart:91:44: Error: Member not found:
-'UserProfile.fromFirestore'.
-        final currentProfile = UserProfile.fromFirestore(userDoc);
-                                           ^^^^^^^^^^^^^
-lib/src/features/profile/data/repositories/user_repository.dart:112:49: Error: Member not found:
-'UserProfile.buildSearchKeywords'.
-        updates['searchKeywords'] = UserProfile.buildSearchKeywords(
-                                                ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:104:13: Error: Expected ';' after this.
-            ),
-            ^
-lib/src/features/profile/domain/models/user_profile.dart:104:14: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-            ),
-             ^
-lib/src/features/profile/domain/models/user_profile.dart:104:14: Error: Unexpected token ';'.
-            ),
-             ^
-lib/src/features/profile/domain/models/user_profile.dart:105:49: Error: Expected ';' after this.
-      trustScore: json['trustScore'] as int? ?? 50,
-                                                ^^
-lib/src/features/profile/domain/models/user_profile.dart:105:51: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      trustScore: json['trustScore'] as int? ?? 50,
-                                                  ^
-lib/src/features/profile/domain/models/user_profile.dart:105:51: Error: Unexpected token ';'.
-      trustScore: json['trustScore'] as int? ?? 50,
-                                                  ^
-lib/src/features/profile/domain/models/user_profile.dart:106:70: Error: Expected ';' after this.
-      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
-                                                                     ^
-lib/src/features/profile/domain/models/user_profile.dart:106:71: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:106:71: Error: Unexpected token ';'.
-      trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:107:67: Error: Expected ';' after this.
-      anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
-                                                                  ^
-lib/src/features/profile/domain/models/user_profile.dart:107:68: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
-                                                                   ^
-lib/src/features/profile/domain/models/user_profile.dart:107:68: Error: Unexpected token ';'.
-      anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
-                                                                   ^
-lib/src/features/profile/domain/models/user_profile.dart:108:70: Error: Expected ';' after this.
-      createdAt: _timestampToDate(json['createdAt']) ?? DateTime.now(),
-                                                                     ^
-lib/src/features/profile/domain/models/user_profile.dart:108:71: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      createdAt: _timestampToDate(json['createdAt']) ?? DateTime.now(),
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:108:71: Error: Unexpected token ';'.
-      createdAt: _timestampToDate(json['createdAt']) ?? DateTime.now(),
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:110:56: Error: Expected ';' after this.
-          _timestampToDate(json['lastNicknameChangeAt']),
-                                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:110:57: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          _timestampToDate(json['lastNicknameChangeAt']),
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:110:57: Error: Unexpected token ';'.
-          _timestampToDate(json['lastNicknameChangeAt']),
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:111:68: Error: Expected ';' after this.
-      privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
-                                                                   ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:111:73: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
-                                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:111:73: Error: Unexpected token ';'.
-      privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
-                                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:113:77: Error: Expected ';' after this.
-          _timestampToDate(json['privacyConsentTimestamp']) ?? DateTime.now(),
-                                                                            ^
-lib/src/features/profile/domain/models/user_profile.dart:113:78: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          _timestampToDate(json['privacyConsentTimestamp']) ?? DateTime.now(),
-                                                                             ^
-lib/src/features/profile/domain/models/user_profile.dart:113:78: Error: Unexpected token ';'.
-          _timestampToDate(json['privacyConsentTimestamp']) ?? DateTime.now(),
-                                                                             ^
-lib/src/features/profile/domain/models/user_profile.dart:114:39: Error: Expected ';' after this.
-      isMinor: json['isMinor'] as bool?,
-                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:114:40: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      isMinor: json['isMinor'] as bool?,
-                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:114:40: Error: Unexpected token ';'.
-      isMinor: json['isMinor'] as bool?,
-                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:115:57: Error: Expected ';' after this.
-      guardianContact: json['guardianContact'] as String?,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:115:58: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      guardianContact: json['guardianContact'] as String?,
-                                                         ^
-lib/src/features/profile/domain/models/user_profile.dart:115:58: Error: Unexpected token ';'.
-      guardianContact: json['guardianContact'] as String?,
-                                                         ^
-lib/src/features/profile/domain/models/user_profile.dart:116:65: Error: Expected ';' after this.
-      parentalConsentGiven: json['parentalConsentGiven'] as bool?,
-                                                                ^
-lib/src/features/profile/domain/models/user_profile.dart:116:66: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      parentalConsentGiven: json['parentalConsentGiven'] as bool?,
-                                                                 ^
-lib/src/features/profile/domain/models/user_profile.dart:116:66: Error: Unexpected token ';'.
-      parentalConsentGiven: json['parentalConsentGiven'] as bool?,
-                                                                 ^
-lib/src/features/profile/domain/models/user_profile.dart:118:60: Error: Expected ';' after this.
-          _timestampToDate(json['parentalConsentTimestamp']),
-                                                           ^
-lib/src/features/profile/domain/models/user_profile.dart:118:61: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          _timestampToDate(json['parentalConsentTimestamp']),
-                                                            ^
-lib/src/features/profile/domain/models/user_profile.dart:118:61: Error: Unexpected token ';'.
-          _timestampToDate(json['parentalConsentTimestamp']),
-                                                            ^
-lib/src/features/profile/domain/models/user_profile.dart:119:66: Error: Expected ';' after this.
-      onboardingComplete: json['onboardingComplete'] as bool? ?? false,
-                                                                 ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:119:71: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      onboardingComplete: json['onboardingComplete'] as bool? ?? false,
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:119:71: Error: Unexpected token ';'.
-      onboardingComplete: json['onboardingComplete'] as bool? ?? false,
-                                                                      ^
-lib/src/features/profile/domain/models/user_profile.dart:120:68: Error: Expected ';' after this.
-      allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
-                                                                   ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:120:72: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
-                                                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:120:72: Error: Unexpected token ';'.
-      allowAnonymousPosts: json['allowAnonymousPosts'] as bool? ?? true,
-                                                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:121:58: Error: Expected ';' after this.
-      profileVisible: json['profileVisible'] as bool? ?? true,
-                                                         ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:121:62: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      profileVisible: json['profileVisible'] as bool? ?? true,
-                                                             ^
-lib/src/features/profile/domain/models/user_profile.dart:121:62: Error: Unexpected token ';'.
-      profileVisible: json['profileVisible'] as bool? ?? true,
-                                                             ^
-lib/src/features/profile/domain/models/user_profile.dart:122:62: Error: Expected ';' after this.
-      analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
-                                                             ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:122:66: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
-                                                                 ^
-lib/src/features/profile/domain/models/user_profile.dart:122:66: Error: Unexpected token ';'.
-      analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
-                                                                 ^
-lib/src/features/profile/domain/models/user_profile.dart:123:52: Error: Expected ';' after this.
-      updatedAt: _timestampToDate(json['updatedAt']),
-                                                   ^
-lib/src/features/profile/domain/models/user_profile.dart:123:53: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      updatedAt: _timestampToDate(json['updatedAt']),
-                                                    ^
-lib/src/features/profile/domain/models/user_profile.dart:123:53: Error: Unexpected token ';'.
-      updatedAt: _timestampToDate(json['updatedAt']),
-                                                    ^
-lib/src/features/profile/domain/models/user_profile.dart:124:44: Error: Expected ';' after this.
-      isAdmin: json['isAdmin'] as bool? ?? false,
-                                           ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:124:49: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      isAdmin: json['isAdmin'] as bool? ?? false,
-                                                ^
-lib/src/features/profile/domain/models/user_profile.dart:124:49: Error: Unexpected token ';'.
-      isAdmin: json['isAdmin'] as bool? ?? false,
-                                                ^
-lib/src/features/profile/domain/models/user_profile.dart:125:52: Error: Expected ';' after this.
-      isModerator: json['isModerator'] as bool? ?? false,
-                                                   ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:125:57: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      isModerator: json['isModerator'] as bool? ?? false,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:125:57: Error: Unexpected token ';'.
-      isModerator: json['isModerator'] as bool? ?? false,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:126:54: Error: Expected ';' after this.
-      isBetaTester: json['isBetaTester'] as bool? ?? false,
-                                                     ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:126:59: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      isBetaTester: json['isBetaTester'] as bool? ?? false,
-                                                          ^
-lib/src/features/profile/domain/models/user_profile.dart:126:59: Error: Unexpected token ';'.
-      isBetaTester: json['isBetaTester'] as bool? ?? false,
-                                                          ^
-lib/src/features/profile/domain/models/user_profile.dart:127:57: Error: Expected ';' after this.
-      betaConsentGiven: json['betaConsentGiven'] as bool?,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:127:58: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      betaConsentGiven: json['betaConsentGiven'] as bool?,
-                                                         ^
-lib/src/features/profile/domain/models/user_profile.dart:127:58: Error: Unexpected token ';'.
-      betaConsentGiven: json['betaConsentGiven'] as bool?,
-                                                         ^
-lib/src/features/profile/domain/models/user_profile.dart:129:56: Error: Expected ';' after this.
-          _timestampToDate(json['betaConsentTimestamp']),
-                                                       ^
-lib/src/features/profile/domain/models/user_profile.dart:129:57: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          _timestampToDate(json['betaConsentTimestamp']),
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:129:57: Error: Unexpected token ';'.
-          _timestampToDate(json['betaConsentTimestamp']),
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:131:53: Error: Expected ';' after this.
-          json['crashReportingEnabled'] as bool? ?? true,
-                                                    ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:131:57: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          json['crashReportingEnabled'] as bool? ?? true,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:131:57: Error: Unexpected token ';'.
-          json['crashReportingEnabled'] as bool? ?? true,
-                                                        ^
-lib/src/features/profile/domain/models/user_profile.dart:134:13: Error: Expected ';' after this.
-          : null,
-            ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:134:17: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          : null,
-                ^
-lib/src/features/profile/domain/models/user_profile.dart:134:17: Error: Unexpected token ';'.
-          : null,
-                ^
-lib/src/features/profile/domain/models/user_profile.dart:135:72: Error: Expected ';' after this.
-      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
-                                                                       ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:135:76: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
-                                                                           ^
-lib/src/features/profile/domain/models/user_profile.dart:135:76: Error: Unexpected token ';'.
-      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
-                                                                           ^
-lib/src/features/profile/domain/models/user_profile.dart:137:59: Error: Expected ';' after this.
-          json['screenshotProtectionEnabled'] as bool? ?? true,
-                                                          ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:137:63: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-          json['screenshotProtectionEnabled'] as bool? ?? true,
-                                                              ^
-lib/src/features/profile/domain/models/user_profile.dart:137:63: Error: Unexpected token ';'.
-          json['screenshotProtectionEnabled'] as bool? ?? true,
-                                                              ^
-lib/src/features/profile/domain/models/user_profile.dart:138:5: Error: Expected an identifier, but got ')'.
-Try inserting an identifier before ')'.
-    );
-    ^
-lib/src/features/profile/domain/models/user_profile.dart:137:63: Error: Expected ';' after this.
-          json['screenshotProtectionEnabled'] as bool? ?? true,
-                                                              ^
-lib/src/features/profile/domain/models/user_profile.dart:138:5: Error: Unexpected token ';'.
-    );
-    ^
-lib/src/features/profile/domain/models/user_profile.dart:184:7: Error: Expected ';' after this.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:184:36: Error: Expected an identifier, but got ':'.
-Try inserting an identifier before ':'.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-                                   ^
-lib/src/features/profile/domain/models/user_profile.dart:184:36: Error: Unexpected token ';'.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-                                   ^
-lib/src/features/profile/domain/models/user_profile.dart:184:38: Error: Expected ';' after this.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:184:65: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-                                                                ^
-lib/src/features/profile/domain/models/user_profile.dart:184:65: Error: Unexpected token ';'.
-      'screenshotProtectionEnabled': screenshotProtectionEnabled,
-                                                                ^
-lib/src/features/profile/domain/models/user_profile.dart:207:17: Error: Undefined name 'nickname'.
-      nickname: nickname,
-                ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:210:15: Error: Undefined name 'school'.
-      school: school,
-              ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:211:19: Error: Undefined name 'schoolYear'.
-      schoolYear: schoolYear,
-                  ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:212:18: Error: Undefined name 'interests'.
-      interests: interests,
-                 ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:213:14: Error: Undefined name 'clubs'.
-      clubs: clubs,
-             ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:214:23: Error: Undefined name 'searchKeywords'.
-      searchKeywords: searchKeywords.isNotEmpty
-                      ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:215:13: Error: Undefined name 'searchKeywords'.
-          ? searchKeywords
-            ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:217:15: Error: Undefined name 'nickname'.
-              nickname,
-              ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:218:15: Error: Undefined name 'school'.
-              school,
-              ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:219:15: Error: Undefined name 'schoolYear'.
-              schoolYear,
-              ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:220:15: Error: Undefined name 'interests'.
-              interests,
-              ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:221:15: Error: Undefined name 'clubs'.
-              clubs,
-              ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:268:7: Error: Undefined name 'nickname'.
-      nickname,
-      ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:269:7: Error: Undefined name 'school'.
-      school,
-      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:270:7: Error: Undefined name 'schoolYear'.
-      schoolYear,
-      ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:271:7: Error: Undefined name 'interests'.
-      interests,
-      ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:272:7: Error: Undefined name 'clubs'.
-      clubs,
-      ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:273:7: Error: Undefined name 'gender'.
-      gender,
-      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:278:25: Error: Undefined name 'nickname'.
-    final hasNickname = nickname.isNotEmpty && nicknameVerified;
-                        ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:278:48: Error: Undefined name 'nicknameVerified'.
-    final hasNickname = nickname.isNotEmpty && nicknameVerified;
-                                               ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:279:23: Error: Undefined name 'school'.
-    final hasSchool = school != null && school!.trim().isNotEmpty;
-                      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:279:41: Error: Undefined name 'school'.
-    final hasSchool = school != null && school!.trim().isNotEmpty;
-                                        ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:280:23: Error: Undefined name 'gender'.
-    final hasGender = gender != null && gender!.trim().isNotEmpty;
-                      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:280:41: Error: Undefined name 'gender'.
-    final hasGender = gender != null && gender!.trim().isNotEmpty;
-                                        ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:281:24: Error: Undefined name 'isMinor'.
-    final hasAgeInfo = isMinor != null;
-                       ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:282:27: Error: Undefined name 'schoolYear'.
-    final hasSchoolYear = schoolYear != null && schoolYear!.trim().isNotEmpty;
-                          ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:282:49: Error: Undefined name 'schoolYear'.
-    final hasSchoolYear = schoolYear != null && schoolYear!.trim().isNotEmpty;
-                                                ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:283:26: Error: Undefined name 'interests'.
-    final hasInterests = interests.isNotEmpty;
-                         ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:285:12: Error: Undefined name 'onboardingComplete'.
-    return onboardingComplete &&
-           ^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:292:9: Error: Undefined name 'privacyConsentGiven'.
-        privacyConsentGiven;
-        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:330:19: Error: Expected identifier, but got 'this'.
-      uid: uid ?? this.uid,
-                  ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:331:29: Error: Expected identifier, but got 'this'.
-      nickname: nickname ?? this.nickname,
-                            ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:332:45: Error: Expected identifier, but got 'this'.
-      nicknameVerified: nicknameVerified ?? this.nicknameVerified,
-                                            ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:333:25: Error: Expected identifier, but got 'this'.
-      gender: gender ?? this.gender,
-                        ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:334:25: Error: Expected identifier, but got 'this'.
-      school: school ?? this.school,
-                        ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:335:33: Error: Expected identifier, but got 'this'.
-      schoolYear: schoolYear ?? this.schoolYear,
-                                ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:336:31: Error: Expected identifier, but got 'this'.
-      interests: interests ?? this.interests,
-                              ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:337:23: Error: Expected identifier, but got 'this'.
-      clubs: clubs ?? this.clubs,
-                      ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:338:41: Error: Expected identifier, but got 'this'.
-      searchKeywords: searchKeywords ?? this.searchKeywords,
-                                        ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:339:33: Error: Expected identifier, but got 'this'.
-      trustScore: trustScore ?? this.trustScore,
-                                ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:340:33: Error: Expected identifier, but got 'this'.
-      trustLevel: trustLevel ?? this.trustLevel,
-                                ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:341:51: Error: Expected identifier, but got 'this'.
-      anonymousPostsCount: anonymousPostsCount ?? this.anonymousPostsCount,
-                                                  ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:342:31: Error: Expected identifier, but got 'this'.
-      createdAt: createdAt ?? this.createdAt,
-                              ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:343:53: Error: Expected identifier, but got 'this'.
-      lastNicknameChangeAt: lastNicknameChangeAt ?? this.lastNicknameChangeAt,
-                                                    ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:344:51: Error: Expected identifier, but got 'this'.
-      privacyConsentGiven: privacyConsentGiven ?? this.privacyConsentGiven,
-                                                  ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:346:38: Error: Expected identifier, but got 'this'.
-          privacyConsentTimestamp ?? this.privacyConsentTimestamp,
-                                     ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:347:27: Error: Expected identifier, but got 'this'.
-      isMinor: isMinor ?? this.isMinor,
-                          ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:348:43: Error: Expected identifier, but got 'this'.
-      guardianContact: guardianContact ?? this.guardianContact,
-                                          ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:349:53: Error: Expected identifier, but got 'this'.
-      parentalConsentGiven: parentalConsentGiven ?? this.parentalConsentGiven,
-                                                    ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:351:39: Error: Expected identifier, but got 'this'.
-          parentalConsentTimestamp ?? this.parentalConsentTimestamp,
-                                      ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:352:49: Error: Expected identifier, but got 'this'.
-      onboardingComplete: onboardingComplete ?? this.onboardingComplete,
-                                                ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:353:51: Error: Expected identifier, but got 'this'.
-      allowAnonymousPosts: allowAnonymousPosts ?? this.allowAnonymousPosts,
-                                                  ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:354:41: Error: Expected identifier, but got 'this'.
-      profileVisible: profileVisible ?? this.profileVisible,
-                                        ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:355:45: Error: Expected identifier, but got 'this'.
-      analyticsEnabled: analyticsEnabled ?? this.analyticsEnabled,
-                                            ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:356:31: Error: Expected identifier, but got 'this'.
-      updatedAt: updatedAt ?? this.updatedAt,
-                              ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:357:27: Error: Expected identifier, but got 'this'.
-      isAdmin: isAdmin ?? this.isAdmin,
-                          ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:358:35: Error: Expected identifier, but got 'this'.
-      isModerator: isModerator ?? this.isModerator,
-                                  ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:359:37: Error: Expected identifier, but got 'this'.
-      isBetaTester: isBetaTester ?? this.isBetaTester,
-                                    ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:360:45: Error: Expected identifier, but got 'this'.
-      betaConsentGiven: betaConsentGiven ?? this.betaConsentGiven,
-                                            ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:361:53: Error: Expected identifier, but got 'this'.
-      betaConsentTimestamp: betaConsentTimestamp ?? this.betaConsentTimestamp,
-                                                    ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:363:36: Error: Expected identifier, but got 'this'.
-          crashReportingEnabled ?? this.crashReportingEnabled,
-                                   ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:364:55: Error: Expected identifier, but got 'this'.
-      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
-                                                      ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:366:42: Error: Expected identifier, but got 'this'.
-          screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
-                                         ^^^^
-lib/src/features/profile/domain/models/user_profile.dart:364:7: Error: Duplicated named argument
-'crashReportingEnabled'.
-      crashReportingEnabled: crashReportingEnabled ?? this.crashReportingEnabled,
-      ^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:414:12: Error: Undefined name 'uid'.
-    return uid.hashCode ^
-           ^^^
-lib/src/features/profile/domain/models/user_profile.dart:415:9: Error: Undefined name 'nickname'.
-        nickname.hashCode ^
-        ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:416:9: Error: Undefined name 'nicknameVerified'.
-        nicknameVerified.hashCode ^
-        ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:417:9: Error: Undefined name 'gender'.
-        gender.hashCode ^
-        ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:418:9: Error: Undefined name 'school'.
-        school.hashCode ^
-        ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:419:9: Error: Undefined name 'schoolYear'.
-        schoolYear.hashCode ^
-        ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:420:28: Error: Undefined name 'interests'.
-        _listEquality.hash(interests) ^
-                           ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:421:28: Error: Undefined name 'clubs'.
-        _listEquality.hash(clubs) ^
-                           ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:422:28: Error: Undefined name 'searchKeywords'.
-        _listEquality.hash(searchKeywords) ^
-                           ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:423:9: Error: Undefined name 'anonymousPostsCount'.
-        anonymousPostsCount.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:424:9: Error: Undefined name 'createdAt'.
-        createdAt.hashCode ^
-        ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:425:9: Error: Undefined name 'lastNicknameChangeAt'.
-        lastNicknameChangeAt.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:426:9: Error: Undefined name 'privacyConsentGiven'.
-        privacyConsentGiven.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:427:9: Error: Undefined name 'privacyConsentTimestamp'.
-        privacyConsentTimestamp.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:428:9: Error: Undefined name 'isMinor'.
-        isMinor.hashCode ^
-        ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:429:9: Error: Undefined name 'guardianContact'.
-        guardianContact.hashCode ^
-        ^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:430:9: Error: Undefined name 'parentalConsentGiven'.
-        parentalConsentGiven.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:431:9: Error: Undefined name 'parentalConsentTimestamp'.
-        parentalConsentTimestamp.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:432:9: Error: Undefined name 'onboardingComplete'.
-        onboardingComplete.hashCode ^
-        ^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:433:9: Error: Undefined name 'allowAnonymousPosts'.
-        allowAnonymousPosts.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:434:9: Error: Undefined name 'profileVisible'.
-        profileVisible.hashCode ^
-        ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:435:9: Error: Undefined name 'analyticsEnabled'.
-        analyticsEnabled.hashCode ^
-        ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:436:9: Error: Undefined name 'updatedAt'.
-        updatedAt.hashCode ^
-        ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:437:9: Error: Undefined name 'isAdmin'.
-        isAdmin.hashCode ^
-        ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:438:9: Error: Undefined name 'isModerator'.
-        isModerator.hashCode ^
-        ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:439:9: Error: Undefined name 'trustLevel'.
-        trustLevel.hashCode ^
-        ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:440:9: Error: Undefined name 'isBetaTester'.
-        isBetaTester.hashCode ^
-        ^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:441:9: Error: Undefined name 'betaConsentGiven'.
-        betaConsentGiven.hashCode ^
-        ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:442:9: Error: Undefined name 'betaConsentTimestamp'.
-        betaConsentTimestamp.hashCode ^
-        ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:443:9: Error: Undefined name 'crashReportingEnabled'.
-        crashReportingEnabled.hashCode;
-        ^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:451:26: Error: Undefined name 'interests'.
-      _listEquality.hash(interests),
-                         ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:452:26: Error: Undefined name 'clubs'.
-      _listEquality.hash(clubs),
-                         ^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:453:26: Error: Undefined name 'searchKeywords'.
-      _listEquality.hash(searchKeywords),
-                         ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:475:7: Error: Undefined name 'crashReportingEnabled'.
-      crashReportingEnabled,
-      ^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:474:7: Error: Undefined name 'betaConsentTimestamp'.
-      betaConsentTimestamp,
-      ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:473:7: Error: Undefined name 'betaConsentGiven'.
-      betaConsentGiven,
-      ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:472:7: Error: Undefined name 'isBetaTester'.
-      isBetaTester,
-      ^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:471:7: Error: Undefined name 'isModerator'.
-      isModerator,
-      ^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:470:7: Error: Undefined name 'isAdmin'.
-      isAdmin,
-      ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:469:7: Error: Undefined name 'updatedAt'.
-      updatedAt,
-      ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:468:7: Error: Undefined name 'analyticsEnabled'.
-      analyticsEnabled,
-      ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:467:7: Error: Undefined name 'profileVisible'.
-      profileVisible,
-      ^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:466:7: Error: Undefined name 'allowAnonymousPosts'.
-      allowAnonymousPosts,
-      ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:465:7: Error: Undefined name 'onboardingComplete'.
-      onboardingComplete,
-      ^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:464:7: Error: Undefined name 'parentalConsentTimestamp'.
-      parentalConsentTimestamp,
-      ^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:463:7: Error: Undefined name 'parentalConsentGiven'.
-      parentalConsentGiven,
-      ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:462:7: Error: Undefined name 'guardianContact'.
-      guardianContact,
-      ^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:461:7: Error: Undefined name 'isMinor'.
-      isMinor,
-      ^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:460:7: Error: Undefined name 'privacyConsentTimestamp'.
-      privacyConsentTimestamp,
-      ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:459:7: Error: Undefined name 'privacyConsentGiven'.
-      privacyConsentGiven,
-      ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:458:7: Error: Undefined name 'lastNicknameChangeAt'.
-      lastNicknameChangeAt,
-      ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:457:7: Error: Undefined name 'createdAt'.
-      createdAt,
-      ^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:456:7: Error: Undefined name 'anonymousPostsCount'.
-      anonymousPostsCount,
-      ^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:455:7: Error: Undefined name 'trustLevel'.
-      trustLevel,
-      ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:454:7: Error: Undefined name 'trustScore'.
-      trustScore,
-      ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:450:7: Error: Undefined name 'schoolYear'.
-      schoolYear,
-      ^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:449:7: Error: Undefined name 'school'.
-      school,
-      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:448:7: Error: Undefined name 'gender'.
-      gender,
-      ^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:447:7: Error: Undefined name 'nicknameVerified'.
-      nicknameVerified,
-      ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:446:7: Error: Undefined name 'nickname'.
-      nickname,
-      ^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:445:7: Error: Undefined name 'uid'.
-      uid,
-      ^^^
-lib/src/features/profile/domain/models/user_profile.dart:544:18: Error: Undefined name 'club'.
-      addKeyword(club);
-                 ^^^^
 lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:7: Error: Expected ';' after this.
       ),
       ^
@@ -1432,23 +171,14 @@ lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:8: Error: E
 lib/src/features/feed/presentation/pages/feed_sections_page.dart:596:5: Error: Unexpected token ';'.
     );
     ^
-lib/src/features/comments/data/repositories/posts_repository.dart:76:7: Error: Using a colon as a separator before a
-default value is no longer supported.
-Try replacing the colon with an equal sign.
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-      ^
-lib/src/features/comments/data/repositories/posts_repository.dart:71:7: Error: A non-null value must be returned since
-the return type 'Future<({bool hasMore, DocumentSnapshot<Object?>? lastDocument, String? paginationToken, List<Post>
-posts})>' doesn't allow null.
- - 'Future' is from 'dart:async'.
- - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
+lib/src/features/comments/data/repositories/posts_repository.dart:130:19: Error: The method 'select' isn't defined for
+the type 'Query<Object?>'.
+ - 'Query' is from 'package:cloud_firestore/cloud_firestore.dart'
  ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
  - 'Object' is from 'dart:core'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-  })> getPosts({
-      ^
+Try correcting the name to the name of an existing method, or defining a method named 'select'.
+    query = query.select(_listFields);
+                  ^^^^^^
 lib/src/features/profile/domain/models/trust_level_localizations.dart:4:47: Error: 'AppLocalizations' isn't a type.
 String trustLevelLabel(TrustLevel trustLevel, AppLocalizations? localization) {
                                               ^^^^^^^^^^^^^^^^
@@ -1480,51 +210,87 @@ isn't defined for the type 'SyncQueueService'.
 Try correcting the name to the name of an existing method, or defining a method named 'QueuedActionStatusAdapter'.
         Hive.registerAdapter(QueuedActionStatusAdapter());
                              ^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/offline_sync/services/sync_queue_service.dart:195:22: Error: The method 'createPost' isn't defined for
-the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'createPost'.
-    await repository.createPost(
-                     ^^^^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:334:9: Error: No named parameter with the name
-'lastDocument'.
-        lastDocument: refresh ? null : state.lastDocument,
-        ^^^^^^^^^^^^
+lib/src/features/comments/presentation/providers/comments_provider.dart:333:13: Error: The matched value of type '({bool
+hasMore, DocumentSnapshot<Object?>? lastDocument, String? paginationToken, List<Post> posts})' isn't assignable to the
+required type '(Object?, Object?)'.
+ - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
+ ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
+ - 'Object' is from 'dart:core'.
+ - 'List' is from 'dart:core'.
+ - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
+ ('lib/src/features/comments/data/models/comment.dart').
+Try changing the required type of the pattern, or the matched value type.
+      final (posts, lastDoc) = await _repository.getPosts(
+            ^
+lib/src/features/comments/presentation/providers/comments_provider.dart:339:17: Error: The getter 'isEmpty' isn't
+defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'isEmpty'.
+      if (posts.isEmpty) {
+                ^^^^^^^
 lib/src/features/comments/presentation/providers/comments_provider.dart:348:62: Error: An expression whose value can be
 'null' must be null-checked before it can be dereferenced.
       final allPosts = refresh ? posts : [...state.posts, ...posts];
                                                              ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:348:62: Error: Unexpected type 'invalid-type' of
-a spread.  Expected 'dynamic' or an Iterable.
+lib/src/features/comments/presentation/providers/comments_provider.dart:348:62: Error: Unexpected type 'Object?' of a
+spread.  Expected 'dynamic' or an Iterable.
+ - 'Object' is from 'dart:core'.
       final allPosts = refresh ? posts : [...state.posts, ...posts];
                                                              ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:373:10: Error: The method 'getPostsStream' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getPostsStream'.
-        .getPostsStream(section: section, limit: 50)
-         ^^^^^^^^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:382:41: Error: The argument type 'List<dynamic>'
-can't be assigned to the parameter type 'List<Post>?'.
+lib/src/features/comments/presentation/providers/comments_provider.dart:354:24: Error: The getter 'length' isn't defined
+for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'length'.
+        hasMore: posts.length == 20,
+                       ^^^^^^
+lib/src/features/comments/presentation/providers/comments_provider.dart:351:16: Error: The argument type 'Object?' can't
+be assigned to the parameter type 'List<Post>?'.
+ - 'Object' is from 'dart:core'.
  - 'List' is from 'dart:core'.
  - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
  ('lib/src/features/comments/data/models/comment.dart').
-          state = state.copyWith(posts: updatedPosts);
-                                        ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:397:9: Error: No named parameter with the name
-'lastDocument'.
-        lastDocument: state.lastDocument,
-        ^^^^^^^^^^^^
+        posts: allPosts,
+               ^
+lib/src/features/comments/presentation/providers/comments_provider.dart:353:23: Error: The argument type 'Object?' can't
+be assigned to the parameter type 'DocumentSnapshot<Object?>?'.
+ - 'Object' is from 'dart:core'.
+ - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
+ ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
+        lastDocument: lastDoc,
+                      ^
+lib/src/features/comments/presentation/providers/comments_provider.dart:396:13: Error: The matched value of type '({bool
+hasMore, DocumentSnapshot<Object?>? lastDocument, String? paginationToken, List<Post> posts})' isn't assignable to the
+required type '(Object?, Object?)'.
+ - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
+ ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
+ - 'Object' is from 'dart:core'.
+ - 'List' is from 'dart:core'.
+ - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
+ ('lib/src/features/comments/data/models/comment.dart').
+Try changing the required type of the pattern, or the matched value type.
+      final (posts, lastDoc) = await _repository.getPosts(
+            ^
+lib/src/features/comments/presentation/providers/comments_provider.dart:402:17: Error: The getter 'isEmpty' isn't
+defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'isEmpty'.
+      if (posts.isEmpty) {
+                ^^^^^^^
 lib/src/features/comments/presentation/providers/comments_provider.dart:410:44: Error: An expression whose value can be
 'null' must be null-checked before it can be dereferenced.
       final allPosts = [...state.posts, ...posts];
                                            ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:410:44: Error: Unexpected type 'invalid-type' of
-a spread.  Expected 'dynamic' or an Iterable.
+lib/src/features/comments/presentation/providers/comments_provider.dart:410:44: Error: Unexpected type 'Object?' of a
+spread.  Expected 'dynamic' or an Iterable.
+ - 'Object' is from 'dart:core'.
       final allPosts = [...state.posts, ...posts];
                                            ^
+lib/src/features/comments/presentation/providers/comments_provider.dart:416:24: Error: The getter 'length' isn't defined
+for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'length'.
+        hasMore: posts.length == 20,
+                       ^^^^^^
 lib/src/features/comments/presentation/providers/comments_provider.dart:413:16: Error: The argument type 'List<dynamic>'
 can't be assigned to the parameter type 'List<Post>?'.
  - 'List' is from 'dart:core'.
@@ -1532,129 +298,38 @@ can't be assigned to the parameter type 'List<Post>?'.
  ('lib/src/features/comments/data/models/comment.dart').
         posts: allPosts,
                ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:434:38: Error: The method 'createPost' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'createPost'.
-      final post = await _repository.createPost(
-                                     ^^^^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:452:25: Error: The method 'likePost' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'likePost'.
-      await _repository.likePost(postId, userId);
-                        ^^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:473:25: Error: The method 'unlikePost' isn't
-defined for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'unlikePost'.
-      await _repository.unlikePost(postId, userId);
-                        ^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:164:34: Error: The argument type 'BuildContext' can't
-be assigned to the parameter type 'ThemeData'.
- - 'BuildContext' is from 'package:flutter/src/widgets/framework.dart'
- ('../flutter/packages/flutter/lib/src/widgets/framework.dart').
- - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart'
- ('../flutter/packages/flutter/lib/src/material/theme_data.dart').
-                    _buildHeader(context, theme),
-                                 ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:164:43: Error: The argument type 'ThemeData' can't be
-assigned to the parameter type 'AppLocalizations?'.
- - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart'
- ('../flutter/packages/flutter/lib/src/material/theme_data.dart').
- - 'AppLocalizations' is from 'package:teen_talk_app/src/core/localization/app_localizations.dart'
- ('lib/src/core/localization/app_localizations.dart').
-                    _buildHeader(context, theme),
-                                          ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:166:21: Error: The method '_buildContent' isn't defined
-for the type '_PostCardWidgetState'.
- - '_PostCardWidgetState' is from 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart'
- ('lib/src/features/feed/presentation/widgets/post_card_widget.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_buildContent'.
+lib/src/features/comments/presentation/providers/comments_provider.dart:415:23: Error: The argument type 'Object?' can't
+be assigned to the parameter type 'DocumentSnapshot<Object?>?'.
+ - 'Object' is from 'dart:core'.
+ - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
+ ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
+        lastDocument: lastDoc,
+                      ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:80:25: Error: Too few positional arguments: 1 required,
+0 given.
+      analytics.logEvent(
+                        ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:165:34: Error: Too many positional arguments: 1
+allowed, but 2 found.
+Try removing the extra positional arguments.
                     _buildContent(theme, l10n),
-                    ^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:169:23: Error: The method '_buildImage' isn't defined
-for the type '_PostCardWidgetState'.
- - '_PostCardWidgetState' is from 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart'
- ('lib/src/features/feed/presentation/widgets/post_card_widget.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_buildImage'.
+                                 ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:168:34: Error: Too many positional arguments: 1
+allowed, but 2 found.
+Try removing the extra positional arguments.
                       _buildImage(theme, l10n),
-                      ^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:172:21: Error: The method '_buildFooter' isn't defined
-for the type '_PostCardWidgetState'.
- - '_PostCardWidgetState' is from 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart'
- ('lib/src/features/feed/presentation/widgets/post_card_widget.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_buildFooter'.
+                                 ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:171:33: Error: Too many positional arguments: 2
+allowed, but 3 found.
+Try removing the extra positional arguments.
                     _buildFooter(theme, l10n, isLiked),
-                    ^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:197:10: Error: A function expression can't have a name.
-  Widget _buildHeader(BuildContext context, ThemeData theme) {
-         ^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:357:3: Error: Expected ',' before this.
-  Widget _buildContent(ThemeData theme) {
-  ^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:357:10: Error: A function expression can't have a name.
-  Widget _buildContent(ThemeData theme) {
-         ^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:369:3: Error: Expected ',' before this.
-  Widget _buildImage(ThemeData theme) {
-  ^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:369:10: Error: A function expression can't have a name.
-  Widget _buildImage(ThemeData theme) {
-         ^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:379:9: Error: No named parameter with the name 'child'.
+                                ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:364:9: Error: No named parameter with the name 'child'.
         child: CachedNetworkImage(
         ^^^^^
 lib/src/core/widgets/cached_image_widget.dart:17:9: Context: Found this candidate, but the arguments don't match.
   const CachedImageWidget({
         ^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:408:3: Error: Expected ',' before this.
-  Widget _buildFooter(ThemeData theme, bool isLiked) {
-  ^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:408:10: Error: A function expression can't have a name.
-  Widget _buildFooter(ThemeData theme, bool isLiked) {
-         ^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:547:3: Error: Expected ',' before this.
-  Color _getUserAccentColor(ThemeData theme) {
-  ^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:547:9: Error: A function expression can't have a name.
-  Color _getUserAccentColor(ThemeData theme) {
-        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:565:3: Error: Expected ',' before this.
-  String _formatTimestamp(DateTime dateTime) {
-  ^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:565:10: Error: A function expression can't have a name.
-  String _formatTimestamp(DateTime dateTime) {
-         ^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:192:20: Error: Too many positional arguments: 0
-allowed, but 6 found.
-Try removing the extra positional arguments.
-          Semantics(
-                   ^
-../flutter/packages/flutter/lib/src/widgets/basic.dart:7787:3: Context: Found this candidate, but the arguments don't
-match.
-  Semantics({
-  ^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:580:3: Error: Expected ';' after this.
-  }
-  ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:184:25: Error: The method '_getUserAccentColor' isn't
-defined for the type '_PostCardWidgetState'.
- - '_PostCardWidgetState' is from 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart'
- ('lib/src/features/feed/presentation/widgets/post_card_widget.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_getUserAccentColor'.
-    final accentColor = _getUserAccentColor(theme);
-                        ^^^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:186:23: Error: The method '_formatTimestamp' isn't
-defined for the type '_PostCardWidgetState'.
- - '_PostCardWidgetState' is from 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart'
- ('lib/src/features/feed/presentation/widgets/post_card_widget.dart').
-Try correcting the name to the name of an existing method, or defining a method named '_formatTimestamp'.
-    final timestamp = _formatTimestamp(widget.post.createdAt);
-                      ^^^^^^^^^^^^^^^^
 lib/src/features/admin/presentation/widgets/reports_list_widget.dart:521:22: Error: The getter 'shade100' isn't defined
 for the type 'Color'.
  - 'Color' is from 'dart:ui'.
@@ -1681,113 +356,20 @@ lib/src/features/tutorial/presentation/widgets/app_tutorial.dart:275:15: Error: 
 can't be assigned to the parameter type 'bool Function()?'.
       onSkip: onSkip,
               ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:178:7: Error: Expected an identifier, but got 'final'.
-Try inserting an identifier before 'final'.
-      final result = await _repository.getPosts(
-      ^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:177:58: Error: Expected ';' after this.
-      final (posts, lastDoc) = await _repository.getPosts(
-                                                         ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:204:13: Error: 'allPosts' is already declared in this
-scope.
-      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
-            ^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:203:13: Context: Previous declaration of 'allPosts'.
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
-            ^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:177:58: Error: Too many positional arguments: 0 allowed,
-but 1 found.
-Try removing the extra positional arguments.
-      final (posts, lastDoc) = await _repository.getPosts(
-                                                         ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:179:9: Error: No named parameter with the name
-'lastDocument'.
-        lastDocument: refresh ? null : state.lastDocument,
-        ^^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:203:62: Error: An expression whose value can be 'null'
-must be null-checked before it can be dereferenced.
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
-                                                             ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:203:62: Error: Unexpected type 'invalid-type' of a
-spread.  Expected 'dynamic' or an Iterable.
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
-                                                             ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:204:76: Error: An expression whose value can be 'null'
-must be null-checked before it can be dereferenced.
-      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
-                                                                           ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:204:76: Error: Unexpected type 'invalid-type' of a
-spread.  Expected 'dynamic' or an Iterable.
-      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
-                                                                           ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:279:9: Error: No named parameter with the name
-'lastDocument'.
-        lastDocument: state.lastDocument,
-        ^^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:296:29: Error: The getter 'posts' isn't defined for the
+lib/src/features/feed/presentation/providers/feed_provider.dart:294:29: Error: The getter 'posts' isn't defined for the
 type 'FeedNotifier'.
  - 'FeedNotifier' is from 'package:teen_talk_app/src/features/feed/presentation/providers/feed_provider.dart'
  ('lib/src/features/feed/presentation/providers/feed_provider.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'posts'.
         [...state.posts, ...posts],
                             ^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:302:44: Error: The getter 'posts' isn't defined for the
+lib/src/features/feed/presentation/providers/feed_provider.dart:300:44: Error: The getter 'posts' isn't defined for the
 type 'FeedNotifier'.
  - 'FeedNotifier' is from 'package:teen_talk_app/src/features/feed/presentation/providers/feed_provider.dart'
  ('lib/src/features/feed/presentation/providers/feed_provider.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'posts'.
       final allPosts = [...state.posts, ...posts];
                                            ^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:303:54: Error: An expression whose value can be 'null'
-must be null-checked before it can be dereferenced.
-      final mergedPosts = [...state.posts, ...result.posts];
-                                                     ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:303:54: Error: Unexpected type 'invalid-type' of a
-spread.  Expected 'dynamic' or an Iterable.
-      final mergedPosts = [...state.posts, ...result.posts];
-                                                     ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:306:16: Error: The argument type 'List<dynamic>' can't
-be assigned to the parameter type 'List<Post>?'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-        posts: mergedPosts,
-               ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:330:38: Error: The method 'createPost' isn't defined for
-the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'createPost'.
-      final post = await _repository.createPost(
-                                     ^^^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:349:25: Error: The method 'likePost' isn't defined for
-the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'likePost'.
-      await _repository.likePost(postId, userId);
-                        ^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:373:25: Error: The method 'unlikePost' isn't defined for
-the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'unlikePost'.
-      await _repository.unlikePost(postId, userId);
-                        ^^^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:418:10: Error: The method 'getPostsStream' isn't defined
-for the type 'PostsRepository'.
- - 'PostsRepository' is from 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart'
- ('lib/src/features/comments/data/repositories/posts_repository.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getPostsStream'.
-        .getPostsStream(
-         ^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:432:41: Error: The argument type 'List<dynamic>' can't
-be assigned to the parameter type 'List<Post>?'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-          state = state.copyWith(posts: updatedPosts);
-                                        ^
 lib/src/features/offline_sync/services/connectivity_service.dart:33:48: Error: The argument type 'void
 Function(List<ConnectivityResult>)' can't be assigned to the parameter type 'void Function(ConnectivityResult)?'.
  - 'List' is from 'dart:core'.
@@ -1823,7 +405,15 @@ type 'ConnectivityResult'.
 Try correcting the name to the name of an existing method, or defining a method named 'every'.
           !results.every((result) => result == ConnectivityResult.none);
                    ^^^^^
-lib/src/core/services/image_cache_service.dart:54:21: Error: A value of type 'num' can't be assigned to a variable of
+lib/src/core/services/image_cache_service.dart:50:46: Error: The method 'getFilesFromCache' isn't defined for the type
+'DefaultCacheManager'.
+ - 'DefaultCacheManager' is from 'package:flutter_cache_manager/src/cache_managers/default_cache_manager.dart'
+ ('../../AppData/Local/Pub/Cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib/src/cache_managers/default_cache_manager
+ .dart').
+Try correcting the name to the name of an existing method, or defining a method named 'getFilesFromCache'.
+      final files = await customCacheManager.getFilesFromCache();
+                                             ^^^^^^^^^^^^^^^^^
+lib/src/core/services/image_cache_service.dart:55:21: Error: A value of type 'num' can't be assigned to a variable of
 type 'int'.
           totalSize += await file.file!.length();
                     ^
@@ -1851,30 +441,13 @@ lib/src/core/services/image_prefetch_service.dart:59:29: Error: The getter 'imag
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'imageUrl'.
         .map((post) => post.imageUrl!)
                             ^^^^^^^^
+lib/src/features/feed/presentation/widgets/liker_list_modal.dart:214:58: Error: Too few positional arguments: 1
+required, 0 given.
+        await ref.read(analyticsServiceProvider).logEvent(
+                                                         ^
 lib/src/features/admin/data/services/analytics_export_service.dart:11:9: Error: 'AnalyticsExportDelegate' isn't a type.
   final AnalyticsExportDelegate _delegate = buildAnalyticsExportDelegate();
         ^^^^^^^^^^^^^^^^^^^^^^^
-lib/core/app_config.dart:4:36: Error: Undefined name 'dotenv'.
-  static String get environment => dotenv.env['FLUTTER_ENV'] ?? 'dev';
-                                   ^^^^^^
-lib/core/app_config.dart:10:39: Error: Undefined name 'dotenv'.
-  static String get firebaseApiKey => dotenv.env['FIREBASE_API_KEY'] ?? '';
-                                      ^^^^^^
-lib/core/app_config.dart:11:43: Error: Undefined name 'dotenv'.
-  static String get firebaseAuthDomain => dotenv.env['FIREBASE_AUTH_DOMAIN'] ?? '';
-                                          ^^^^^^
-lib/core/app_config.dart:12:42: Error: Undefined name 'dotenv'.
-  static String get firebaseProjectId => dotenv.env['FIREBASE_PROJECT_ID'] ?? '';
-                                         ^^^^^^
-lib/core/app_config.dart:13:46: Error: Undefined name 'dotenv'.
-  static String get firebaseStorageBucket => dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '';
-                                             ^^^^^^
-lib/core/app_config.dart:14:50: Error: Undefined name 'dotenv'.
-  static String get firebaseMessagingSenderId => dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '';
-                                                 ^^^^^^
-lib/core/app_config.dart:15:38: Error: Undefined name 'dotenv'.
-  static String get firebaseAppId => dotenv.env['FIREBASE_APP_ID'] ?? '';
-                                     ^^^^^^
 lib/src/core/services/connectivity_service.dart:28:59: Error: A value of type 'StreamSubscription<ConnectivityResult>'
 can't be assigned to a variable of type 'StreamSubscription<List<ConnectivityResult>>?'.
  - 'StreamSubscription' is from 'dart:async'.
@@ -1885,47 +458,28 @@ can't be assigned to a variable of type 'StreamSubscription<List<ConnectivityRes
                                                           ^
 Unhandled exception:
 Unsupported operation: Unsupported invalid type InvalidType(<invalid>) (InvalidType). Encountered while compiling
-file:///C:/Users/othma/Desktop/TeenTalk/lib/main.dart, which contains the type: FunctionType(<invalid> Function()).
+file:///C:/Users/othma/Desktop/TeenTalk/lib/src/features/admin/data/services/analytics_export_service.dart, which
+contains the type: InvalidType(<invalid>).
 #0      LibraryCompiler._typeCompilationError (package:dev_compiler/src/kernel/compiler_new.dart:4451)
 #1      LibraryCompiler._emitType (package:dev_compiler/src/kernel/compiler_new.dart:4416)
-#2      LibraryCompiler._emitFunctionTagged (package:dev_compiler/src/kernel/compiler_new.dart:4263)
-#3      LibraryCompiler.visitFunctionDeclaration (package:dev_compiler/src/kernel/compiler_new.dart:6016)
-#4      FunctionDeclaration.accept (package:kernel/src/ast/statements.dart:1776)
-#5      LibraryCompiler._visitStatement (package:dev_compiler/src/kernel/compiler_new.dart:5015)
-#6      MappedIterable.elementAt (dart:_internal/iterable.dart:402)
-#7      ListIterator.moveNext (dart:_internal/iterable.dart:371)
-#8      new _GrowableList._ofEfficientLengthIterable (dart:core-patch/growable_array.dart:194)
-#9      new _GrowableList.of (dart:core-patch/growable_array.dart:154)
-#10     new List.of (dart:core-patch/array_patch.dart:39)
-#11     SetBase.toList (dart:collection/set.dart:119)
-#12     LibraryCompiler.visitBlock (package:dev_compiler/src/kernel/compiler_new.dart:5222)
-#13     Block.accept (package:kernel/src/ast/statements.dart:103)
-#14     LibraryCompiler._visitStatement (package:dev_compiler/src/kernel/compiler_new.dart:5015)
-#15     LibraryCompiler._emitFunctionScopedBody (package:dev_compiler/src/kernel/compiler_new.dart:5048)
-#16     LibraryCompiler._emitFunction.<anonymous closure> (package:dev_compiler/src/kernel/compiler_new.dart:4638)
-#17     LibraryCompiler._withLetScope (package:dev_compiler/src/kernel/compiler_new.dart:3632)
-#18     LibraryCompiler._withCurrentFunction (package:dev_compiler/src/kernel/compiler_new.dart:4812)
-#19     LibraryCompiler._emitFunction (package:dev_compiler/src/kernel/compiler_new.dart:4630)
-#20     LibraryCompiler._emitMethodDeclaration.<anonymous closure>
-(package:dev_compiler/src/kernel/compiler_new.dart:2912)
-#21     LibraryCompiler._withMethodDeclarationContext (package:dev_compiler/src/kernel/compiler_new.dart:4837)
-#22     LibraryCompiler._emitMethodDeclaration (package:dev_compiler/src/kernel/compiler_new.dart:2910)
-#23     LibraryCompiler._emitClassProperties (package:dev_compiler/src/kernel/compiler_new.dart:2851)
-#24     LibraryCompiler._emitClassDeclaration (package:dev_compiler/src/kernel/compiler_new.dart:1452)
-#25     LibraryCompiler._emitClass (package:dev_compiler/src/kernel/compiler_new.dart:1390)
-#26     List.forEach (dart:core-patch/growable_array.dart:425)
-#27     LibraryCompiler._emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:1312)
-#28     LibraryCompiler.emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:926)
-#29     LibraryBundleCompiler.emitModule (package:dev_compiler/src/kernel/compiler_new.dart:163)
-#30     IncrementalJavaScriptBundler.compile (package:frontend_server/src/javascript_bundle.dart:300)
-#31     FrontendCompiler.writeJavaScriptBundle (package:frontend_server/frontend_server.dart:898)
+#2      LibraryCompiler._emitClassSignature.emitClassFieldSignature
+(package:dev_compiler/src/kernel/compiler_new.dart:2127)
+#3      LibraryCompiler._emitClassSignature (package:dev_compiler/src/kernel/compiler_new.dart:2301)
+#4      LibraryCompiler._emitClassDeclaration (package:dev_compiler/src/kernel/compiler_new.dart:1524)
+#5      LibraryCompiler._emitClass (package:dev_compiler/src/kernel/compiler_new.dart:1390)
+#6      List.forEach (dart:core-patch/growable_array.dart:425)
+#7      LibraryCompiler._emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:1312)
+#8      LibraryCompiler.emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:926)
+#9      LibraryBundleCompiler.emitModule (package:dev_compiler/src/kernel/compiler_new.dart:163)
+#10     IncrementalJavaScriptBundler.compile (package:frontend_server/src/javascript_bundle.dart:300)
+#11     FrontendCompiler.writeJavaScriptBundle (package:frontend_server/frontend_server.dart:898)
 <asynchronous suspension>
-#32     FrontendCompiler.compile (package:frontend_server/frontend_server.dart:708)
+#12     FrontendCompiler.compile (package:frontend_server/frontend_server.dart:708)
 <asynchronous suspension>
-#33     listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
+#13     listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
 <asynchronous suspension>
 The Dart compiler exited unexpectedly.
-Waiting for connection from debug service on Edge...               30,7s
+Waiting for connection from debug service on Edge...               28,3s
 Failed to compile application.
 
-C:\Users\othma\Desktop\TeenTalk>^A
+C:\Users\othma\Desktop\TeenTalk>
