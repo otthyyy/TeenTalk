@@ -304,4 +304,23 @@ class AppLocalizationsEN extends AppLocalizations {
   String remainingCount(int count, String type) {
     return '$count $type remaining';
   }
+
+  @override
+  String get legalPrivacyPolicyTitle => 'Privacy Policy';
+  @override
+  String get legalTermsOfServiceTitle => 'Terms of Service';
+  @override
+  String get legalUnavailableTitle => 'Document not found';
+  @override
+  String get legalUnavailableMessage => 'The requested legal document could not be found.';
+  @override
+  String get legalLoadError => 'Unable to load document.';
+  @override
+  String get legalReload => 'Reload';
+  @override
+  String get legalLinkOpenError => 'Unable to open link.';
+  @override
+  String get legalViewPrivacy => 'View Privacy Policy';
+  @override
+  String get legalViewTerms => 'View Terms of Service';
 }

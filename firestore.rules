@@ -603,6 +603,30 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Notifications collection rules
+    match /notifications/{notificationId} {
+      // Users can only read their own notifications
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Users can update only their own notifications (for marking as read)
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.userId == resource.data.userId &&
+                       request.resource.data.type == resource.data.type &&
+                       request.resource.data.title == resource.data.title &&
+                       request.resource.data.body == resource.data.body &&
+                       request.resource.data.data == resource.data.data &&
+                       request.resource.data.createdAt == resource.data.createdAt;
+      
+      // Only Cloud Functions can create notifications
+      allow create: if false;
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+    }
+
     // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;

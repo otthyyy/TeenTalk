@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
+import '../../../legal/presentation/pages/legal_document_page.dart';
 import '../providers/auth_provider.dart';
 import '../models/auth_form_state.dart';
 import '../../data/models/auth_user.dart';
@@ -28,6 +30,11 @@ class _ConsentPageState extends ConsumerState<ConsentPage> {
     _consentState = ConsentState(
       parentalConsent: widget.user.isMinor,
     );
+  }
+
+  void _openLegalDocument(LegalDocumentType type) {
+    if (!mounted) return;
+    context.push('/legal/${type.routeSegment}');
   }
 
   @override
@@ -74,10 +81,27 @@ class _ConsentPageState extends ConsumerState<ConsentPage> {
                   });
                 },
               ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => _openLegalDocument(LegalDocumentType.privacyPolicy),
+                    icon: const Icon(Icons.privacy_tip_outlined),
+                    label: Text(localizations?.legalViewPrivacy ?? 'View Privacy Policy'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => _openLegalDocument(LegalDocumentType.termsOfService),
+                    icon: const Icon(Icons.gavel_outlined),
+                    label: Text(localizations?.legalViewTerms ?? 'View Terms of Service'),
+                  ),
+                ],
+              ),
               if (widget.user.isMinor) const SizedBox(height: 24),
               if (widget.user.isMinor)
                 Container(
-                  padding: const EdgeInsets.all(12),
+
                   decoration: BoxDecoration(
                     color: Colors.orange.shade50,
                     border: Border.all(color: Colors.orange.shade200),
