@@ -52,5 +52,9 @@
     <string>This app needs photo library access to allow users to select images for posts.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>This app needs photo library access to save images users capture.</string>
+    
+    <!-- Push Notifications permission -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>We would like to send you notifications for new messages, comments, and likes.</string>
 </dict>
 </plist>

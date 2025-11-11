@@ -7,6 +7,8 @@ import '../../data/repositories/user_repository.dart';
 import '../../domain/models/user_profile.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../legal/presentation/pages/legal_document_page.dart';
+import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
@@ -43,6 +45,8 @@ class ProfilePage extends ConsumerWidget {
                       _buildProfileInfoCard(context, profile, isDark),
                       const SizedBox(height: 16),
                       _buildPrivacySettingsCard(context, profile, isDark),
+                      const SizedBox(height: 16),
+                      _buildTutorialCard(context, ref, isDark),
                       const SizedBox(height: 16),
                       _buildConsentCard(context, profile, isDark),
                       const SizedBox(height: 16),
@@ -456,6 +460,14 @@ class ProfilePage extends ConsumerWidget {
                 profile.crashReportingEnabled ? 'Enabled' : 'Disabled',
                 profile.crashReportingEnabled,
               ),
+              const Divider(),
+              _buildAnimatedSettingRow(
+                context,
+                Icons.no_photography,
+                'Screenshot Protection',
+                profile.screenshotProtectionEnabled ? 'Enabled' : 'Disabled',
+                profile.screenshotProtectionEnabled,
+              ),
             ],
           ),
         ),
@@ -465,6 +477,7 @@ class ProfilePage extends ConsumerWidget {
 
   Widget _buildConsentCard(BuildContext context, dynamic profile, bool isDark) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -511,6 +524,22 @@ class ProfilePage extends ConsumerWidget {
                 ),
               ],
             ],
+            const Divider(),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.privacy_tip_outlined, color: theme.colorScheme.primary),
+              title: Text(localizations?.legalViewPrivacy ?? 'View Privacy Policy'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => _openLegalDocument(context, LegalDocumentType.privacyPolicy),
+            ),
+            const Divider(),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.gavel_outlined, color: theme.colorScheme.primary),
+              title: Text(localizations?.legalViewTerms ?? 'View Terms of Service'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => _openLegalDocument(context, LegalDocumentType.termsOfService),
+            ),
           ],
         ),
       ),
@@ -1026,6 +1055,68 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
+  Widget _buildTutorialCard(BuildContext context, WidgetRef ref, bool isDark) {
+    final theme = Theme.of(context);
+    final tutorialState = ref.watch(tutorialControllerProvider);
+    
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.help_outline,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Tutorial dell\'App',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              tutorialState.hasCompleted
+                  ? 'Hai completato il tutorial! Puoi riavviarlo per rivedere le funzionalità principali.'
+                  : 'Scopri come utilizzare l\'app con una guida interattiva.',
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ref.read(tutorialControllerProvider.notifier).reset();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Tutorial riavviato! Torna alla home per iniziare.'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.replay),
+                label: Text(
+                  tutorialState.hasCompleted ? 'Riavvia Tutorial' : 'Avvia Tutorial',
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSignOutButton(BuildContext context, WidgetRef ref) {
     return OutlinedButton.icon(
       onPressed: () async {
@@ -1075,4 +1166,9 @@ class ProfilePage extends ConsumerWidget {
         return gender;
     }
   }
+
+  void _openLegalDocument(BuildContext context, LegalDocumentType type) {
+    context.push('/legal/${type.routeSegment}');
+  }
 }
+

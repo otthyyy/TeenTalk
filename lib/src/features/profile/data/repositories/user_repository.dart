@@ -76,6 +76,7 @@ class UserRepository {
         'schoolYear',
         'interests',
         'clubs',
+        'gender',
       };
 
       final shouldUpdateKeywords =
@@ -104,6 +105,9 @@ class UserRepository {
         final clubsForKeywords = updates.containsKey('clubs')
             ? (updates['clubs'] as List?)?.whereType<String>().toList() ?? []
             : currentProfile.clubs;
+        final genderForKeywords = updates.containsKey('gender')
+            ? updates['gender'] as String?
+            : currentProfile.gender;
 
         updates['searchKeywords'] = UserProfile.buildSearchKeywords(
           nicknameForKeywords,
@@ -111,6 +115,7 @@ class UserRepository {
           schoolYearForKeywords,
           interestsForKeywords,
           clubsForKeywords,
+          genderForKeywords,
         );
       }
 

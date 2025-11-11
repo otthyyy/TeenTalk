@@ -15,6 +15,7 @@ import 'package:teen_talk_app/src/core/providers/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';
 import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
+import 'package:teen_talk_app/src/features/offline_sync/services/offline_submission_helper.dart';
 
 class PostComposerPage extends ConsumerStatefulWidget {
   const PostComposerPage({super.key});
@@ -164,6 +165,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     final userProfile = ref.read(userProfileProvider).value;
     final rateLimitService = ref.read(rateLimitServiceProvider);
     final analyticsService = ref.read(analyticsServiceProvider);
+    final offlineHelper = ref.read(offlineSubmissionHelperProvider);
     
     if (authState.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -197,6 +199,51 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
           cooldownDuration: rateLimitStatus.cooldownDuration,
           onViewGuidelines: _showPostingGuidelines,
         );
+      }
+      return;
+    }
+
+    final isOnline = await offlineHelper.isOnline();
+
+    if (!isOnline) {
+      if (kIsWeb && _selectedImageBytes != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Offline posts with images are not supported on web.'),
+            ),
+          );
+        }
+        return;
+      }
+
+      final queuedId = await offlineHelper.enqueuePost(
+        authorId: authState.user!.uid,
+        authorNickname: userProfile.nickname,
+        isAnonymous: _isAnonymous,
+        content: _contentController.text.trim(),
+        section: _selectedSection,
+        school: userProfile.school,
+        imagePath: _selectedImageFile?.path,
+        imageName: _selectedImageName,
+      );
+
+      if (mounted) {
+        if (queuedId != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Post queued. We'll publish it when you're back online."),
+            ),
+          );
+          Navigator.of(context).pop(true);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to queue post. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
       return;
     }

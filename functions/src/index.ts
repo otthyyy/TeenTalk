@@ -13,6 +13,7 @@ export * from "./functions/pushNotifications";
 export * from "./functions/dataCleanup";
 export * from "./functions/extendedAnalytics";
 export * from "./functions/rateLimits";
+export * from "./functions/trustScore";
 
 // Health check function for emulator testing
 export const healthCheck = functions.https.onCall(async (data, context) => {

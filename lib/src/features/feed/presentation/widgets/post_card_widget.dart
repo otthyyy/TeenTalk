@@ -4,9 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/services/analytics_provider.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../comments/data/models/comment.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/services/analytics_provider.dart';
+import 'liker_list_modal.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
@@ -60,9 +70,34 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     super.dispose();
   }
 
+  void _onLikeCountTap() {
+    if (widget.post.likeCount == 0 || widget.post.likedBy.isEmpty) {
+      return;
+    }
+
+    final analytics = ref.read(analyticsServiceProvider);
+    unawaited(
+      analytics.logEvent(
+        name: 'like_count_tap',
+        parameters: {
+          'post_id': widget.post.id,
+          'like_count': widget.post.likeCount,
+        },
+      ),
+    );
+
+    unawaited(
+      LikerListModal.show(
+        context: context,
+        likerIds: widget.post.likedBy,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isLiked = widget.currentUserId != null &&
         widget.post.likedBy.contains(widget.currentUserId);
 
@@ -125,15 +160,16 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(theme),
+                    _buildHeader(theme, l10n),
+                    _buildHeader(context, theme),
                     const SizedBox(height: 12),
-                    _buildContent(theme),
+                    _buildContent(theme, l10n),
                     if (widget.post.imageUrl != null) ...[
                       const SizedBox(height: 12),
-                      _buildImage(theme),
+                      _buildImage(theme, l10n),
                     ],
                     const SizedBox(height: 12),
-                    _buildFooter(theme, isLiked),
+                    _buildFooter(theme, l10n, isLiked),
                   ],
                 ),
               ),
@@ -144,15 +180,33 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
-  Widget _buildHeader(ThemeData theme) {
+  Widget _buildHeader(ThemeData theme, AppLocalizations? l10n) {
     final accentColor = _getUserAccentColor(theme);
+    final author = widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname;
+    final timestamp = _formatTimestamp(widget.post.createdAt);
 
     return Semantics(
-      label: 'Post by ${widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname}, ${_formatTimestamp(widget.post.createdAt)}',
+      label: l10n != null ? l10n.postByAuthor(author, timestamp) : 'Post by $author, $timestamp',
       child: Row(
         children: [
           Semantics(
-            label: widget.post.isAnonymous ? 'Anonymous user avatar' : '${widget.post.authorNickname} avatar',
+            label: widget.post.isAnonymous 
+                ? (l10n?.a11yAnonymousAvatar ?? 'Anonymous user avatar') 
+                : (l10n?.authorAvatar(widget.post.authorNickname) ?? '${widget.post.authorNickname} avatar'),
+            excludeSemantics: true,
+  Widget _buildHeader(BuildContext context, ThemeData theme) {
+    final accentColor = _getUserAccentColor(theme);
+    final isAnonymous = widget.post.isAnonymous;
+
+    return Semantics(
+      label:
+          'Post by ${isAnonymous ? 'Anonymous' : widget.post.authorNickname}, ${_formatTimestamp(widget.post.createdAt)}',
+      child: Row(
+        children: [
+          Semantics(
+            label: isAnonymous
+                ? 'Anonymous user avatar'
+                : '${widget.post.authorNickname} avatar',
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -175,7 +229,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: Colors.transparent,
-                child: widget.post.isAnonymous
+                child: isAnonymous
                     ? Icon(
                         Icons.person_outline,
                         color: theme.colorScheme.onPrimary,
@@ -197,65 +251,70 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.post.isAnonymous
-                      ? 'Anonymous'
-                      : widget.post.authorNickname,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.post.isAnonymous
-                        ? 'Anonymous'
-                        : widget.post.authorNickname,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (!widget.post.isAnonymous) ...[
-                    const SizedBox(width: 8),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final authorProfileAsync = ref.watch(
-                          userProfileByIdProvider(widget.post.authorId),
-                        );
-                        return authorProfileAsync.when(
-                          data: (authorProfile) {
-                            if (authorProfile == null) return const SizedBox.shrink();
-                            return TrustBadge(
-                              trustLevel: authorProfile.trustLevel,
-                              showLabel: false,
-                              size: 16,
-                              onTap: () {
-                                ref.read(analyticsServiceProvider).logTrustBadgeTap(
-                                      authorProfile.trustLevel.name,
-                                      'post_card',
-                                    );
-                              },
-                            );
+                Row(
+                  children: [
+                    if (isAnonymous)
+                      Text(
+                        'Anonymous',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    else
+                      Semantics(
+                        button: true,
+                        link: true,
+                        label: 'View profile of ${widget.post.authorNickname}',
+                        child: InkWell(
+                          onTap: () {
+                            context.push('/users/${widget.post.authorId}');
                           },
-                          loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
-                        );
-                      },
-                    ),
+                          borderRadius: BorderRadius.circular(4),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            child: Text(
+                              widget.post.authorNickname,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (!isAnonymous) ...[
+                      const SizedBox(width: 8),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final authorProfileAsync =
+                              ref.watch(userProfileByIdProvider(widget.post.authorId));
+                          return authorProfileAsync.when(
+                            data: (authorProfile) {
+                              if (authorProfile == null) {
+                                return const SizedBox.shrink();
+                              }
+                              return TrustBadge(
+                                trustLevel: authorProfile.trustLevel,
+                                showLabel: false,
+                                size: 16,
+                                onTap: () {
+                                  ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                                        authorProfile.trustLevel.name,
+                                        'post_card',
+                                      );
+                                },
+                              );
+                            },
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                          );
+                        },
+                      ),
+                    ],
                   ],
-                ],
-              ),
-              const SizedBox(height: 2),
-              Text(
-                _formatTimestamp(widget.post.createdAt),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -311,7 +370,11 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     return Semantics(
       label: 'Post image',
       image: true,
-      child: ClipRRect(
+      child: CachedImageWidget(
+        imageUrl: widget.post.imageUrl!,
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
         child: CachedNetworkImage(
           imageUrl: widget.post.imageUrl!,
@@ -337,6 +400,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
             ),
           ),
         ),
+        enableInstrumentation: true,
       ),
     );
   }
@@ -348,7 +412,9 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
         children: [
           Semantics(
             button: true,
-            label: isLiked ? 'Unlike post, ${widget.post.likeCount} likes' : 'Like post, ${widget.post.likeCount} likes',
+            label: isLiked
+                ? 'Unlike post, view ${widget.post.likeCount} likes'
+                : 'Like post, view ${widget.post.likeCount} likes',
             excludeSemantics: true,
             child: AnimatedScale(
               scale: _isLikeAnimating ? 1.2 : 1.0,
@@ -397,13 +463,21 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                             : theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        widget.post.likeCount.toString(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isLiked
-                              ? Colors.white
-                              : theme.colorScheme.onSurfaceVariant,
-                          fontWeight: isLiked ? FontWeight.w600 : FontWeight.normal,
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: widget.post.likeCount > 0 ? _onLikeCountTap : null,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Text(
+                            widget.post.likeCount.toString(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isLiked
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurfaceVariant,
+                              fontWeight:
+                                  widget.post.likeCount > 0 ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                          ),
                         ),
                       ),
                     ],

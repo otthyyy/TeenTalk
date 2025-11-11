@@ -9,6 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 import 'src/core/localization/app_localizations.dart';
@@ -19,6 +25,23 @@ import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/services/push_notifications_controller.dart';
+import 'src/services/push_notifications_provider.dart';
+import 'src/services/push_notifications_service.dart';
+
+/// Background message handler for Firebase Cloud Messaging
+/// Must be a top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  final logger = Logger();
+  logger.i('Handling background message: ${message.messageId}');
+  logger.d('Message data: ${message.data}');
+  logger.d('Message notification: ${message.notification?.title}');
+}
+import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
+import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -38,10 +61,15 @@ Future<void> main() async {
       print('Firebase init error: $e');
     }
 
+    // Set up background message handler
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     final crashlyticsService = CrashlyticsService();
     await crashlyticsService.initialize();
 
     final feedCacheService = await _initializeFeedCache();
+    // Initialize SharedPreferences
+    final sharedPreferences = await SharedPreferences.getInstance();
 
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
@@ -59,6 +87,7 @@ Future<void> main() async {
           crashlyticsServiceProvider.overrideWithValue(crashlyticsService),
           if (feedCacheService != null)
             feedCacheServiceProvider.overrideWithValue(feedCacheService),
+          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         ],
         child: const TeenTalkApp(),
       ),
@@ -82,11 +111,46 @@ Future<FeedCacheService?> _initializeFeedCache() async {
 }
 
 class TeenTalkApp extends ConsumerWidget {
+class TeenTalkApp extends ConsumerStatefulWidget {
   const TeenTalkApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeenTalkApp> createState() => _TeenTalkAppState();
+}
+
+class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Initialize push notifications after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pushService = ref.read(pushNotificationsServiceProvider);
+      unawaited(pushService.initialize());
+    });
+    _initializePushNotifications();
+  }
+
+  Future<void> _initializePushNotifications() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!mounted) return;
+    
+    final router = ref.read(routerProvider);
+    final pushHandler = ref.read(pushNotificationHandlerProvider);
+    
+    pushHandler.initialize(router);
+    
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      await pushHandler.handleInitialMessage(initialMessage);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(crashlyticsSyncProvider);
+    ref.watch(pushNotificationsControllerProvider);
     
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
@@ -107,7 +171,27 @@ class TeenTalkApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('en', ''),
         Locale('es', ''),
+        Locale('it', ''),
       ],
+    return ScreenshotProtectedContent(
+      child: MaterialApp.router(
+        title: 'TeenTalk',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: router,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('es', ''),
+        ],
+      ),
     );
   }
 }
