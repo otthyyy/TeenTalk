@@ -122,6 +122,8 @@ dev_dependencies:
   mockito: ^5.4.0
   golden_toolkit: ^0.13.0
   fake_cloud_firestore: ^2.4.1
+  integration_test:
+    sdk: flutter
   
   # Branding Assets Generation
   flutter_launcher_icons: ^0.13.1

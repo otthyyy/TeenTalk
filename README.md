@@ -157,6 +157,35 @@ flutter test test/src/features/messages/data/repositories/direct_messages_reposi
 flutter test test/src/features/profile/data/repositories/user_repository_test.dart
 ```
 
+### Integration Tests
+
+The app includes comprehensive end-to-end integration tests using Firebase emulator:
+
+```bash
+# Run complete integration test workflow (automated)
+./scripts/run_integration_tests.sh
+
+# Or manually step by step:
+
+# 1. Start Firebase emulators
+./scripts/start_emulator.sh
+
+# 2. Run integration tests
+flutter test integration_test/
+
+# 3. Stop emulators
+./scripts/stop_emulator.sh
+```
+
+Integration tests cover:
+- Complete authentication flow (sign-up, sign-in)
+- Onboarding process
+- Post creation with images
+- Commenting and liking
+- Direct messaging
+- Notification stream updates
+
+See [docs/TESTING.md](docs/TESTING.md) for comprehensive testing documentation.
 ### Repository and Service Unit Tests
 
 Comprehensive unit tests cover core repositories:
