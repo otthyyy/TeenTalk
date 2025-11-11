@@ -5,21 +5,24 @@ class AnalyticsService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   final Logger _logger = Logger();
   
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
+  Future<void> logEvent({
+    required String name,
+    Map<String, dynamic>? parameters,
+  }) async {
     try {
       await _analytics.logEvent(
-        name: eventName,
+        name: name,
         parameters: parameters,
       );
-      _logger.i('Logged event: $eventName');
+      _logger.i('Logged event: $name');
     } catch (e) {
-      _logger.e('Failed to log event $eventName: $e');
+      _logger.e('Failed to log event $name: $e');
     }
   }
 
   Future<void> logTrustBadgeTap(String trustLevel, String location) async {
     await logEvent(
-      'trust_badge_tap',
+      name: 'trust_badge_tap',
       parameters: {
         'trust_level': trustLevel,
         'location': location,
@@ -33,7 +36,7 @@ class AnalyticsService {
     required int submissionCount,
   }) async {
     await logEvent(
-      'rate_limit_hit',
+      name: 'rate_limit_hit',
       parameters: {
         'content_type': contentType,
         'limit_type': limitType,
@@ -48,7 +51,7 @@ class AnalyticsService {
     required int remainingSubmissions,
   }) async {
     await logEvent(
-      'rate_limit_warning',
+      name: 'rate_limit_warning',
       parameters: {
         'content_type': contentType,
         'remaining_submissions': remainingSubmissions,
@@ -62,11 +65,41 @@ class AnalyticsService {
     required bool isAnonymous,
   }) async {
     await logEvent(
-      'content_submission',
+      name: 'content_submission',
       parameters: {
         'content_type': contentType,
         'is_anonymous': isAnonymous,
         'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+  }
+  
+  Future<void> logLowTrustWarning(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningDismiss(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_dismiss',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningProceed(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_proceed',
+      parameters: {
+        'user_id': userId,
+        'context': context,
       },
     );
   }

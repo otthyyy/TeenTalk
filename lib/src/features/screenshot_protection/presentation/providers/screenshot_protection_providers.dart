@@ -71,7 +71,7 @@ class ScreenshotProtectionStateNotifier extends StateNotifier<ScreenshotProtecti
     
     _captureStatusSubscription = service.screenCaptureStatus.listen((isCaptured) {
       state = state.copyWith(isIosCaptureActive: isCaptured);
-      analyticsService.logEvent('screen_capture_detected', parameters: {
+      analyticsService.logEvent(name: 'screen_capture_detected', parameters: {
         'platform': 'ios',
         'is_captured': isCaptured,
       });
@@ -79,17 +79,17 @@ class ScreenshotProtectionStateNotifier extends StateNotifier<ScreenshotProtecti
 
     _screenshotDetectedSubscription = service.screenshotDetected.listen((_) {
       state = state.copyWith(showWarning: true);
-      analyticsService.logEvent('screenshot_attempt_detected');
+      analyticsService.logEvent(name: 'screenshot_attempt_detected');
     });
   }
 
   Future<void> toggleProtection(bool enable, WidgetRef ref) async {
     if (enable) {
       await service.enableProtection();
-      analyticsService.logEvent('screenshot_protection_enabled');
+      analyticsService.logEvent(name: 'screenshot_protection_enabled');
     } else {
       await service.disableProtection();
-      analyticsService.logEvent('screenshot_protection_disabled');
+      analyticsService.logEvent(name: 'screenshot_protection_disabled');
     }
     state = state.copyWith(isEnabled: enable);
 
