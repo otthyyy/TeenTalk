@@ -57,19 +57,22 @@ class SyncQueueService {
       if (kIsWeb) {
         await Hive.initFlutter();
       } else if (Platform.isLinux) {
-        await Hive.init('./hive_boxes');
+        Hive.init('./hive_boxes');
       } else {
         await Hive.initFlutter();
       }
       
       if (!Hive.isAdapterRegistered(0)) {
-        Hive.registerAdapter(QueuedActionAdapter());
+        final adapter = QueuedActionAdapter();
+        Hive.registerAdapter(adapter);
       }
       if (!Hive.isAdapterRegistered(1)) {
-        Hive.registerAdapter(QueuedActionTypeAdapter());
+        final adapter = QueuedActionTypeAdapter();
+        Hive.registerAdapter(adapter);
       }
       if (!Hive.isAdapterRegistered(2)) {
-        Hive.registerAdapter(QueuedActionStatusAdapter());
+        final adapter = QueuedActionStatusAdapter();
+        Hive.registerAdapter(adapter);
       }
 
       _queueBox = await Hive.openBox<QueuedAction>(_boxName);

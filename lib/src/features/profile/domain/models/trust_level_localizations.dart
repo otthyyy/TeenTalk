@@ -1,4 +1,5 @@
-import '../../../core/localization/app_localizations.dart';
+import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
+
 import 'trust_level.dart';
 
 String trustLevelLabel(TrustLevel trustLevel, AppLocalizations? localization) {

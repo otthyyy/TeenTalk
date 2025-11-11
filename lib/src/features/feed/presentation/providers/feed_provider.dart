@@ -291,13 +291,12 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
 
       await _cacheService.cachePosts(
-        [...state.posts, ...posts],
+        [...state.posts, ...result.posts],
         sortOption: resolvedSort,
         section: resolvedSection,
         school: resolvedSchool,
       );
 
-      final allPosts = [...state.posts, ...posts];
       final mergedPosts = [...state.posts, ...result.posts];
 
       state = state.copyWith(

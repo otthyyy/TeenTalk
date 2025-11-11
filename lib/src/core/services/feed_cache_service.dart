@@ -44,7 +44,7 @@ class FeedCacheService {
     String? school,
   }) {
     final schoolKey = school ?? 'global';
-    return '${section}_$schoolKey_${sortOption.name}';
+    return '${section}_${schoolKey}_${sortOption.name}';
   }
 
   String _metadataKey({

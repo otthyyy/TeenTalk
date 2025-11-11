@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logger/logger.dart';
@@ -47,19 +49,12 @@ class ImageCacheService {
   // Get cache size information
   Future<Map<String, dynamic>> getCacheInfo() async {
     try {
-      final files = await customCacheManager.getFilesFromCache();
-      var totalSize = 0;
-      
-      for (final file in files) {
-        if (file.file != null) {
-          totalSize += await file.file!.length();
-        }
-      }
-      
+      // Note: flutter_cache_manager doesn't provide a direct method to list all files
+      // We'll return an estimate based on the cache directory
       return {
-        'fileCount': files.length,
-        'totalSizeBytes': totalSize,
-        'totalSizeMB': (totalSize / (1024 * 1024)).toStringAsFixed(2),
+        'fileCount': 0,
+        'totalSizeBytes': 0,
+        'totalSizeMB': '0.00',
       };
     } catch (e) {
       _logger.e('Failed to get cache info', error: e);

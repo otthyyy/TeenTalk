@@ -1,21 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../common/widgets/trust_badge.dart';
-import '../../../../core/services/analytics_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../comments/data/models/comment.dart';
-import '../../../../core/widgets/cached_image_widget.dart';
-import '../../../profile/domain/models/user_profile.dart';
-import '../../../profile/presentation/providers/user_profile_provider.dart';
+
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
+import '../../../comments/data/models/comment.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
 import 'liker_list_modal.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
@@ -287,8 +281,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                                 size: 16,
                                 onTap: () {
                                   ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                                        authorProfile.uid,
                                         authorProfile.trustLevel.name,
-                                        'post_card',
                                       );
                                 },
                               );
@@ -339,7 +333,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
-  Widget _buildContent(ThemeData theme) {
+  Widget _buildContent(ThemeData theme, AppLocalizations? l10n) {
     return Semantics(
       label: 'Post content: ${widget.post.content}',
       child: Text(
@@ -351,7 +345,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
-  Widget _buildImage(ThemeData theme) {
+  Widget _buildImage(ThemeData theme, AppLocalizations? l10n) {
     return Semantics(
       label: 'Post image',
       image: true,
@@ -361,36 +355,12 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
         height: 200,
         fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
-        child: CachedNetworkImage(
-          imageUrl: widget.post.imageUrl!,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: 200,
-          placeholder: (context, url) => Container(
-            height: 200,
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
-            child: const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          ),
-          errorWidget: (context, url, error) => Container(
-            height: 200,
-            color: theme.colorScheme.surfaceVariant,
-            child: Center(
-              child: Icon(
-                Icons.broken_image_outlined,
-                size: 48,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ),
         enableInstrumentation: true,
       ),
     );
   }
 
-  Widget _buildFooter(ThemeData theme, bool isLiked) {
+  Widget _buildFooter(ThemeData theme, AppLocalizations? l10n, bool isLiked) {
     return Semantics(
       label: '${widget.post.likeCount} likes, ${widget.post.commentCount} comments, section: ${widget.post.section}',
       child: Row(

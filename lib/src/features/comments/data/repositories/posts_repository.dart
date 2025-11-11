@@ -35,22 +35,6 @@ class PostsRepository {
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
 
-  static const List<String> _listFields = [
-    'authorId',
-    'authorNickname',
-    'isAnonymous',
-    'content',
-    'createdAt',
-    'updatedAt',
-    'likeCount',
-    'likedBy',
-    'commentCount',
-    'imageUrl',
-    'section',
-    'school',
-    'engagementScore',
-  ];
-
   PostsRepository({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
@@ -127,7 +111,6 @@ class PostsRepository {
     }
 
     query = query.limit(limit);
-    query = query.select(_listFields);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);

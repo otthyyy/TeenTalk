@@ -500,7 +500,7 @@ class _ReportListItemState extends ConsumerState<ReportListItem> {
 
   Widget _buildSeverityBadge() {
     final severity = widget.report.severity?.toLowerCase() ?? 'low';
-    Color color;
+    MaterialColor color;
     switch (severity) {
       case 'critical':
         color = Colors.red;
