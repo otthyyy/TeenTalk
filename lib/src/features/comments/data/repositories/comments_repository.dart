@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/comment.dart';
 
 class CommentsRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
   static const String _commentsCollection = 'comments';
   static const String _postsCollection = 'posts';
+
+  CommentsRepository({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<(List<Comment>, DocumentSnapshot?)> getCommentsByPostId({
     required String postId,
