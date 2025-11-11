@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import '../../domain/models/user_profile.dart';
 import '../../data/repositories/user_repository.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../../core/constants/brescia_schools.dart';
+import '../../../../core/providers/image_cache_provider.dart';
 import '../../../../core/constants/user_interests.dart';
 import 'dart:async';
 
@@ -36,6 +38,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   bool _canChangeNickname = true;
   int _daysUntilChange = 0;
   String? _originalNickname;
+  bool _isClearingCache = false;
 
   @override
   void initState() {
@@ -333,6 +336,44 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _clearImageCache() async {
+    if (_isClearingCache) return;
+
+    setState(() => _isClearingCache = true);
+
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final cacheService = ref.read(imageCacheServiceProvider);
+      await cacheService.clearCache();
+      ref.invalidate(cacheInfoProvider);
+
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.cleaning_services, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Media cache cleared'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+    } catch (e) {
+      _showError('Failed to clear cache: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => _isClearingCache = false);
+      }
+    }
   }
 
   @override
@@ -897,6 +938,84 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Storage',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ListTile(
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.error.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.cleaning_services,
+                                  color: theme.colorScheme.error,
+                                ),
+                              ),
+                              title: const Text(
+                                'Clear Media Cache',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: ref.watch(cacheInfoProvider).when(
+                                data: (info) => Text(
+                                  '${info['fileCount']} images cached (${info['totalSizeMB']} MB)',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                loading: () => const Text(
+                                  'Calculating cache size...',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                error: (_, __) => const Text(
+                                  'Unable to calculate cache size',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                              trailing: _isClearingCache
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    )
+                                  : IconButton(
+                                      onPressed: _clearImageCache,
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: theme.colorScheme.error,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'Clearing the cache will remove locally stored images. They\'ll be downloaded again when you view them.',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),

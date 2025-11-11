@@ -7,6 +7,8 @@ import 'package:teen_talk_app/src/features/messages/presentation/pages/messages_
 import 'package:teen_talk_app/src/features/messages/presentation/pages/chat_screen.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/pages/profile_edit_page.dart';
+import 'package:teen_talk_app/src/features/offline_sync/presentation/pages/sync_queue_page.dart';
+import 'package:teen_talk_app/src/features/profile/presentation/pages/public_profile_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/admin_page.dart';
 import 'package:teen_talk_app/src/features/admin/presentation/pages/crashlytics_test_page.dart';
 import 'package:teen_talk_app/src/features/moderation/presentation/pages/moderation_queue_page.dart';
@@ -15,8 +17,10 @@ import 'package:teen_talk_app/src/features/auth/presentation/pages/signup_page.d
 import 'package:teen_talk_app/src/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:teen_talk_app/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:teen_talk_app/src/features/beta_feedback/presentation/pages/beta_feedback_form_page.dart';
+import 'package:teen_talk_app/src/features/legal/presentation/pages/legal_document_page.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
+import 'package:teen_talk_app/src/features/tutorial/presentation/providers/tutorial_provider.dart';
 import 'package:teen_talk_app/src/core/theme/decorations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -76,6 +80,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingPage(),
       ),
+      GoRoute(
+        path: '/legal/:document',
+        builder: (context, state) {
+          final documentSegment = state.pathParameters['document'];
+          final documentType = legalDocumentTypeFromRouteSegment(documentSegment);
+          if (documentType == null) {
+            return const LegalDocumentUnavailablePage();
+          }
+          return LegalDocumentPage(documentType: documentType);
+        },
+      ),
       ShellRoute(
         builder: (context, state, child) {
           return MainNavigationShell(child: child);
@@ -114,14 +129,24 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const BetaFeedbackFormPage(),
           ),
           GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfilePage(),
-            routes: [
-              GoRoute(
-                path: 'edit',
-                builder: (context, state) => const ProfileEditPage(),
-              ),
-            ],
+             path: '/profile',
+             builder: (context, state) => const ProfilePage(),
+             routes: [
+               GoRoute(
+                 path: 'edit',
+                 builder: (context, state) => const ProfileEditPage(),
+               ),
+               GoRoute(
+                 path: 'sync-queue',
+                 builder: (context, state) => const SyncQueuePage(),
+               ),
+             ],
+           ),
+          GoRoute(
+            path: '/users/:userId',
+            builder: (context, state) => PublicProfilePage(
+              userId: state.pathParameters['userId'] ?? '',
+            ),
           ),
           GoRoute(
             path: '/admin',
@@ -157,6 +182,7 @@ class MainNavigationShell extends ConsumerWidget {
     final isAdmin = userProfile.value?.isAdmin ?? false;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final tutorialAnchors = ref.watch(tutorialAnchorsProvider);
 
     return Container(
       decoration: AppDecorations.surfaceGradientBackground(isDark: isDark),
@@ -186,14 +212,20 @@ class MainNavigationShell extends ConsumerWidget {
                     activeIcon: Icon(Icons.home_rounded),
                     label: 'Feed',
                   ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.message_outlined),
-                    activeIcon: Icon(Icons.message_rounded),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.message_outlined,
+                      key: tutorialAnchors.messagesNavKey,
+                    ),
+                    activeIcon: const Icon(Icons.message_rounded),
                     label: 'Messages',
                   ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline),
-                    activeIcon: Icon(Icons.person_rounded),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person_outline,
+                      key: tutorialAnchors.profileNavKey,
+                    ),
+                    activeIcon: const Icon(Icons.person_rounded),
                     label: 'Profile',
                   ),
                   if (isAdmin)
