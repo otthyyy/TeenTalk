@@ -19,6 +19,7 @@ import '../widgets/segmented_control.dart';
 import '../widgets/post_search_delegate.dart';
 import '../widgets/feed_filter_chips.dart';
 import '../../domain/models/feed_sort_option.dart';
+import '../../../offline_sync/presentation/widgets/sync_status_indicator.dart';
 
 enum FeedSection {
   spotted('spotted', 'Spotted'),
@@ -384,11 +385,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                 background: _buildHeroHeader(theme, userProfile),
                 collapseMode: CollapseMode.parallax,
               ),
-              actions: [
-                NotificationBadge(
-                  onTap: () {
-                    context.push('/notifications');
-                  },
+              actions: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SyncStatusIndicator(),
                 ),
               ],
             ),
