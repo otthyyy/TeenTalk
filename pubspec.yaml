@@ -75,6 +75,10 @@ dependencies:
   # Persistence
   shared_preferences: ^2.2.2
   
+  # Tutorial
+  tutorial_coach_mark: ^1.2.11
+  shared_preferences: ^2.2.2
+  
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
   
