@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/services/analytics_provider.dart';
+import 'liker_list_modal.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
@@ -58,6 +61,30 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
   void dispose() {
     _shimmerController.dispose();
     super.dispose();
+  }
+
+  void _onLikeCountTap() {
+    if (widget.post.likeCount == 0 || widget.post.likedBy.isEmpty) {
+      return;
+    }
+
+    final analytics = ref.read(analyticsServiceProvider);
+    unawaited(
+      analytics.logEvent(
+        name: 'like_count_tap',
+        parameters: {
+          'post_id': widget.post.id,
+          'like_count': widget.post.likeCount,
+        },
+      ),
+    );
+
+    unawaited(
+      LikerListModal.show(
+        context: context,
+        likerIds: widget.post.likedBy,
+      ),
+    );
   }
 
   @override
@@ -338,7 +365,9 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
         children: [
           Semantics(
             button: true,
-            label: isLiked ? 'Unlike post, ${widget.post.likeCount} likes' : 'Like post, ${widget.post.likeCount} likes',
+            label: isLiked
+                ? 'Unlike post, view ${widget.post.likeCount} likes'
+                : 'Like post, view ${widget.post.likeCount} likes',
             excludeSemantics: true,
             child: AnimatedScale(
               scale: _isLikeAnimating ? 1.2 : 1.0,
@@ -387,13 +416,21 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                             : theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        widget.post.likeCount.toString(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isLiked
-                              ? Colors.white
-                              : theme.colorScheme.onSurfaceVariant,
-                          fontWeight: isLiked ? FontWeight.w600 : FontWeight.normal,
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: widget.post.likeCount > 0 ? _onLikeCountTap : null,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Text(
+                            widget.post.likeCount.toString(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isLiked
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurfaceVariant,
+                              fontWeight:
+                                  widget.post.likeCount > 0 ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                          ),
                         ),
                       ),
                     ],
