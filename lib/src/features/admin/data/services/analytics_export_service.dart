@@ -1,14 +1,18 @@
 import 'package:csv/csv.dart';
+
 import '../models/extended_analytics.dart';
 import '../models/report.dart';
+import 'analytics_export_delegate_stub.dart' show AnalyticsExportDelegate;
 import 'analytics_export_delegate_stub.dart'
     if (dart.library.io) 'analytics_export_delegate_io.dart'
-    if (dart.library.html) 'analytics_export_delegate_web.dart';
+    if (dart.library.html) 'analytics_export_delegate_web.dart'
+    as analytics_export;
 
 class AnalyticsExportService {
   AnalyticsExportService();
 
-  final AnalyticsExportDelegate _delegate = buildAnalyticsExportDelegate();
+  final AnalyticsExportDelegate _delegate =
+      analytics_export.buildAnalyticsExportDelegate();
 
   Future<void> exportAnalyticsToCSV({
     required AdminAnalytics basicAnalytics,
