@@ -53,6 +53,8 @@ dependencies:
   
   # Image Handling
   image_picker: ^1.0.4
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
   
   # Logging
   logger: ^2.0.2
@@ -83,6 +85,10 @@ dependencies:
   
   # Connectivity
   connectivity_plus: ^5.0.2
+  
+  # Tutorial
+  tutorial_coach_mark: ^1.2.11
+  shared_preferences: ^2.2.2
   
   # Assets Generation (to be added when needed)
   # flutter_gen: ^5.3.0
