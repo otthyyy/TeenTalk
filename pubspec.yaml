@@ -67,6 +67,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   
+  # Notifications
+  flutter_local_notifications: ^17.1.2
+  
   # UI
   provider: ^6.1.0
   fl_chart: ^0.66.0

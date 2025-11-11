@@ -7,6 +7,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 import 'src/core/localization/app_localizations.dart';
@@ -15,6 +17,21 @@ import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/services/push_notifications_controller.dart';
+import 'src/services/push_notifications_provider.dart';
+import 'src/services/push_notifications_service.dart';
+
+/// Background message handler for Firebase Cloud Messaging
+/// Must be a top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  final logger = Logger();
+  logger.i('Handling background message: ${message.messageId}');
+  logger.d('Message data: ${message.data}');
+  logger.d('Message notification: ${message.notification?.title}');
+}
 import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
 import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
@@ -30,8 +47,14 @@ Future<void> main() async {
       print('Firebase init error: $e');
     }
 
+    // Set up background message handler
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     final crashlyticsService = CrashlyticsService();
     await crashlyticsService.initialize();
+
+    // Initialize SharedPreferences
+    final sharedPreferences = await SharedPreferences.getInstance();
 
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
@@ -47,6 +70,7 @@ Future<void> main() async {
       ProviderScope(
         overrides: [
           crashlyticsServiceProvider.overrideWithValue(crashlyticsService),
+          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         ],
         child: const TeenTalkApp(),
       ),
@@ -69,6 +93,12 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
   @override
   void initState() {
     super.initState();
+    
+    // Initialize push notifications after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pushService = ref.read(pushNotificationsServiceProvider);
+      unawaited(pushService.initialize());
+    });
     _initializePushNotifications();
   }
 
@@ -91,6 +121,7 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
   @override
   Widget build(BuildContext context) {
     ref.watch(crashlyticsSyncProvider);
+    ref.watch(pushNotificationsControllerProvider);
     
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
