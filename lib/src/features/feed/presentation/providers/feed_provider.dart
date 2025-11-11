@@ -174,7 +174,6 @@ class FeedNotifier extends StateNotifier<FeedState> {
         return;
       }
 
-      final (posts, lastDoc) = await _repository.getPosts(
       final result = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
@@ -194,13 +193,12 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
 
       await _cacheService.cachePosts(
-        posts,
+        result.posts,
         sortOption: effectiveSortOption,
         section: resolvedSection,
         school: resolvedSchool,
       );
 
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
       final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
 
       state = state.copyWith(

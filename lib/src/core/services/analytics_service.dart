@@ -5,23 +5,21 @@ class AnalyticsService {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   final Logger _logger = Logger();
   
-  Future<void> logEvent({
-    required String name,
-    Map<String, dynamic>? parameters,
-  }) async {
+  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
     try {
       await _analytics.logEvent(
-        name: name,
+        name: eventName,
         parameters: parameters,
       );
+      _logger.i('Logged event: $eventName');
     } catch (e) {
-      _logger.e('Failed to log event $name: $e');
+      _logger.e('Failed to log event $eventName: $e');
     }
   }
 
   Future<void> logTrustBadgeTap(String trustLevel, String location) async {
     await logEvent(
-      name: 'trust_badge_tap',
+      'trust_badge_tap',
       parameters: {
         'trust_level': trustLevel,
         'location': location,
@@ -34,68 +32,42 @@ class AnalyticsService {
     required String limitType,
     required int submissionCount,
   }) async {
-    try {
-      await _analytics.logEvent(
-        name: 'rate_limit_hit',
-        parameters: {
-          'content_type': contentType,
-          'limit_type': limitType,
-          'submission_count': submissionCount,
-          'timestamp': DateTime.now().toIso8601String(),
-        },
-      );
-      _logger.i('Logged rate limit hit: $contentType, $limitType');
-    } catch (e) {
-      _logger.e('Failed to log rate limit hit: $e');
-    }
+    await logEvent(
+      'rate_limit_hit',
+      parameters: {
+        'content_type': contentType,
+        'limit_type': limitType,
+        'submission_count': submissionCount,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
   }
   
   Future<void> logRateLimitWarning({
     required String contentType,
     required int remainingSubmissions,
   }) async {
-    try {
-      await _analytics.logEvent(
-        name: 'rate_limit_warning',
-        parameters: {
-          'content_type': contentType,
-          'remaining_submissions': remainingSubmissions,
-          'timestamp': DateTime.now().toIso8601String(),
-        },
-      );
-      _logger.i('Logged rate limit warning: $contentType, remaining: $remainingSubmissions');
-    } catch (e) {
-      _logger.e('Failed to log rate limit warning: $e');
-    }
+    await logEvent(
+      'rate_limit_warning',
+      parameters: {
+        'content_type': contentType,
+        'remaining_submissions': remainingSubmissions,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
   }
   
   Future<void> logContentSubmission({
     required String contentType,
     required bool isAnonymous,
   }) async {
-    try {
-      await _analytics.logEvent(
-        name: 'content_submission',
-        parameters: {
-          'content_type': contentType,
-          'is_anonymous': isAnonymous,
-          'timestamp': DateTime.now().toIso8601String(),
-        },
-      );
-    } catch (e) {
-      _logger.e('Failed to log content submission: $e');
-    }
-  }
-
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) async {
-    try {
-      await _analytics.logEvent(
-        name: eventName,
-        parameters: parameters,
-      );
-      _logger.i('Logged event: $eventName');
-    } catch (e) {
-      _logger.e('Failed to log event $eventName: $e');
-    }
+    await logEvent(
+      'content_submission',
+      parameters: {
+        'content_type': contentType,
+        'is_anonymous': isAnonymous,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
   }
 }

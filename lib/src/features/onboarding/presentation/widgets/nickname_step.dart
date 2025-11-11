@@ -156,73 +156,74 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            const SizedBox(height: 32),
-            TextFormField(
-              controller: _nicknameController,
-              decoration: InputDecoration(
-                labelText: 'Nickname',
-                hintText: 'Enter a unique nickname',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.account_circle),
-                suffixIcon: _isChecking
-                    ? const Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      )
-                    : _isAvailable == true
-                        ? const Icon(Icons.check_circle, color: Colors.green)
-                        : _isAvailable == false
-                            ? const Icon(Icons.error, color: Colors.red)
-                            : null,
-              ),
-              validator: _validateNickname,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-            ),
-            const SizedBox(height: 16),
-            Card(
-              color: Colors.blue.shade50,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.info_outline, size: 20, color: Colors.blue),
-                        SizedBox(width: 8),
-                        Text(
-                          'Nickname Guidelines',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+              const SizedBox(height: 32),
+              TextFormField(
+                controller: _nicknameController,
+                decoration: InputDecoration(
+                  labelText: 'Nickname',
+                  hintText: 'Enter a unique nickname',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.account_circle),
+                  suffixIcon: _isChecking
+                      ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Text('• 3-20 characters long'),
-                    Text('• Only letters, numbers, and underscores'),
-                    Text('• Must be unique'),
-                    Text('• Can be changed once per month'),
-                  ],
+                        )
+                      : _isAvailable == true
+                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          : _isAvailable == false
+                              ? const Icon(Icons.error, color: Colors.red)
+                              : null,
+                ),
+                validator: _validateNickname,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(height: 16),
+              Card(
+                color: Colors.blue.shade50,
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, size: 20, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text(
+                            'Nickname Guidelines',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text('• 3-20 characters long'),
+                      Text('• Only letters, numbers, and underscores'),
+                      Text('• Must be unique'),
+                      Text('• Can be changed once per month'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: (_isAvailable == true && !_isChecking)
-                  ? _handleNext
-                  : null,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: (_isAvailable == true && !_isChecking)
+                    ? _handleNext
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text('Next'),
               ),
-              child: const Text('Next'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

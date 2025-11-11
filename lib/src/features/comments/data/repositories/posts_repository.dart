@@ -24,28 +24,16 @@ import '../../../feed/data/services/feed_cache_service.dart';
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final Logger _logger = Logger();
-  final FeedCacheService _cacheService = FeedCacheService();
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
   final Logger _logger;
+  final FeedCacheService _cacheService = FeedCacheService();
+  
   static const String _postsCollection = 'posts';
   static const String _imagesFolder = 'post_images';
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
-
-  void invalidateCache({String? section, String? school}) {
-    if (section != null || school != null) {
-      _cacheService.invalidate(section: section, school: school);
-    } else {
-      _cacheService.clearAll();
-    }
-  }
-
-  Map<String, dynamic> getCacheMetrics() => _cacheService.getMetrics();
 
   static const List<String> _listFields = [
     'authorId',
@@ -63,12 +51,6 @@ class PostsRepository {
     'engagementScore',
   ];
 
-  Future<({
-    List<Post> posts,
-    DocumentSnapshot? lastDocument,
-    bool hasMore,
-    String? paginationToken,
-  })> getPosts({
   PostsRepository({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
@@ -77,7 +59,22 @@ class PostsRepository {
         _storage = storage ?? FirebaseStorage.instance,
         _logger = logger ?? Logger();
 
-  Future<(List<Post>, DocumentSnapshot?)> getPosts({
+  void invalidateCache({String? section, String? school}) {
+    if (section != null || school != null) {
+      _cacheService.invalidate(section: section, school: school);
+    } else {
+      _cacheService.clearAll();
+    }
+  }
+
+  Map<String, dynamic> getCacheMetrics() => _cacheService.getMetrics();
+
+  Future<({
+    List<Post> posts,
+    DocumentSnapshot? lastDocument,
+    bool hasMore,
+    String? paginationToken,
+  })> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,

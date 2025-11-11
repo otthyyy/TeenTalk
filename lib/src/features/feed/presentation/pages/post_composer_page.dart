@@ -9,9 +9,8 @@ import 'package:logger/logger.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
-import '../../../core/analytics/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/providers/rate_limit_provider.dart';
-import 'package:teen_talk_app/src/core/providers/analytics_provider.dart';
+import 'package:teen_talk_app/src/core/analytics/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';
 import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
@@ -422,197 +421,195 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 ),
                 // Section selection
                 Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Section',
-                    style: theme.textTheme.titleSmall,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Section',
+                        style: theme.textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _sections.map((section) {
+                            final isSelected = section['value'] == _selectedSection;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: FilterChip(
+                                label: Text(section['label']!),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    _selectedSection = section['value']!;
+                                  });
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: _sections.map((section) {
-                        final isSelected = section['value'] == _selectedSection;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: FilterChip(
-                            label: Text(section['label']!),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              setState(() {
-                                _selectedSection = section['value']!;
-                              });
-                            },
-                          ),
-                        );
-                      }).toList(),
+                ),
+                
+                // Content input
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextFormField(
+                      controller: _contentController,
+                      maxLines: null,
+                      expands: true,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter some content';
+                        }
+                        if (value.trim().length > 2000) {
+                          return 'Content cannot exceed 2000 characters';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'What\'s on your mind?',
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surface,
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            
-            // Content input
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: _contentController,
-                  maxLines: null,
-                  expands: true,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter some content';
-                    }
-                    if (value.trim().length > 2000) {
-                      return 'Content cannot exceed 2000 characters';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'What\'s on your mind?',
-                    hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-                    border: OutlineInputBorder(
+                ),
+                
+                // Image preview
+                if (_selectedImageFile != null || _selectedImageBytes != null)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: theme.colorScheme.outline),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    filled: true,
-                    fillColor: theme.colorScheme.surface,
-                  ),
-                ),
-              ),
-            ),
-            
-            // Image preview
-            if (_selectedImageFile != null || _selectedImageBytes != null)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: theme.colorScheme.outline),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: _selectedImageBytes != null
-                          ? Image.memory(
-                              _selectedImageBytes!,
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              _selectedImageFile!,
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    if (_selectedImageName != null)
-                      Positioned(
-                        left: 12,
-                        bottom: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            _selectedImageName!,
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedImageFile = null;
-                            _selectedImageBytes = null;
-                            _selectedImageName = null;
-                          });
-                        },
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            
-            // Anonymous toggle and image button
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Row(
+                    child: Stack(
                       children: [
-                        Switch(
-                          value: _isAnonymous,
-                          onChanged: (value) {
-                            setState(() {
-                              _isAnonymous = value;
-                            });
-                          },
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: _selectedImageBytes != null
+                              ? Image.memory(
+                                  _selectedImageBytes!,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  _selectedImageFile!,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
-                        const Text('Post anonymously'),
+                        if (_selectedImageName != null)
+                          Positioned(
+                            left: 12,
+                            bottom: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _selectedImageName!,
+                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedImageFile = null;
+                                _selectedImageBytes = null;
+                                _selectedImageName = null;
+                              });
+                            },
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  IconButton.outlined(
-                    onPressed: _showImagePicker,
-                    icon: const Icon(Icons.photo_library),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Submit button
-            Container(
-              padding: const EdgeInsets.all(16),
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: _isUploading || !status.canSubmit ? null : _submitPost,
-                child: _isUploading
-                    ? const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          SizedBox(width: 8),
-                          Text('Posting...'),
-                        ],
-                      )
-                    : Text(
-                        status.canSubmit
-                            ? 'Post'
-                            : l10n?.cooldownTimer(
-                                  status.cooldownDuration?.inSeconds ?? 0,
-                                ) ??
-                                'Cooldown active',
+                
+                // Anonymous toggle and image button
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Switch(
+                              value: _isAnonymous,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isAnonymous = value;
+                                });
+                              },
+                            ),
+                            const Text('Post anonymously'),
+                          ],
+                        ),
                       ),
-              ),
+                      IconButton.outlined(
+                        onPressed: _showImagePicker,
+                        icon: const Icon(Icons.photo_library),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Submit button
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _isUploading || !status.canSubmit ? null : _submitPost,
+                    child: _isUploading
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              SizedBox(width: 8),
+                              Text('Posting...'),
+                            ],
+                          )
+                        : Text(
+                            status.canSubmit
+                                ? 'Post'
+                                : l10n?.cooldownTimer(
+                                      status.cooldownDuration?.inSeconds ?? 0,
+                                    ) ??
+                                    'Cooldown active',
+                          ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}        },
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) {
           _logger.w('Failed to load rate limit status: $error');

@@ -160,7 +160,6 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(theme, l10n),
                     _buildHeader(context, theme),
                     const SizedBox(height: 12),
                     _buildContent(theme, l10n),
@@ -180,20 +179,6 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
-  Widget _buildHeader(ThemeData theme, AppLocalizations? l10n) {
-    final accentColor = _getUserAccentColor(theme);
-    final author = widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname;
-    final timestamp = _formatTimestamp(widget.post.createdAt);
-
-    return Semantics(
-      label: l10n != null ? l10n.postByAuthor(author, timestamp) : 'Post by $author, $timestamp',
-      child: Row(
-        children: [
-          Semantics(
-            label: widget.post.isAnonymous 
-                ? (l10n?.a11yAnonymousAvatar ?? 'Anonymous user avatar') 
-                : (l10n?.authorAvatar(widget.post.authorNickname) ?? '${widget.post.authorNickname} avatar'),
-            excludeSemantics: true,
   Widget _buildHeader(BuildContext context, ThemeData theme) {
     final accentColor = _getUserAccentColor(theme);
     final isAnonymous = widget.post.isAnonymous;
