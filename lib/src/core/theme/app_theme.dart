@@ -243,6 +243,11 @@ class AppTheme {
       },
     ),
     
+    focusTheme: FocusThemeData(
+      glowColor: DesignTokens.vibrantPurple.withOpacity(0.2),
+      glowFactor: 1.5,
+    ),
+    
     textTheme: _textTheme,
   );
 
@@ -482,6 +487,11 @@ class AppTheme {
         TargetPlatform.android: ZoomPageTransitionsBuilder(),
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
+    ),
+    
+    focusTheme: FocusThemeData(
+      glowColor: DesignTokens.lightPurple.withOpacity(0.25),
+      glowFactor: 1.6,
     ),
     
     textTheme: _textTheme,

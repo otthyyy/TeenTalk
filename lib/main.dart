@@ -95,6 +95,24 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
 
+    return MaterialApp.router(
+      title: 'TeenTalk',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      routerConfig: router,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('es', ''),
+        Locale('it', ''),
+      ],
     return ScreenshotProtectedContent(
       child: MaterialApp.router(
         title: 'TeenTalk',

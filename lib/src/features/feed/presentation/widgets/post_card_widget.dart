@@ -8,6 +8,7 @@ import '../../../../core/widgets/cached_image_widget.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
 import 'liker_list_modal.dart';
 
@@ -90,6 +91,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isLiked = widget.currentUserId != null &&
         widget.post.likedBy.contains(widget.currentUserId);
 
@@ -152,15 +154,16 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildHeader(theme, l10n),
                     _buildHeader(context, theme),
                     const SizedBox(height: 12),
-                    _buildContent(theme),
+                    _buildContent(theme, l10n),
                     if (widget.post.imageUrl != null) ...[
                       const SizedBox(height: 12),
-                      _buildImage(theme),
+                      _buildImage(theme, l10n),
                     ],
                     const SizedBox(height: 12),
-                    _buildFooter(theme, isLiked),
+                    _buildFooter(theme, l10n, isLiked),
                   ],
                 ),
               ),
@@ -171,6 +174,20 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     );
   }
 
+  Widget _buildHeader(ThemeData theme, AppLocalizations? l10n) {
+    final accentColor = _getUserAccentColor(theme);
+    final author = widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname;
+    final timestamp = _formatTimestamp(widget.post.createdAt);
+
+    return Semantics(
+      label: l10n != null ? l10n.postByAuthor(author, timestamp) : 'Post by $author, $timestamp',
+      child: Row(
+        children: [
+          Semantics(
+            label: widget.post.isAnonymous 
+                ? (l10n?.a11yAnonymousAvatar ?? 'Anonymous user avatar') 
+                : (l10n?.authorAvatar(widget.post.authorNickname) ?? '${widget.post.authorNickname} avatar'),
+            excludeSemantics: true,
   Widget _buildHeader(BuildContext context, ThemeData theme) {
     final accentColor = _getUserAccentColor(theme);
     final isAnonymous = widget.post.isAnonymous;
