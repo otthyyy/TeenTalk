@@ -14,6 +14,7 @@ import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -65,23 +66,25 @@ class TeenTalkApp extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
-      title: 'TeenTalk',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      routerConfig: router,
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('es', ''),
-      ],
+    return ScreenshotProtectedContent(
+      child: MaterialApp.router(
+        title: 'TeenTalk',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: router,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('es', ''),
+        ],
+      ),
     );
   }
 }
