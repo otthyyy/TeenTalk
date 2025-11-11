@@ -7,7 +7,7 @@ class ConnectivityService {
   final Logger _logger = Logger();
   
   StreamController<bool>? _connectivityController;
-  StreamSubscription<List<ConnectivityResult>>? _subscription;
+  StreamSubscription<ConnectivityResult>? _subscription;
   bool _isConnected = true;
 
   bool get isConnected => _isConnected;
@@ -22,13 +22,12 @@ class ConnectivityService {
       _connectivityController ??= StreamController<bool>.broadcast();
 
       final initialResult = await _connectivity.checkConnectivity();
-      _isConnected = _isNetworkConnected(_normalizeResults(initialResult));
+      _isConnected = _isNetworkConnected(initialResult);
       _connectivityController?.add(_isConnected);
       
-      _subscription = _connectivity.onConnectivityChanged.listen((results) {
-        final normalized = _normalizeResults(results);
+      _subscription = _connectivity.onConnectivityChanged.listen((result) {
         final wasConnected = _isConnected;
-        _isConnected = _isNetworkConnected(normalized);
+        _isConnected = _isNetworkConnected(result);
         
         if (wasConnected != _isConnected) {
           _logger.i('Connectivity changed: ${_isConnected ? 'online' : 'offline'}');
@@ -42,23 +41,10 @@ class ConnectivityService {
     }
   }
 
-  List<ConnectivityResult> _normalizeResults(dynamic result) {
-    if (result is List<ConnectivityResult>) {
-      return result;
-    }
-    if (result is ConnectivityResult) {
-      return [result];
-    }
-    return const [];
-  }
-
-  bool _isNetworkConnected(List<ConnectivityResult> results) {
-    return results.isNotEmpty && 
-           results.any((result) => 
-             result == ConnectivityResult.mobile || 
-             result == ConnectivityResult.wifi ||
-             result == ConnectivityResult.ethernet
-           );
+  bool _isNetworkConnected(ConnectivityResult result) {
+    return result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet;
   }
 
   void dispose() {

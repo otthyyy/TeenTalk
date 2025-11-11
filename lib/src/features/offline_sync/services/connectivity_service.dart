@@ -22,6 +22,7 @@ class ConnectivityService {
   final Logger _logger = Logger();
   final StreamController<ConnectivityStatus> _statusController =
       StreamController<ConnectivityStatus>.broadcast();
+  StreamSubscription<ConnectivityResult>? _subscription;
 
   Stream<ConnectivityStatus> get connectivityStream => _statusController.stream;
 
@@ -30,15 +31,10 @@ class ConnectivityService {
   }
 
   void _init() {
-    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
-      final hasConnection = results.isNotEmpty &&
-          !results.every((result) => result == ConnectivityResult.none);
-      
-      final status = hasConnection
-          ? ConnectivityStatus.online
-          : ConnectivityStatus.offline;
-      
-      _logger.d('Connectivity changed: $status (results: $results)');
+    _subscription = _connectivity.onConnectivityChanged.listen((result) {
+      final status = _mapResultToStatus(result);
+
+      _logger.d('Connectivity changed: $status (result: $result)');
       _statusController.add(status);
     });
 
@@ -47,14 +43,9 @@ class ConnectivityService {
 
   Future<void> _checkInitialConnectivity() async {
     try {
-      final results = await _connectivity.checkConnectivity();
-      final hasConnection = results.isNotEmpty &&
-          !results.every((result) => result == ConnectivityResult.none);
-      
-      final status = hasConnection
-          ? ConnectivityStatus.online
-          : ConnectivityStatus.offline;
-      
+      final result = await _connectivity.checkConnectivity();
+      final status = _mapResultToStatus(result);
+
       _logger.d('Initial connectivity: $status');
       _statusController.add(status);
     } catch (e, stackTrace) {
@@ -65,16 +56,22 @@ class ConnectivityService {
 
   Future<bool> isOnline() async {
     try {
-      final results = await _connectivity.checkConnectivity();
-      return results.isNotEmpty &&
-          !results.every((result) => result == ConnectivityResult.none);
+      final result = await _connectivity.checkConnectivity();
+      return result != ConnectivityResult.none;
     } catch (e) {
       _logger.e('Error checking connectivity: $e');
       return false;
     }
   }
 
+  ConnectivityStatus _mapResultToStatus(ConnectivityResult result) {
+    return result == ConnectivityResult.none
+        ? ConnectivityStatus.offline
+        : ConnectivityStatus.online;
+  }
+
   void dispose() {
+    _subscription?.cancel();
     _statusController.close();
   }
 }

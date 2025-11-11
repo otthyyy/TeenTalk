@@ -12,7 +12,7 @@ import '../../../comments/data/repositories/posts_repository.dart';
 import '../../../comments/presentation/providers/comments_provider.dart';
 import '../../../feed/presentation/widgets/post_card_widget.dart';
 import '../../../messages/data/repositories/direct_messages_repository.dart';
-import '../../../messages/presentation/providers/direct_messages_provider.dart';
+import '../../../messages/presentation/providers/direct_messages_provider.dart' as dm_provider;
 import '../../domain/models/trust_level_localizations.dart';
 
 final userPostsProvider = StateNotifierProvider.family<UserPostsNotifier, UserPostsState, String>(

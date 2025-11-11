@@ -175,7 +175,7 @@ class _EnhancedAnalyticsWidgetState
         _buildMetricCard(
           'Active Users',
           extendedAnalytics.activeUsers.toString(),
-          Icons.person_check,
+          Icons.how_to_reg,
           Colors.green,
         ),
         _buildMetricCard(

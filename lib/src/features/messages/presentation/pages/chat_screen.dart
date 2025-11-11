@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/direct_messages_repository.dart';
-import '../providers/direct_messages_provider.dart';
+import '../providers/direct_messages_provider.dart' as dm_provider;
 import '../widgets/message_bubble.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../offline_sync/services/offline_submission_helper.dart';
@@ -67,7 +67,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   void _markConversationAsRead() {
     Future.microtask(() {
-      final currentUserId = ref.read(currentUserIdProvider);
+      final currentUserId = ref.read(dm_provider.currentUserIdProvider);
       if (currentUserId != null) {
         final repository = ref.read(directMessagesRepositoryProvider);
         repository.markConversationAsRead(widget.conversationId, currentUserId);
@@ -143,9 +143,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = ref.watch(currentUserIdProvider);
-    final messagesAsync = ref.watch(messagesProvider(widget.conversationId));
-    final sendMessageAsync = ref.watch(sendMessageProvider);
+    final currentUserId = ref.watch(dm_provider.currentUserIdProvider);
+    final messagesAsync = ref.watch(dm_provider.messagesProvider(widget.conversationId));
+    final sendMessageAsync = ref.watch(dm_provider.sendMessageProvider);
 
     final theme = Theme.of(context);
 
@@ -347,7 +347,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (text.isEmpty) return;
 
     final offlineHelper = ref.read(offlineSubmissionHelperProvider);
-    final currentUserId = ref.read(currentUserIdProvider);
+    final currentUserId = ref.read(dm_provider.currentUserIdProvider);
     
     if (currentUserId == null) return;
 
@@ -383,7 +383,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       return;
     }
 
-    final notifier = ref.read(sendMessageProvider.notifier);
+    final notifier = ref.read(dm_provider.sendMessageProvider.notifier);
     await notifier.sendMessage(
       receiverId: widget.otherUserId,
       text: text,

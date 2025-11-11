@@ -202,8 +202,8 @@ class ProfilePage extends ConsumerWidget {
                       size: 16,
                       onTap: () {
                         ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                              profile.uid,
                               profile.trustLevel.name,
-                              'profile_page',
                             );
                       },
                     ),

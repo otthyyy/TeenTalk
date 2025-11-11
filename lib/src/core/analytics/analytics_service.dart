@@ -439,6 +439,91 @@ class AnalyticsService {
     await logEvent(name: AnalyticsEvents.analyticsOptedIn);
   }
 
+  // Rate Limit Events
+
+  Future<void> logRateLimitHit({
+    required String contentType,
+    required String limitType,
+    required int submissionCount,
+  }) async {
+    await logEvent(
+      name: 'rate_limit_hit',
+      parameters: {
+        'content_type': contentType,
+        'limit_type': limitType,
+        'submission_count': submissionCount,
+      },
+    );
+  }
+
+  Future<void> logContentSubmission({
+    required String contentType,
+    required bool isAnonymous,
+  }) async {
+    await logEvent(
+      name: 'content_submission',
+      parameters: {
+        'content_type': contentType,
+        'is_anonymous': isAnonymous,
+      },
+    );
+  }
+
+  Future<void> logRateLimitWarning({
+    required String contentType,
+    required int remainingSubmissions,
+  }) async {
+    await logEvent(
+      name: 'rate_limit_warning',
+      parameters: {
+        'content_type': contentType,
+        'remaining_submissions': remainingSubmissions,
+      },
+    );
+  }
+
+  // Trust & Safety Events
+
+  Future<void> logLowTrustWarning(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningDismiss(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_dismiss',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningProceed(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_proceed',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logTrustBadgeTap(String userId, String trustLevel) async {
+    await logEvent(
+      name: 'trust_badge_tap',
+      parameters: {
+        'user_id': userId,
+        'trust_level': trustLevel,
+      },
+    );
+  }
+
   /// Set screen name for Firebase Analytics
   Future<void> setCurrentScreen({
     required String screenName,

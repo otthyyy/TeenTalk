@@ -243,10 +243,7 @@ class AppTheme {
       },
     ),
     
-    focusTheme: FocusThemeData(
-      glowColor: DesignTokens.vibrantPurple.withOpacity(0.2),
-      glowFactor: 1.5,
-    ),
+    focusColor: DesignTokens.vibrantPurple.withOpacity(0.2),
     
     textTheme: _textTheme,
   );
@@ -489,10 +486,7 @@ class AppTheme {
       },
     ),
     
-    focusTheme: FocusThemeData(
-      glowColor: DesignTokens.lightPurple.withOpacity(0.25),
-      glowFactor: 1.6,
-    ),
+    focusColor: DesignTokens.lightPurple.withOpacity(0.25),
     
     textTheme: _textTheme,
   );

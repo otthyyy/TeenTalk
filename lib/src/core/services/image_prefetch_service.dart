@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import '../../../features/comments/data/models/comment.dart';
+import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'image_cache_service.dart';
 
 class ImagePrefetchService {
