@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import '../../../../core/utils/search_keywords_generator.dart';
 
 import 'trust_level.dart';
 
@@ -98,6 +99,8 @@ class UserProfile {
               schoolYear,
               interests,
               clubs,
+              json['gender'] as String?,
+            ),
             ),
       trustScore: json['trustScore'] as int? ?? 50,
       trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
@@ -210,13 +213,14 @@ class UserProfile {
       clubs: clubs,
       searchKeywords: searchKeywords.isNotEmpty
           ? searchKeywords
-          : buildSearchKeywords(nickname, school, schoolYear, interests, clubs),
-      school: data['school'] as String?,
-      schoolYear: data['schoolYear'] as int?,
-      interests: data['interests'] != null
-          ? List<String>.from(data['interests'] as List)
-          : [],
-      trustLevel: (data['trustLevel'] as num?)?.toDouble() ?? 0.0,
+          : buildSearchKeywords(
+              nickname,
+              school,
+              schoolYear,
+              interests,
+              clubs,
+              data['gender'] as String?,
+            ),
       anonymousPostsCount: data['anonymousPostsCount'] as int? ?? 0,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
@@ -266,6 +270,7 @@ class UserProfile {
       schoolYear,
       interests,
       clubs,
+      gender,
     );
   }
 
@@ -397,6 +402,7 @@ class UserProfile {
         other.updatedAt == updatedAt &&
         other.isAdmin == isAdmin &&
         other.isModerator == isModerator &&
+        other.trustLevel == trustLevel &&
         other.isBetaTester == isBetaTester &&
         other.betaConsentGiven == betaConsentGiven &&
         other.betaConsentTimestamp == betaConsentTimestamp &&
@@ -405,6 +411,36 @@ class UserProfile {
 
   @override
   int get hashCode {
+    return uid.hashCode ^
+        nickname.hashCode ^
+        nicknameVerified.hashCode ^
+        gender.hashCode ^
+        school.hashCode ^
+        schoolYear.hashCode ^
+        _listEquality.hash(interests) ^
+        _listEquality.hash(clubs) ^
+        _listEquality.hash(searchKeywords) ^
+        anonymousPostsCount.hashCode ^
+        createdAt.hashCode ^
+        lastNicknameChangeAt.hashCode ^
+        privacyConsentGiven.hashCode ^
+        privacyConsentTimestamp.hashCode ^
+        isMinor.hashCode ^
+        guardianContact.hashCode ^
+        parentalConsentGiven.hashCode ^
+        parentalConsentTimestamp.hashCode ^
+        onboardingComplete.hashCode ^
+        allowAnonymousPosts.hashCode ^
+        profileVisible.hashCode ^
+        analyticsEnabled.hashCode ^
+        updatedAt.hashCode ^
+        isAdmin.hashCode ^
+        isModerator.hashCode ^
+        trustLevel.hashCode ^
+        isBetaTester.hashCode ^
+        betaConsentGiven.hashCode ^
+        betaConsentTimestamp.hashCode ^
+        crashReportingEnabled.hashCode;
     return Object.hashAll([
       uid,
       nickname,
@@ -464,7 +500,16 @@ class UserProfile {
     String? schoolYear,
     List<String> interests,
     List<String> clubs,
+    String? gender,
   ) {
+    return SearchKeywordsGenerator.generateUserKeywords(
+      nickname: nickname,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      gender: gender,
+    );
     final keywords = <String>{};
 
     void addKeyword(String? rawValue) {

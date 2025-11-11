@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import '../models/comment.dart';
 import '../../../feed/domain/models/feed_sort_option.dart';
+import '../../../../core/utils/search_keywords_generator.dart';
 import '../../../feed/data/services/feed_cache_service.dart';
 
 /// Repository for managing posts in Firestore.
@@ -283,6 +284,14 @@ class PostsRepository {
         );
       }
 
+      final searchKeywords = SearchKeywordsGenerator.generatePostKeywords(
+        content: content,
+        authorNickname: authorNickname,
+        isAnonymous: isAnonymous,
+        section: section,
+        school: school,
+      );
+
       final postData = {
         'authorId': authorId,
         'authorNickname': authorNickname,
@@ -290,6 +299,7 @@ class PostsRepository {
         'content': content,
         'section': section,
         'school': school,
+        'searchKeywords': searchKeywords,
         'createdAt': now.toIso8601String(),
         'updatedAt': now.toIso8601String(),
         'likeCount': 0,
@@ -327,9 +337,24 @@ class PostsRepository {
     final now = DateTime.now();
     final mentionedUserIds = _extractMentionedUserIds(content);
 
+    final postDoc = await _firestore.collection(_postsCollection).doc(postId).get();
+    if (!postDoc.exists) {
+      throw Exception('Post not found');
+    }
+
+    final postData = postDoc.data() as Map<String, dynamic>;
+    final searchKeywords = SearchKeywordsGenerator.generatePostKeywords(
+      content: content,
+      authorNickname: postData['authorNickname'] as String?,
+      isAnonymous: postData['isAnonymous'] as bool? ?? false,
+      section: postData['section'] as String?,
+      school: postData['school'] as String?,
+    );
+
     await _firestore.collection(_postsCollection).doc(postId).update({
       'content': content,
       'mentionedUserIds': mentionedUserIds,
+      'searchKeywords': searchKeywords,
       'updatedAt': now.toIso8601String(),
     });
   }

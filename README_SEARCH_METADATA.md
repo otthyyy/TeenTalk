@@ -1,4 +1,8 @@
-# Search Metadata Feature
+# Search Keywords & Metadata Feature
+
+## Overview
+
+This feature enables full-text search for posts and users with support for Italian diacritics, prefix matching, and accent-insensitive queries. Search keywords are automatically generated and maintained for all posts and user profiles.
 
 ## Quick Start
 
@@ -10,8 +14,16 @@ New users will automatically see the updated onboarding flow:
 4. Accept consent and privacy policy
 5. Configure privacy preferences
 
+Search keywords are automatically generated during profile creation.
+
 ### For Existing Users
 Existing users will see a banner on the profile edit page prompting them to complete their profile with school year and interests.
+
+**To backfill search keywords for existing data:**
+```bash
+dart scripts/backfill_search_keywords.dart dev  # For emulator
+dart scripts/backfill_search_keywords.dart prod # For production
+```
 
 ## Usage Examples
 

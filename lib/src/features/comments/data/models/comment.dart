@@ -125,25 +125,27 @@ class Post {
   final String section;
   final String? school;
   final double engagementScore;
+  final List<String> searchKeywords;
 
-  const Post({
-    required this.id,
-    required this.authorId,
-    required this.authorNickname,
-    required this.isAnonymous,
-    required this.content,
-    required this.createdAt,
-    required this.updatedAt,
-    this.likeCount = 0,
-    this.likedBy = const [],
-    this.commentCount = 0,
-    this.mentionedUserIds = const [],
-    this.isModerated = false,
-    this.imageUrl,
-    this.section = 'spotted',
-    this.school,
-    this.engagementScore = 0.0,
-  });
+   const Post({
+     required this.id,
+     required this.authorId,
+     required this.authorNickname,
+     required this.isAnonymous,
+     required this.content,
+     required this.createdAt,
+     required this.updatedAt,
+     this.likeCount = 0,
+     this.likedBy = const [],
+     this.commentCount = 0,
+     this.mentionedUserIds = const [],
+     this.isModerated = false,
+     this.imageUrl,
+     this.section = 'spotted',
+     this.school,
+     this.engagementScore = 0.0,
+     this.searchKeywords = const [],
+   });
 
   Post copyWith({
     String? id,
@@ -162,6 +164,7 @@ class Post {
     String? section,
     String? school,
     double? engagementScore,
+    List<String>? searchKeywords,
   }) {
     return Post(
       id: id ?? this.id,
@@ -180,6 +183,7 @@ class Post {
       section: section ?? this.section,
       school: school ?? this.school,
       engagementScore: engagementScore ?? this.engagementScore,
+      searchKeywords: searchKeywords ?? this.searchKeywords,
     );
   }
 
@@ -201,6 +205,7 @@ class Post {
       section: json['section'] as String? ?? 'spotted',
       school: json['school'] as String?,
       engagementScore: (json['engagementScore'] as num?)?.toDouble() ?? 0.0,
+      searchKeywords: List<String>.from(json['searchKeywords'] as List? ?? []),
     );
   }
 
@@ -221,5 +226,6 @@ class Post {
     'section': section,
     'school': school,
     'engagementScore': engagementScore,
+    'searchKeywords': searchKeywords,
   };
 }
