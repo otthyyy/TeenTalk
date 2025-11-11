@@ -4,6 +4,9 @@ This directory contains all the visual assets for the TeenTalk Flutter applicati
 
 ## Directory Structure
 
+### `branding/`
+Source artwork for automated launcher icons and splash screens generated via `flutter_launcher_icons` and `flutter_native_splash`.
+
 ### `images/`
 Contains image assets like logos, splash screens, and other graphics.
 
@@ -73,6 +76,27 @@ flutter:
     - assets/images/
     - assets/icons/
 ```
+
+## Branding Assets
+
+### `branding/` - Automated Icon & Splash Generation
+This directory contains the source artwork for TeenTalk's branded launcher icons and splash screens. Use these commands to regenerate platform assets:
+
+```sh
+# Regenerate launcher icons (Android, iOS, web, macOS, Windows, Linux)
+flutter pub run flutter_launcher_icons
+
+# Regenerate splash screens (Android, iOS, web)
+flutter pub run flutter_native_splash:create
+```
+
+**Source Files:**
+- `app_icon.png` (1024×1024) - Gradient icon with TeenTalk chat bubble logo
+- `splash_logo.png` (512×512) - Transparent logo for splash screens
+- `splash_background_light.png` - Light mode gradient background
+- `splash_background_dark.png` - Dark mode gradient background
+
+No manual editing of platform-specific folders required. These tools automatically generate all density-specific icons and splash screens.
 
 ## Testing
 

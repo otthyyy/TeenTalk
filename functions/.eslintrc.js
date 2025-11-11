@@ -11,27 +11,24 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
-    "plugin:@typescript-eslint/recommended",
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
     project: ["tsconfig.json"],
     sourceType: "module",
   },
   ignorePatterns: [
     "/lib/**/*",
+    "index.js",
+    ".eslintrc.js",
   ],
   plugins: [
     "@typescript-eslint",
-    "import",
   ],
   rules: {
+    "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "max-len": ["error", {"code": 120}],
+    "require-jsdoc": 0,
+    "valid-jsdoc": 0,
   },
   overrides: [
     {
@@ -45,9 +42,4 @@ module.exports = {
       },
     },
   ],
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
-    "max-len": ["error", {"code": 120}],
-  },
 };

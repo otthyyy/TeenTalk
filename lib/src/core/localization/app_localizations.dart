@@ -166,6 +166,17 @@ abstract class AppLocalizations {
   String get rateLimitOkay;
   String cooldownTimer(int seconds);
   String remainingCount(int count, String type);
+
+  // Legal Pages
+  String get legalPrivacyPolicyTitle;
+  String get legalTermsOfServiceTitle;
+  String get legalUnavailableTitle;
+  String get legalUnavailableMessage;
+  String get legalLoadError;
+  String get legalReload;
+  String get legalLinkOpenError;
+  String get legalViewPrivacy;
+  String get legalViewTerms;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

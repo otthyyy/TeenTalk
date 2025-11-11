@@ -38,14 +38,20 @@ void main() {
 
 class MockPostsRepository extends PostsRepository {
   @override
-  Future<(List<Post>, DocumentSnapshot?)> getPosts({
+  Future<({
+    List<Post> posts,
+    DocumentSnapshot? lastDocument,
+    bool hasMore,
+    String? paginationToken,
+  })> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
     String? school,
     FeedSortOption sortOption = FeedSortOption.newest,
+    bool forceRefresh = false,
   }) async {
-    return ([], null);
+    return (posts: [], lastDocument: null, hasMore: false, paginationToken: null);
   }
 
   @override
