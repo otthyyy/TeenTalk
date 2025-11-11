@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/screenshot_protection_providers.dart';
@@ -30,13 +31,18 @@ class _ScreenshotProtectedContentState
 
   bool _dialogShowing = false;
 
+  bool get _isIOS {
+    if (kIsWeb) return false;
+    return Platform.isIOS;
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(screenshotProtectionStateProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      if (Platform.isIOS && state.showWarning && !_dialogShowing) {
+      if (_isIOS && state.showWarning && !_dialogShowing) {
         _dialogShowing = true;
         showDialog(
           context: context,
@@ -56,7 +62,7 @@ class _ScreenshotProtectedContentState
     return Stack(
       children: [
         widget.child,
-        if (Platform.isIOS && state.isEnabled && state.isIosCaptureActive)
+        if (_isIOS && state.isEnabled && state.isIosCaptureActive)
           const ScreenshotBlurOverlay(),
       ],
     );

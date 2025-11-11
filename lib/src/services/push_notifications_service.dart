@@ -95,7 +95,7 @@ class PushNotificationsService {
     );
 
     // Create Android notification channel
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final androidPlugin =
           _localNotifications.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
