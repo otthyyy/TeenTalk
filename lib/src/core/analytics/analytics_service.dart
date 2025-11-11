@@ -455,4 +455,86 @@ class AnalyticsService {
       _logger.e('Error setting screen: $e');
     }
   }
+
+  // Rate Limiting Events
+  Future<void> logRateLimitHit({
+    required String contentType,
+    required String limitType,
+    required int submissionCount,
+  }) async {
+    await logEvent(
+      name: 'rate_limit_hit',
+      parameters: {
+        'content_type': contentType,
+        'limit_type': limitType,
+        'submission_count': submissionCount,
+      },
+    );
+  }
+
+  Future<void> logRateLimitWarning({
+    required String contentType,
+    required int remainingSubmissions,
+  }) async {
+    await logEvent(
+      name: 'rate_limit_warning',
+      parameters: {
+        'content_type': contentType,
+        'remaining_submissions': remainingSubmissions,
+      },
+    );
+  }
+
+  Future<void> logContentSubmission({
+    required String contentType,
+    required bool isAnonymous,
+  }) async {
+    await logEvent(
+      name: 'content_submission',
+      parameters: {
+        'content_type': contentType,
+        'is_anonymous': isAnonymous,
+      },
+    );
+  }
+
+  // Trust Level Events
+  Future<void> logLowTrustWarning(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningDismiss(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_dismiss',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logLowTrustWarningProceed(String userId, String context) async {
+    await logEvent(
+      name: 'low_trust_warning_proceed',
+      parameters: {
+        'user_id': userId,
+        'context': context,
+      },
+    );
+  }
+
+  Future<void> logTrustBadgeTap(String trustLevel) async {
+    await logEvent(
+      name: 'trust_badge_tap',
+      parameters: {
+        'trust_level': trustLevel,
+      },
+    );
+  }
 }

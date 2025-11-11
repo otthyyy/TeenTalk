@@ -330,13 +330,13 @@ class PostsNotifier extends StateNotifier<PostsState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final (posts, lastDoc) = await _repository.getPosts(
+      final result = await _repository.getPosts(
         lastDocument: refresh ? null : state.lastDocument,
         limit: 20,
         section: section,
       );
 
-      if (posts.isEmpty) {
+      if (result.posts.isEmpty) {
         state = state.copyWith(
           isLoading: false,
           hasMore: false,
@@ -345,13 +345,13 @@ class PostsNotifier extends StateNotifier<PostsState> {
         return;
       }
 
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
+      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
 
       state = state.copyWith(
         posts: allPosts,
         isLoading: false,
-        lastDocument: lastDoc,
-        hasMore: posts.length == 20,
+        lastDocument: result.lastDocument,
+        hasMore: result.hasMore,
         currentSection: section,
       );
 

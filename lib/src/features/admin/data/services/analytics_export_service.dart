@@ -1,6 +1,7 @@
 import 'package:csv/csv.dart';
 import '../models/extended_analytics.dart';
 import '../models/report.dart';
+import 'analytics_export_delegate.dart';
 import 'analytics_export_delegate_stub.dart'
     if (dart.library.io) 'analytics_export_delegate_io.dart'
     if (dart.library.html) 'analytics_export_delegate_web.dart';

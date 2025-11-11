@@ -272,7 +272,10 @@ class AppTutorial {
         ),
       ),
       onFinish: onFinish,
-      onSkip: onSkip,
+      onSkip: () {
+        onSkip();
+        return true;
+      },
       onClickTarget: (target) {},
       onClickTargetWithTapPosition: (target, tapDetails) {},
       onClickOverlay: (target) {},

@@ -424,21 +424,21 @@ class UserProfile {
     );
   }
 
-  static List<String> _normalizeStringList(dynamic value) {
-    if (value == null) return const [];
-    if (value is Iterable) {
-      return value.map((e) => e.toString()).toList(growable: false);
-    }
-    return const [];
-  }
-
-  static DateTime? _timestampToDate(dynamic value) {
-    if (value is Timestamp) {
-      return value.toDate();
-    }
-    if (value is DateTime) {
-      return value;
-    }
-    return null;
+  static List<String> buildSearchKeywords(
+    String nickname,
+    String? school,
+    String? schoolYear,
+    List<String> interests,
+    List<String> clubs,
+    String? gender,
+  ) {
+    return SearchKeywordsGenerator.generateUserKeywords(
+      nickname: nickname,
+      school: school,
+      schoolYear: schoolYear,
+      interests: interests,
+      clubs: clubs,
+      gender: gender,
+    );
   }
 }

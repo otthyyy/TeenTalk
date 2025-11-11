@@ -20,6 +20,9 @@ class AnalyticsEvents {
   static const String postCreationStarted = 'post_creation_started';
   static const String postCreated = 'post_created';
   static const String postCreationCancelled = 'post_creation_cancelled';
+  static const String contentSubmission = 'content_submission';
+  static const String rateLimitHit = 'rate_limit_hit';
+  static const String rateLimitWarning = 'rate_limit_warning';
 
   // Comment Events
   static const String commentCreated = 'comment_created';
@@ -29,6 +32,9 @@ class AnalyticsEvents {
   static const String contentReported = 'content_reported';
   static const String userBlocked = 'user_blocked';
   static const String userUnblocked = 'user_unblocked';
+  static const String lowTrustWarning = 'low_trust_warning';
+  static const String lowTrustWarningDismiss = 'low_trust_warning_dismiss';
+  static const String lowTrustWarningProceed = 'low_trust_warning_proceed';
 
   // Notification Events
   static const String notificationOpened = 'notification_opened';
@@ -45,6 +51,7 @@ class AnalyticsEvents {
   // Profile Events
   static const String profileViewed = 'profile_viewed';
   static const String profileEdited = 'profile_edited';
+  static const String trustBadgeTap = 'trust_badge_tap';
 
   // Privacy Events
   static const String privacySettingsChanged = 'privacy_settings_changed';
@@ -96,6 +103,16 @@ class AnalyticsParameters {
   // Share Parameters
   static const String shareMethod = 'share_method';
   static const String shareDestination = 'share_destination';
+
+  // Rate Limit Parameters
+  static const String limitType = 'limit_type';
+  static const String submissionCount = 'submission_count';
+  static const String remainingSubmissions = 'remaining_submissions';
+
+  // Trust & Safety Parameters
+  static const String userId = 'user_id';
+  static const String context = 'context';
+  static const String trustLevel = 'trust_level';
 }
 
 class AnalyticsContentTypes {

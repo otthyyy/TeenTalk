@@ -162,13 +162,13 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                   children: [
                     _buildHeader(context, theme),
                     const SizedBox(height: 12),
-                    _buildContent(theme, l10n),
+                    _buildContent(theme),
                     if (widget.post.imageUrl != null) ...[
                       const SizedBox(height: 12),
-                      _buildImage(theme, l10n),
+                      _buildImage(theme),
                     ],
                     const SizedBox(height: 12),
-                    _buildFooter(theme, l10n, isLiked),
+                    _buildFooter(theme, isLiked),
                   ],
                 ),
               ),
@@ -361,27 +361,17 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
         height: 200,
         fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
-        child: CachedNetworkImage(
-          imageUrl: widget.post.imageUrl!,
-          fit: BoxFit.cover,
-          width: double.infinity,
+        errorWidget: Container(
           height: 200,
-          placeholder: (context, url) => Container(
-            height: 200,
-            color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
-            child: const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          ),
-          errorWidget: (context, url, error) => Container(
-            height: 200,
+          decoration: BoxDecoration(
             color: theme.colorScheme.surfaceVariant,
-            child: Center(
-              child: Icon(
-                Icons.broken_image_outlined,
-                size: 48,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.broken_image_outlined,
+              size: 48,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ),

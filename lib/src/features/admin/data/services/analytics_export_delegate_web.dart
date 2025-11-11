@@ -1,5 +1,5 @@
 import 'dart:html' as html;
-import 'analytics_export_delegate_stub.dart';
+import 'analytics_export_delegate.dart';
 
 class WebAnalyticsExportDelegate implements AnalyticsExportDelegate {
   @override

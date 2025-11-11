@@ -47,19 +47,14 @@ class ImageCacheService {
   // Get cache size information
   Future<Map<String, dynamic>> getCacheInfo() async {
     try {
-      final files = await customCacheManager.getFilesFromCache();
-      var totalSize = 0;
-      
-      for (final file in files) {
-        if (file.file != null) {
-          totalSize += await file.file!.length();
-        }
-      }
-      
+      // Note: flutter_cache_manager doesn't expose a method to get all cached files directly
+      // This is a limitation of the current API
+      // We return a placeholder response
+      _logger.w('Cache info not available with current flutter_cache_manager API');
       return {
-        'fileCount': files.length,
-        'totalSizeBytes': totalSize,
-        'totalSizeMB': (totalSize / (1024 * 1024)).toStringAsFixed(2),
+        'fileCount': -1,
+        'totalSizeBytes': -1,
+        'totalSizeMB': 'N/A',
       };
     } catch (e) {
       _logger.e('Failed to get cache info', error: e);

@@ -515,23 +515,26 @@ class _ReportListItemState extends ConsumerState<ReportListItem> {
         color = Colors.grey;
     }
 
+    final backgroundColor = color.withOpacity(0.15);
+    final foregroundColor = color;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.shade100,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.priority_high, size: 12, color: color.shade900),
+          Icon(Icons.priority_high, size: 12, color: foregroundColor),
           const SizedBox(width: 2),
           Text(
             severity.toUpperCase(),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: color.shade900,
+              color: foregroundColor,
             ),
           ),
         ],

@@ -127,7 +127,6 @@ class PostsRepository {
     }
 
     query = query.limit(limit);
-    query = query.select(_listFields);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);

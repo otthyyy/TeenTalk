@@ -57,7 +57,7 @@ class SyncQueueService {
       if (kIsWeb) {
         await Hive.initFlutter();
       } else if (Platform.isLinux) {
-        await Hive.init('./hive_boxes');
+        Hive.init('./hive_boxes');
       } else {
         await Hive.initFlutter();
       }

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'analytics_export_delegate_stub.dart';
+import 'analytics_export_delegate.dart';
 
 class IoAnalyticsExportDelegate implements AnalyticsExportDelegate {
   @override
