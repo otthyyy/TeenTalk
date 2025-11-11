@@ -41,7 +41,7 @@ jobs:
         run: flutter test --coverage --reporter expanded
       
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
           flags: flutter
@@ -50,7 +50,7 @@ jobs:
       
       - name: Archive test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-test-results
           path: |
@@ -86,7 +86,7 @@ jobs:
         run: npm test
       
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: functions-build
           path: functions/lib/
@@ -121,7 +121,7 @@ jobs:
       
       - name: Archive integration test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-results
           path: integration_test/
