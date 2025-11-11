@@ -60,6 +60,7 @@ class _ScreenshotProtectedContentState
     });
 
     return Stack(
+      alignment: Alignment.topLeft,
       children: [
         widget.child,
         if (_isIOS && state.isEnabled && state.isIosCaptureActive)
