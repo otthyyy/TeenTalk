@@ -134,7 +134,68 @@ flutter test test/a11y/
 
 # Update golden test files
 flutter test --update-goldens test/a11y/
+
+# Run all repository/service unit tests
+flutter test test/src/features/**/data/repositories
 ```
+
+### Targeted repository tests
+
+Repository and service tests mirror the `lib/src/features` structure under `test/src/features`. To focus on a particular repository you can target the corresponding file or directory:
+
+```bash
+# Posts
+flutter test test/src/features/comments/data/repositories/posts_repository_test.dart
+
+# Comments
+flutter test test/src/features/comments/data/repositories/comments_repository_test.dart
+
+# Direct messages
+flutter test test/src/features/messages/data/repositories/direct_messages_repository_test.dart
+
+# User profiles
+flutter test test/src/features/profile/data/repositories/user_repository_test.dart
+```
+
+### Integration Tests
+
+The app includes comprehensive end-to-end integration tests using Firebase emulator:
+
+```bash
+# Run complete integration test workflow (automated)
+./scripts/run_integration_tests.sh
+
+# Or manually step by step:
+
+# 1. Start Firebase emulators
+./scripts/start_emulator.sh
+
+# 2. Run integration tests
+flutter test integration_test/
+
+# 3. Stop emulators
+./scripts/stop_emulator.sh
+```
+
+Integration tests cover:
+- Complete authentication flow (sign-up, sign-in)
+- Onboarding process
+- Post creation with images
+- Commenting and liking
+- Direct messaging
+- Notification stream updates
+
+See [docs/TESTING.md](docs/TESTING.md) for comprehensive testing documentation.
+### Repository and Service Unit Tests
+
+Comprehensive unit tests cover core repositories:
+- **PostsRepository**: Post CRUD, like/unlike, mentions extraction, validation
+- **CommentsRepository**: Comment CRUD, replies, like/unlike, mention tracking
+- **DirectMessagesRepository**: Messaging, blocking, unread counts, conversations
+- **UserRepository**: Profile management, nickname validation, search keywords
+- **Search Keywords**: Accent handling, unicode, special characters
+
+See [test/README.md](test/README.md) for detailed test documentation.
 
 ### Accessibility Testing
 

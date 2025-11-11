@@ -32,6 +32,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   logger.d('Message data: ${message.data}');
   logger.d('Message notification: ${message.notification?.title}');
 }
+import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
+import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -97,6 +99,23 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
       final pushService = ref.read(pushNotificationsServiceProvider);
       unawaited(pushService.initialize());
     });
+    _initializePushNotifications();
+  }
+
+  Future<void> _initializePushNotifications() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!mounted) return;
+    
+    final router = ref.read(routerProvider);
+    final pushHandler = ref.read(pushNotificationHandlerProvider);
+    
+    pushHandler.initialize(router);
+    
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      await pushHandler.handleInitialMessage(initialMessage);
+    }
   }
 
   @override
@@ -125,6 +144,25 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
         Locale('es', ''),
         Locale('it', ''),
       ],
+    return ScreenshotProtectedContent(
+      child: MaterialApp.router(
+        title: 'TeenTalk',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: router,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('es', ''),
+        ],
+      ),
     );
   }
 }

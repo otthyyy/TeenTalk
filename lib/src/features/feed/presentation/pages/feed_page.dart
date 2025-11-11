@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'feed_sections_page.dart';
 
 class FeedPage extends StatelessWidget {
-  const FeedPage({super.key});
+  final String? openCommentsForPost;
+  
+  const FeedPage({
+    super.key,
+    this.openCommentsForPost,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const FeedSectionsPage();
+    return FeedSectionsPage(
+      openCommentsForPost: openCommentsForPost,
+    );
   }
 }

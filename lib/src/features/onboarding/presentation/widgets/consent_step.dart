@@ -1,5 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../legal/presentation/pages/legal_document_page.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 class ConsentStep extends StatefulWidget {
   final bool? isMinor;
@@ -73,68 +76,14 @@ class _ConsentStepState extends State<ConsentStep> {
     }
   }
 
-  void _showPrivacyPolicy() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Privacy Policy'),
-        content: const SingleChildScrollView(
-          child: Text(
-            'TeenTalk Privacy Policy\n\n'
-            '1. Data Collection\n'
-            'We collect and process your personal data including nickname, gender, school, and usage data.\n\n'
-            '2. Data Usage\n'
-            'Your data is used to provide and improve our services, ensure platform safety, and comply with legal obligations.\n\n'
-            '3. Data Storage\n'
-            'Data is stored securely using industry-standard encryption and security practices.\n\n'
-            '4. Your Rights\n'
-            'Under GDPR, you have the right to access, correct, delete, and port your data. You can also withdraw consent at any time.\n\n'
-            '5. Contact\n'
-            'For privacy concerns, contact us at privacy@teentalk.app',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showTermsOfService() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Terms of Service'),
-        content: const SingleChildScrollView(
-          child: Text(
-            'TeenTalk Terms of Service\n\n'
-            '1. Acceptance of Terms\n'
-            'By using TeenTalk, you agree to these terms.\n\n'
-            '2. User Conduct\n'
-            'Users must respect others, not share inappropriate content, and follow community guidelines.\n\n'
-            '3. Content Moderation\n'
-            'We reserve the right to moderate and remove content that violates our policies.\n\n'
-            '4. Account Termination\n'
-            'We may suspend or terminate accounts that violate these terms.\n\n'
-            '5. Disclaimer\n'
-            'The service is provided "as is" without warranties.',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
+  void _openLegalDocument(LegalDocumentType documentType) {
+    if (!mounted) return;
+    context.push('/legal/${documentType.routeSegment}');
   }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Form(
@@ -314,23 +263,23 @@ class _ConsentStepState extends State<ConsentStep> {
                                       text: 'I agree to the ',
                                     ),
                                     TextSpan(
-                                      text: 'Privacy Policy',
+                                      text: localizations?.legalPrivacyPolicyTitle ?? 'Privacy Policy',
                                       style: const TextStyle(
                                         color: Colors.blue,
                                         decoration: TextDecoration.underline,
                                       ),
                                       recognizer: TapGestureRecognizer()
-                                        ..onTap = _showPrivacyPolicy,
+                                        ..onTap = () => _openLegalDocument(LegalDocumentType.privacyPolicy),
                                     ),
                                     const TextSpan(text: ' and '),
                                     TextSpan(
-                                      text: 'Terms of Service',
+                                      text: localizations?.legalTermsOfServiceTitle ?? 'Terms of Service',
                                       style: const TextStyle(
                                         color: Colors.blue,
                                         decoration: TextDecoration.underline,
                                       ),
                                       recognizer: TapGestureRecognizer()
-                                        ..onTap = _showTermsOfService,
+                                        ..onTap = () => _openLegalDocument(LegalDocumentType.termsOfService),
                                     ),
                                   ],
                                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
 
@@ -125,59 +126,12 @@ class PostWidget extends ConsumerWidget {
             ),
             if (post.imageUrl != null) ...[
               const SizedBox(height: 12),
-              ClipRRect(
+              CachedImageWidget(
+                imageUrl: post.imageUrl!,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  post.imageUrl!,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / 
-                                loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.errorContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.broken_image,
-                              size: 48,
-                              color: theme.colorScheme.error,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Failed to load image',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.error,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             ],
             if (post.mentionedUserIds.isNotEmpty) ...[

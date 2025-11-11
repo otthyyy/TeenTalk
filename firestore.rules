@@ -60,10 +60,19 @@ service cloud.firestore {
                        request.resource.data.uid == resource.data.uid &&
                        request.resource.data.createdAt == resource.data.createdAt &&
                        request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp &&
+                       // Prevent users from modifying trust score/level (only Cloud Functions can)
+                       (!('trustScore' in request.resource.data) || request.resource.data.trustScore == resource.data.trustScore) &&
+                       (!('trustLevel' in request.resource.data) || request.resource.data.trustLevel == resource.data.trustLevel) &&
                        isValidProfileData(request.resource.data);
       
       // Allow delete only for own user document (for account deletion)
       allow delete: if isAuthenticated() && isOwner(userId);
+      
+      // Trust history subcollection - read for owner or admins, write only for Cloud Functions
+      match /trustHistory/{historyId} {
+        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow write: if false; // Only Cloud Functions can write
+      }
     }
     
     // Posts collection rules
@@ -283,45 +292,6 @@ service cloud.firestore {
       return ('schoolYear' in data) && data.schoolYear is string &&
              ('interests' in data) && data.interests is list && data.interests.size() >= 1 &&
              ('searchKeywords' in data) && data.searchKeywords is list;
-    }
-    
-    // Users collection rules
-    match /users/{userId} {
-      // Allow read for authenticated users if profile is visible or it's their own profile
-      allow read: if isAuthenticated() && 
-                     (get(/databases/$(database)/documents/users/$(userId)).data.profileVisible == true || 
-                      isOwner(userId));
-      
-      // Allow create only for own user document with valid data
-      allow create: if isAuthenticated() && 
-                       isOwner(userId) &&
-                       isValidNickname(request.resource.data.nickname) &&
-                       request.resource.data.nicknameVerified == true &&
-                       request.resource.data.privacyConsentGiven == true &&
-                       request.resource.data.privacyConsentTimestamp is timestamp &&
-                       request.resource.data.createdAt is timestamp &&
-                       request.resource.data.anonymousPostsCount == 0 &&
-                       // Nickname lowercase must match
-                       request.resource.data.nicknameLowercase == request.resource.data.nickname.lower() &&
-                       hasRequiredProfileFields(request.resource.data) &&
-                       isValidProfileData(request.resource.data);
-      
-      // Allow update only for own user document
-      allow update: if isAuthenticated() && 
-                       isOwner(userId) &&
-                       isValidNickname(request.resource.data.nickname) &&
-                       // If nickname is being changed, check if 30 days have passed
-                       (!isNicknameChanged() || canChangeNickname()) &&
-                       // Nickname lowercase must match if nickname changed
-                       (!isNicknameChanged() || request.resource.data.nicknameLowercase == request.resource.data.nickname.lower()) &&
-                       // Prevent modification of certain fields
-                       request.resource.data.uid == resource.data.uid &&
-                       request.resource.data.createdAt == resource.data.createdAt &&
-                       request.resource.data.privacyConsentTimestamp == resource.data.privacyConsentTimestamp &&
-                       isValidProfileData(request.resource.data);
-      
-      // Allow delete only for own user document (for account deletion)
-      allow delete: if isAuthenticated() && isOwner(userId);
     }
     
     // Rate limit helper functions
@@ -601,6 +571,30 @@ service cloud.firestore {
       
       // Admins can delete rate limits (for resets)
       allow delete: if isAdmin();
+    }
+
+    // Notifications collection rules
+    match /notifications/{notificationId} {
+      // Users can only read their own notifications
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Users can update only their own notifications (for marking as read)
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.userId == resource.data.userId &&
+                       request.resource.data.type == resource.data.type &&
+                       request.resource.data.title == resource.data.title &&
+                       request.resource.data.body == resource.data.body &&
+                       request.resource.data.data == resource.data.data &&
+                       request.resource.data.createdAt == resource.data.createdAt;
+      
+      // Only Cloud Functions can create notifications
+      allow create: if false;
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
     }
 
     // Default deny all other collections
