@@ -86,6 +86,11 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   
+  # Network
+  connectivity_plus: ^5.0.2
+  
+  # Image Caching
+  cached_network_image: ^3.3.1
   # Background Tasks
   workmanager: ^0.5.2
   background_fetch: ^1.2.4

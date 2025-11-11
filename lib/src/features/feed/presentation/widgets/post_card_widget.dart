@@ -1,3 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../common/widgets/trust_badge.dart';
+import '../../../../core/services/analytics_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -370,6 +376,30 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
         height: 200,
         fit: BoxFit.cover,
         borderRadius: BorderRadius.circular(12),
+        child: CachedNetworkImage(
+          imageUrl: widget.post.imageUrl!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: 200,
+          placeholder: (context, url) => Container(
+            height: 200,
+            color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            height: 200,
+            color: theme.colorScheme.surfaceVariant,
+            child: Center(
+              child: Icon(
+                Icons.broken_image_outlined,
+                size: 48,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ),
         enableInstrumentation: true,
       ),
     );

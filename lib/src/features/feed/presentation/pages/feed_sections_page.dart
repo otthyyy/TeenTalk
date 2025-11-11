@@ -19,6 +19,7 @@ import '../widgets/empty_state_widget.dart';
 import '../widgets/segmented_control.dart';
 import '../widgets/post_search_delegate.dart';
 import '../widgets/feed_filter_chips.dart';
+import '../widgets/offline_banner.dart';
 import '../../domain/models/feed_sort_option.dart';
 import '../../../offline_sync/presentation/widgets/sync_status_indicator.dart';
 
@@ -472,6 +473,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                   child: SyncStatusIndicator(),
                 ),
               ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: OfflineBanner(
+              lastSyncedAt: postsState.lastSyncedAt,
             ),
           ),
           SliverToBoxAdapter(
