@@ -81,8 +81,8 @@ class _CrashlyticsListenerState extends ConsumerState<CrashlyticsListener> {
 
   @override
   void dispose() {
-    unawaited(_authSubscription?.close());
-    unawaited(_profileSubscription?.close());
+    _authSubscription?.close();
+    _profileSubscription?.close();
     super.dispose();
   }
 
