@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/repositories/user_repository.dart';
@@ -11,7 +13,13 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
     return Stream.value(null);
   }
   
-  return userRepository.watchUserProfile(authState.user!.uid);
+  // Add timeout to prevent indefinite loading
+  return userRepository.watchUserProfile(authState.user!.uid).timeout(
+    const Duration(seconds: 10),
+    onTimeout: (sink) {
+      sink.addError(Exception('Failed to load user profile: timeout after 10 seconds'));
+    },
+  );
 });
 
 final hasCompletedOnboardingProvider = Provider<bool>((ref) {

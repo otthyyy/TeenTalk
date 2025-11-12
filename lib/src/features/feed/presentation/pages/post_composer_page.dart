@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint, debugPrintStack;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -324,6 +324,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       );
     } catch (e, stackTrace) {
       _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
+      debugPrint('Post creation error: $e');
+      debugPrintStack(stackTrace: stackTrace);
       if (!mounted) return;
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
 
