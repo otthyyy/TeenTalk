@@ -26,10 +26,11 @@ The push notifications feature enables the app to send real-time notifications t
    - Riverpod provider exposing the service
    - Manages SharedPreferences provider for local storage
 
-3. **PushNotificationsController** (`lib/src/services/push_notifications_controller.dart`)
-   - Wires push notifications to authentication events
+3. **PushNotificationsListener** (`lib/src/services/push_notifications_listener.dart`)
+   - Widget-level listener that wires push notifications to authentication events
    - Refreshes tokens on sign-in
    - Clears tokens on sign-out
+   - Uses `ref.listenManual` in widget lifecycle to avoid provider assertion errors
 
 4. **NotificationPreferences Model** (`lib/src/services/models/notification_preferences.dart`)
    - Data model for user notification preferences

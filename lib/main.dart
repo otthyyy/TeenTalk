@@ -21,9 +21,10 @@ import 'src/core/services/crashlytics_service.dart';
 import 'src/core/services/feed_cache_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
+import 'src/core/widgets/crashlytics_listener.dart';
 import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
 import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
-import 'src/services/push_notifications_controller.dart';
+import 'src/services/push_notifications_listener.dart';
 import 'src/services/push_notifications_provider.dart';
 import 'src/services/push_notifications_service.dart';
 
@@ -140,31 +141,32 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(crashlyticsSyncProvider);
-    ref.watch(pushNotificationsControllerProvider);
-    
     final themeMode = ref.watch(themeProvider);
     final router = ref.watch(routerProvider);
 
-    return ScreenshotProtectedContent(
-      child: MaterialApp.router(
-        title: 'TeenTalk',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: themeMode,
-        routerConfig: router,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en', ''),
-          Locale('es', ''),
-          Locale('it', ''),
-        ],
+    return CrashlyticsListener(
+      child: PushNotificationsListener(
+        child: ScreenshotProtectedContent(
+          child: MaterialApp.router(
+            title: 'TeenTalk',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            routerConfig: router,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en', ''),
+              Locale('es', ''),
+              Locale('it', ''),
+            ],
+          ),
+        ),
       ),
     );
   }
