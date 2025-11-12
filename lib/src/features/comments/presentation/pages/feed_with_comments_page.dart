@@ -5,6 +5,7 @@ import '../../data/models/comment.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
+import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/comments_list_widget.dart';
@@ -66,9 +67,14 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
           : _buildFeedView(postsState, theme, authState),
       floatingActionButton: _showComments
           ? null
-          : FloatingActionButton(
-              onPressed: _navigateToPostComposer,
-              child: const Icon(Icons.add),
+          : Padding(
+              padding: EdgeInsets.only(
+                bottom: BottomNavMetrics.fabPadding(margin: 16.0),
+              ),
+              child: FloatingActionButton(
+                onPressed: _navigateToPostComposer,
+                child: const Icon(Icons.add),
+              ),
             ),
     );
   }
@@ -145,9 +151,11 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                       ),
                     )
                   : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(bottom: 80.0),
-                      itemCount: postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+                     controller: _scrollController,
+                     padding: EdgeInsets.only(
+                       bottom: BottomNavMetrics.scrollBottomPadding(context, extra: 16),
+                     ),
+                     itemCount: postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == postsState.posts.length) {
                           return const Padding(

@@ -11,6 +11,7 @@ import '../../../legal/presentation/pages/legal_document_page.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../../../../core/services/analytics_provider.dart';
 import '../../domain/models/trust_level_localizations.dart';
 
@@ -22,7 +23,7 @@ class ProfilePage extends ConsumerWidget {
     final profileAsync = ref.watch(userProfileProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom + 32;
+    final bottomPadding = context.scrollPaddingAboveBottomNav(extra: 16);
 
     return Scaffold(
       body: profileAsync.when(

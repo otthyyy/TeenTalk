@@ -9,6 +9,7 @@ import '../../../comments/data/models/comment.dart';
 import '../../../comments/presentation/widgets/comments_list_widget.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../../../../core/providers/image_cache_provider.dart';
+import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../tutorial/presentation/widgets/app_tutorial.dart';
 import '../providers/feed_provider.dart';
@@ -360,7 +361,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final provider = schoolAwareFeedProvider(_selectedSection.value);
-    final fabBottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     ref.listen<FeedState>(provider, (previous, next) {
       if (next.error != null && next.error!.isNotEmpty && previous?.error != next.error) {
@@ -386,7 +386,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       floatingActionButton: _showComments
           ? null
           : Padding(
-              padding: EdgeInsets.only(bottom: fabBottomPadding),
+              padding: EdgeInsets.only(
+                bottom: BottomNavMetrics.fabPadding(margin: 16.0),
+              ),
               child: FloatingActionButton.extended(
                 key: _tutorialAnchors.createPostKey,
                 onPressed: _showCreatePostDialog,
@@ -402,7 +404,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final postsState = ref.watch(schoolAwareFeedProvider(_selectedSection.value));
     final authState = ref.watch(authStateProvider);
     final userProfile = ref.watch(userProfileProvider).value;
-    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -588,7 +589,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                 ),
               ),
           SliverToBoxAdapter(
-            child: SizedBox(height: 120 + bottomInset),
+            child: SizedBox(
+              height: context.scrollPaddingAboveBottomNav(extra: 36),
+            ),
           ),
         ],
       ),
