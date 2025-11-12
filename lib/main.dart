@@ -71,10 +71,14 @@ Future<void> main() async {
 
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
+      debugPrint('FlutterError: ${details.exception}');
+      debugPrintStack(stackTrace: details.stack);
       unawaited(crashlyticsService.recordFlutterError(details));
     };
 
     PlatformDispatcher.instance.onError = (error, stack) {
+      debugPrint('Platform error: $error');
+      debugPrintStack(stackTrace: stack);
       unawaited(crashlyticsService.recordError(error, stack, fatal: true));
       return true;
     };

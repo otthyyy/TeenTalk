@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'dart:io';
@@ -438,6 +439,8 @@ class PostsRepository {
       });
     } catch (error, stackTrace) {
       _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
+      debugPrint('likePost error for $postId: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw Exception(
         _mapLikeErrorMessage(
           error,
@@ -483,6 +486,8 @@ class PostsRepository {
       });
     } catch (error, stackTrace) {
       _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
+      debugPrint('unlikePost error for $postId: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw Exception(
         _mapLikeErrorMessage(
           error,
