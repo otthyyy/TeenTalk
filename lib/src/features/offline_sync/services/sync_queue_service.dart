@@ -12,6 +12,7 @@ import 'connectivity_service.dart';
 import '../../comments/data/repositories/posts_repository.dart';
 import '../../comments/data/repositories/comments_repository.dart';
 import '../../messages/data/repositories/direct_messages_repository.dart';
+import '../../friends/data/repositories/friends_repository.dart';
 
 final syncQueueServiceProvider = Provider<SyncQueueService>((ref) {
   final service = SyncQueueService(
@@ -229,6 +230,7 @@ class SyncQueueService {
     final data = action.data;
     final repository = DirectMessagesRepository(
       FirebaseFirestore.instance,
+      FriendsRepository(FirebaseFirestore.instance),
     );
 
     await repository.sendMessage(

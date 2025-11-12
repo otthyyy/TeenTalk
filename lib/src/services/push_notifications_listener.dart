@@ -58,7 +58,7 @@ class _PushNotificationsListenerState
 
   @override
   void dispose() {
-    unawaited(_authSubscription?.close());
+    _authSubscription?.close();
     super.dispose();
   }
 

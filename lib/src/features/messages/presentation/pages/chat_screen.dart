@@ -47,9 +47,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _markConversationAsRead();
     _checkForLowTrustWarning();
     _checkFriendshipStatus();
-    _friendsSubscription = ref.listen<AsyncValue<List<FriendEntry>>>(
+    _friendsSubscription = ref.listenManual<AsyncValue<List<FriendEntry>>>(
       friendsListProvider,
       (previous, next) => _handleFriendshipUpdate(next),
+      fireImmediately: true,
     );
   }
 
