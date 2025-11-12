@@ -47,11 +47,11 @@
     <true/>
     <!-- Camera and Photo Library permissions -->
     <key>NSCameraUsageDescription</key>
-    <string>This app needs camera access to allow users to take photos for posts.</string>
+    <string>Teen Talk uses the camera so you can capture photos to share in your posts.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app needs photo library access to allow users to select images for posts.</string>
+    <string>Teen Talk uses your photo library so you can choose images to attach to posts.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>This app needs photo library access to save images users capture.</string>
+    <string>Teen Talk saves the photos you capture to your library when you decide to keep them.</string>
     
     <!-- Push Notifications permission -->
     <key>NSUserNotificationsUsageDescription</key>

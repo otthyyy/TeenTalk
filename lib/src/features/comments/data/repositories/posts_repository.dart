@@ -8,6 +8,7 @@ import '../models/comment.dart';
 import '../../../feed/domain/models/feed_sort_option.dart';
 import '../../../../core/utils/search_keywords_generator.dart';
 import '../../../feed/data/services/feed_cache_service.dart';
+import '../../../../core/exceptions/post_exceptions.dart';
 
 /// Repository for managing posts in Firestore.
 /// 
@@ -167,71 +168,118 @@ class PostsRepository {
     });
   }
 
-  Future<String?> uploadPostImage(File? imageFile, {Uint8List? imageBytes, String? imageName}) async {
+  Future<String?> uploadPostImage(
+    File? imageFile, {
+    Uint8List? imageBytes,
+    String? imageName,
+  }) async {
     try {
       if (imageFile == null && imageBytes == null) {
         return null;
       }
 
-      // Validate image size
-      int fileSize;
+      _logger.i('[PostsRepository] Starting image upload '
+          'source=${imageFile != null ? 'file' : 'bytes'} name=$imageName');
+
+      final int fileSize;
       if (imageFile != null) {
-        fileSize = await imageFile.length();
+        try {
+          fileSize = await imageFile.length();
+        } on FileSystemException catch (e) {
+          _logger.e('[PostsRepository] Failed to read image file size', error: e);
+          throw const ImageValidationException(
+            'Failed to read selected image. Please select a different file.',
+          );
+        }
       } else {
         fileSize = imageBytes!.length;
       }
 
       if (fileSize > _maxImageSizeBytes) {
-        throw Exception('Image size exceeds 5MB limit');
+        throw const ImageValidationException(
+          'The selected image is larger than 5MB. Choose a smaller image.',
+        );
       }
 
       // Generate unique filename
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      String fileName;
-      if (imageFile != null) {
-        fileName = 'post_${timestamp}_${imageFile.path.split('/').last}';
-      } else {
-        fileName = 'post_${timestamp}_${imageName ?? 'image.jpg'}';
-      }
-      
-      // Upload to Firebase Storage
+      final fileName = imageFile != null
+          ? 'post_${timestamp}_${imageFile.path.split('/').last}'
+          : 'post_${timestamp}_${imageName ?? 'image.jpg'}';
+
       final ref = _storage.ref().child('$_imagesFolder/$fileName');
-      UploadTask uploadTask;
       final metadata = SettableMetadata(contentType: _inferImageContentType(fileName));
-      
-      if (imageFile != null) {
-        uploadTask = ref.putFile(imageFile, metadata);
-      } else {
-        uploadTask = ref.putData(imageBytes!, metadata);
+
+      UploadTask uploadTask;
+      try {
+        uploadTask = imageFile != null
+            ? ref.putFile(imageFile, metadata)
+            : ref.putData(imageBytes!, metadata);
+      } on FirebaseException catch (e, stackTrace) {
+        _logger.e('[PostsRepository] Failed to start image upload task',
+            error: e, stackTrace: stackTrace);
+        throw const PostStorageException(
+          'Unable to start image upload. Please try again.',
+        );
       }
-      
-      // Wait for upload and get download URL
-      final snapshot = await uploadTask;
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
+
+      try {
+        final snapshot = await uploadTask;
+        final downloadUrl = await snapshot.ref.getDownloadURL();
+        _logger.i('[PostsRepository] Image upload completed downloadUrl=$downloadUrl');
+        return downloadUrl;
+      } on FirebaseException catch (e, stackTrace) {
+        _logger.e('[PostsRepository] Storage error during upload',
+            error: e, stackTrace: stackTrace);
+        if (e.code == 'canceled') {
+          throw const PostStorageException('Image upload was cancelled.');
+        }
+        throw const ImageUploadNetworkException();
+      } catch (e, stackTrace) {
+        _logger.e('[PostsRepository] Unknown error during image upload',
+            error: e, stackTrace: stackTrace);
+        throw const PostStorageException();
+      }
+    } on ImageValidationException {
+      rethrow;
+    } on PostException {
+      rethrow;
     } catch (e, stackTrace) {
-      _logger.e('Failed to upload image', error: e, stackTrace: stackTrace);
-      throw Exception('Failed to upload image. Please check your network connection.');
+      _logger.e('[PostsRepository] Unexpected image upload failure',
+          error: e, stackTrace: stackTrace);
+      throw const PostStorageException();
     }
   }
 
   Future<void> validatePostContent(String content) async {
     if (content.trim().isEmpty) {
-      throw Exception('Post content cannot be empty');
+      throw const PostValidationException(
+        'Post content cannot be empty',
+        userMessage: 'Please enter some content for your post.',
+      );
     }
     if (content.trim().length < _minContentLength) {
-      throw Exception('Post content must be at least $_minContentLength characters');
+      throw PostValidationException(
+        'Post content must be at least $_minContentLength characters',
+        userMessage: 'Your post must be at least $_minContentLength character long.',
+      );
     }
     if (content.length > _maxContentLength) {
-      throw Exception('Post content cannot exceed $_maxContentLength characters');
+      throw PostValidationException(
+        'Post content cannot exceed $_maxContentLength characters',
+        userMessage: 'Your post is too long. Maximum is $_maxContentLength characters.',
+      );
     }
-    
+
     // Profanity filter placeholder - in real implementation, this would check against a profanity list
     final profanityWords = ['spam', 'inappropriate']; // Placeholder
     final lowerContent = content.toLowerCase();
     for (final word in profanityWords) {
       if (lowerContent.contains(word)) {
-        throw Exception('Post contains inappropriate content');
+        throw const PostValidationException(
+          'Post contains inappropriate content',
+          userMessage: 'Your post contains content that violates our guidelines.',
+        );
       }
     }
   }
@@ -247,15 +295,14 @@ class PostsRepository {
     String section = 'spotted',
     String? school,
   }) async {
+    _logger.i('[PostsRepository] createPost start author=$authorId section=$section');
     try {
-      // Validate content
       await validatePostContent(content);
 
       final now = DateTime.now();
       final mentionedUserIds = _extractMentionedUserIds(content);
       String? imageUrl;
 
-      // Upload image if provided
       if (imageFile != null || imageBytes != null) {
         imageUrl = await uploadPostImage(
           imageFile,
@@ -290,23 +337,44 @@ class PostsRepository {
         if (imageUrl != null) 'imageUrl': imageUrl,
       };
 
-      final docRef = await _firestore.collection(_postsCollection).add(postData);
-      
-      // Update user's anonymous posts count if applicable
+      final docRef = _firestore.collection(_postsCollection).doc();
+
+      _logger.i('[PostsRepository] Writing post document id=${docRef.id}');
+
+      await docRef.set(
+        postData,
+        SetOptions(merge: true),
+      );
+
       if (isAnonymous) {
         await _updateAnonymousPostsCount(authorId);
       }
 
-      // Trigger moderation pipeline (placeholder)
       await _triggerModerationPipeline(docRef.id, content, imageUrl);
+
+      _logger.i('[PostsRepository] Post created id=${docRef.id}');
 
       return Post.fromJson({
         ...postData,
         'id': docRef.id,
       });
+    } on PostValidationException {
+      rethrow;
+    } on ImageValidationException {
+      rethrow;
+    } on PostException catch (e) {
+      _logger.e('[PostsRepository] Post creation failed', error: e);
+      rethrow;
+    } on FirebaseException catch (e, stackTrace) {
+      _logger.e('[PostsRepository] Firestore error during create',
+          error: e, stackTrace: stackTrace);
+      throw const PostFirestoreException();
     } catch (e, stackTrace) {
-      _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
-      throw Exception('Unable to create post at this time. Please try again.');
+      _logger.e('[PostsRepository] Unexpected error creating post',
+          error: e, stackTrace: stackTrace);
+      throw const PostFirestoreException(
+        'Unexpected error while creating the post.',
+      );
     }
   }
 

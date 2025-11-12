@@ -15,6 +15,8 @@ import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';
 import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 import 'package:teen_talk_app/src/features/offline_sync/services/offline_submission_helper.dart';
+import 'package:teen_talk_app/src/core/exceptions/post_exceptions.dart';
+import 'package:teen_talk_app/src/features/comments/presentation/providers/comments_provider.dart';
 
 class PostComposerPage extends ConsumerStatefulWidget {
   const PostComposerPage({super.key});
@@ -251,15 +253,14 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       _isUploading = true;
     });
 
+    final repository = ref.read(postsRepositoryProvider);
+
     try {
-      final repository = PostsRepository();
-      
-      // Only pass imageFile on non-web platforms
       File? imageFileToUpload;
       if (!kIsWeb && _selectedImageFile != null) {
         imageFileToUpload = _selectedImageFile;
       }
-      
+
       await repository.createPost(
         authorId: authState.user!.uid,
         authorNickname: userProfile.nickname,
@@ -273,7 +274,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       );
 
       rateLimitService.recordSubmission(ContentType.post);
-      
+
       await analyticsService.logContentSubmission(
         contentType: 'post',
         isAnonymous: _isAnonymous,
@@ -286,41 +287,71 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             backgroundColor: Colors.green,
           ),
         );
-        
-        // Navigate back to feed and trigger refresh
         Navigator.of(context).pop(true);
       }
+    } on PostValidationException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.userMessage ?? e.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } on PostStorageException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.userMessage ?? 'Failed to upload image. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } on ImageValidationException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.userMessage ?? e.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } on PostException catch (e, stackTrace) {
+      _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.userMessage ?? 'Failed to create post. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } catch (e, stackTrace) {
       _logger.e('Failed to create post', error: e, stackTrace: stackTrace);
-      if (mounted) {
-        final errorMessage = e.toString().replaceFirst('Exception: ', '');
-        
-        if (errorMessage.toLowerCase().contains('rate') || 
-            errorMessage.toLowerCase().contains('limit') ||
-            errorMessage.toLowerCase().contains('too many')) {
-          await analyticsService.logRateLimitHit(
-            contentType: 'post',
-            limitType: 'backend',
-            submissionCount: rateLimitService.getSubmissionCount(
-              ContentType.post,
-              const Duration(hours: 1),
-            ),
-          );
-          
-          RateLimitDialog.show(
-            context,
-            contentType: 'post',
-            onViewGuidelines: _showPostingGuidelines,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create post: $errorMessage'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 4),
-            ),
-          );
-        }
+      if (!mounted) return;
+      final errorMessage = e.toString().replaceFirst('Exception: ', '');
+
+      if (errorMessage.toLowerCase().contains('rate') ||
+          errorMessage.toLowerCase().contains('limit') ||
+          errorMessage.toLowerCase().contains('too many')) {
+        await analyticsService.logRateLimitHit(
+          contentType: 'post',
+          limitType: 'backend',
+          submissionCount: rateLimitService.getSubmissionCount(
+            ContentType.post,
+            const Duration(hours: 1),
+          ),
+        );
+
+        RateLimitDialog.show(
+          context,
+          contentType: 'post',
+          onViewGuidelines: _showPostingGuidelines,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create post: $errorMessage'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -570,7 +601,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                         ),
                       ),
                       IconButton.outlined(
-                        onPressed: _showImagePicker,
+                        onPressed: _isUploading ? null : _showImagePicker,
                         icon: const Icon(Icons.photo_library),
                       ),
                     ],
