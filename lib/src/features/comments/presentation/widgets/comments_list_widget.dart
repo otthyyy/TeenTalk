@@ -5,6 +5,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../data/models/comment.dart';
+import '../../data/models/comment_failure.dart';
 import '../providers/comments_provider.dart';
 import 'comment_input_widget.dart';
 import 'comment_widget.dart';
@@ -337,7 +338,7 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
     );
   }
 
-  Widget _buildErrorState(ThemeData theme, String error) {
+  Widget _buildErrorState(ThemeData theme, CommentFailure failure) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -356,12 +357,23 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
             ),
             const SizedBox(height: 8),
             Text(
-              error,
+              failure.userFriendlyMessage,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,
               ),
               textAlign: TextAlign.center,
             ),
+            if (failure.type == CommentFailureType.permissionDenied)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Please check your account permissions or try signing in again.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {

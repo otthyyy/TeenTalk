@@ -13,6 +13,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../offline_sync/services/offline_submission_helper.dart';
+import '../../data/models/comment_failure.dart';
 import '../providers/comments_provider.dart';
 
 class CommentInputWidget extends ConsumerStatefulWidget {
@@ -477,7 +478,7 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
 
     try {
       final notifier = ref.read(commentsProvider(widget.postId).notifier);
-      await notifier.addComment(
+      final failure = await notifier.addComment(
         authorId: authState.user!.uid,
         authorNickname: userProfile.nickname,
         isAnonymous: _isAnonymous,
@@ -485,6 +486,30 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
         school: school,
         replyToCommentId: widget.replyToCommentId,
       );
+
+      if (failure != null) {
+        if (!mounted) return;
+
+        if (failure.type == CommentFailureType.rateLimited) {
+          await analyticsService.logRateLimitHit(
+            contentType: 'comment',
+            limitType: 'backend',
+            submissionCount: rateLimitService.getSubmissionCount(
+              ContentType.comment,
+              const Duration(hours: 1),
+            ),
+          );
+
+          RateLimitDialog.show(
+            context,
+            contentType: 'comment',
+            cooldownDuration: null,
+          );
+        } else {
+          _showErrorSnackbar(failure);
+        }
+        return;
+      }
 
       rateLimitService.recordSubmission(ContentType.comment);
       
@@ -508,33 +533,18 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
       );
     } catch (error) {
       if (!mounted) return;
-      
-      final errorMessage = error.toString().toLowerCase();
-      
-      if (errorMessage.contains('rate') || 
-          errorMessage.contains('limit') ||
-          errorMessage.contains('too many')) {
-        await analyticsService.logRateLimitHit(
-          contentType: 'comment',
-          limitType: 'backend',
-          submissionCount: rateLimitService.getSubmissionCount(
-            ContentType.comment,
-            const Duration(hours: 1),
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to post comment: ${error.toString()}'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          action: SnackBarAction(
+            label: 'Retry',
+            textColor: Colors.white,
+            onPressed: _submitComment,
           ),
-        );
-        
-        RateLimitDialog.show(
-          context,
-          contentType: 'comment',
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to post comment: $error'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -542,5 +552,25 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
         });
       }
     }
+  }
+
+  void _showErrorSnackbar(CommentFailure failure) {
+    final theme = Theme.of(context);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(failure.userFriendlyMessage),
+        backgroundColor: theme.colorScheme.error,
+        action: failure.type == CommentFailureType.networkError ||
+                failure.type == CommentFailureType.unknown
+            ? SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: _submitComment,
+              )
+            : null,
+        duration: const Duration(seconds: 4),
+      ),
+    );
   }
 }

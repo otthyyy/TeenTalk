@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
+import 'package:teen_talk_app/src/features/comments/data/models/comment_failure.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/comments_repository.dart';
 
 void main() {
@@ -34,6 +35,7 @@ void main() {
           authorNickname: 'Commenter',
           isAnonymous: false,
           content: 'Hello @friend1 and @friend2',
+          school: 'Test School',
         );
 
         expect(comment.mentionedUserIds, ['friend1', 'friend2']);
@@ -54,6 +56,7 @@ void main() {
           authorNickname: 'Parent',
           isAnonymous: false,
           content: 'Parent comment',
+          school: 'Test School',
         );
 
         final reply = await repository.createComment(
@@ -62,6 +65,7 @@ void main() {
           authorNickname: 'Child',
           isAnonymous: false,
           content: 'Reply comment',
+          school: 'Test School',
           replyToCommentId: parent.id,
         );
 
@@ -83,6 +87,7 @@ void main() {
           authorNickname: 'User1',
           isAnonymous: false,
           content: 'Active comment',
+          school: 'Test School',
         );
         final moderated = await repository.createComment(
           postId: 'post1',
@@ -90,6 +95,7 @@ void main() {
           authorNickname: 'User2',
           isAnonymous: false,
           content: 'Moderated comment',
+          school: 'Test School',
         );
 
         await firestore.collection('comments').doc(moderated.id).update({
@@ -113,6 +119,7 @@ void main() {
           authorNickname: 'Parent',
           isAnonymous: false,
           content: 'Parent',
+          school: 'Test School',
         );
 
         final reply1 = await repository.createComment(
@@ -121,6 +128,7 @@ void main() {
           authorNickname: 'Child1',
           isAnonymous: false,
           content: 'Reply 1',
+          school: 'Test School',
           replyToCommentId: parent.id,
         );
         await repository.createComment(
@@ -129,6 +137,7 @@ void main() {
           authorNickname: 'Child2',
           isAnonymous: false,
           content: 'Other comment',
+          school: 'Test School',
         );
 
         final replies = await repository.getRepliesForComment(commentId: parent.id);
@@ -147,6 +156,7 @@ void main() {
           authorNickname: 'Author',
           isAnonymous: false,
           content: 'Like me',
+          school: 'Test School',
         );
 
         await repository.likeComment(comment.id, 'user42');
@@ -164,6 +174,7 @@ void main() {
           authorNickname: 'Author',
           isAnonymous: false,
           content: 'Like me',
+          school: 'Test School',
         );
 
         await repository.likeComment(comment.id, 'user42');
@@ -182,6 +193,7 @@ void main() {
           authorNickname: 'Author',
           isAnonymous: false,
           content: 'Unlike me',
+          school: 'Test School',
         );
 
         await repository.likeComment(comment.id, 'user42');
@@ -201,6 +213,7 @@ void main() {
           authorNickname: 'Author',
           isAnonymous: false,
           content: 'Never negative',
+          school: 'Test School',
         );
 
         await repository.unlikeComment(comment.id, 'user42');
@@ -220,6 +233,7 @@ void main() {
           authorNickname: 'Author',
           isAnonymous: false,
           content: 'Remove me',
+          school: 'Test School',
         );
 
         await repository.deleteComment(comment.id);
@@ -239,6 +253,7 @@ void main() {
           authorNickname: 'Parent',
           isAnonymous: false,
           content: 'Parent comment',
+          school: 'Test School',
         );
         final reply = await repository.createComment(
           postId: 'post1',
@@ -246,6 +261,7 @@ void main() {
           authorNickname: 'Child',
           isAnonymous: false,
           content: 'Reply comment',
+          school: 'Test School',
           replyToCommentId: parent.id,
         );
 
@@ -256,6 +272,136 @@ void main() {
 
         final post = await firestore.collection('posts').doc('post1').get();
         expect(post.get('commentCount'), 1);
+      });
+    });
+
+    group('error handling', () {
+      test('createComment throws CommentFailure when post does not exist', () async {
+        expect(
+          () => repository.createComment(
+            postId: 'nonexistent',
+            authorId: 'user1',
+            authorNickname: 'User1',
+            isAnonymous: false,
+            content: 'Test',
+            school: 'Test School',
+          ),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
+      });
+
+      test('createComment throws CommentFailure with empty content', () async {
+        await _createPost('post1');
+
+        expect(
+          () => repository.createComment(
+            postId: 'post1',
+            authorId: 'user1',
+            authorNickname: 'User1',
+            isAnonymous: false,
+            content: '  ',
+            school: 'Test School',
+          ),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.invalidData,
+          )),
+        );
+      });
+
+      test('createComment throws CommentFailure when replying to nonexistent comment', () async {
+        await _createPost('post1');
+
+        expect(
+          () => repository.createComment(
+            postId: 'post1',
+            authorId: 'user1',
+            authorNickname: 'User1',
+            isAnonymous: false,
+            content: 'Reply',
+            school: 'Test School',
+            replyToCommentId: 'nonexistent',
+          ),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
+      });
+
+      test('deleteComment throws CommentFailure for nonexistent comment', () async {
+        expect(
+          () => repository.deleteComment('nonexistent'),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
+      });
+
+      test('likeComment throws CommentFailure for nonexistent comment', () async {
+        expect(
+          () => repository.likeComment('nonexistent', 'user1'),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
+      });
+
+      test('unlikeComment throws CommentFailure for nonexistent comment', () async {
+        expect(
+          () => repository.unlikeComment('nonexistent', 'user1'),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
+      });
+
+      test('updateComment throws CommentFailure with empty content', () async {
+        expect(
+          () => repository.updateComment(
+            commentId: 'comment1',
+            content: '  ',
+          ),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.invalidData,
+          )),
+        );
+      });
+
+      test('reportComment throws CommentFailure with empty reason', () async {
+        expect(
+          () => repository.reportComment('comment1', '  '),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.invalidData,
+          )),
+        );
+      });
+
+      test('reportComment throws CommentFailure for nonexistent comment', () async {
+        expect(
+          () => repository.reportComment('nonexistent', 'spam'),
+          throwsA(isA<CommentFailure>().having(
+            (e) => e.type,
+            'type',
+            CommentFailureType.notFound,
+          )),
+        );
       });
     });
   });
