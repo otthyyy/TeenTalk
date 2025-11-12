@@ -342,50 +342,69 @@ class FeedNotifier extends StateNotifier<FeedState> {
   }
 
   Future<void> likePost(String postId, String userId) async {
+    clearError();
+
     try {
       await _repository.likePost(postId, userId);
 
       final updatedPosts = state.posts.map((post) {
-        if (post.id == postId) {
-          final likedBy = [...post.likedBy, userId];
-          return post.copyWith(
-            likeCount: post.likeCount + 1,
-            likedBy: likedBy,
-          );
+        if (post.id != postId) {
+          return post;
         }
-        return post;
+
+        if (post.likedBy.contains(userId)) {
+          return post;
+        }
+
+        return post.copyWith(
+          likeCount: post.likeCount + 1,
+          likedBy: [...post.likedBy, userId],
+        );
       }).toList();
 
       state = state.copyWith(posts: updatedPosts);
     } catch (error, stackTrace) {
       _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
-      state = state.copyWith(
-        error: 'We couldn\'t register your like. Please try again.',
+      final message = _extractFriendlyError(
+        error,
+        fallback: 'We couldn\'t register your like. Please try again.',
       );
+      _emitError(message);
     }
   }
 
   Future<void> unlikePost(String postId, String userId) async {
+    clearError();
+
     try {
       await _repository.unlikePost(postId, userId);
 
       final updatedPosts = state.posts.map((post) {
-        if (post.id == postId) {
-          final likedBy = post.likedBy.where((id) => id != userId).toList();
-          return post.copyWith(
-            likeCount: (post.likeCount - 1).clamp(0, double.infinity).toInt(),
-            likedBy: likedBy,
-          );
+        if (post.id != postId) {
+          return post;
         }
-        return post;
+
+        if (!post.likedBy.contains(userId)) {
+          return post;
+        }
+
+        final updatedLikedBy = post.likedBy.where((id) => id != userId).toList();
+        final updatedLikeCount = (post.likeCount - 1).clamp(0, double.infinity).toInt();
+
+        return post.copyWith(
+          likeCount: updatedLikeCount,
+          likedBy: updatedLikedBy,
+        );
       }).toList();
 
       state = state.copyWith(posts: updatedPosts);
     } catch (error, stackTrace) {
       _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
-      state = state.copyWith(
-        error: 'We couldn\'t update your like. Please check your connection and try again.',
+      final message = _extractFriendlyError(
+        error,
+        fallback: 'We couldn\'t update your like. Please try again.',
       );
+      _emitError(message);
     }
   }
 
@@ -437,7 +456,35 @@ class FeedNotifier extends StateNotifier<FeedState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  void _emitError(String message) {
+    state = state.copyWith(error: message);
+  }
+
+  String _extractFriendlyError(Object error, {required String fallback}) {
+    if (error is Exception) {
+      final raw = error.toString();
+      final cleaned = raw.replaceFirst('Exception:', '').trim();
+
+      if (cleaned.isNotEmpty && cleaned != raw) {
+        return cleaned;
+      }
+
+      if (raw.isNotEmpty && !raw.startsWith('Instance of')) {
+        return raw;
+      }
+    }
+
+    final raw = error.toString();
+    if (raw.isNotEmpty && !raw.startsWith('Instance of')) {
+      return raw;
+    }
+
+    return fallback;
+  }
 }
+
+
 
 final feedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, String>(
   (ref, section) {
