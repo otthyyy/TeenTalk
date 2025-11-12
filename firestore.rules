@@ -365,6 +365,14 @@ service cloud.firestore {
     }
     
     // Posts collection rules
+    // 
+    // Post schema requirements for likes:
+    // - likedBy: array<string> - List of user IDs who liked the post
+    // - likeCount: number - Total count of likes (must be >= 0)
+    // - Both fields must be updated atomically to maintain consistency
+    // - Use FieldValue.arrayUnion/arrayRemove for likedBy updates
+    // - Use FieldValue.increment for likeCount updates
+    // - Transactions are required for like/unlike operations to prevent race conditions
     match /posts/{postId} {
       allow read: if isAuthenticated() && canAccessSchool(resource.data.school);
       allow create: if isAuthenticated() &&

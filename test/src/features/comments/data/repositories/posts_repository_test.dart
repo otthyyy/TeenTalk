@@ -159,8 +159,52 @@ void main() {
       test('throws when liking non-existent post', () async {
         expect(
           () => repository.likePost('missing', 'user42'),
-          throwsException,
+          throwsA(isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('post no longer exists'),
+          )),
         );
+      });
+
+      test('handles concurrent likes correctly', () async {
+        final docRef = await _createPost(content: 'Popular post');
+
+        await Future.wait([
+          repository.likePost(docRef.id, 'user1'),
+          repository.likePost(docRef.id, 'user2'),
+          repository.likePost(docRef.id, 'user3'),
+        ]);
+
+        final updated = await docRef.get();
+        expect(updated.get('likeCount'), 3);
+        expect(updated.get('likedBy'), hasLength(3));
+        expect(updated.get('likedBy'), containsAll(['user1', 'user2', 'user3']));
+      });
+
+      test('handles duplicate concurrent likes', () async {
+        final docRef = await _createPost(content: 'Double tap test');
+
+        await Future.wait([
+          repository.likePost(docRef.id, 'user42'),
+          repository.likePost(docRef.id, 'user42'),
+          repository.likePost(docRef.id, 'user42'),
+        ]);
+
+        final updated = await docRef.get();
+        expect(updated.get('likeCount'), 1);
+        expect(updated.get('likedBy'), ['user42']);
+      });
+
+      test('allows multiple users to like the same post', () async {
+        final docRef = await _createPost(content: 'Multi-user like test');
+
+        await repository.likePost(docRef.id, 'user1');
+        await repository.likePost(docRef.id, 'user2');
+
+        final updated = await docRef.get();
+        expect(updated.get('likeCount'), 2);
+        expect(updated.get('likedBy'), containsAll(['user1', 'user2']));
       });
     });
 
@@ -192,6 +236,52 @@ void main() {
         final updated = await docRef.get();
         expect(updated.get('likeCount'), 0);
         expect((updated.get('likedBy') as List).isEmpty, true);
+      });
+
+      test('handles concurrent unlikes correctly', () async {
+        final docRef = await _createPost(
+          content: 'Popular post',
+          likeCount: 3,
+          likedBy: const ['user1', 'user2', 'user3'],
+        );
+
+        await Future.wait([
+          repository.unlikePost(docRef.id, 'user1'),
+          repository.unlikePost(docRef.id, 'user2'),
+        ]);
+
+        final updated = await docRef.get();
+        expect(updated.get('likeCount'), 1);
+        expect(updated.get('likedBy'), ['user3']);
+      });
+
+      test('ignores duplicate concurrent unlikes', () async {
+        final docRef = await _createPost(
+          content: 'Repeated unlike teen',
+          likeCount: 1,
+          likedBy: const ['user42'],
+        );
+
+        await Future.wait([
+          repository.unlikePost(docRef.id, 'user42'),
+          repository.unlikePost(docRef.id, 'user42'),
+          repository.unlikePost(docRef.id, 'user42'),
+        ]);
+
+        final updated = await docRef.get();
+        expect(updated.get('likeCount'), 0);
+        expect((updated.get('likedBy') as List).isEmpty, true);
+      });
+
+      test('throws when unliking non-existent post', () async {
+        expect(
+          () => repository.unlikePost('missing', 'user42'),
+          throwsA(isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('post no longer exists'),
+          )),
+        );
       });
     });
 

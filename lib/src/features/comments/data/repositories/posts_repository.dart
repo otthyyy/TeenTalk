@@ -344,15 +344,52 @@ class PostsRepository {
   }
 
   Future<void> likePost(String postId, String userId) async {
-    try {
-      final postRef = _firestore.collection(_postsCollection).doc(postId);
+    final postRef = _firestore.collection(_postsCollection).doc(postId);
 
+    try {
       await _firestore.runTransaction((transaction) async {
         final postDoc = await transaction.get(postRef);
-        
+
         if (!postDoc.exists) {
           _logger.w('Attempted to like non-existent post: $postId');
-          throw Exception('Post not found');
+          throw Exception('This post no longer exists.');
+        }
+
+        final data = postDoc.data() as Map<String, dynamic>;
+        final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
+
+        if (likedBy.contains(userId)) {
+          return;
+        }
+
+        transaction.update(postRef, {
+          'likedBy': FieldValue.arrayUnion([userId]),
+          'likeCount': FieldValue.increment(1),
+          'updatedAt': DateTime.now().toIso8601String(),
+        });
+      });
+    } catch (error, stackTrace) {
+      _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
+      throw Exception(
+        _mapLikeErrorMessage(
+          error,
+          fallbackMessage: 'We couldn\'t register your like. Please try again.',
+          permissionDeniedMessage: 'You don\'t have permission to like this post.',
+        ),
+      );
+    }
+  }
+
+  Future<void> unlikePost(String postId, String userId) async {
+    final postRef = _firestore.collection(_postsCollection).doc(postId);
+
+    try {
+      await _firestore.runTransaction((transaction) async {
+        final postDoc = await transaction.get(postRef);
+
+        if (!postDoc.exists) {
+          _logger.w('Attempted to unlike non-existent post: $postId');
+          throw Exception('This post no longer exists.');
         }
 
         final data = postDoc.data() as Map<String, dynamic>;
@@ -360,48 +397,31 @@ class PostsRepository {
         final currentLikeCount = data['likeCount'] as int? ?? 0;
 
         if (!likedBy.contains(userId)) {
-          likedBy.add(userId);
-          transaction.update(postRef, {
-            'likedBy': likedBy,
-            'likeCount': currentLikeCount + 1,
-            'updatedAt': DateTime.now().toIso8601String(),
-          });
+          return;
         }
+
+        final updates = <String, dynamic>{
+          'likedBy': FieldValue.arrayRemove([userId]),
+          'updatedAt': DateTime.now().toIso8601String(),
+        };
+
+        if (currentLikeCount > 0) {
+          updates['likeCount'] = FieldValue.increment(-1);
+        } else {
+          updates['likeCount'] = 0;
+        }
+
+        transaction.update(postRef, updates);
       });
-    } catch (e, stackTrace) {
-      _logger.e('Failed to like post $postId', error: e, stackTrace: stackTrace);
-      throw Exception('Failed to like post. Please check your connection and try again.');
-    }
-  }
-
-  Future<void> unlikePost(String postId, String userId) async {
-    try {
-      final postRef = _firestore.collection(_postsCollection).doc(postId);
-
-      await _firestore.runTransaction((transaction) async {
-        final postDoc = await transaction.get(postRef);
-        
-        if (!postDoc.exists) {
-          _logger.w('Attempted to unlike non-existent post: $postId');
-          throw Exception('Post not found');
-        }
-
-        final data = postDoc.data() as Map<String, dynamic>;
-        final likedBy = List<String>.from(data['likedBy'] as List? ?? []);
-        final currentLikeCount = data['likeCount'] as int? ?? 0;
-
-        if (likedBy.contains(userId)) {
-          likedBy.remove(userId);
-          transaction.update(postRef, {
-            'likedBy': likedBy,
-            'likeCount': (currentLikeCount - 1).clamp(0, double.infinity).toInt(),
-            'updatedAt': DateTime.now().toIso8601String(),
-          });
-        }
-      });
-    } catch (e, stackTrace) {
-      _logger.e('Failed to unlike post $postId', error: e, stackTrace: stackTrace);
-      throw Exception('Failed to update like status. Please try again later.');
+    } catch (error, stackTrace) {
+      _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
+      throw Exception(
+        _mapLikeErrorMessage(
+          error,
+          fallbackMessage: 'We couldn\'t update your like. Please try again.',
+          permissionDeniedMessage: 'You don\'t have permission to update this like.',
+        ),
+      );
     }
   }
 
@@ -541,6 +561,38 @@ class PostsRepository {
         });
       }).toList();
     });
+  }
+
+  String _mapLikeErrorMessage(
+    Object error, {
+    required String fallbackMessage,
+    required String permissionDeniedMessage,
+  }) {
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return permissionDeniedMessage;
+        case 'unavailable':
+        case 'deadline-exceeded':
+          return 'Network connection lost. Please check your connection and try again.';
+        case 'not-found':
+          return 'This post no longer exists.';
+        case 'resource-exhausted':
+          return 'Too many requests. Please wait a moment and try again.';
+        default:
+          return fallbackMessage;
+      }
+    }
+
+    final errorMessage = error.toString();
+    if (errorMessage.contains('post no longer exists')) {
+      return 'This post no longer exists.';
+    }
+    if (errorMessage.contains('network') || errorMessage.contains('connection')) {
+      return 'Network connection lost. Please check your connection and try again.';
+    }
+
+    return fallbackMessage;
   }
 
   List<String> _extractMentionedUserIds(String content) {
