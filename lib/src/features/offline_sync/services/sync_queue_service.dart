@@ -209,13 +209,18 @@ class SyncQueueService {
     final data = action.data;
     final repository = CommentsRepository();
     
+    final school = data['school'] as String?;
+    if (school == null || school.isEmpty) {
+      throw Exception('Comment requires a valid school to be synced');
+    }
+    
     await repository.createComment(
       postId: data['postId'] as String,
       authorId: data['authorId'] as String,
       authorNickname: data['authorNickname'] as String,
       isAnonymous: data['isAnonymous'] as bool,
       content: data['content'] as String,
-      school: data['school'] as String?,
+      school: school,
       replyToCommentId: data['replyToCommentId'] as String?,
     );
   }

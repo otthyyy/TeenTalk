@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import '../../data/models/comment.dart';
+import '../../data/models/comment_failure.dart';
 import '../../data/repositories/comments_repository.dart';
 import '../../data/repositories/posts_repository.dart';
 import '../../data/services/notification_service.dart';
@@ -24,7 +25,7 @@ class CommentsState {
   final List<Comment> comments;
   final bool isLoading;
   final bool isLoadingMore;
-  final String? error;
+  final CommentFailure? error;
   final DocumentSnapshot? lastDocument;
   final bool hasMore;
 
@@ -41,7 +42,7 @@ class CommentsState {
     List<Comment>? comments,
     bool? isLoading,
     bool? isLoadingMore,
-    String? error,
+    CommentFailure? error,
     bool clearError = false,
     DocumentSnapshot? lastDocument,
     bool clearLastDocument = false,
@@ -97,10 +98,18 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         lastDocument: lastDoc,
         hasMore: comments.length == 20,
       );
-    } catch (e) {
+    } on CommentFailure catch (failure) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: failure,
+      );
+    } catch (error) {
+      state = state.copyWith(
+        isLoading: false,
+        error: CommentFailure.unknown(
+          message: 'Failed to load comments',
+          originalError: error,
+        ),
       );
     }
   }
@@ -134,15 +143,23 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         lastDocument: lastDoc,
         hasMore: comments.length == 20,
       );
-    } catch (e) {
+    } on CommentFailure catch (failure) {
       state = state.copyWith(
         isLoadingMore: false,
-        error: e.toString(),
+        error: failure,
+      );
+    } catch (error) {
+      state = state.copyWith(
+        isLoadingMore: false,
+        error: CommentFailure.unknown(
+          message: 'Failed to load more comments',
+          originalError: error,
+        ),
       );
     }
   }
 
-  Future<void> addComment({
+  Future<CommentFailure?> addComment({
     required String authorId,
     required String authorNickname,
     required bool isAnonymous,
@@ -163,6 +180,7 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
 
       state = state.copyWith(
         comments: [comment, ...state.comments],
+        clearError: true,
       );
 
       if (replyToCommentId != null) {
@@ -175,8 +193,17 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
 
         state = state.copyWith(comments: updatedComments);
       }
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+      return null;
+    } on CommentFailure catch (failure) {
+      state = state.copyWith(error: failure);
+      return failure;
+    } catch (error) {
+      final failure = CommentFailure.unknown(
+        message: 'Failed to create comment',
+        originalError: error,
+      );
+      state = state.copyWith(error: failure);
+      return failure;
     }
   }
 
@@ -194,9 +221,19 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         return comment;
       }).toList();
 
-      state = state.copyWith(comments: updatedComments);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(
+        comments: updatedComments,
+        clearError: true,
+      );
+    } on CommentFailure catch (failure) {
+      state = state.copyWith(error: failure);
+    } catch (error) {
+      state = state.copyWith(
+        error: CommentFailure.unknown(
+          message: 'Failed to update comment',
+          originalError: error,
+        ),
+      );
     }
   }
 
@@ -208,9 +245,19 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
           .where((comment) => comment.id != commentId)
           .toList();
 
-      state = state.copyWith(comments: updatedComments);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(
+        comments: updatedComments,
+        clearError: true,
+      );
+    } on CommentFailure catch (failure) {
+      state = state.copyWith(error: failure);
+    } catch (error) {
+      state = state.copyWith(
+        error: CommentFailure.unknown(
+          message: 'Failed to delete comment',
+          originalError: error,
+        ),
+      );
     }
   }
 
@@ -229,9 +276,19 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         return comment;
       }).toList();
 
-      state = state.copyWith(comments: updatedComments);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(
+        comments: updatedComments,
+        clearError: true,
+      );
+    } on CommentFailure catch (failure) {
+      state = state.copyWith(error: failure);
+    } catch (error) {
+      state = state.copyWith(
+        error: CommentFailure.unknown(
+          message: 'Failed to like comment',
+          originalError: error,
+        ),
+      );
     }
   }
 
@@ -250,9 +307,19 @@ class CommentsNotifier extends StateNotifier<CommentsState> {
         return comment;
       }).toList();
 
-      state = state.copyWith(comments: updatedComments);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(
+        comments: updatedComments,
+        clearError: true,
+      );
+    } on CommentFailure catch (failure) {
+      state = state.copyWith(error: failure);
+    } catch (error) {
+      state = state.copyWith(
+        error: CommentFailure.unknown(
+          message: 'Failed to unlike comment',
+          originalError: error,
+        ),
+      );
     }
   }
 
