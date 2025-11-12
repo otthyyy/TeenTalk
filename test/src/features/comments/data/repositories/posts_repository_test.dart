@@ -1,11 +1,105 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
 import 'package:teen_talk_app/src/features/feed/domain/models/feed_sort_option.dart';
+import 'package:teen_talk_app/src/core/exceptions/post_exceptions.dart';
 
-class _FakeFirebaseStorage extends Fake implements FirebaseStorage {}
+class _FakeFirebaseStorage extends Fake implements FirebaseStorage {
+  @override
+  Reference ref([String? path]) => _FakeStorageReference();
+}
+
+class _FakeStorageReference extends Fake implements Reference {
+  @override
+  Reference child(String path) => _FakeStorageReference();
+
+  @override
+  UploadTask putData(Uint8List data, [SettableMetadata? metadata]) {
+    return _FakeUploadTask(success: true);
+  }
+
+  @override
+  UploadTask putFile(File file, [SettableMetadata? metadata]) {
+    return _FakeUploadTask(success: true);
+  }
+}
+
+class _FakeUploadTask extends Fake implements UploadTask {
+  final bool success;
+  _FakeUploadTask({required this.success});
+
+  @override
+  Stream<TaskSnapshot> asStream() => Stream.fromFuture(future);
+
+  @override
+  Future<TaskSnapshot> get future async {
+    if (!success) {
+      throw FirebaseException(
+        plugin: 'firebase_storage',
+        code: 'unknown',
+        message: 'Upload failed',
+      );
+    }
+    return _FakeTaskSnapshot();
+  }
+
+  @override
+  Future<TaskSnapshot> then<R>(
+    FutureOr<R> Function(TaskSnapshot) onValue, {
+    Function? onError,
+  }) {
+    return future.then(onValue, onError: onError);
+  }
+}
+
+class _FakeTaskSnapshot extends Fake implements TaskSnapshot {
+  @override
+  Reference get ref => _FakeStorageReferenceWithUrl();
+}
+
+class _FakeStorageReferenceWithUrl extends Fake implements Reference {
+  @override
+  Future<String> getDownloadURL() async => 'https://example.com/test-image.jpg';
+}
+
+class _TestPostsRepository extends PostsRepository {
+  _TestPostsRepository({
+    required FirebaseFirestore firestore,
+    FirebaseStorage? storage,
+    this.onUpload,
+  }) : super(firestore: firestore, storage: storage);
+
+  final Future<String?> Function(
+    File? imageFile, {
+    Uint8List? imageBytes,
+    String? imageName,
+  })? onUpload;
+
+  @override
+  Future<String?> uploadPostImage(
+    File? imageFile, {
+    Uint8List? imageBytes,
+    String? imageName,
+  }) {
+    if (onUpload != null) {
+      return onUpload!(
+        imageFile,
+        imageBytes: imageBytes,
+        imageName: imageName,
+      );
+    }
+    return super.uploadPostImage(
+      imageFile,
+      imageBytes: imageBytes,
+      imageName: imageName,
+    );
+  }
+}
 
 void main() {
   group('PostsRepository', () {
@@ -118,7 +212,7 @@ void main() {
         expect(userDoc.get('anonymousPostsCount'), 1);
       });
 
-      test('throws when content is empty', () async {
+      test('throws PostValidationException when content is empty', () async {
         expect(
           () => repository.createPost(
             authorId: 'author1',
@@ -126,8 +220,161 @@ void main() {
             isAnonymous: false,
             content: '   ',
           ),
-          throwsException,
+          throwsA(isA<PostValidationException>()),
         );
+      });
+
+      test('creates post with image after upload completes', () async {
+        final imageBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+
+        final post = await repository.createPost(
+          authorId: 'author1',
+          authorNickname: 'Author One',
+          isAnonymous: false,
+          content: 'Post with image',
+          imageBytes: imageBytes,
+          imageName: 'test.jpg',
+        );
+
+        expect(post.imageUrl, isNotNull);
+        expect(post.imageUrl, equals('https://example.com/test-image.jpg'));
+
+        final stored = await firestore.collection('posts').doc(post.id).get();
+        expect(stored.exists, true);
+        expect(stored.get('imageUrl'), equals('https://example.com/test-image.jpg'));
+      });
+
+      test('uses SetOptions(merge: true) when creating post', () async {
+        final post = await repository.createPost(
+          authorId: 'author1',
+          authorNickname: 'Author One',
+          isAnonymous: false,
+          content: 'Test merge post',
+        );
+
+        final stored = await firestore.collection('posts').doc(post.id).get();
+        expect(stored.exists, true);
+        expect(stored.get('content'), 'Test merge post');
+      });
+    });
+
+    group('uploadPostImage', () {
+      test('returns null when no image provided', () async {
+        final result = await repository.uploadPostImage(null);
+        expect(result, isNull);
+      });
+
+      test('throws ImageValidationException when image too large', () async {
+        final largeImage = Uint8List(6 * 1024 * 1024);
+        expect(
+          () => repository.uploadPostImage(
+            null,
+            imageBytes: largeImage,
+            imageName: 'large.jpg',
+          ),
+          throwsA(isA<ImageValidationException>()),
+        );
+      });
+
+      test('returns download URL after successful upload', () async {
+        final imageBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+        final downloadUrl = await repository.uploadPostImage(
+          null,
+          imageBytes: imageBytes,
+          imageName: 'test.jpg',
+        );
+
+        expect(downloadUrl, equals('https://example.com/test-image.jpg'));
+      });
+    });
+
+    group('validatePostContent', () {
+      test('throws PostValidationException for empty content', () {
+        expect(
+          () => repository.validatePostContent(''),
+          throwsA(isA<PostValidationException>()),
+        );
+      });
+
+      test('throws PostValidationException for content exceeding max length', () {
+        final longContent = 'a' * 2001;
+        expect(
+          () => repository.validatePostContent(longContent),
+          throwsA(isA<PostValidationException>()),
+        );
+      });
+
+      test('does not throw for valid content', () {
+        expect(
+          () => repository.validatePostContent('Valid post content'),
+          returnsNormally,
+        );
+      });
+    });
+
+    group('Image upload resilience', () {
+      test('ensures upload completes before Firestore write', () async {
+        final uploadCompleter = Completer<void>();
+        var uploadStarted = false;
+
+        final testRepo = _TestPostsRepository(
+          firestore: firestore,
+          storage: _FakeFirebaseStorage(),
+          onUpload: (imageFile, {imageBytes, imageName}) async {
+            uploadStarted = true;
+            await uploadCompleter.future;
+            return 'https://example.com/uploaded.jpg';
+          },
+        );
+
+        final imageBytes = Uint8List.fromList([1, 2, 3]);
+
+        final createFuture = testRepo.createPost(
+          authorId: 'author1',
+          authorNickname: 'Test',
+          isAnonymous: false,
+          content: 'Test content',
+          imageBytes: imageBytes,
+        );
+
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(uploadStarted, true);
+
+        final snapshotBefore = await firestore.collection('posts').get();
+        expect(snapshotBefore.docs, isEmpty);
+
+        uploadCompleter.complete();
+        final post = await createFuture;
+
+        final stored = await firestore.collection('posts').doc(post.id).get();
+        expect(stored.exists, true);
+        expect(stored.get('imageUrl'), 'https://example.com/uploaded.jpg');
+      });
+
+      test('bubbles storage failure without writing document', () async {
+        final testRepo = _TestPostsRepository(
+          firestore: firestore,
+          storage: _FakeFirebaseStorage(),
+          onUpload: (imageFile, {imageBytes, imageName}) async {
+            throw const PostStorageException('Forced failure');
+          },
+        );
+
+        final imageBytes = Uint8List.fromList([9, 9, 9]);
+
+        await expectLater(
+          () => testRepo.createPost(
+            authorId: 'author1',
+            authorNickname: 'Test',
+            isAnonymous: false,
+            content: 'Test content',
+            imageBytes: imageBytes,
+          ),
+          throwsA(isA<PostStorageException>()),
+        );
+
+        final snapshotAfter = await firestore.collection('posts').get();
+        expect(snapshotAfter.docs, isEmpty);
       });
     });
 
