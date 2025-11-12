@@ -5,26 +5,47 @@ This document describes the Direct Messages (DM) feature implementation for Teen
 ## Overview
 
 The Direct Messages feature allows users to:
-- Start conversations with other users
+- Start conversations with other users once they are friends
 - Exchange text messages with real-time updates
 - See read/unread status for messages
 - Block users to prevent unwanted messages
 - Receive push notifications for new messages
+- Manage friends and friend requests to gate conversations
 
 ## Data Structure
 
 ### Firestore Collections
+
+#### Friend Requests Collection
+```
+friendRequests/{requestId}
+├── senderId: string (required)
+├── receiverId: string (required)
+├── status: string (pending | accepted | rejected | cancelled)
+├── createdAt: timestamp (required)
+├── respondedAt: timestamp (optional)
+└── conversationId: string (optional, populated on acceptance)
+```
+
+#### Friends Collection
+```
+friends/{userId}/list/{friendId}
+├── conversationId: string (required)
+└── createdAt: timestamp (required)
+```
 
 #### Conversations Collection
 ```
 conversations/{conversationId}
 ├── userId1: string (required)
 ├── userId2: string (required)
+├── participantIds: array<string> (required)
 ├── lastMessageId: string (optional)
 ├── lastMessage: string (optional)
 ├── lastSenderId: string (optional)
 ├── lastMessageTime: timestamp (optional)
 ├── unreadCount: number (required, default: 0)
+├── unreadCounts: map<string, number> (optional)
 ├── createdAt: timestamp (required)
 ├── updatedAt: timestamp (optional)
 └── messages/ (subcollection)
@@ -59,6 +80,15 @@ This ensures that a conversation between user A and user B always has the same I
 
 ## Privacy Controls
 
+### Friends System
+
+Users must be accepted friends before they can message each other:
+
+1. **Send Friend Request**: Creates a pending request document in `friendRequests`
+2. **Accept Request**: Updates request status, creates friend entries for both users, and creates a conversation
+3. **Reject Request**: Updates request status to rejected
+4. **Cancel Request**: Sender can cancel pending requests
+
 ### Blocking Users
 
 Users can block other users to prevent receiving messages:
@@ -70,9 +100,10 @@ Users can block other users to prevent receiving messages:
 ### Message Sending Restrictions
 
 When sending a message:
-1. Check if the sender is blocked by the receiver
-2. If blocked, throw an exception and prevent the message from being sent
-3. Only authenticated users can send messages
+1. **Check Friendship**: Verify users are friends before allowing messages
+2. Check if the sender is blocked by the receiver
+3. If not friends or blocked, throw an exception and prevent the message from being sent
+4. Only authenticated users can send messages
 
 ## Security Rules
 
@@ -83,6 +114,9 @@ Firestore Security Rules enforce:
 3. **Message Permissions**: Only conversation participants can view messages
 4. **Write Restrictions**: Only the message sender can write messages
 5. **Block Management**: Only the blocker can manage their own block list
+6. **Friend Requests**: Only senders/receivers can read requests; only the sender can cancel and the receiver can accept/reject
+7. **Friends List**: Only the user can read their friends list
+8. **Friends-Only Messaging**: Conversations require existing friend entries for both participants
 
 ## Features
 
