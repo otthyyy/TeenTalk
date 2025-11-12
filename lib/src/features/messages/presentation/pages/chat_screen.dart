@@ -10,6 +10,9 @@ import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../profile/domain/models/trust_level_localizations.dart';
+import '../../../friends/data/repositories/friends_repository.dart';
+import '../../../friends/data/models/friend_entry.dart';
+import '../../../friends/presentation/providers/friends_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -31,6 +34,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   late final TextEditingController _messageController;
   bool _hasText = false;
   bool _lowTrustWarningShown = false;
+  bool _canMessage = true;
+  bool _isFriendshipLoading = true;
+  bool _friendshipDialogShown = false;
+  ProviderSubscription<AsyncValue<List<FriendEntry>>>? _friendsSubscription;
 
   @override
   void initState() {
@@ -39,6 +46,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _messageController.addListener(_onTextChanged);
     _markConversationAsRead();
     _checkForLowTrustWarning();
+    _checkFriendshipStatus();
+    _friendsSubscription = ref.listen<AsyncValue<List<FriendEntry>>>(
+      friendsListProvider,
+      (previous, next) => _handleFriendshipUpdate(next),
+    );
   }
 
   void _checkForLowTrustWarning() {
@@ -134,8 +146,56 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+  void _checkFriendshipStatus() {
+    Future.microtask(() async {
+      if (!mounted) return;
+      final currentUserId = ref.read(dm_provider.currentUserIdProvider);
+      if (currentUserId == null) return;
+
+      final friendsRepository = ref.read(friendsRepositoryProvider);
+      final areFriends = await friendsRepository.areFriends(currentUserId, widget.otherUserId);
+
+      if (mounted) {
+        setState(() {
+          _canMessage = areFriends;
+          _isFriendshipLoading = false;
+        });
+
+        if (!areFriends && !_friendshipDialogShown && context.mounted) {
+          _friendshipDialogShown = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              _showNotFriendsDialog();
+            }
+          });
+        }
+      }
+    });
+  }
+
+  void _handleFriendshipUpdate(AsyncValue<List<FriendEntry>> friendsAsync) {
+    friendsAsync.whenData((friends) async {
+      final currentUserId = ref.read(dm_provider.currentUserIdProvider);
+      if (currentUserId == null) return;
+
+      final isFriend = friends.any((entry) => entry.friendId == widget.otherUserId);
+      
+      if (_canMessage != isFriend) {
+        setState(() {
+          _canMessage = isFriend;
+        });
+
+        if (!isFriend && !_friendshipDialogShown && mounted && context.mounted) {
+          _friendshipDialogShown = true;
+          _showNotFriendsDialog();
+        }
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _friendsSubscription?.close();
     _messageController.removeListener(_onTextChanged);
     _messageController.dispose();
     super.dispose();
@@ -174,6 +234,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
+          if (_isFriendshipLoading)
+            const LinearProgressIndicator(minHeight: 2),
+          if (!_canMessage && !_isFriendshipLoading)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              color: theme.colorScheme.errorContainer.withOpacity(0.4),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'You can only send messages to accepted friends.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onErrorContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Expanded(
             child: messagesAsync.when(
               data: (messages) {
@@ -290,10 +375,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: TextField(
                         controller: _messageController,
+                        enabled: _canMessage && !_isFriendshipLoading,
                         minLines: 1,
                         maxLines: 6,
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message...',
+                        decoration: InputDecoration(
+                          hintText: _isFriendshipLoading
+                              ? 'Loading...'
+                              : _canMessage
+                                  ? 'Type a message...'
+                                  : 'Friends only',
+                          hintStyle: !_canMessage
+                              ? TextStyle(
+                                  color: theme.colorScheme.error.withOpacity(0.7),
+                                )
+                              : null,
                           border: InputBorder.none,
                         ),
                       ),
@@ -314,11 +409,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     )
                   else
                     InkWell(
-                      onTap: !_hasText ? null : _sendMessage,
+                      onTap: !_hasText || !_canMessage ? null : _sendMessage,
                       borderRadius: BorderRadius.circular(24),
                       child: Ink(
                         decoration: BoxDecoration(
-                          color: !_hasText
+                          color: !_hasText || !_canMessage
                               ? theme.colorScheme.surfaceVariant
                               : theme.colorScheme.primary,
                           shape: BoxShape.circle,
@@ -327,7 +422,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         height: 44,
                         child: Icon(
                           Icons.send_rounded,
-                          color: !_hasText
+                          color: !_hasText || !_canMessage
                               ? theme.colorScheme.onSurface.withOpacity(0.4)
                               : theme.colorScheme.onPrimary,
                         ),
@@ -350,6 +445,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final currentUserId = ref.read(dm_provider.currentUserIdProvider);
     
     if (currentUserId == null) return;
+
+    final friendsRepository = ref.read(friendsRepositoryProvider);
+    final areFriends = await friendsRepository.areFriends(currentUserId, widget.otherUserId);
+
+    if (!areFriends) {
+      if (mounted && context.mounted) {
+        _showNotFriendsDialog();
+      }
+      return;
+    }
 
     final isOnline = await offlineHelper.isOnline();
 
@@ -383,21 +488,53 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       return;
     }
 
-    final notifier = ref.read(dm_provider.sendMessageProvider.notifier);
-    await notifier.sendMessage(
-      receiverId: widget.otherUserId,
-      text: text,
-    );
-
-    _messageController.clear();
-
-    if (mounted && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Message sent'),
-          duration: Duration(seconds: 2),
-        ),
+    try {
+      final notifier = ref.read(dm_provider.sendMessageProvider.notifier);
+      await notifier.sendMessage(
+        receiverId: widget.otherUserId,
+        text: text,
       );
+
+      _messageController.clear();
+
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Message sent'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
+  }
+
+  void _showNotFriendsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.person_off, size: 48),
+        title: const Text('Friends Only'),
+        content: const Text(
+          'You can only send messages to accepted friends. '
+          'Please send a friend request first.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }

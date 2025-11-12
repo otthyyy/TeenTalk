@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
+import '../../../friends/presentation/providers/friends_provider.dart';
+import '../../../friends/data/models/friendship_status.dart';
+import '../../../friends/data/repositories/friends_repository.dart';
 
 class PostWidget extends ConsumerWidget {
   final Post post;
@@ -96,6 +100,8 @@ class PostWidget extends ConsumerWidget {
                     ],
                   ),
                 ),
+                if (!post.isAnonymous && post.authorId != currentUserId)
+                  _buildFriendActionButton(context, ref),
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     switch (value) {
@@ -219,6 +225,205 @@ class PostWidget extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildFriendActionButton(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    if (currentUserId.isEmpty) {
+      return IconButton(
+        icon: Icon(
+          Icons.person_add_alt_1,
+          size: 20,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        tooltip: 'Sign in to add friends',
+        onPressed: () => _showAuthPrompt(context),
+      );
+    }
+
+    final friendshipStatusAsync = ref.watch(friendshipStatusProvider(post.authorId));
+
+    return friendshipStatusAsync.when(
+      data: (status) {
+        switch (status) {
+          case FriendshipStatus.none:
+            return IconButton(
+              icon: Icon(
+                Icons.person_add_alt,
+                size: 20,
+                color: theme.colorScheme.primary,
+              ),
+              tooltip: 'Send friend request',
+              onPressed: () => _handleSendFriendRequest(context, ref),
+            );
+          case FriendshipStatus.pendingSent:
+            return IconButton(
+              icon: Icon(
+                Icons.hourglass_top_rounded,
+                size: 20,
+                color: theme.colorScheme.secondary,
+              ),
+              tooltip: 'Cancel friend request',
+              onPressed: () => _handleCancelFriendRequest(context, ref),
+            );
+          case FriendshipStatus.pendingReceived:
+            return IconButton(
+              icon: Icon(
+                Icons.how_to_reg,
+                size: 20,
+                color: theme.colorScheme.primary,
+              ),
+              tooltip: 'Respond to friend request',
+              onPressed: () => _handleAcceptFriendRequest(context, ref),
+            );
+          case FriendshipStatus.friends:
+            return IconButton(
+              icon: Icon(
+                Icons.chat_bubble_rounded,
+                size: 20,
+                color: theme.colorScheme.primary,
+              ),
+              tooltip: 'Open chat',
+              onPressed: () => _handleOpenChat(context, ref),
+            );
+        }
+      },
+      loading: () => const SizedBox(
+        width: 40,
+        height: 40,
+        child: Center(
+          child: SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ),
+      error: (_, __) => IconButton(
+        icon: Icon(
+          Icons.error_outline,
+          size: 20,
+          color: theme.colorScheme.error,
+        ),
+        tooltip: 'Unable to load friend status',
+        onPressed: () => _showErrorSnackBar(context, 'Unable to load friend status'),
+      ),
+    );
+  }
+
+  Future<void> _handleSendFriendRequest(BuildContext context, WidgetRef ref) async {
+    if (currentUserId.isEmpty) {
+      _showAuthPrompt(context);
+      return;
+    }
+
+    try {
+      final notifier = ref.read(sendFriendRequestProvider.notifier);
+      await notifier.sendRequest(post.authorId);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Friend request sent to ${post.authorNickname}')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send friend request: ${_formatError(e)}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleCancelFriendRequest(BuildContext context, WidgetRef ref) async {
+    try {
+      final repository = ref.read(friendsRepositoryProvider);
+      final requestId = await repository.getPendingRequestId(currentUserId, post.authorId);
+      
+      if (requestId != null) {
+        final notifier = ref.read(sendFriendRequestProvider.notifier);
+        await notifier.cancelRequest(requestId, post.authorId);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Friend request cancelled')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Failed to cancel friend request: ${_formatError(e)}');
+      }
+    }
+  }
+
+  Future<void> _handleAcceptFriendRequest(BuildContext context, WidgetRef ref) async {
+    try {
+      final repository = ref.read(friendsRepositoryProvider);
+      final requestId = await repository.getPendingRequestId(currentUserId, post.authorId);
+      
+      if (requestId != null) {
+        final notifier = ref.read(respondToFriendRequestProvider.notifier);
+        await notifier.accept(requestId, post.authorId);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('You are now friends with ${post.authorNickname}')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Failed to accept friend request: ${_formatError(e)}');
+      }
+    }
+  }
+
+  Future<void> _handleOpenChat(BuildContext context, WidgetRef ref) async {
+    try {
+      final repository = ref.read(friendsRepositoryProvider);
+      final conversationId = await repository.getConversationId(
+        currentUserId,
+        post.authorId,
+      );
+
+      if (conversationId != null && context.mounted) {
+        context.push('/chat/$conversationId/${post.authorId}');
+      } else if (context.mounted) {
+        _showErrorSnackBar(context, 'Conversation not found');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Failed to open chat: ${_formatError(e)}');
+      }
+    }
+  }
+
+  void _showAuthPrompt(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please sign in to connect with friends'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  String _formatError(dynamic error) {
+    return error.toString().replaceFirst('Exception: ', '');
   }
 
   String _formatTimestamp(DateTime timestamp) {

@@ -2,16 +2,44 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teen_talk_app/src/features/messages/data/repositories/direct_messages_repository.dart';
+import 'package:teen_talk_app/src/features/friends/data/repositories/friends_repository.dart';
 
 void main() {
   group('DirectMessagesRepository', () {
     late DirectMessagesRepository repository;
     late FakeFirebaseFirestore firestore;
+    late FriendsRepository friendsRepository;
 
     setUp(() {
       firestore = FakeFirebaseFirestore();
-      repository = DirectMessagesRepository(firestore);
+      friendsRepository = FriendsRepository(firestore);
+      repository = DirectMessagesRepository(firestore, friendsRepository);
     });
+
+    Future<void> makeFriends(String userA, String userB) async {
+      final timestamp = Timestamp.now();
+      final conversationId = _generateConversationId(userA, userB);
+
+      await firestore
+          .collection('friends')
+          .doc(userA)
+          .collection('list')
+          .doc(userB)
+          .set({
+        'createdAt': timestamp,
+        'conversationId': conversationId,
+      });
+
+      await firestore
+          .collection('friends')
+          .doc(userB)
+          .collection('list')
+          .doc(userA)
+          .set({
+        'createdAt': timestamp,
+        'conversationId': conversationId,
+      });
+    }
 
     group('_generateConversationId', () {
       test('generates consistent ID regardless of order', () {
@@ -33,6 +61,8 @@ void main() {
       test('creates new conversation when sending first message', () async {
         final senderId = 'user1';
         final receiverId = 'user2';
+
+        await makeFriends(senderId, receiverId);
 
         final message = await repository.sendMessage(
           senderId: senderId,
@@ -57,6 +87,8 @@ void main() {
         final senderId = 'user1';
         final receiverId = 'user2';
         final conversationId = _generateConversationId(senderId, receiverId);
+
+        await makeFriends(senderId, receiverId);
 
         await firestore.collection('conversations').doc(conversationId).set({
           'userId1': 'user1',
@@ -85,9 +117,25 @@ void main() {
         expect(messages.docs.length, 1);
       });
 
+      test('throws exception when users are not friends', () async {
+        final senderId = 'user1';
+        final receiverId = 'user2';
+
+        expect(
+          () => repository.sendMessage(
+            senderId: senderId,
+            receiverId: receiverId,
+            text: 'Hello!',
+          ),
+          throwsException,
+        );
+      });
+
       test('throws exception when sender is blocked by receiver', () async {
         final senderId = 'user1';
         final receiverId = 'user2';
+
+        await makeFriends(senderId, receiverId);
 
         await firestore.collection('blocks').doc(receiverId).set({
           'createdAt': Timestamp.now(),
@@ -117,6 +165,8 @@ void main() {
         final senderId = 'user1';
         final receiverId = 'user2';
 
+        await makeFriends(senderId, receiverId);
+
         await repository.sendMessage(
           senderId: senderId,
           receiverId: receiverId,
@@ -137,6 +187,8 @@ void main() {
       test('stores message with correct timestamp', () async {
         final senderId = 'user1';
         final receiverId = 'user2';
+
+        await makeFriends(senderId, receiverId);
 
         final beforeSend = DateTime.now();
         await repository.sendMessage(

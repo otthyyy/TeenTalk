@@ -3,16 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/direct_message.dart';
 import '../models/conversation.dart';
 import '../models/block.dart';
+import '../../../friends/data/repositories/friends_repository.dart';
 
 final directMessagesRepositoryProvider =
     Provider<DirectMessagesRepository>((ref) {
-  return DirectMessagesRepository(FirebaseFirestore.instance);
+  final friendsRepository = ref.watch(friendsRepositoryProvider);
+  return DirectMessagesRepository(
+    FirebaseFirestore.instance,
+    friendsRepository,
+  );
 });
 
 class DirectMessagesRepository {
   final FirebaseFirestore _firestore;
+  final FriendsRepository _friendsRepository;
 
-  DirectMessagesRepository(this._firestore);
+  DirectMessagesRepository(this._firestore, this._friendsRepository);
 
   /// Generate a conversation ID from two user IDs (ensures consistency)
   String _generateConversationId(String userId1, String userId2) {
@@ -27,6 +33,12 @@ class DirectMessagesRepository {
     required String text,
     String? imageUrl,
   }) async {
+    // Validate friendship
+    final areFriends = await _friendsRepository.areFriends(senderId, receiverId);
+    if (!areFriends) {
+      throw Exception('You can only message accepted friends');
+    }
+
     // Check if sender is blocked by receiver
     final isBlocked = await isUserBlocked(receiverId, senderId);
     if (isBlocked) {
