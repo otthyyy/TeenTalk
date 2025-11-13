@@ -72,12 +72,40 @@ lib/
    flutter pub get
    ```
 
-3. **Run code generation** (if needed)
+3. **Configure Firebase** (Required)
+   
+   ⚠️ **IMPORTANT**: Firebase credentials are required to run the app but are NOT included in the repository for security reasons.
+   
+   **Option A: Using FlutterFire CLI (Recommended)**
+   ```bash
+   # Install FlutterFire CLI
+   dart pub global activate flutterfire_cli
+   
+   # Login to Firebase
+   firebase login
+   
+   # Configure Firebase for your project
+   flutterfire configure
+   ```
+   
+   **Option B: Manual Setup**
+   ```bash
+   # Copy template files
+   cp lib/firebase_options.dart.example lib/firebase_options.dart
+   cp android/google-services.json.example android/google-services.json
+   cp ios/Runner/GoogleService-Info.plist.example ios/Runner/GoogleService-Info.plist
+   
+   # Then edit each file and replace placeholder values with your Firebase project credentials
+   ```
+   
+   📚 See [FIREBASE_SECURITY.md](FIREBASE_SECURITY.md) for detailed Firebase setup instructions and security best practices.
+
+4. **Run code generation** (if needed)
    ```bash
    flutter packages pub run build_runner build
    ```
 
-4. **Run the app**
+5. **Run the app**
    ```bash
    # For development
    flutter run
@@ -88,7 +116,7 @@ lib/
    flutter run -d ios         # iOS (requires simulator/device)
    ```
 
-5. **Build for production**
+6. **Build for production**
    ```bash
    # Android APK
    flutter build apk --release
@@ -102,6 +130,71 @@ lib/
    # Web
    flutter build web --release
    ```
+
+## 🔐 Firebase Setup
+
+Firebase credentials are not committed to this repository. Follow the steps below to configure your environment.
+
+### iOS: GoogleService-Info.plist
+1. Open [Firebase Console](https://console.firebase.google.com/)
+2. Select your project or create a new one
+3. Go to **Project settings → Your apps → iOS**
+4. Register your iOS bundle ID if you have not already
+5. Download the generated **GoogleService-Info.plist**
+6. Place the file at `ios/Runner/GoogleService-Info.plist`
+
+### Android: google-services.json
+1. Open Firebase Console → **Project settings → Your apps → Android**
+2. Register your Android package name if needed
+3. Download **google-services.json**
+4. Place the file at `android/google-services.json`
+
+### Flutter: firebase_options.dart
+1. Install the FlutterFire CLI: `dart pub global activate flutterfire_cli`
+2. Run `flutterfire configure`
+3. Confirm the platforms you want to configure
+4. The CLI will generate `lib/firebase_options.dart` locally
+5. If you prefer manual setup, copy `lib/firebase_options.dart.example` to `lib/firebase_options.dart` and fill in your credentials
+
+### Web Push Notifications
+1. Copy `web/firebase-config.js.example` to `web/firebase-config.js`
+2. Fill in your web-specific Firebase credentials (API key, auth domain, etc.)
+3. This file is used by `firebase-messaging-sw.js` for background notifications
+
+### Local Development
+- Copy `.env.example` to `.env` and populate your Firebase values
+- When running the app, you can inject variables with `--dart-define` flags:
+  ```bash
+  flutter run \
+    --dart-define=FIREBASE_API_KEY=YOUR_API_KEY \
+    --dart-define=FIREBASE_APP_ID=YOUR_APP_ID \
+    --dart-define=FIREBASE_PROJECT_ID=YOUR_PROJECT_ID \
+    --dart-define=FIREBASE_MESSAGING_SENDER_ID=YOUR_SENDER_ID \
+    --dart-define=FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN \
+    --dart-define=FIREBASE_STORAGE_BUCKET=YOUR_STORAGE_BUCKET \
+    --dart-define=FIREBASE_MEASUREMENT_ID=YOUR_MEASUREMENT_ID
+  ```
+- For local testing without production credentials, use the Firebase Emulator Suite (see [EMULATOR_TESTING_GUIDE.md](EMULATOR_TESTING_GUIDE.md))
+
+### CI/CD Pipelines
+- Store configuration files as GitHub Secrets (base64 encoded)
+- In your workflow, decode the secrets and write the files before building:
+  ```yaml
+  - name: Setup Firebase credentials
+    run: |
+      echo "${{ secrets.FIREBASE_OPTIONS_DART }}" | base64 -d > lib/firebase_options.dart
+      echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/google-services.json
+      echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}" | base64 -d > ios/Runner/GoogleService-Info.plist
+  ```
+- Rotate secrets immediately if there is any suspicion of exposure
+
+### Security Best Practices
+- Follow [Firebase security best practices](https://firebase.google.com/docs/projects/manage-secrets)
+- Restrict API keys in Google Cloud Console (HTTP referrers, bundle IDs, SHA1 fingerprints)
+- Enable Firebase App Check to protect backend resources
+- Audit Firebase Security Rules regularly
+
+📚 Additional resources: [FIREBASE_SECURITY.md](FIREBASE_SECURITY.md), [SECURITY_INCIDENT_RESPONSE.md](SECURITY_INCIDENT_RESPONSE.md)
 
 ## 🎨 Theming
 

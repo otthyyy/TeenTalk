@@ -1,0 +1,37 @@
+import 'package:firebase_core/firebase_core.dart';
+
+// IMPORTANT: This is a template file.
+// To configure Firebase for your project:
+//
+// 1. Install FlutterFire CLI:
+//    dart pub global activate flutterfire_cli
+//
+// 2. Run FlutterFire configuration:
+//    flutterfire configure
+//
+// 3. This will create a firebase_options.dart file with your credentials
+//
+// OR manually create firebase_options.dart based on this template:
+
+class DefaultFirebaseOptions {
+  static FirebaseOptions get currentPlatform {
+    // Return the appropriate platform configuration
+    // For web-only apps, return web directly
+    // For multi-platform apps, use Platform detection
+    return web;
+  }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'YOUR_WEB_API_KEY',
+    appId: 'YOUR_WEB_APP_ID',
+    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+    projectId: 'YOUR_PROJECT_ID',
+    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
+    storageBucket: 'YOUR_PROJECT_ID.firebasestorage.app',
+    measurementId: 'YOUR_MEASUREMENT_ID',
+  );
+
+  // Add additional platform configurations as needed:
+  // static const FirebaseOptions android = FirebaseOptions(...);
+  // static const FirebaseOptions ios = FirebaseOptions(...);
+}

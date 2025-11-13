@@ -1,0 +1,14 @@
+// Firebase configuration for web service worker
+// Copy this file to firebase-config.js and fill in your actual credentials
+//
+// This file is used by firebase-messaging-sw.js for push notifications
+
+self.firebaseConfig = {
+  apiKey: "YOUR_WEB_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_WEB_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};

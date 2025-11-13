@@ -72,12 +72,12 @@ The application uses `.env` files for configuration management:
 
 ```env
 # Firebase Configuration - Production Environment
-FIREBASE_API_KEY=AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE
-FIREBASE_AUTH_DOMAIN=teentalk-31e45.firebaseapp.com
-FIREBASE_PROJECT_ID=teentalk-31e45
-FIREBASE_STORAGE_BUCKET=teentalk-31e45.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=505388994229
-FIREBASE_APP_ID=1:505388994229:web:a620f3735bb1dc6420f8fc
+FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
+FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
+FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
+FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
+FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
+FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
 
 # Environment
 FLUTTER_ENV=prod
@@ -88,9 +88,11 @@ FLUTTER_ENV=prod
 The application supports multiple environments:
 
 - **Development**: Uses development Firebase project
-- **Production**: Uses production Firebase project `teentalk-31e45`
+- **Production**: Uses production Firebase project
 
 To switch environments, modify the `FLUTTER_ENV` variable in your `.env` file.
+
+⚠️ **IMPORTANT**: Never commit actual Firebase credentials to version control. Always use `.env` files (which are gitignored) or environment variables.
 
 ## FlutterFire Configuration
 

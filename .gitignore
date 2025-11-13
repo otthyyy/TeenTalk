@@ -49,8 +49,12 @@ app.*.map.json
 *.pem
 *.jks
 *.keystore
-google-services.json
-GoogleService-Info.plist
+
+# Firebase credentials - DO NOT COMMIT
+lib/firebase_options.dart
+android/google-services.json
+ios/Runner/GoogleService-Info.plist
+web/firebase-config.js
 
 # Generated files
 **/*.freezed.dart
