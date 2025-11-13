@@ -74,7 +74,11 @@ lib/
 
 3. **Configure Firebase** (Required)
    
-   ⚠️ **IMPORTANT**: Firebase credentials are required to run the app but are NOT included in the repository for security reasons.
+   ⚠️ **IMPORTANT**: Firebase credentials are required to run the app. A placeholder `lib/firebase_options.dart` is checked into the repository so the project compiles, but it contains dummy values only.
+
+   - Replace the placeholder values with your actual Firebase project credentials **locally only**.
+   - Do **not** commit real credentials back to the repository.
+   - Review [SECURITY_NOTICE.md](SECURITY_NOTICE.md) for remediation steps and best practices after the recent credential exposure.
    
    **Option A: Using FlutterFire CLI (Recommended)**
    ```bash
@@ -87,18 +91,20 @@ lib/
    # Configure Firebase for your project
    flutterfire configure
    ```
+   This command overwrites `lib/firebase_options.dart` with real credentials on your machine. Remember to keep those changes local.
    
    **Option B: Manual Setup**
    ```bash
-   # Copy template files
-   cp lib/firebase_options.dart.example lib/firebase_options.dart
+   # Copy template files if you prefer manual configuration
+   cp lib/firebase_options.dart.example lib/firebase_options.local.dart
    cp android/google-services.json.example android/google-services.json
    cp ios/Runner/GoogleService-Info.plist.example ios/Runner/GoogleService-Info.plist
    
-   # Then edit each file and replace placeholder values with your Firebase project credentials
+   # Then edit each file (or the existing placeholder) and replace placeholder values with your Firebase project credentials
    ```
+   When editing manually, ensure `lib/firebase_options.dart` points to your updated credentials locally.
    
-   📚 See [FIREBASE_SECURITY.md](FIREBASE_SECURITY.md) for detailed Firebase setup instructions and security best practices.
+   📚 See [FIREBASE_SECURITY.md](FIREBASE_SECURITY.md) and [SECURITY_NOTICE.md](SECURITY_NOTICE.md) for detailed Firebase setup instructions and security best practices.
 
 4. **Run code generation** (if needed)
    ```bash
