@@ -28,13 +28,27 @@ import 'src/services/push_notifications_listener.dart';
 import 'src/services/push_notifications_provider.dart';
 import 'src/services/push_notifications_service.dart';
 
+const _firebaseOptionsHelpMessage = 'Firebase configuration is missing or still uses placeholder values. '
+    'Update lib/firebase_options.dart with real credentials (see README.md and SECURITY_NOTICE.md).';
+
+bool _firebaseOptionsContainPlaceholders(FirebaseOptions options) {
+  return options.apiKey.startsWith('YOUR_') ||
+      options.projectId == 'your-project-id';
+}
+
 /// Background message handler for Firebase Cloud Messaging
 /// Must be a top-level function
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
   final logger = Logger();
+  final options = DefaultFirebaseOptions.currentPlatform;
+
+  if (_firebaseOptionsContainPlaceholders(options)) {
+    logger.w('Skipping Firebase background initialization: $_firebaseOptionsHelpMessage');
+    return;
+  }
+
+  await Firebase.initializeApp(options: options);
   logger.i('Handling background message: ${message.messageId}');
   logger.d('Message data: ${message.data}');
   logger.d('Message notification: ${message.notification?.title}');
@@ -49,9 +63,16 @@ Future<void> main() async {
     await Hive.initFlutter();
 
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      final options = DefaultFirebaseOptions.currentPlatform;
+      
+      if (_firebaseOptionsContainPlaceholders(options)) {
+        print('⚠️ WARNING: $_firebaseOptionsHelpMessage');
+        if (!kIsWeb) {
+          throw Exception(_firebaseOptionsHelpMessage);
+        }
+      }
+      
+      await Firebase.initializeApp(options: options);
 
       if (!kIsWeb) {
         FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
