@@ -35,6 +35,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isProfileLoading = userProfile.isLoading;
       final profile = userProfile.value;
       final hasProfile = profile != null;
+      final hasCompletedOnboarding = profile?.onboardingComplete ?? false;
       final isProfileComplete = profile?.isProfileComplete ?? false;
       final isAdminUser = profile?.isAdmin ?? false;
 
@@ -51,7 +52,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isOnAuthPage ? null : '/auth';
       }
 
-      if (isAuthenticated && (!hasProfile || !isProfileComplete)) {
+      // Only redirect to onboarding if user hasn't completed it yet
+      // Don't redirect if they've completed onboarding but profile is incomplete
+      if (isAuthenticated && (!hasProfile || !hasCompletedOnboarding)) {
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
@@ -59,7 +62,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/feed';
       }
 
-      if (isAuthenticated && hasProfile && isProfileComplete && (isOnAuthPage || isOnOnboardingPage)) {
+      if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage)) {
         return '/feed';
       }
 

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
+import '../../../profile/presentation/widgets/incomplete_profile_banner.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../comments/presentation/widgets/comments_list_widget.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
@@ -457,6 +458,10 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               lastSyncedAt: postsState.lastSyncedAt,
             ),
           ),
+          if (userProfile != null && !userProfile.isProfileComplete)
+            SliverToBoxAdapter(
+              child: IncompleteProfileBanner(profile: userProfile),
+            ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
