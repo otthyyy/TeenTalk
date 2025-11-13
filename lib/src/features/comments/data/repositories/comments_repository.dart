@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/comment.dart';
 import '../models/comment_failure.dart';
@@ -40,7 +41,9 @@ class CommentsRepository {
 
       final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
       return (comments, lastDoc);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('getCommentsByPostId error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -142,7 +145,10 @@ class CommentsRepository {
           'id': commentRef.id,
         });
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      // Log error and stack trace to help debug "converted Future" issues
+      debugPrint('createComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -166,7 +172,9 @@ class CommentsRepository {
         'mentionedUserIds': mentionedUserIds,
         'updatedAt': now.toIso8601String(),
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('updateComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -219,7 +227,9 @@ class CommentsRepository {
 
         transaction.delete(commentRef);
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('deleteComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -251,7 +261,9 @@ class CommentsRepository {
           });
         }
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('likeComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -285,7 +297,9 @@ class CommentsRepository {
           });
         }
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('unlikeComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -331,7 +345,9 @@ class CommentsRepository {
           'updatedAt': now.toIso8601String(),
         });
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('reportComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
@@ -362,7 +378,9 @@ class CommentsRepository {
           'id': doc.id,
         });
       }).toList();
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('getRepliesForComment error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
     }
   }
