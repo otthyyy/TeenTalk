@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "505388994229",
-    "project_id": "teentalk-31e45",
-    "storage_bucket": "teentalk-31e45.firebasestorage.app"
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_PROJECT_ID.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:505388994229:android:placeholder",
+        "mobilesdk_app_id": "1:YOUR_PROJECT_NUMBER:android:YOUR_ANDROID_APP_ID",
         "android_client_info": {
           "package_name": "com.teentalk.teen_talk_app"
         }
       },
       "api_key": [
         {
-          "current_key": "AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE"
+          "current_key": "YOUR_ANDROID_API_KEY"
         }
       ],
       "services": {

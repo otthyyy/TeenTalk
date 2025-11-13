@@ -1,20 +1,30 @@
 importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
 
-// Initialize Firebase in the service worker
-firebase.initializeApp({
-  apiKey: "AIzaSyBv3aOdo7j0BVQFU4dJ_I5MMy4anyqrqhE",
-  authDomain: "teentalk-31e45.firebaseapp.com",
-  projectId: "teentalk-31e45",
-  storageBucket: "teentalk-31e45.firebasestorage.app",
-  messagingSenderId: "505388994229",
-  appId: "1:505388994229:web:a620f3735bb1dc6420f8fc"
-});
+// IMPORTANT: Firebase configuration must be injected at build time or loaded from a secure source
+// Do NOT hardcode credentials here. This is a placeholder that should be replaced during build.
+//
+// For local development, create web/firebase-config.js with your credentials:
+// self.firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", ... };
+//
+// For production builds, inject credentials using environment variables or build-time replacement.
+importScripts('firebase-config.js');
 
-const messaging = firebase.messaging();
+// Initialize Firebase in the service worker with the loaded config
+let messaging = null;
+if (typeof self.firebaseConfig === 'undefined') {
+  console.error('Firebase configuration not found. Please create web/firebase-config.js or inject config at build time.');
+} else {
+  firebase.initializeApp(self.firebaseConfig);
+  messaging = firebase.messaging();
+}
+
+if (!messaging) {
+  console.warn('Firebase Messaging is not initialized. Push notifications are disabled.');
+}
 
 // Handle background messages
-messaging.onBackgroundMessage((payload) => {
+messaging?.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
   const notificationTitle = payload.notification?.title || 'TeenTalk';
