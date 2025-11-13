@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/design_tokens.dart';
+import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
@@ -8,7 +10,7 @@ import '../../../friends/presentation/providers/friends_provider.dart';
 import '../../../friends/data/models/friendship_status.dart';
 import '../../../friends/data/repositories/friends_repository.dart';
 
-class PostWidget extends ConsumerWidget {
+class PostWidget extends ConsumerStatefulWidget {
   final Post post;
   final String currentUserId;
   final VoidCallback? onComments;
@@ -27,39 +29,61 @@ class PostWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isLiked = post.likedBy.contains(currentUserId);
+  ConsumerState<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends ConsumerState<PostWidget> {
+  bool _isLikeAnimating = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLiked = widget.post.likedBy.contains(widget.currentUserId);
     final theme = Theme.of(context);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return AnimatedCard(
+      duration: DesignTokens.duration,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: theme.colorScheme.primary,
-                  child: post.isAnonymous
-                      ? Icon(
-                          Icons.person_off,
-                          size: 24,
-                          color: theme.colorScheme.onPrimary,
-                        )
-                      : Text(
-                          post.authorNickname.isNotEmpty
-                              ? post.authorNickname[0].toUpperCase()
-                              : 'A',
-                          style: TextStyle(
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.primary.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.transparent,
+                    child: widget.post.isAnonymous
+                        ? Icon(
+                            Icons.person_outline,
+                            size: 24,
                             color: theme.colorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                          )
+                        : Text(
+                            widget.post.authorNickname.isNotEmpty
+                                ? widget.post.authorNickname[0].toUpperCase()
+                                : 'A',
+                            style: TextStyle(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -69,7 +93,7 @@ class PostWidget extends ConsumerWidget {
                       Row(
                         children: [
                           Text(
-                            post.isAnonymous ? 'Anonymous' : post.authorNickname,
+                            widget.post.isAnonymous ? 'Anonymous' : widget.post.authorNickname,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -79,10 +103,10 @@ class PostWidget extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                             ),
                             child: Text(
-                              post.section,
+                              widget.post.section,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: theme.colorScheme.onPrimaryContainer,
                                 fontWeight: FontWeight.w500,
@@ -92,7 +116,7 @@ class PostWidget extends ConsumerWidget {
                         ],
                       ),
                       Text(
-                        _formatTimestamp(post.createdAt),
+                        _formatTimestamp(widget.post.createdAt),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -100,13 +124,13 @@ class PostWidget extends ConsumerWidget {
                     ],
                   ),
                 ),
-                if (!post.isAnonymous && post.authorId != currentUserId)
-                  _buildFriendActionButton(context, ref),
+                if (!widget.post.isAnonymous && widget.post.authorId != widget.currentUserId)
+                  _buildFriendActionButton(context),
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     switch (value) {
                       case 'report':
-                        onReport?.call();
+                        widget.onReport?.call();
                         break;
                     }
                   },
@@ -127,24 +151,24 @@ class PostWidget extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              post.content,
+              widget.post.content,
               style: theme.textTheme.bodyLarge,
             ),
-            if (post.imageUrl != null) ...[
+            if (widget.post.imageUrl != null) ...[
               const SizedBox(height: 12),
               CachedImageWidget(
-                imageUrl: post.imageUrl!,
+                imageUrl: widget.post.imageUrl!,
                 width: double.infinity,
                 height: 200,
                 fit: BoxFit.cover,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
               ),
             ],
-            if (post.mentionedUserIds.isNotEmpty) ...[
+            if (widget.post.mentionedUserIds.isNotEmpty) ...[
               const SizedBox(height: 8),
               Wrap(
                 spacing: 4,
-                children: post.mentionedUserIds.map((userId) {
+                children: widget.post.mentionedUserIds.map((userId) {
                   return Chip(
                     label: Text('@$userId'),
                     backgroundColor: theme.colorScheme.primaryContainer,
@@ -160,36 +184,67 @@ class PostWidget extends ConsumerWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                InkWell(
-                  onTap: isLiked ? onUnlike : onLike,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          size: 20,
-                          color: isLiked ? theme.colorScheme.error : theme.colorScheme.onSurface,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          post.likeCount.toString(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
+                AnimatedPressable(
+                  onPressed: () {
+                    setState(() {
+                      _isLikeAnimating = true;
+                    });
+                    Future.delayed(DesignTokens.durationFast, () {
+                      if (mounted) {
+                        setState(() {
+                          _isLikeAnimating = false;
+                        });
+                      }
+                    });
+
+                    if (isLiked) {
+                      widget.onUnlike?.call();
+                    } else {
+                      widget.onLike?.call();
+                    }
+                  },
+                  child: AnimatedScale(
+                    scale: _isLikeAnimating ? 1.15 : 1.0,
+                    duration: DesignTokens.durationFast,
+                    curve: DesignTokens.curveBounce,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      decoration: BoxDecoration(
+                        color: isLiked
+                            ? DesignTokens.vibrantPink
+                            : theme.colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            size: 20,
+                            color: isLiked ? Colors.white : theme.colorScheme.onSurface,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Text(
+                            widget.post.likeCount.toString(),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: isLiked ? Colors.white : null,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                InkWell(
-                  onTap: onComments,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
+                AnimatedPressable(
+                  onPressed: widget.onComments,
+                  child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant,
+                      borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -200,7 +255,7 @@ class PostWidget extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          post.commentCount.toString(),
+                          widget.post.commentCount.toString(),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -227,10 +282,10 @@ class PostWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildFriendActionButton(BuildContext context, WidgetRef ref) {
+  Widget _buildFriendActionButton(BuildContext context) {
     final theme = Theme.of(context);
 
-    if (currentUserId.isEmpty) {
+    if (widget.currentUserId.isEmpty) {
       return IconButton(
         icon: Icon(
           Icons.person_add_alt_1,
@@ -242,7 +297,7 @@ class PostWidget extends ConsumerWidget {
       );
     }
 
-    final friendshipStatusAsync = ref.watch(friendshipStatusProvider(post.authorId));
+    final friendshipStatusAsync = ref.watch(friendshipStatusProvider(widget.post.authorId));
 
     return friendshipStatusAsync.when(
       data: (status) {
@@ -255,7 +310,7 @@ class PostWidget extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
               tooltip: 'Send friend request',
-              onPressed: () => _handleSendFriendRequest(context, ref),
+              onPressed: () => _handleSendFriendRequest(context),
             );
           case FriendshipStatus.pendingSent:
             return IconButton(
@@ -265,7 +320,7 @@ class PostWidget extends ConsumerWidget {
                 color: theme.colorScheme.secondary,
               ),
               tooltip: 'Cancel friend request',
-              onPressed: () => _handleCancelFriendRequest(context, ref),
+              onPressed: () => _handleCancelFriendRequest(context),
             );
           case FriendshipStatus.pendingReceived:
             return IconButton(
@@ -275,7 +330,7 @@ class PostWidget extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
               tooltip: 'Respond to friend request',
-              onPressed: () => _handleAcceptFriendRequest(context, ref),
+              onPressed: () => _handleAcceptFriendRequest(context),
             );
           case FriendshipStatus.friends:
             return IconButton(
@@ -285,7 +340,7 @@ class PostWidget extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
               tooltip: 'Open chat',
-              onPressed: () => _handleOpenChat(context, ref),
+              onPressed: () => _handleOpenChat(context),
             );
         }
       },
@@ -312,19 +367,19 @@ class PostWidget extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleSendFriendRequest(BuildContext context, WidgetRef ref) async {
-    if (currentUserId.isEmpty) {
+  Future<void> _handleSendFriendRequest(BuildContext context) async {
+    if (widget.currentUserId.isEmpty) {
       _showAuthPrompt(context);
       return;
     }
 
     try {
       final notifier = ref.read(sendFriendRequestProvider.notifier);
-      await notifier.sendRequest(post.authorId);
+      await notifier.sendRequest(widget.post.authorId);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Friend request sent to ${post.authorNickname}')),
+          SnackBar(content: Text('Friend request sent to ${widget.post.authorNickname}')),
         );
       }
     } catch (e) {
@@ -339,14 +394,14 @@ class PostWidget extends ConsumerWidget {
     }
   }
 
-  Future<void> _handleCancelFriendRequest(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleCancelFriendRequest(BuildContext context) async {
     try {
       final repository = ref.read(friendsRepositoryProvider);
-      final requestId = await repository.getPendingRequestId(currentUserId, post.authorId);
-      
+      final requestId = await repository.getPendingRequestId(widget.currentUserId, widget.post.authorId);
+
       if (requestId != null) {
         final notifier = ref.read(sendFriendRequestProvider.notifier);
-        await notifier.cancelRequest(requestId, post.authorId);
+        await notifier.cancelRequest(requestId, widget.post.authorId);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -361,18 +416,18 @@ class PostWidget extends ConsumerWidget {
     }
   }
 
-  Future<void> _handleAcceptFriendRequest(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleAcceptFriendRequest(BuildContext context) async {
     try {
       final repository = ref.read(friendsRepositoryProvider);
-      final requestId = await repository.getPendingRequestId(currentUserId, post.authorId);
-      
+      final requestId = await repository.getPendingRequestId(widget.currentUserId, widget.post.authorId);
+
       if (requestId != null) {
         final notifier = ref.read(respondToFriendRequestProvider.notifier);
-        await notifier.accept(requestId, post.authorId);
+        await notifier.accept(requestId, widget.post.authorId);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('You are now friends with ${post.authorNickname}')),
+            SnackBar(content: Text('You are now friends with ${widget.post.authorNickname}')),
           );
         }
       }
@@ -383,16 +438,16 @@ class PostWidget extends ConsumerWidget {
     }
   }
 
-  Future<void> _handleOpenChat(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleOpenChat(BuildContext context) async {
     try {
       final repository = ref.read(friendsRepositoryProvider);
       final conversationId = await repository.getConversationId(
-        currentUserId,
-        post.authorId,
+        widget.currentUserId,
+        widget.post.authorId,
       );
 
       if (conversationId != null && context.mounted) {
-        context.push('/chat/$conversationId/${post.authorId}');
+        context.push('/chat/$conversationId/${widget.post.authorId}');
       } else if (context.mounted) {
         _showErrorSnackBar(context, 'Conversation not found');
       }

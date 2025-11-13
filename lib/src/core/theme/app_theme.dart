@@ -82,10 +82,10 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: DesignTokens.vibrantPurple,
         foregroundColor: DesignTokens.lightOnPrimary,
-        elevation: 4,
-        shadowColor: DesignTokens.vibrantPurple.withOpacity(0.5),
+        elevation: 0, // Flat design like BeReal
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusFull), // Pill-shaped
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.spacingLg,
@@ -93,13 +93,14 @@ class AppTheme {
         ),
         textStyle: const TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700, // Bolder
           letterSpacing: 0.5,
         ),
+        animationDuration: DesignTokens.durationFast,
       ).copyWith(
         overlayColor: MaterialStateProperty.resolveWith((states) {
           if (states.contains(MaterialState.pressed)) {
-            return DesignTokens.lightOnPrimary.withOpacity(0.2);
+            return DesignTokens.lightOnPrimary.withOpacity(0.15);
           }
           return null;
         }),
@@ -180,10 +181,14 @@ class AppTheme {
     
     cardTheme: CardThemeData(
       color: DesignTokens.lightSurface,
-      elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.08),
+      elevation: 0, // Flat cards like BeReal
+      shadowColor: Colors.black.withOpacity(0.04),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+        side: BorderSide(
+          color: DesignTokens.lightOutline.withOpacity(0.5),
+          width: 1,
+        ),
       ),
       margin: const EdgeInsets.all(DesignTokens.spacingSm),
     ),
@@ -238,7 +243,7 @@ class AppTheme {
     
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(), // Smooth fade like BeReal
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
@@ -323,12 +328,12 @@ class AppTheme {
     
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: DesignTokens.vibrantPurple,
-        foregroundColor: DesignTokens.darkOnPrimary,
-        elevation: 4,
-        shadowColor: DesignTokens.vibrantPurple.withOpacity(0.5),
+        backgroundColor: DesignTokens.lightSurface,
+        foregroundColor: DesignTokens.darkOnBackground,
+        elevation: 0,
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
+          borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.spacingLg,
@@ -336,13 +341,14 @@ class AppTheme {
         ),
         textStyle: const TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           letterSpacing: 0.5,
         ),
+        animationDuration: DesignTokens.durationFast,
       ).copyWith(
         overlayColor: MaterialStateProperty.resolveWith((states) {
           if (states.contains(MaterialState.pressed)) {
-            return DesignTokens.darkOnPrimary.withOpacity(0.2);
+            return DesignTokens.darkOnPrimary.withOpacity(0.1);
           }
           return null;
         }),
@@ -423,10 +429,14 @@ class AppTheme {
     
     cardTheme: CardThemeData(
       color: DesignTokens.darkSurface,
-      elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.3),
+      elevation: 0, // Flat cards like BeReal
+      shadowColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+        side: BorderSide(
+          color: DesignTokens.darkOutline.withOpacity(0.5),
+          width: 1,
+        ),
       ),
       margin: const EdgeInsets.all(DesignTokens.spacingSm),
     ),
@@ -481,12 +491,12 @@ class AppTheme {
     
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(), // Smooth fade like BeReal
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
-    
-    focusColor: DesignTokens.lightPurple.withOpacity(0.25),
+
+    focusColor: DesignTokens.lightSurface.withOpacity(0.15),
     
     textTheme: _textTheme,
   );

@@ -59,13 +59,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY_HERE',
-    appId: '1:000000000000:web:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'your-project-id',
-    authDomain: 'your-project-id.firebaseapp.com',
-    storageBucket: 'your-project-id.firebasestorage.app',
-    measurementId: 'G-XXXXXXXXXX',
+    apiKey: "AIzaSyDidlkbYJWCOgFej4czfgBYWMLr3xO9gUI",
+  authDomain: "teentalk-31e45.firebaseapp.com",
+  projectId: "teentalk-31e45",
+  storageBucket: "teentalk-31e45.firebasestorage.app",
+  messagingSenderId: "505388994229",
+  appId: "1:505388994229:web:a620f3735bb1dc6420f8fc",
+  measurementId: "G-0KPB6VFN4J",
   );
 
   static const FirebaseOptions android = FirebaseOptions(

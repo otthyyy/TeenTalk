@@ -53,6 +53,7 @@ app.*.map.json
 # Firebase credentials - DO NOT COMMIT
 # NOTE: A sanitized placeholder of lib/firebase_options.dart is tracked for developer guidance.
 #       Do not replace it with real credentials or commit generated files from FlutterFire.
+lib/firebase_options.dart
 android/google-services.json
 ios/Runner/GoogleService-Info.plist
 web/firebase-config.js

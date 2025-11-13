@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
+import '../../../../core/theme/design_tokens.dart';
+import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
@@ -98,56 +100,39 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     return Semantics(
       container: true,
       explicitChildNodes: true,
-      child: AnimatedBuilder(
-        animation: _shimmerController,
-        builder: (context, child) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: widget.isNew
-                  ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        theme.colorScheme.primary.withOpacity(0.1),
-                        theme.colorScheme.secondary.withOpacity(0.05),
-                      ],
-                      stops: [
-                        _shimmerController.value - 0.3,
-                        _shimmerController.value + 0.3,
-                      ],
-                    )
-                  : null,
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: child,
-          );
-        },
-        child: MergeSemantics(
-          child: Card(
-            margin: EdgeInsets.zero,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Container(
+      child: AnimatedCard(
+        duration: DesignTokens.duration,
+        child: AnimatedBuilder(
+          animation: _shimmerController,
+          builder: (context, child) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.colorScheme.surface,
-                    theme.colorScheme.surface.withOpacity(0.95),
-                  ],
-                ),
+                borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
+                gradient: widget.isNew
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          theme.colorScheme.primary.withOpacity(0.05),
+                          theme.colorScheme.secondary.withOpacity(0.02),
+                        ],
+                        stops: [
+                          _shimmerController.value - 0.3,
+                          _shimmerController.value + 0.3,
+                        ],
+                      )
+                    : null,
+              ),
+              child: child,
+            );
+          },
+          child: MergeSemantics(
+            child: Card(
+              margin: EdgeInsets.zero,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -371,41 +356,36 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 ? 'Unlike post, view ${widget.post.likeCount} likes'
                 : 'Like post, view ${widget.post.likeCount} likes',
             excludeSemantics: true,
-            child: AnimatedScale(
-              scale: _isLikeAnimating ? 1.2 : 1.0,
-              duration: const Duration(milliseconds: 150),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _isLikeAnimating = true;
-                  });
-                  Future.delayed(const Duration(milliseconds: 150), () {
-                    if (mounted) {
-                      setState(() {
-                        _isLikeAnimating = false;
-                      });
-                    }
-                  });
-
-                  if (isLiked) {
-                    widget.onUnlike();
-                  } else {
-                    widget.onLike();
+            child: AnimatedPressable(
+              onPressed: () {
+                setState(() {
+                  _isLikeAnimating = true;
+                });
+                Future.delayed(DesignTokens.durationFast, () {
+                  if (mounted) {
+                    setState(() {
+                      _isLikeAnimating = false;
+                    });
                   }
-                },
-                borderRadius: BorderRadius.circular(20),
+                });
+
+                if (isLiked) {
+                  widget.onUnlike();
+                } else {
+                  widget.onLike();
+                }
+              },
+              child: AnimatedScale(
+                scale: _isLikeAnimating ? 1.2 : 1.0,
+                duration: DesignTokens.durationFast,
+                curve: DesignTokens.curveBounce,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                   decoration: BoxDecoration(
-                    gradient: isLiked
-                        ? LinearGradient(
-                            colors: [
-                              theme.colorScheme.error,
-                              theme.colorScheme.error.withOpacity(0.8),
-                            ],
-                          )
-                        : null,
-                    borderRadius: BorderRadius.circular(20),
+                    color: isLiked
+                        ? DesignTokens.vibrantPink
+                        : theme.colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -441,16 +421,19 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Semantics(
             button: true,
             label: 'View comments, ${widget.post.commentCount} comments',
             excludeSemantics: true,
-            child: InkWell(
-              onTap: widget.onComments,
-              borderRadius: BorderRadius.circular(20),
+            child: AnimatedPressable(
+              onPressed: widget.onComments,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

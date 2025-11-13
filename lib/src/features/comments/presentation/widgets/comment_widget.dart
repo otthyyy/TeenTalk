@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/design_tokens.dart';
+import '../../../../core/utils/animation_utils.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
 
-class CommentWidget extends ConsumerWidget {
+class CommentWidget extends ConsumerStatefulWidget {
   final Comment comment;
   final String currentUserId;
   final VoidCallback? onReply;
@@ -22,43 +24,66 @@ class CommentWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isLiked = comment.likedBy.contains(currentUserId);
+  ConsumerState<CommentWidget> createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends ConsumerState<CommentWidget> {
+  bool _isLikeAnimating = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLiked = widget.comment.likedBy.contains(widget.currentUserId);
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+    return AnimatedCard(
+      duration: DesignTokens.durationFast,
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.3),
+          ),
         ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: theme.colorScheme.primary,
-                child: comment.isAnonymous
-                    ? Icon(
-                        Icons.person_off,
-                        size: 20,
-                        color: theme.colorScheme.onPrimary,
-                      )
-                    : Text(
-                        comment.authorNickname.isNotEmpty
-                            ? comment.authorNickname[0].toUpperCase()
-                            : 'A',
-                        style: TextStyle(
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withOpacity(0.7),
+                    ],
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.transparent,
+                  child: widget.comment.isAnonymous
+                      ? Icon(
+                          Icons.person_outline,
+                          size: 18,
                           color: theme.colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
+                        )
+                      : Text(
+                          widget.comment.authorNickname.isNotEmpty
+                              ? widget.comment.authorNickname[0].toUpperCase()
+                              : 'A',
+                          style: TextStyle(
+                            color: theme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -66,13 +91,13 @@ class CommentWidget extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      comment.isAnonymous ? 'Anonymous' : comment.authorNickname,
+                      widget.comment.isAnonymous ? 'Anonymous' : widget.comment.authorNickname,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      _formatTimestamp(comment.createdAt),
+                      _formatTimestamp(widget.comment.createdAt),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -84,7 +109,7 @@ class CommentWidget extends ConsumerWidget {
                 onSelected: (value) {
                   switch (value) {
                     case 'report':
-                      onReport?.call();
+                      widget.onReport?.call();
                       break;
                   }
                 },
@@ -105,14 +130,14 @@ class CommentWidget extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            comment.content,
+            widget.comment.content,
             style: theme.textTheme.bodyMedium,
           ),
-          if (comment.mentionedUserIds.isNotEmpty) ...[
+          if (widget.comment.mentionedUserIds.isNotEmpty) ...[
             const SizedBox(height: 4),
             Wrap(
               spacing: 4,
-              children: comment.mentionedUserIds.map((userId) {
+              children: widget.comment.mentionedUserIds.map((userId) {
                 return Chip(
                   label: Text('@$userId'),
                   backgroundColor: theme.colorScheme.primaryContainer,
@@ -128,34 +153,66 @@ class CommentWidget extends ConsumerWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              InkWell(
-                onTap: isLiked ? onUnlike : onLike,
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        size: 16,
-                        color: isLiked ? theme.colorScheme.error : theme.colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        comment.likeCount.toString(),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
+              AnimatedPressable(
+                onPressed: () {
+                  setState(() {
+                    _isLikeAnimating = true;
+                  });
+                  Future.delayed(DesignTokens.durationFast, () {
+                    if (mounted) {
+                      setState(() {
+                        _isLikeAnimating = false;
+                      });
+                    }
+                  });
+
+                  if (isLiked) {
+                    widget.onUnlike?.call();
+                  } else {
+                    widget.onLike?.call();
+                  }
+                },
+                child: AnimatedScale(
+                  scale: _isLikeAnimating ? 1.15 : 1.0,
+                  duration: DesignTokens.durationFast,
+                  curve: DesignTokens.curveBounce,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: isLiked
+                          ? DesignTokens.vibrantPink
+                          : theme.colorScheme.surfaceVariant,
+                      borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          size: 16,
+                          color: isLiked ? Colors.white : theme.colorScheme.onSurface,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.comment.likeCount.toString(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isLiked ? Colors.white : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
-              InkWell(
-                onTap: onReply,
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
+              const SizedBox(width: 8),
+              AnimatedPressable(
+                onPressed: widget.onReply,
+                child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -173,19 +230,19 @@ class CommentWidget extends ConsumerWidget {
                   ),
                 ),
               ),
-              if (comment.replyCount > 0) ...[
+              if (widget.comment.replyCount > 0) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                   ),
                   child: Text(
-                    '${comment.replyCount}',
+                    '${widget.comment.replyCount}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -193,6 +250,7 @@ class CommentWidget extends ConsumerWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }
