@@ -22,17 +22,19 @@ import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_prov
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import 'package:teen_talk_app/src/features/tutorial/presentation/providers/tutorial_provider.dart';
 import 'package:teen_talk_app/src/core/theme/decorations.dart';
+import 'package:teen_talk_app/src/features/auth/presentation/pages/splash_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
   final userProfile = ref.watch(userProfileProvider);
 
   return GoRouter(
-    initialLocation: '/feed',
+    initialLocation: '/loading',
     redirect: (context, state) {
       final isAuthLoading = authState.isLoading;
       final isAuthenticated = authState.user != null;
       final isProfileLoading = userProfile.isLoading;
+      final hasProfileError = userProfile.hasError;
       final profile = userProfile.value;
       final hasProfile = profile != null;
       final hasCompletedOnboarding = profile?.onboardingComplete ?? false;
@@ -43,9 +45,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnAuthPage = path == '/auth' || path == '/auth/signup';
       final isOnOnboardingPage = path == '/onboarding';
       final isOnAdminPage = path.startsWith('/admin');
+      final isOnLoadingPage = path == '/loading';
 
       if (isAuthLoading || isProfileLoading) {
-        return null;
+        return isOnLoadingPage ? null : '/loading';
+      }
+
+      if (hasProfileError && isAuthenticated) {
+        return isOnOnboardingPage ? null : '/onboarding';
       }
 
       if (!isAuthenticated) {
@@ -62,13 +69,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/feed';
       }
 
-      if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage)) {
+      if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage || isOnLoadingPage)) {
         return '/feed';
       }
 
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/loading',
+        builder: (context, state) => const SplashPage(),
+      ),
       GoRoute(
         path: '/auth',
         builder: (context, state) => const AuthPage(),

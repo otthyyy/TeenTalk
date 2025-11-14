@@ -1,10 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'dart:io';
-import 'dart:typed_data';
+
 import '../models/comment.dart';
 import '../../../feed/domain/models/feed_sort_option.dart';
 import '../../../../core/utils/search_keywords_generator.dart';
@@ -436,7 +439,13 @@ class PostsRepository {
           'likeCount': FieldValue.increment(1),
           'updatedAt': DateTime.now().toIso8601String(),
         });
-      });
+      }).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          _logger.w('likePost timeout for $postId');
+          throw Exception('Connection timeout. Please try again.');
+        },
+      );
     } catch (error, stackTrace) {
       _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
       debugPrint('likePost error for $postId: $error');
@@ -483,7 +492,13 @@ class PostsRepository {
         }
 
         transaction.update(postRef, updates);
-      });
+      }).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          _logger.w('unlikePost timeout for $postId');
+          throw Exception('Connection timeout. Please try again.');
+        },
+      );
     } catch (error, stackTrace) {
       _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
       debugPrint('unlikePost error for $postId: $error');

@@ -4,6 +4,7 @@ enum CommentFailureType {
   networkError,
   invalidData,
   rateLimited,
+  timeout,
   unknown,
 }
 
@@ -52,6 +53,14 @@ class CommentFailure implements Exception {
     return CommentFailure(
       type: CommentFailureType.rateLimited,
       message: message ?? 'You are posting too quickly. Please wait a moment and try again.',
+      originalError: originalError,
+    );
+  }
+
+  factory CommentFailure.timeout({String? message, dynamic originalError}) {
+    return CommentFailure(
+      type: CommentFailureType.timeout,
+      message: message ?? 'The operation took too long. Please check your connection and try again.',
       originalError: originalError,
     );
   }
@@ -158,6 +167,8 @@ class CommentFailure implements Exception {
         return 'There was a problem with your input. Please check and try again.';
       case CommentFailureType.rateLimited:
         return 'You\'re posting too quickly. Please wait a moment.';
+      case CommentFailureType.timeout:
+        return 'Operation timed out. Please check your connection and try again.';
       case CommentFailureType.unknown:
         return 'Something went wrong. Please try again.';
     }
