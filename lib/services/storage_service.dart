@@ -10,16 +10,16 @@ class StorageService {
   // Upload file from path
   Future<String> uploadFile(String filePath, String storagePath) async {
     try {
-      File file = File(filePath);
+      final File file = File(filePath);
       if (!await file.exists()) {
         throw Exception('File does not exist: $filePath');
       }
 
-      Reference ref = _storage.ref().child(storagePath);
-      UploadTask uploadTask = ref.putFile(file);
+      final Reference ref = _storage.ref().child(storagePath);
+      final UploadTask uploadTask = ref.putFile(file);
       
-      TaskSnapshot snapshot = await uploadTask;
-      String downloadUrl = await snapshot.ref.getDownloadURL();
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
       
       _logger.d('File uploaded successfully: $storagePath');
       return downloadUrl;
@@ -36,14 +36,14 @@ class StorageService {
     String? contentType,
   }) async {
     try {
-      Reference ref = _storage.ref().child(storagePath);
-      UploadTask uploadTask = ref.putData(
+      final Reference ref = _storage.ref().child(storagePath);
+      final UploadTask uploadTask = ref.putData(
         bytes,
         SettableMetadata(contentType: contentType),
       );
       
-      TaskSnapshot snapshot = await uploadTask;
-      String downloadUrl = await snapshot.ref.getDownloadURL();
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
       
       _logger.d('Bytes uploaded successfully: $storagePath');
       return downloadUrl;
@@ -56,8 +56,8 @@ class StorageService {
   // Download file to local path
   Future<File> downloadFile(String storagePath, String localPath) async {
     try {
-      Reference ref = _storage.ref().child(storagePath);
-      File file = File(localPath);
+      final Reference ref = _storage.ref().child(storagePath);
+      final File file = File(localPath);
       
       await ref.writeToFile(file);
       
@@ -72,8 +72,8 @@ class StorageService {
   // Get download URL
   Future<String> getDownloadUrl(String storagePath) async {
     try {
-      Reference ref = _storage.ref().child(storagePath);
-      String downloadUrl = await ref.getDownloadURL();
+      final Reference ref = _storage.ref().child(storagePath);
+      final String downloadUrl = await ref.getDownloadURL();
       
       _logger.d('Got download URL for: $storagePath');
       return downloadUrl;
@@ -86,7 +86,7 @@ class StorageService {
   // Delete file
   Future<void> deleteFile(String storagePath) async {
     try {
-      Reference ref = _storage.ref().child(storagePath);
+      final Reference ref = _storage.ref().child(storagePath);
       await ref.delete();
       
       _logger.d('File deleted successfully: $storagePath');
@@ -99,10 +99,10 @@ class StorageService {
   // List files in directory
   Future<List<String>> listFiles(String directoryPath) async {
     try {
-      Reference ref = _storage.ref().child(directoryPath);
-      ListResult result = await ref.listAll();
+      final Reference ref = _storage.ref().child(directoryPath);
+      final ListResult result = await ref.listAll();
       
-      List<String> filePaths = result.items.map((item) => item.fullPath).toList();
+      final List<String> filePaths = result.items.map((item) => item.fullPath).toList();
       _logger.d('Listed ${filePaths.length} files in: $directoryPath');
       return filePaths;
     } catch (e) {
@@ -114,8 +114,8 @@ class StorageService {
   // Upload progress stream
   Stream<TaskSnapshot> uploadFileWithProgress(String filePath, String storagePath) {
     try {
-      File file = File(filePath);
-      Reference ref = _storage.ref().child(storagePath);
+      final File file = File(filePath);
+      final Reference ref = _storage.ref().child(storagePath);
       return ref.putFile(file).snapshotEvents;
     } catch (e) {
       _logger.e('Failed to start upload with progress for $filePath: $e');
@@ -126,8 +126,8 @@ class StorageService {
   // Delete directory
   Future<void> deleteDirectory(String directoryPath) async {
     try {
-      Reference ref = _storage.ref().child(directoryPath);
-      ListResult result = await ref.listAll();
+      final Reference ref = _storage.ref().child(directoryPath);
+      final ListResult result = await ref.listAll();
       
       for (final item in result.items) {
         await item.delete();

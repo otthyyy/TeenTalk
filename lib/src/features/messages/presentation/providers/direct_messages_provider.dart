@@ -51,9 +51,9 @@ final sendMessageProvider =
 });
 
 class SendMessageNotifier extends StateNotifier<AsyncValue<void>> {
-  final Ref ref;
 
   SendMessageNotifier(this.ref) : super(const AsyncValue.data(null));
+  final Ref ref;
 
   Future<void> sendMessage({
     required String receiverId,
@@ -89,9 +89,9 @@ final blockUserProvider =
 });
 
 class BlockUserNotifier extends StateNotifier<AsyncValue<void>> {
-  final Ref ref;
 
   BlockUserNotifier(this.ref) : super(const AsyncValue.data(null));
+  final Ref ref;
 
   Future<void> blockUser(String blockedUserId) async {
     state = const AsyncValue.loading();

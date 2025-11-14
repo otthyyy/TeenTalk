@@ -63,9 +63,9 @@ final sendFriendRequestProvider = StateNotifierProvider<SendFriendRequestNotifie
 });
 
 class SendFriendRequestNotifier extends StateNotifier<AsyncValue<void>> {
-  final Ref ref;
 
   SendFriendRequestNotifier(this.ref) : super(const AsyncValue.data(null));
+  final Ref ref;
 
   Future<void> sendRequest(String toUserId) async {
     state = const AsyncValue.loading();
@@ -110,9 +110,9 @@ final respondToFriendRequestProvider = StateNotifierProvider<RespondToFriendRequ
 });
 
 class RespondToFriendRequestNotifier extends StateNotifier<AsyncValue<void>> {
-  final Ref ref;
 
   RespondToFriendRequestNotifier(this.ref) : super(const AsyncValue.data(null));
+  final Ref ref;
 
   Future<void> accept(String requestId, String otherUserId) async {
     state = const AsyncValue.loading();

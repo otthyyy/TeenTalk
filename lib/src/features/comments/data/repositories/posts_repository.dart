@@ -26,6 +26,14 @@ import '../../../../core/exceptions/post_exceptions.dart';
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
+
+  PostsRepository({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+    Logger? logger,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _logger = logger ?? Logger();
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
   final Logger _logger;
@@ -36,14 +44,6 @@ class PostsRepository {
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
   static const int _minContentLength = 1;
   static const int _maxContentLength = 2000;
-
-  PostsRepository({
-    FirebaseFirestore? firestore,
-    FirebaseStorage? storage,
-    Logger? logger,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance,
-        _logger = logger ?? Logger();
 
   void invalidateCache({String? section, String? school}) {
     if (section != null || school != null) {
@@ -260,13 +260,13 @@ class PostsRepository {
       );
     }
     if (content.trim().length < _minContentLength) {
-      throw PostValidationException(
+      throw const PostValidationException(
         'Post content must be at least $_minContentLength characters',
         userMessage: 'Your post must be at least $_minContentLength character long.',
       );
     }
     if (content.length > _maxContentLength) {
-      throw PostValidationException(
+      throw const PostValidationException(
         'Post content cannot exceed $_maxContentLength characters',
         userMessage: 'Your post is too long. Maximum is $_maxContentLength characters.',
       );

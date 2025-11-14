@@ -15,19 +15,6 @@ enum FeedbackPriority {
 }
 
 class BetaFeedback {
-  final String id;
-  final String userId;
-  final String userNickname;
-  final FeedbackType type;
-  final FeedbackPriority priority;
-  final String title;
-  final String description;
-  final String? deviceInfo;
-  final String? appVersion;
-  final DateTime createdAt;
-  final String status;
-  final String? adminResponse;
-  final DateTime? respondedAt;
 
   const BetaFeedback({
     required this.id,
@@ -73,6 +60,19 @@ class BetaFeedback {
           : null,
     );
   }
+  final String id;
+  final String userId;
+  final String userNickname;
+  final FeedbackType type;
+  final FeedbackPriority priority;
+  final String title;
+  final String description;
+  final String? deviceInfo;
+  final String? appVersion;
+  final DateTime createdAt;
+  final String status;
+  final String? adminResponse;
+  final DateTime? respondedAt;
 
   Map<String, dynamic> toFirestore() {
     return {

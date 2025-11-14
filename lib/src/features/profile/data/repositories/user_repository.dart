@@ -7,9 +7,9 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
 });
 
 class UserRepository {
-  final FirebaseFirestore _firestore;
 
   UserRepository(this._firestore);
+  final FirebaseFirestore _firestore;
 
   Future<bool> isNicknameAvailable(String nickname) async {
     final normalizedNickname = nickname.trim().toLowerCase();

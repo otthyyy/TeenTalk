@@ -8,12 +8,6 @@ enum FriendRequestStatus {
 }
 
 class FriendRequest {
-  final String id;
-  final String senderId;
-  final String receiverId;
-  final FriendRequestStatus status;
-  final DateTime createdAt;
-  final DateTime? respondedAt;
 
   const FriendRequest({
     required this.id,
@@ -23,24 +17,6 @@ class FriendRequest {
     required this.createdAt,
     this.respondedAt,
   });
-
-  FriendRequest copyWith({
-    String? id,
-    String? senderId,
-    String? receiverId,
-    FriendRequestStatus? status,
-    DateTime? createdAt,
-    DateTime? respondedAt,
-  }) {
-    return FriendRequest(
-      id: id ?? this.id,
-      senderId: senderId ?? this.senderId,
-      receiverId: receiverId ?? this.receiverId,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      respondedAt: respondedAt ?? this.respondedAt,
-    );
-  }
 
   factory FriendRequest.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -72,6 +48,30 @@ class FriendRequest {
       respondedAt: json['respondedAt'] != null
           ? DateTime.parse(json['respondedAt'] as String)
           : null,
+    );
+  }
+  final String id;
+  final String senderId;
+  final String receiverId;
+  final FriendRequestStatus status;
+  final DateTime createdAt;
+  final DateTime? respondedAt;
+
+  FriendRequest copyWith({
+    String? id,
+    String? senderId,
+    String? receiverId,
+    FriendRequestStatus? status,
+    DateTime? createdAt,
+    DateTime? respondedAt,
+  }) {
+    return FriendRequest(
+      id: id ?? this.id,
+      senderId: senderId ?? this.senderId,
+      receiverId: receiverId ?? this.receiverId,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      respondedAt: respondedAt ?? this.respondedAt,
     );
   }
 

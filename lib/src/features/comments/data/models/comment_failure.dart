@@ -8,10 +8,6 @@ enum CommentFailureType {
 }
 
 class CommentFailure implements Exception {
-  final CommentFailureType type;
-  final String message;
-  final String? code;
-  final dynamic originalError;
 
   CommentFailure({
     required this.type,
@@ -108,6 +104,10 @@ class CommentFailure implements Exception {
         );
     }
   }
+  final CommentFailureType type;
+  final String message;
+  final String? code;
+  final dynamic originalError;
 
   static String _getErrorCode(dynamic error) {
     if (error == null) return '';

@@ -26,7 +26,6 @@ import 'src/features/notifications/presentation/providers/push_notification_hand
 import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 import 'src/services/push_notifications_listener.dart';
 import 'src/services/push_notifications_provider.dart';
-import 'src/services/push_notifications_service.dart';
 
 const _firebaseOptionsHelpMessage = 'Firebase configuration is missing or still uses placeholder values. '
     'Update lib/firebase_options.dart with real credentials (see README.md and SECURITY_NOTICE.md).';

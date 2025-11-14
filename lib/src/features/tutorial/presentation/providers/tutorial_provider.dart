@@ -8,9 +8,6 @@ final tutorialServiceProvider = Provider<TutorialService>((ref) {
 });
 
 class TutorialState {
-  final bool hasCompleted;
-  final bool hasSkipped;
-  final bool isLoading;
 
   const TutorialState({
     required this.hasCompleted,
@@ -22,6 +19,9 @@ class TutorialState {
       : hasCompleted = false,
         hasSkipped = false,
         isLoading = true;
+  final bool hasCompleted;
+  final bool hasSkipped;
+  final bool isLoading;
 
   TutorialState copyWith({
     bool? hasCompleted,

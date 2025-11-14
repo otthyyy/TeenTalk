@@ -15,9 +15,6 @@ import '../../../friends/data/models/friend_entry.dart';
 import '../../../friends/presentation/providers/friends_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final String conversationId;
-  final String otherUserId;
-  final String? otherUserDisplayName;
 
   const ChatScreen({
     super.key,
@@ -25,6 +22,9 @@ class ChatScreen extends ConsumerStatefulWidget {
     required this.otherUserId,
     this.otherUserDisplayName,
   });
+  final String conversationId;
+  final String otherUserId;
+  final String? otherUserDisplayName;
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -273,7 +273,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Icon(
                             Icons.chat_bubble_outline_rounded,
                             size: 64,
-                            color: theme.colorScheme.surfaceVariant,
+                            color: theme.colorScheme.surfaceContainerHighest,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -360,7 +360,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(
-                top: BorderSide(color: theme.colorScheme.surfaceVariant),
+                top: BorderSide(color: theme.colorScheme.surfaceContainerHighest),
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -370,7 +370,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+                        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(24),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -415,7 +415,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       child: Ink(
                         decoration: BoxDecoration(
                           color: !_hasText || !_canMessage
-                              ? theme.colorScheme.surfaceVariant
+                              ? theme.colorScheme.surfaceContainerHighest
                               : theme.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),

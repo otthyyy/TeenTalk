@@ -66,11 +66,6 @@ final moderationDecisionsProvider =
 });
 
 class AdminReportsFilter {
-  final String status;
-  final String? contentType;
-  final String? severity;
-  final DateTime? startDate;
-  final DateTime? endDate;
 
   AdminReportsFilter({
     this.status = 'all',
@@ -79,6 +74,11 @@ class AdminReportsFilter {
     this.startDate,
     this.endDate,
   });
+  final String status;
+  final String? contentType;
+  final String? severity;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   AdminReportsFilter copyWith({
     String? status,
@@ -98,11 +98,11 @@ class AdminReportsFilter {
 }
 
 class ReportedContentRequest {
-  final String itemId;
-  final String itemType;
 
   ReportedContentRequest({
     required this.itemId,
     required this.itemType,
   });
+  final String itemId;
+  final String itemType;
 }

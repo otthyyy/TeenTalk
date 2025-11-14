@@ -6,9 +6,6 @@ import '../../data/models/report_reason.dart';
 import '../providers/moderation_provider.dart';
 
 class ReportDialog extends ConsumerStatefulWidget {
-  final String contentId;
-  final ContentType contentType;
-  final String contentAuthorId;
 
   const ReportDialog({
     super.key,
@@ -16,6 +13,9 @@ class ReportDialog extends ConsumerStatefulWidget {
     required this.contentType,
     required this.contentAuthorId,
   });
+  final String contentId;
+  final ContentType contentType;
+  final String contentAuthorId;
 
   @override
   ConsumerState<ReportDialog> createState() => _ReportDialogState();

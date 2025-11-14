@@ -86,9 +86,6 @@ class AnimationUtils {
 
 /// Animated wrapper for cards with entrance animation
 class AnimatedCard extends StatefulWidget {
-  final Widget child;
-  final Duration delay;
-  final Duration duration;
 
   const AnimatedCard({
     super.key,
@@ -96,6 +93,9 @@ class AnimatedCard extends StatefulWidget {
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 400),
   });
+  final Widget child;
+  final Duration delay;
+  final Duration duration;
 
   @override
   State<AnimatedCard> createState() => _AnimatedCardState();
@@ -162,10 +162,6 @@ class _AnimatedCardState extends State<AnimatedCard>
 
 /// Animated button with scale effect on press
 class AnimatedPressable extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onPressed;
-  final Duration duration;
-  final double scaleAmount;
 
   const AnimatedPressable({
     super.key,
@@ -174,6 +170,10 @@ class AnimatedPressable extends StatefulWidget {
     this.duration = const Duration(milliseconds: 100),
     this.scaleAmount = 0.95,
   });
+  final Widget child;
+  final VoidCallback? onPressed;
+  final Duration duration;
+  final double scaleAmount;
 
   @override
   State<AnimatedPressable> createState() => _AnimatedPressableState();
@@ -238,10 +238,6 @@ class _AnimatedPressableState extends State<AnimatedPressable>
 
 /// Staggered list animation for multiple items
 class StaggeredListAnimation extends StatelessWidget {
-  final List<Widget> children;
-  final Duration staggerDelay;
-  final Duration itemDuration;
-  final Axis direction;
 
   const StaggeredListAnimation({
     super.key,
@@ -250,6 +246,10 @@ class StaggeredListAnimation extends StatelessWidget {
     this.itemDuration = const Duration(milliseconds: 400),
     this.direction = Axis.vertical,
   });
+  final List<Widget> children;
+  final Duration staggerDelay;
+  final Duration itemDuration;
+  final Axis direction;
 
   @override
   Widget build(BuildContext context) {
@@ -276,8 +276,6 @@ class StaggeredListAnimation extends StatelessWidget {
 
 /// Smooth page route transition
 class SmoothPageRoute<T> extends PageRouteBuilder<T> {
-  final Widget page;
-  final Duration duration;
 
   SmoothPageRoute({
     required this.page,
@@ -305,4 +303,6 @@ class SmoothPageRoute<T> extends PageRouteBuilder<T> {
             );
           },
         );
+  final Widget page;
+  final Duration duration;
 }

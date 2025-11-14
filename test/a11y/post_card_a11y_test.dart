@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'package:teen_talk_app/src/features/feed/presentation/widgets/post_card_widget.dart';
-import '../helpers/color_contrast_matcher.dart';
 import '../helpers/golden_test_config.dart';
 import '../helpers/test_helpers.dart';
 

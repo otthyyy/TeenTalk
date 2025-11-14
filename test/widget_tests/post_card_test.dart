@@ -235,7 +235,7 @@ void main() {
       section: 'general',
     );
 
-    ProviderScope _interactionWrapper({
+    ProviderScope interactionWrapper({
       required VoidCallback onLike,
       required VoidCallback onUnlike,
       required VoidCallback onComments,
@@ -272,7 +272,7 @@ void main() {
       var likeTapped = false;
 
       await tester.pumpWidget(
-        _interactionWrapper(
+        interactionWrapper(
           onLike: () => likeTapped = true,
           onUnlike: () {},
           onComments: () {},
@@ -288,7 +288,7 @@ void main() {
       var commentsTapped = false;
 
       await tester.pumpWidget(
-        _interactionWrapper(
+        interactionWrapper(
           onLike: () {},
           onUnlike: () {},
           onComments: () => commentsTapped = true,

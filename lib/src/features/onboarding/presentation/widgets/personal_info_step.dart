@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/brescia_schools.dart';
 
 class PersonalInfoStep extends StatefulWidget {
-  final String? initialGender;
-  final String? initialSchool;
-  final Function(String?) onGenderChanged;
-  final Function(String?) onSchoolChanged;
-  final VoidCallback onNext;
-  final VoidCallback onBack;
 
   const PersonalInfoStep({
     super.key,
@@ -18,6 +12,12 @@ class PersonalInfoStep extends StatefulWidget {
     required this.onNext,
     required this.onBack,
   });
+  final String? initialGender;
+  final String? initialSchool;
+  final Function(String?) onGenderChanged;
+  final Function(String?) onSchoolChanged;
+  final VoidCallback onNext;
+  final VoidCallback onBack;
 
   @override
   State<PersonalInfoStep> createState() => _PersonalInfoStepState();
@@ -69,7 +69,7 @@ class _PersonalInfoStepState extends State<PersonalInfoStep> {
           ),
           const SizedBox(height: 32),
           DropdownButtonFormField<String>(
-            value: _selectedGender,
+            initialValue: _selectedGender,
             decoration: const InputDecoration(
               labelText: 'Gender (Optional)',
               border: OutlineInputBorder(),
@@ -89,7 +89,7 @@ class _PersonalInfoStepState extends State<PersonalInfoStep> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _selectedSchool,
+            initialValue: _selectedSchool,
             decoration: const InputDecoration(
               labelText: 'School (Optional)',
               border: OutlineInputBorder(),

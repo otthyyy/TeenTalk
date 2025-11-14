@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/user_interests.dart';
 
 class InterestsStep extends StatefulWidget {
-  final String? initialSchoolYear;
-  final List<String> initialInterests;
-  final List<String> initialClubs;
-  final Function(String?) onSchoolYearChanged;
-  final Function(List<String>) onInterestsChanged;
-  final Function(List<String>) onClubsChanged;
-  final VoidCallback onNext;
-  final VoidCallback onBack;
 
   const InterestsStep({
     super.key,
@@ -22,6 +14,14 @@ class InterestsStep extends StatefulWidget {
     required this.onNext,
     required this.onBack,
   });
+  final String? initialSchoolYear;
+  final List<String> initialInterests;
+  final List<String> initialClubs;
+  final Function(String?) onSchoolYearChanged;
+  final Function(List<String>) onInterestsChanged;
+  final Function(List<String>) onClubsChanged;
+  final VoidCallback onNext;
+  final VoidCallback onBack;
 
   @override
   State<InterestsStep> createState() => _InterestsStepState();
@@ -130,7 +130,7 @@ class _InterestsStepState extends State<InterestsStep> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _selectedSchoolYear,
+                    initialValue: _selectedSchoolYear,
                     decoration: const InputDecoration(
                       labelText: 'School Year *',
                       border: OutlineInputBorder(),

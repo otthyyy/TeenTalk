@@ -20,12 +20,6 @@ final userPostsProvider = StateNotifierProvider.family<UserPostsNotifier, UserPo
 );
 
 class UserPostsState {
-  final List<Post> posts;
-  final bool isLoading;
-  final bool isLoadingMore;
-  final String? error;
-  final DocumentSnapshot? lastDocument;
-  final bool hasMore;
 
   const UserPostsState({
     this.posts = const [],
@@ -35,6 +29,12 @@ class UserPostsState {
     this.lastDocument,
     this.hasMore = true,
   });
+  final List<Post> posts;
+  final bool isLoading;
+  final bool isLoadingMore;
+  final String? error;
+  final DocumentSnapshot? lastDocument;
+  final bool hasMore;
 
   UserPostsState copyWith({
     List<Post>? posts,
@@ -58,10 +58,10 @@ class UserPostsState {
 }
 
 class UserPostsNotifier extends StateNotifier<UserPostsState> {
-  final Ref ref;
-  final String userId;
 
   UserPostsNotifier(this.ref, this.userId) : super(const UserPostsState());
+  final Ref ref;
+  final String userId;
 
   Future<void> loadPosts({bool refresh = false}) async {
     if (refresh) {
@@ -123,12 +123,12 @@ final blockedStatusProvider = FutureProvider.family<({bool isBlocked, bool hasBl
 );
 
 class PublicProfilePage extends ConsumerStatefulWidget {
-  final String userId;
 
   const PublicProfilePage({
     super.key,
     required this.userId,
   });
+  final String userId;
 
   @override
   ConsumerState<PublicProfilePage> createState() => _PublicProfilePageState();

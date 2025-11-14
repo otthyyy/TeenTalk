@@ -42,7 +42,7 @@ class MessagesPage extends ConsumerWidget {
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   border: Border(
                     bottom: BorderSide(
-                      color: theme.colorScheme.surfaceVariant,
+                      color: theme.colorScheme.surfaceContainerHighest,
                       width: 1,
                     ),
                   ),
@@ -90,7 +90,7 @@ class MessagesPage extends ConsumerWidget {
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
                     thickness: 0.5,
-                    color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                   ),
                   itemBuilder: (context, index) {
                     final conversation = conversations[index];
@@ -153,7 +153,7 @@ class MessagesPage extends ConsumerWidget {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Failed to load messages. Please retry.'),
                       ),
                     );
@@ -191,7 +191,7 @@ class MessagesPage extends ConsumerWidget {
             Icon(
               Icons.chat_bubble_outline_rounded,
               size: 80,
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceContainerHighest,
             ),
             const SizedBox(height: 24),
             Text(

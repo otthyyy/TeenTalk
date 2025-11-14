@@ -6,7 +6,7 @@ import 'package:teen_talk_app/src/features/profile/domain/models/trust_level.dar
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 
 void main() {
-  Widget _wrapWithMaterialApp(Widget child) {
+  Widget wrapWithMaterialApp(Widget child) {
     return MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: const [
@@ -26,7 +26,7 @@ void main() {
 
   testWidgets('displays newcomer trust badge label', (tester) async {
     await tester.pumpWidget(
-      _wrapWithMaterialApp(
+      wrapWithMaterialApp(
         const TrustBadge(trustLevel: TrustLevel.newcomer),
       ),
     );
@@ -36,7 +36,7 @@ void main() {
 
   testWidgets('displays member trust badge label', (tester) async {
     await tester.pumpWidget(
-      _wrapWithMaterialApp(
+      wrapWithMaterialApp(
         const TrustBadge(trustLevel: TrustLevel.member),
       ),
     );
@@ -46,7 +46,7 @@ void main() {
 
   testWidgets('displays trusted trust badge label', (tester) async {
     await tester.pumpWidget(
-      _wrapWithMaterialApp(
+      wrapWithMaterialApp(
         const TrustBadge(trustLevel: TrustLevel.trusted),
       ),
     );
@@ -56,7 +56,7 @@ void main() {
 
   testWidgets('displays veteran trust badge label', (tester) async {
     await tester.pumpWidget(
-      _wrapWithMaterialApp(
+      wrapWithMaterialApp(
         const TrustBadge(trustLevel: TrustLevel.veteran),
       ),
     );
@@ -66,7 +66,7 @@ void main() {
 
   testWidgets('hides label when showLabel is false', (tester) async {
     await tester.pumpWidget(
-      _wrapWithMaterialApp(
+      wrapWithMaterialApp(
         const TrustBadge(
           trustLevel: TrustLevel.member,
           showLabel: false,

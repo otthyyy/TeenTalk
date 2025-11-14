@@ -18,6 +18,10 @@ enum ConnectivityStatus {
 }
 
 class ConnectivityService {
+
+  ConnectivityService() {
+    _init();
+  }
   final Connectivity _connectivity = Connectivity();
   final Logger _logger = Logger();
   final StreamController<ConnectivityStatus> _statusController =
@@ -25,10 +29,6 @@ class ConnectivityService {
   StreamSubscription<ConnectivityResult>? _subscription;
 
   Stream<ConnectivityStatus> get connectivityStream => _statusController.stream;
-
-  ConnectivityService() {
-    _init();
-  }
 
   void _init() {
     _subscription = _connectivity.onConnectivityChanged.listen((result) {

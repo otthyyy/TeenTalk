@@ -59,7 +59,7 @@ void main() {
     });
 
     test('filters by interests using array-contains-any', () async {
-      final filters = SearchFilters(interests: const ['Music']);
+      const filters = SearchFilters(interests: const ['Music']);
 
       final results = await repository.searchProfiles(filters);
 
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('filters by school year range', () async {
-      final filters = SearchFilters(minSchoolYear: 11, maxSchoolYear: 12);
+      const filters = SearchFilters(minSchoolYear: 11, maxSchoolYear: 12);
 
       final results = await repository.searchProfiles(filters);
 
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('filters by trust level threshold', () async {
-      final filters = SearchFilters(minTrustLevel: 70);
+      const filters = SearchFilters(minTrustLevel: 70);
 
       final results = await repository.searchProfiles(filters);
 
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('supports combined filters', () async {
-      final filters = SearchFilters(
+      const filters = SearchFilters(
         interests: const ['Music', 'Art'],
         minTrustLevel: 70,
         minSchoolYear: 9,

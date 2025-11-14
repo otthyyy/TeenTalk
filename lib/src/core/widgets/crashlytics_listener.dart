@@ -10,12 +10,12 @@ import '../../features/profile/presentation/providers/user_profile_provider.dart
 import '../providers/crashlytics_provider.dart';
 
 class CrashlyticsListener extends ConsumerStatefulWidget {
-  final Widget child;
 
   const CrashlyticsListener({
     required this.child,
     super.key,
   });
+  final Widget child;
 
   @override
   ConsumerState<CrashlyticsListener> createState() =>

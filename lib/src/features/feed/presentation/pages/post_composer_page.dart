@@ -751,7 +751,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: math.min(minuteProgress, hourProgress).clamp(0, 1),
-          backgroundColor: theme.colorScheme.surfaceVariant,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
           color: status.isNearLimit ? theme.colorScheme.tertiary : theme.colorScheme.primary,
         ),
       ],

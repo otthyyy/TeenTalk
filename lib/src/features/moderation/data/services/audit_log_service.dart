@@ -3,14 +3,14 @@ import 'package:logger/logger.dart';
 import '../models/audit_log.dart';
 
 class AuditLogService {
-  final FirebaseFirestore _firestore;
-  final Logger _logger;
 
   AuditLogService({
     FirebaseFirestore? firestore,
     Logger? logger,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _logger = logger ?? Logger();
+  final FirebaseFirestore _firestore;
+  final Logger _logger;
 
   Future<void> createAuditLog({
     required String contentId,

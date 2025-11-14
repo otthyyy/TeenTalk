@@ -9,12 +9,12 @@ import '../widgets/phone_auth_form.dart';
 import '../widgets/social_auth_buttons.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
-  final bool isSignUp;
 
   const AuthPage({
     super.key,
     this.isSignUp = false,
   });
+  final bool isSignUp;
 
   @override
   ConsumerState<AuthPage> createState() => _AuthPageState();

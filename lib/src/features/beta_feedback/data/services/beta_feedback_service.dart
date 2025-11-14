@@ -8,14 +8,14 @@ final betaFeedbackServiceProvider = Provider<BetaFeedbackService>((ref) {
 });
 
 class BetaFeedbackService {
-  final FirebaseFirestore _firestore;
-  final Logger _logger;
 
   BetaFeedbackService({
     FirebaseFirestore? firestore,
     Logger? logger,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _logger = logger ?? Logger();
+  final FirebaseFirestore _firestore;
+  final Logger _logger;
 
   Future<String> submitFeedback({
     required String userId,

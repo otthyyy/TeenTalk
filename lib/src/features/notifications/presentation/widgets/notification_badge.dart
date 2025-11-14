@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/notifications_provider.dart';
 
 class NotificationBadge extends ConsumerWidget {
-  final VoidCallback onTap;
 
   const NotificationBadge({
     super.key,
     required this.onTap,
   });
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

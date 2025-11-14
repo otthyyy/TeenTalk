@@ -11,12 +11,6 @@ import '../../../friends/data/models/friendship_status.dart';
 import '../../../friends/data/repositories/friends_repository.dart';
 
 class PostWidget extends ConsumerStatefulWidget {
-  final Post post;
-  final String currentUserId;
-  final VoidCallback? onComments;
-  final VoidCallback? onLike;
-  final VoidCallback? onUnlike;
-  final VoidCallback? onReport;
 
   const PostWidget({
     super.key,
@@ -27,6 +21,12 @@ class PostWidget extends ConsumerStatefulWidget {
     this.onUnlike,
     this.onReport,
   });
+  final Post post;
+  final String currentUserId;
+  final VoidCallback? onComments;
+  final VoidCallback? onLike;
+  final VoidCallback? onUnlike;
+  final VoidCallback? onReport;
 
   @override
   ConsumerState<PostWidget> createState() => _PostWidgetState();
@@ -212,7 +212,7 @@ class _PostWidgetState extends ConsumerState<PostWidget> {
                       decoration: BoxDecoration(
                         color: isLiked
                             ? DesignTokens.vibrantPink
-                            : theme.colorScheme.surfaceVariant,
+                            : theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                       ),
                       child: Row(
@@ -242,7 +242,7 @@ class _PostWidgetState extends ConsumerState<PostWidget> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant,
+                      color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                     ),
                     child: Row(

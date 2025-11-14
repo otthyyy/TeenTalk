@@ -1,16 +1,6 @@
 import '../../data/models/auth_user.dart';
 
 class AuthFormState {
-  final String email;
-  final String password;
-  final String confirmPassword;
-  final String phoneNumber;
-  final String otp;
-  final bool isSubmitting;
-  final String? error;
-  final bool showPassword;
-  final bool showConfirmPassword;
-  final String? displayName;
 
   const AuthFormState({
     this.email = '',
@@ -24,6 +14,16 @@ class AuthFormState {
     this.showConfirmPassword = false,
     this.displayName,
   });
+  final String email;
+  final String password;
+  final String confirmPassword;
+  final String phoneNumber;
+  final String otp;
+  final bool isSubmitting;
+  final String? error;
+  final bool showPassword;
+  final bool showConfirmPassword;
+  final String? displayName;
 
   AuthFormState copyWith({
     String? email,
@@ -53,16 +53,16 @@ class AuthFormState {
 }
 
 class ConsentState {
-  final bool gdprConsent;
-  final bool termsConsent;
-  final bool parentalConsent;
-  final bool allConsentsProvided;
 
   const ConsentState({
     this.gdprConsent = false,
     this.termsConsent = false,
     this.parentalConsent = false,
   }) : allConsentsProvided = gdprConsent && termsConsent;
+  final bool gdprConsent;
+  final bool termsConsent;
+  final bool parentalConsent;
+  final bool allConsentsProvided;
 
   ConsentState copyWith({
     bool? gdprConsent,

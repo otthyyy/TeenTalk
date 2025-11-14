@@ -17,7 +17,7 @@ class TestHelpers {
     storage.useStorageEmulator('localhost', 9199);
     functions.useFunctionsEmulator('localhost', 5001);
 
-    await firestore.settings = const Settings(persistenceEnabled: false);
+    firestore.settings = const Settings(persistenceEnabled: false);
   }
 
   static Future<void> clearFirestoreData() async {

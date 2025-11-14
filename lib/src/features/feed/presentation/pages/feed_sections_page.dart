@@ -35,12 +35,12 @@ enum FeedSection {
 }
 
 class FeedSectionsPage extends ConsumerStatefulWidget {
-  final String? openCommentsForPost;
   
   const FeedSectionsPage({
     super.key,
     this.openCommentsForPost,
   });
+  final String? openCommentsForPost;
 
   @override
   ConsumerState<FeedSectionsPage> createState() => _FeedSectionsPageState();
@@ -651,7 +651,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
               Positioned(
                 top: 100 + (_headerAnimationController.value * 20),
                 right: 30 - (_headerAnimationController.value * 30),
-                child: Opacity(
+                child: const Opacity(
                   opacity: 0.1,
                   child: Icon(
                     Icons.visibility,
@@ -819,7 +819,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
   }
 
   Widget _buildErrorView(String error, ThemeData theme) {
-    return Container(
+    return SizedBox(
       height: 400,
       child: Center(
         child: Column(

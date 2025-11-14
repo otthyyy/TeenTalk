@@ -75,7 +75,7 @@ void main() {
     });
 
     test('should serialize to/from JSON', () {
-      final filters = SearchFilters(
+      const filters = SearchFilters(
         query: 'test',
         interests: ['Sports', 'Music'],
         minSchoolYear: 9,

@@ -6,13 +6,13 @@ enum ContentType {
 }
 
 class RateLimitConfig {
-  final int maxPerMinute;
-  final int maxPerHour;
   
   const RateLimitConfig({
     required this.maxPerMinute,
     required this.maxPerHour,
   });
+  final int maxPerMinute;
+  final int maxPerHour;
   
   static const post = RateLimitConfig(
     maxPerMinute: 5,
@@ -26,11 +26,6 @@ class RateLimitConfig {
 }
 
 class RateLimitStatus {
-  final bool canSubmit;
-  final int remainingPerMinute;
-  final int remainingPerHour;
-  final Duration? cooldownDuration;
-  final String? reason;
   
   const RateLimitStatus({
     required this.canSubmit,
@@ -39,6 +34,11 @@ class RateLimitStatus {
     this.cooldownDuration,
     this.reason,
   });
+  final bool canSubmit;
+  final int remainingPerMinute;
+  final int remainingPerHour;
+  final Duration? cooldownDuration;
+  final String? reason;
   
   bool get isNearLimit => remainingPerMinute <= 2 || remainingPerHour <= 5;
 }

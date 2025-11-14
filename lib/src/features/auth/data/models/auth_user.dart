@@ -1,17 +1,4 @@
 class AuthUser {
-  final String uid;
-  final String? email;
-  final String? phoneNumber;
-  final String? displayName;
-  final String? photoURL;
-  final bool emailVerified;
-  final bool isAnonymous;
-  final DateTime createdAt;
-  final List<String> authMethods;
-  final bool isMinor;
-  final bool parentalConsentProvided;
-  final bool gdprConsentProvided;
-  final bool termsAccepted;
 
   const AuthUser({
     required this.uid,
@@ -28,6 +15,37 @@ class AuthUser {
     this.gdprConsentProvided = false,
     this.termsAccepted = false,
   });
+
+  factory AuthUser.fromJson(Map<String, dynamic> json) {
+    return AuthUser(
+      uid: json['uid'] as String,
+      email: json['email'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      displayName: json['displayName'] as String?,
+      photoURL: json['photoURL'] as String?,
+      emailVerified: json['emailVerified'] as bool? ?? false,
+      isAnonymous: json['isAnonymous'] as bool? ?? false,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      authMethods: List<String>.from(json['authMethods'] as List? ?? []),
+      isMinor: json['isMinor'] as bool? ?? false,
+      parentalConsentProvided: json['parentalConsentProvided'] as bool? ?? false,
+      gdprConsentProvided: json['gdprConsentProvided'] as bool? ?? false,
+      termsAccepted: json['termsAccepted'] as bool? ?? false,
+    );
+  }
+  final String uid;
+  final String? email;
+  final String? phoneNumber;
+  final String? displayName;
+  final String? photoURL;
+  final bool emailVerified;
+  final bool isAnonymous;
+  final DateTime createdAt;
+  final List<String> authMethods;
+  final bool isMinor;
+  final bool parentalConsentProvided;
+  final bool gdprConsentProvided;
+  final bool termsAccepted;
 
   AuthUser copyWith({
     String? uid,
@@ -61,24 +79,6 @@ class AuthUser {
     );
   }
 
-  factory AuthUser.fromJson(Map<String, dynamic> json) {
-    return AuthUser(
-      uid: json['uid'] as String,
-      email: json['email'] as String?,
-      phoneNumber: json['phoneNumber'] as String?,
-      displayName: json['displayName'] as String?,
-      photoURL: json['photoURL'] as String?,
-      emailVerified: json['emailVerified'] as bool? ?? false,
-      isAnonymous: json['isAnonymous'] as bool? ?? false,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      authMethods: List<String>.from(json['authMethods'] as List? ?? []),
-      isMinor: json['isMinor'] as bool? ?? false,
-      parentalConsentProvided: json['parentalConsentProvided'] as bool? ?? false,
-      gdprConsentProvided: json['gdprConsentProvided'] as bool? ?? false,
-      termsAccepted: json['termsAccepted'] as bool? ?? false,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'email': email,
@@ -97,16 +97,6 @@ class AuthUser {
 }
 
 class UserProfile {
-  final String uid;
-  final String firstName;
-  final String lastName;
-  final DateTime dateOfBirth;
-  final String? photoURL;
-  final String? bio;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final bool profileComplete;
-  final bool isAdmin;
 
   const UserProfile({
     required this.uid,
@@ -120,6 +110,31 @@ class UserProfile {
     this.profileComplete = false,
     this.isAdmin = false,
   });
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      uid: json['uid'] as String,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      dateOfBirth: DateTime.parse(json['dateOfBirth'] as String),
+      photoURL: json['photoURL'] as String?,
+      bio: json['bio'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      profileComplete: json['profileComplete'] as bool? ?? false,
+      isAdmin: json['isAdmin'] as bool? ?? false,
+    );
+  }
+  final String uid;
+  final String firstName;
+  final String lastName;
+  final DateTime dateOfBirth;
+  final String? photoURL;
+  final String? bio;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final bool profileComplete;
+  final bool isAdmin;
 
   UserProfile copyWith({
     String? uid,
@@ -147,21 +162,6 @@ class UserProfile {
     );
   }
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) {
-    return UserProfile(
-      uid: json['uid'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      dateOfBirth: DateTime.parse(json['dateOfBirth'] as String),
-      photoURL: json['photoURL'] as String?,
-      bio: json['bio'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      profileComplete: json['profileComplete'] as bool? ?? false,
-      isAdmin: json['isAdmin'] as bool? ?? false,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'uid': uid,
     'firstName': firstName,
@@ -177,13 +177,6 @@ class UserProfile {
 }
 
 class AuthState {
-  final bool isAuthenticated;
-  final bool isLoading;
-  final String? error;
-  final AuthUser? user;
-  final UserProfile? profile;
-  final bool requiresOnboarding;
-  final bool requiresParentalConsent;
 
   const AuthState({
     required this.isAuthenticated,
@@ -204,6 +197,13 @@ class AuthState {
     requiresOnboarding: false,
     requiresParentalConsent: false,
   );
+  final bool isAuthenticated;
+  final bool isLoading;
+  final String? error;
+  final AuthUser? user;
+  final UserProfile? profile;
+  final bool requiresOnboarding;
+  final bool requiresParentalConsent;
 
   AuthState copyWith({
     bool? isAuthenticated,
@@ -227,12 +227,6 @@ class AuthState {
 }
 
 class Consent {
-  final String uid;
-  final bool gdprConsent;
-  final bool termsConsent;
-  final bool parentalConsent;
-  final DateTime consentDate;
-  final String consentVersion;
 
   const Consent({
     required this.uid,
@@ -253,6 +247,12 @@ class Consent {
       consentVersion: json['consentVersion'] as String,
     );
   }
+  final String uid;
+  final bool gdprConsent;
+  final bool termsConsent;
+  final bool parentalConsent;
+  final DateTime consentDate;
+  final String consentVersion;
 
   Map<String, dynamic> toJson() => {
     'uid': uid,

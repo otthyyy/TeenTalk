@@ -11,17 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Service responsible for managing push notifications via Firebase Cloud Messaging
 /// Handles permission requests, token registration/unregistration, and notification display
 class PushNotificationsService {
-  final FirebaseMessaging _messaging;
-  final FirebaseFunctions _functions;
-  final FlutterLocalNotificationsPlugin _localNotifications;
-  final SharedPreferences _prefs;
-  final Logger _logger = Logger();
-
-  static const String _tokenKey = 'fcm_token';
-  static const String _androidChannelId = 'teen_talk_notifications';
-  static const String _androidChannelName = 'TeenTalk Notifications';
-  static const String _androidChannelDescription =
-      'Notifications for new messages, comments, and likes';
 
   PushNotificationsService({
     FirebaseMessaging? messaging,
@@ -33,6 +22,17 @@ class PushNotificationsService {
         _localNotifications =
             localNotifications ?? FlutterLocalNotificationsPlugin(),
         _prefs = prefs;
+  final FirebaseMessaging _messaging;
+  final FirebaseFunctions _functions;
+  final FlutterLocalNotificationsPlugin _localNotifications;
+  final SharedPreferences _prefs;
+  final Logger _logger = Logger();
+
+  static const String _tokenKey = 'fcm_token';
+  static const String _androidChannelId = 'teen_talk_notifications';
+  static const String _androidChannelName = 'TeenTalk Notifications';
+  static const String _androidChannelDescription =
+      'Notifications for new messages, comments, and likes';
 
   /// Initialize the push notifications service
   /// Sets up local notifications, requests permissions, and configures message handlers

@@ -20,15 +20,15 @@ final contentReportsProvider = StreamProvider.family<List<ContentReport>, String
 });
 
 class ReportState {
-  final bool isSubmitting;
-  final String? error;
-  final bool submitted;
 
   const ReportState({
     this.isSubmitting = false,
     this.error,
     this.submitted = false,
   });
+  final bool isSubmitting;
+  final String? error;
+  final bool submitted;
 
   ReportState copyWith({
     bool? isSubmitting,
@@ -44,11 +44,11 @@ class ReportState {
 }
 
 class ReportNotifier extends StateNotifier<ReportState> {
-  final ModerationService _moderationService;
-  final Logger _logger;
 
   ReportNotifier(this._moderationService, this._logger) 
       : super(const ReportState());
+  final ModerationService _moderationService;
+  final Logger _logger;
 
   Future<void> submitReport({
     required String contentId,

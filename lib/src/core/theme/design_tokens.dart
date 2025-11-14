@@ -48,7 +48,7 @@ class DesignTokens {
   static const Color successColor = Color(0xFF10B981);
   static const Color warningColor = Color(0xFFFBBF24);
   
-  static final LinearGradient primaryGradient = LinearGradient(
+  static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
@@ -57,7 +57,7 @@ class DesignTokens {
     ],
   );
   
-  static final LinearGradient secondaryGradient = LinearGradient(
+  static const LinearGradient secondaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
@@ -66,7 +66,7 @@ class DesignTokens {
     ],
   );
   
-  static final LinearGradient tertiaryGradient = LinearGradient(
+  static const LinearGradient tertiaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
@@ -75,7 +75,7 @@ class DesignTokens {
     ],
   );
   
-  static final LinearGradient accentGradient = LinearGradient(
+  static const LinearGradient accentGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [

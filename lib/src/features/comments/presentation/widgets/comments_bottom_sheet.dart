@@ -5,9 +5,6 @@ import '../providers/comments_provider.dart';
 import 'comments_list_widget.dart';
 
 class CommentsBottomSheet extends ConsumerStatefulWidget {
-  final String postId;
-  final int initialCommentCount;
-  final ValueChanged<int>? onCommentCountChanged;
 
   const CommentsBottomSheet({
     super.key,
@@ -15,6 +12,9 @@ class CommentsBottomSheet extends ConsumerStatefulWidget {
     required this.initialCommentCount,
     this.onCommentCountChanged,
   });
+  final String postId;
+  final int initialCommentCount;
+  final ValueChanged<int>? onCommentCountChanged;
 
   @override
   ConsumerState<CommentsBottomSheet> createState() => _CommentsBottomSheetState();

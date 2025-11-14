@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/connectivity_provider.dart';
 
 class OfflineBanner extends ConsumerWidget {
-  final DateTime? lastSyncedAt;
 
   const OfflineBanner({
     super.key,
     this.lastSyncedAt,
   });
+  final DateTime? lastSyncedAt;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

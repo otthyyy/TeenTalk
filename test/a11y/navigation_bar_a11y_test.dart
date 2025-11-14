@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:teen_talk_app/widgets/app_wrapper.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {

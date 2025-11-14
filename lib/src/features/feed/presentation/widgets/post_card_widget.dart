@@ -15,13 +15,6 @@ import '../../../profile/presentation/providers/user_profile_provider.dart';
 import 'liker_list_modal.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
-  final Post post;
-  final String? currentUserId;
-  final VoidCallback onComments;
-  final VoidCallback onLike;
-  final VoidCallback onUnlike;
-  final VoidCallback onReport;
-  final bool isNew;
 
   const PostCardWidget({
     super.key,
@@ -33,6 +26,13 @@ class PostCardWidget extends ConsumerStatefulWidget {
     required this.onReport,
     this.isNew = false,
   });
+  final Post post;
+  final String? currentUserId;
+  final VoidCallback onComments;
+  final VoidCallback onLike;
+  final VoidCallback onUnlike;
+  final VoidCallback onReport;
+  final bool isNew;
 
   @override
   ConsumerState<PostCardWidget> createState() => _PostCardWidgetState();
@@ -384,7 +384,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                   decoration: BoxDecoration(
                     color: isLiked
                         ? DesignTokens.vibrantPink
-                        : theme.colorScheme.surfaceVariant,
+                        : theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                   ),
                   child: Row(
@@ -431,7 +431,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                 ),
                 child: Row(

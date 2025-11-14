@@ -4,6 +4,14 @@ import 'package:logger/logger.dart';
 import '../utils/error_handler.dart';
 
 class AuthService extends ChangeNotifier {
+
+  AuthService() {
+    _user = _auth.currentUser;
+    _auth.authStateChanges().listen((User? user) {
+      _user = user;
+      notifyListeners();
+    });
+  }
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Logger _logger = Logger();
   
@@ -16,20 +24,12 @@ class AuthService extends ChangeNotifier {
   String? get error => _error;
   bool get isAuthenticated => _user != null;
 
-  AuthService() {
-    _user = _auth.currentUser;
-    _auth.authStateChanges().listen((User? user) {
-      _user = user;
-      notifyListeners();
-    });
-  }
-
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     _setLoading(true);
     _clearError();
 
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
+      final UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -48,7 +48,7 @@ class AuthService extends ChangeNotifier {
     _clearError();
 
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
+      final UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -67,7 +67,7 @@ class AuthService extends ChangeNotifier {
     _clearError();
 
     try {
-      UserCredential result = await _auth.signInAnonymously();
+      final UserCredential result = await _auth.signInAnonymously();
       _user = result.user;
       _logger.i('Anonymous user signed in: ${_user?.uid}');
     } catch (e) {

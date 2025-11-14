@@ -717,11 +717,11 @@ class ProfilePage extends ConsumerWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
-              const Icon(Icons.error, color: Colors.white),
-              const SizedBox(width: 8),
-              const Expanded(
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
                 child: Text('Unable to update beta status. Please try again.'),
               ),
             ],

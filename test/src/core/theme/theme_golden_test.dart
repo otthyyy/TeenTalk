@@ -149,10 +149,10 @@ class _ThemeShowcase extends StatelessWidget {
                       child: const Text('Tertiary action'),
                     ),
                     const SizedBox(height: DesignTokens.spacingLg),
-                    Wrap(
+                    const Wrap(
                       spacing: DesignTokens.spacingSm,
                       runSpacing: DesignTokens.spacingSm,
-                      children: const [
+                      children: [
                         Chip(label: Text('Trending')),
                         Chip(label: Text('Self Care')),
                         Chip(label: Text('Music')),

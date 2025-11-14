@@ -14,7 +14,7 @@ void main() {
       repository = CommentsRepository(firestore: firestore);
     });
 
-    Future<void> _createPost(String postId, {int commentCount = 0}) async {
+    Future<void> createPost(String postId, {int commentCount = 0}) async {
       await firestore.collection('posts').doc(postId).set({
         'authorId': 'author1',
         'authorNickname': 'Author',
@@ -27,7 +27,7 @@ void main() {
 
     group('createComment', () {
       test('stores mentions and increments post comment count', () async {
-        await _createPost('post1');
+        await createPost('post1');
 
         final comment = await repository.createComment(
           postId: 'post1',
@@ -48,7 +48,7 @@ void main() {
       });
 
       test('increments reply count when replying to comment', () async {
-        await _createPost('post1', commentCount: 1);
+        await createPost('post1', commentCount: 1);
 
         final parent = await repository.createComment(
           postId: 'post1',
@@ -80,7 +80,7 @@ void main() {
 
     group('getCommentsByPostId', () {
       test('returns only active comments for a post', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final active = await repository.createComment(
           postId: 'post1',
           authorId: 'user1',
@@ -112,7 +112,7 @@ void main() {
 
     group('getRepliesForComment', () {
       test('returns only replies for the given comment', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final parent = await repository.createComment(
           postId: 'post1',
           authorId: 'parent',
@@ -149,7 +149,7 @@ void main() {
 
     group('likeComment / unlikeComment', () {
       test('likeComment increments like count and stores user', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final comment = await repository.createComment(
           postId: 'post1',
           authorId: 'author',
@@ -167,7 +167,7 @@ void main() {
       });
 
       test('likeComment does not duplicate likes', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final comment = await repository.createComment(
           postId: 'post1',
           authorId: 'author',
@@ -186,7 +186,7 @@ void main() {
       });
 
       test('unlikeComment decrements like count and removes user', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final comment = await repository.createComment(
           postId: 'post1',
           authorId: 'author',
@@ -206,7 +206,7 @@ void main() {
       });
 
       test('unlikeComment does not go below zero', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final comment = await repository.createComment(
           postId: 'post1',
           authorId: 'author',
@@ -226,7 +226,7 @@ void main() {
 
     group('deleteComment', () {
       test('decrements post comment count and removes comment', () async {
-        await _createPost('post1');
+        await createPost('post1');
         final comment = await repository.createComment(
           postId: 'post1',
           authorId: 'author',
@@ -246,7 +246,7 @@ void main() {
       });
 
       test('decrements reply count when deleting reply', () async {
-        await _createPost('post1', commentCount: 2);
+        await createPost('post1', commentCount: 2);
         final parent = await repository.createComment(
           postId: 'post1',
           authorId: 'parent',
@@ -295,7 +295,7 @@ void main() {
       });
 
       test('createComment throws CommentFailure with empty content', () async {
-        await _createPost('post1');
+        await createPost('post1');
 
         expect(
           () => repository.createComment(
@@ -315,7 +315,7 @@ void main() {
       });
 
       test('createComment throws CommentFailure when replying to nonexistent comment', () async {
-        await _createPost('post1');
+        await createPost('post1');
 
         expect(
           () => repository.createComment(

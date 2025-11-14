@@ -9,7 +9,6 @@ import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../providers/comments_provider.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/comments_list_widget.dart';
-import '../widgets/comment_input_widget.dart';
 
 class FeedWithCommentsPage extends ConsumerStatefulWidget {
   const FeedWithCommentsPage({super.key});

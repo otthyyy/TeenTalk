@@ -35,11 +35,11 @@ final singlePostWithSchoolCheckProvider = FutureProvider.family<SinglePostResult
 });
 
 class SinglePostResult {
-  final Post? post;
-  final String? error;
 
   SinglePostResult({
     required this.post,
     required this.error,
   });
+  final Post? post;
+  final String? error;
 }

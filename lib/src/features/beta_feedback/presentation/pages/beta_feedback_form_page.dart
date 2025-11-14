@@ -181,7 +181,7 @@ class _BetaFeedbackFormPageState extends ConsumerState<BetaFeedbackFormPage> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<FeedbackType>(
-                        value: _selectedType,
+                        initialValue: _selectedType,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -215,7 +215,7 @@ class _BetaFeedbackFormPageState extends ConsumerState<BetaFeedbackFormPage> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<FeedbackPriority>(
-                        value: _selectedPriority,
+                        initialValue: _selectedPriority,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),

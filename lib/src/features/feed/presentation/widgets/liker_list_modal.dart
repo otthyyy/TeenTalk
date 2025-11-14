@@ -6,12 +6,12 @@ import '../../../../core/services/analytics_provider.dart';
 import '../providers/liker_profiles_provider.dart';
 
 class LikerListModal extends ConsumerStatefulWidget {
-  final List<String> likerIds;
 
   const LikerListModal({
     super.key,
     required this.likerIds,
   });
+  final List<String> likerIds;
 
   @override
   ConsumerState<LikerListModal> createState() => _LikerListModalState();
@@ -326,7 +326,7 @@ class _LikerListModalState extends ConsumerState<LikerListModal>
                 height: 48,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                 ),
               ),
               const SizedBox(width: 12),
@@ -338,7 +338,7 @@ class _LikerListModalState extends ConsumerState<LikerListModal>
                       width: 120,
                       height: 16,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -347,7 +347,7 @@ class _LikerListModalState extends ConsumerState<LikerListModal>
                       width: 80,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),

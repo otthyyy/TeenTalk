@@ -6,15 +6,15 @@ import 'analytics_constants.dart';
 /// Provides methods to log events with consistent naming and parameters
 /// Ensures no PII is logged and respects user privacy preferences
 class AnalyticsService {
-  final FirebaseAnalytics _analytics;
-  final Logger _logger;
-  bool _isEnabled = true;
 
   AnalyticsService({
     FirebaseAnalytics? analytics,
     Logger? logger,
   })  : _analytics = analytics ?? FirebaseAnalytics.instance,
         _logger = logger ?? Logger();
+  final FirebaseAnalytics _analytics;
+  final Logger _logger;
+  bool _isEnabled = true;
 
   /// Enable or disable analytics collection
   Future<void> setEnabled(bool enabled) async {

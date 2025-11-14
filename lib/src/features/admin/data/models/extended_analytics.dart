@@ -1,11 +1,4 @@
 class ExtendedAnalytics {
-  final List<DailyMetric> dailyMetrics;
-  final List<SchoolMetric> schoolMetrics;
-  final Map<String, int> reportReasons;
-  final int totalUsers;
-  final int activeUsers;
-  final int totalPosts;
-  final int totalComments;
 
   const ExtendedAnalytics({
     required this.dailyMetrics,
@@ -36,6 +29,13 @@ class ExtendedAnalytics {
       totalComments: json['totalComments'] as int? ?? 0,
     );
   }
+  final List<DailyMetric> dailyMetrics;
+  final List<SchoolMetric> schoolMetrics;
+  final Map<String, int> reportReasons;
+  final int totalUsers;
+  final int activeUsers;
+  final int totalPosts;
+  final int totalComments;
 
   Map<String, dynamic> toJson() => {
         'dailyMetrics': dailyMetrics.map((e) => e.toJson()).toList(),
@@ -49,11 +49,6 @@ class ExtendedAnalytics {
 }
 
 class DailyMetric {
-  final DateTime date;
-  final int postCount;
-  final int commentCount;
-  final int reportCount;
-  final int activeUserCount;
 
   const DailyMetric({
     required this.date,
@@ -72,6 +67,11 @@ class DailyMetric {
       activeUserCount: json['activeUserCount'] as int? ?? 0,
     );
   }
+  final DateTime date;
+  final int postCount;
+  final int commentCount;
+  final int reportCount;
+  final int activeUserCount;
 
   Map<String, dynamic> toJson() => {
         'date': date.toIso8601String(),
@@ -83,10 +83,6 @@ class DailyMetric {
 }
 
 class SchoolMetric {
-  final String schoolName;
-  final int userCount;
-  final int postCount;
-  final int reportCount;
 
   const SchoolMetric({
     required this.schoolName,
@@ -103,6 +99,10 @@ class SchoolMetric {
       reportCount: json['reportCount'] as int? ?? 0,
     );
   }
+  final String schoolName;
+  final int userCount;
+  final int postCount;
+  final int reportCount;
 
   Map<String, dynamic> toJson() => {
         'schoolName': schoolName,
@@ -113,15 +113,15 @@ class SchoolMetric {
 }
 
 class AnalyticsFilter {
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final String? school;
 
   const AnalyticsFilter({
     this.startDate,
     this.endDate,
     this.school,
   });
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? school;
 
   AnalyticsFilter copyWith({
     DateTime? startDate,

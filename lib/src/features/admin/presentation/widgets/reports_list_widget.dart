@@ -124,7 +124,7 @@ class _ReportsListWidgetState extends ConsumerState<ReportsListWidget> {
 
   Widget _buildStatusFilter() {
     return DropdownButtonFormField<String>(
-      value: _selectedStatus,
+      initialValue: _selectedStatus,
       decoration: const InputDecoration(
         labelText: 'Status',
         border: OutlineInputBorder(),
@@ -146,7 +146,7 @@ class _ReportsListWidgetState extends ConsumerState<ReportsListWidget> {
 
   Widget _buildContentTypeFilter() {
     return DropdownButtonFormField<String>(
-      value: _selectedContentType,
+      initialValue: _selectedContentType,
       decoration: const InputDecoration(
         labelText: 'Content Type',
         border: OutlineInputBorder(),
@@ -167,7 +167,7 @@ class _ReportsListWidgetState extends ConsumerState<ReportsListWidget> {
 
   Widget _buildSeverityFilter() {
     return DropdownButtonFormField<String>(
-      value: _selectedSeverity,
+      initialValue: _selectedSeverity,
       decoration: const InputDecoration(
         labelText: 'Severity',
         border: OutlineInputBorder(),
@@ -281,14 +281,14 @@ class _ReportsListWidgetState extends ConsumerState<ReportsListWidget> {
 }
 
 class ReportListItem extends ConsumerStatefulWidget {
-  final Report report;
-  final bool isWide;
 
   const ReportListItem({
     super.key,
     required this.report,
     this.isWide = false,
   });
+  final Report report;
+  final bool isWide;
 
   @override
   ConsumerState<ReportListItem> createState() => _ReportListItemState();

@@ -5,12 +5,12 @@ import '../../domain/models/user_profile.dart';
 /// Banner that shows when user's profile is incomplete
 /// Encourages them to complete it without blocking functionality
 class IncompleteProfileBanner extends StatelessWidget {
-  final UserProfile profile;
 
   const IncompleteProfileBanner({
     super.key,
     required this.profile,
   });
+  final UserProfile profile;
 
   List<String> _getMissingFields() {
     final missing = <String>[];

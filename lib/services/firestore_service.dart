@@ -9,7 +9,7 @@ class FirestoreService {
   // Generic document operations
   Future<DocumentSnapshot> getDocument(String collection, String docId) async {
     try {
-      DocumentSnapshot doc = await _firestore.collection(collection).doc(docId).get();
+      final DocumentSnapshot doc = await _firestore.collection(collection).doc(docId).get();
       _logger.d('Retrieved document: $collection/$docId');
       return doc;
     } catch (e) {
@@ -60,7 +60,7 @@ class FirestoreService {
         query = queryBuilder(query);
       }
 
-      QuerySnapshot snapshot = await query.get();
+      final QuerySnapshot snapshot = await query.get();
       _logger.d('Queried collection: $collection, found ${snapshot.docs.length} documents');
       return snapshot;
     } catch (e) {
@@ -90,7 +90,7 @@ class FirestoreService {
   // Batch operations
   Future<void> batchWrite(List<BatchOperation> operations) async {
     try {
-      WriteBatch batch = _firestore.batch();
+      final WriteBatch batch = _firestore.batch();
       
       for (final operation in operations) {
         switch (operation.type) {
@@ -121,13 +121,13 @@ typedef QueryBuilder = Query Function(Query query);
 enum BatchOperationType { set, update, delete }
 
 class BatchOperation {
-  final BatchOperationType type;
-  final DocumentReference reference;
-  final Map<String, dynamic>? data;
 
   BatchOperation({
     required this.type,
     required this.reference,
     this.data,
   });
+  final BatchOperationType type;
+  final DocumentReference reference;
+  final Map<String, dynamic>? data;
 }

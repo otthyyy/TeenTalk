@@ -6,12 +6,6 @@ import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
 
 class CommentWidget extends ConsumerStatefulWidget {
-  final Comment comment;
-  final String currentUserId;
-  final VoidCallback? onReply;
-  final VoidCallback? onLike;
-  final VoidCallback? onUnlike;
-  final VoidCallback? onReport;
 
   const CommentWidget({
     super.key,
@@ -22,6 +16,12 @@ class CommentWidget extends ConsumerStatefulWidget {
     this.onUnlike,
     this.onReport,
   });
+  final Comment comment;
+  final String currentUserId;
+  final VoidCallback? onReply;
+  final VoidCallback? onLike;
+  final VoidCallback? onUnlike;
+  final VoidCallback? onReport;
 
   @override
   ConsumerState<CommentWidget> createState() => _CommentWidgetState();
@@ -181,7 +181,7 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
                     decoration: BoxDecoration(
                       color: isLiked
                           ? DesignTokens.vibrantPink
-                          : theme.colorScheme.surfaceVariant,
+                          : theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                     ),
                     child: Row(
@@ -210,7 +210,7 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
                   ),
                   child: Row(

@@ -3,12 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../comments/data/models/comment.dart';
 
 class FeedCacheEntry {
-  final List<Post> posts;
-  final DateTime fetchedAt;
-  final bool hasMore;
-  final int readCount;
-  final DocumentSnapshot? lastDocument;
-  final String? paginationToken;
 
   const FeedCacheEntry({
     required this.posts,
@@ -18,6 +12,12 @@ class FeedCacheEntry {
     required this.lastDocument,
     required this.paginationToken,
   });
+  final List<Post> posts;
+  final DateTime fetchedAt;
+  final bool hasMore;
+  final int readCount;
+  final DocumentSnapshot? lastDocument;
+  final String? paginationToken;
 
   bool isStale(Duration maxAge) {
     return DateTime.now().difference(fetchedAt) > maxAge;
@@ -111,7 +111,7 @@ class FeedCacheService {
     return {
       'totalReads': _totalReads,
       'cacheHits': _cacheHits,
-      'hitRate': _totalReads > 0 ? (_cacheHits / _totalReads * 100).toStringAsFixed(1) + '%' : '0%',
+      'hitRate': _totalReads > 0 ? '${(_cacheHits / _totalReads * 100).toStringAsFixed(1)}%' : '0%',
       'cachedEntries': _cache.length,
     };
   }

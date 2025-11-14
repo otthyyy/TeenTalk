@@ -18,9 +18,9 @@ final analyticsEnabledProvider = StateProvider<bool>((ref) => true);
 
 /// Provider to manage analytics opt-in/out
 class AnalyticsPreferencesNotifier extends StateNotifier<bool> {
-  final AnalyticsService _analyticsService;
 
   AnalyticsPreferencesNotifier(this._analyticsService) : super(true);
+  final AnalyticsService _analyticsService;
 
   Future<void> setEnabled(bool enabled) async {
     await _analyticsService.setEnabled(enabled);

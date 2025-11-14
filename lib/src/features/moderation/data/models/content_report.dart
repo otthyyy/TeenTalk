@@ -34,18 +34,6 @@ enum ContentType {
 }
 
 class ContentReport {
-  final String id;
-  final String contentId;
-  final ContentType contentType;
-  final String reporterId;
-  final String contentAuthorId;
-  final ReportReason reason;
-  final String? additionalDetails;
-  final ReportStatus status;
-  final DateTime createdAt;
-  final DateTime? resolvedAt;
-  final String? resolvedBy;
-  final String? resolutionNotes;
 
   const ContentReport({
     required this.id,
@@ -81,6 +69,18 @@ class ContentReport {
       resolutionNotes: data['resolutionNotes'] as String?,
     );
   }
+  final String id;
+  final String contentId;
+  final ContentType contentType;
+  final String reporterId;
+  final String contentAuthorId;
+  final ReportReason reason;
+  final String? additionalDetails;
+  final ReportStatus status;
+  final DateTime createdAt;
+  final DateTime? resolvedAt;
+  final String? resolvedBy;
+  final String? resolutionNotes;
 
   Map<String, dynamic> toFirestore() {
     return {

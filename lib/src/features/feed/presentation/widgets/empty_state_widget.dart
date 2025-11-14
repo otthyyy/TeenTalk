@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import '../pages/feed_sections_page.dart';
 
 class EmptyStateWidget extends StatelessWidget {
-  final FeedSection section;
 
   const EmptyStateWidget({
     super.key,
     required this.section,
   });
+  final FeedSection section;
 
   @override
   Widget build(BuildContext context) {

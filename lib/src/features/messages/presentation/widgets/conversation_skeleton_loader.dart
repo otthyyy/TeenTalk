@@ -9,7 +9,7 @@ class ConversationSkeletonLoader extends StatelessWidget {
       itemCount: 8,
       separatorBuilder: (context, index) => Divider(
         height: 1,
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
       ),
       itemBuilder: (context, index) {
         return const _ConversationSkeletonItem();
@@ -33,7 +33,7 @@ class _ConversationSkeletonItem extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceContainerHighest,
               shape: BoxShape.circle,
             ),
           ),
@@ -49,7 +49,7 @@ class _ConversationSkeletonItem extends StatelessWidget {
                       width: 120,
                       height: 16,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -57,7 +57,7 @@ class _ConversationSkeletonItem extends StatelessWidget {
                       width: 50,
                       height: 12,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -68,7 +68,7 @@ class _ConversationSkeletonItem extends StatelessWidget {
                   width: double.infinity,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

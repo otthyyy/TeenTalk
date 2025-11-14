@@ -1,9 +1,9 @@
 /// Exception thrown when a post operation fails.
 abstract class PostException implements Exception {
-  final String message;
-  final String? userMessage;
 
   const PostException(this.message, {this.userMessage});
+  final String message;
+  final String? userMessage;
 
   @override
   String toString() => userMessage ?? message;
@@ -20,14 +20,12 @@ class ImageUploadNetworkException extends PostException {
 
 /// Exception thrown when image validation fails.
 class ImageValidationException extends PostException {
-  const ImageValidationException(String message, {String? userMessage})
-      : super(message, userMessage: userMessage);
+  const ImageValidationException(super.message, {super.userMessage});
 }
 
 /// Exception thrown when post validation fails.
 class PostValidationException extends PostException {
-  const PostValidationException(String message, {String? userMessage})
-      : super(message, userMessage: userMessage);
+  const PostValidationException(super.message, {super.userMessage});
 }
 
 /// Exception thrown when Firestore operations fail.

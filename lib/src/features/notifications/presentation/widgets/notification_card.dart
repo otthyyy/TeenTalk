@@ -6,12 +6,12 @@ import '../../data/models/app_notification.dart';
 import '../providers/notifications_provider.dart';
 
 class NotificationCard extends ConsumerWidget {
-  final AppNotification notification;
 
   const NotificationCard({
     super.key,
     required this.notification,
   });
+  final AppNotification notification;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -136,7 +136,7 @@ class NotificationCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: iconColor?.withOpacity(0.1),
+        color: iconColor.withOpacity(0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(

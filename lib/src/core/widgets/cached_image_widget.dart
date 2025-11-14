@@ -6,13 +6,6 @@ import 'package:shimmer/shimmer.dart';
 import '../services/image_cache_service.dart';
 
 class CachedImageWidget extends StatefulWidget {
-  final String imageUrl;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
-  final BorderRadius? borderRadius;
-  final Widget? errorWidget;
-  final bool enableInstrumentation;
 
   const CachedImageWidget({
     super.key,
@@ -24,6 +17,13 @@ class CachedImageWidget extends StatefulWidget {
     this.errorWidget,
     this.enableInstrumentation = false,
   });
+  final String imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final BorderRadius? borderRadius;
+  final Widget? errorWidget;
+  final bool enableInstrumentation;
 
   @override
   State<CachedImageWidget> createState() => _CachedImageWidgetState();
@@ -95,7 +95,7 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     if (!widget.enableInstrumentation) return;
 
     if (_stopwatch != null && _stopwatch!.isRunning) {
-      _stopwatch!..stop();
+      _stopwatch!.stop();
       _logger.i(
         'Loaded image: ${widget.imageUrl} in ${_stopwatch!.elapsedMilliseconds}ms',
       );
@@ -111,13 +111,13 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     double? height,
   ) {
     return Shimmer.fromColors(
-      baseColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-      highlightColor: theme.colorScheme.surfaceVariant.withOpacity(0.1),
+      baseColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      highlightColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.1),
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant,
+          color: theme.colorScheme.surfaceContainerHighest,
           borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
         ),
         child: Center(

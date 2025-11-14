@@ -5,17 +5,17 @@ import '../models/moderation_item.dart';
 import '../models/report_reason.dart';
 
 class ModerationService {
-  final FirebaseFirestore _firestore;
-  final Logger _logger;
-
-  static const int _reportThreshold = 3;
-  static const int _maxReportsPerUserPerDay = 10;
 
   ModerationService({
     FirebaseFirestore? firestore,
     Logger? logger,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _logger = logger ?? Logger();
+  final FirebaseFirestore _firestore;
+  final Logger _logger;
+
+  static const int _reportThreshold = 3;
+  static const int _maxReportsPerUserPerDay = 10;
 
   Future<void> submitReport({
     required String contentId,

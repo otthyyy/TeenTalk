@@ -8,14 +8,14 @@ import '../models/auth_form_state.dart';
 import '../../data/models/auth_user.dart';
 
 class ConsentPage extends ConsumerStatefulWidget {
-  final AuthUser user;
-  final VoidCallback onConsentComplete;
 
   const ConsentPage({
     super.key,
     required this.user,
     required this.onConsentComplete,
   });
+  final AuthUser user;
+  final VoidCallback onConsentComplete;
 
   @override
   ConsumerState<ConsentPage> createState() => _ConsentPageState();

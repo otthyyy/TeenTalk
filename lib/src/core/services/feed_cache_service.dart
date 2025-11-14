@@ -7,15 +7,15 @@ import '../../features/comments/data/models/comment.dart';
 import '../../features/feed/domain/models/feed_sort_option.dart';
 
 class FeedCacheEntry {
-  final List<Post> posts;
-  final DateTime? lastSyncedAt;
-  final FeedSortOption sortOption;
 
   const FeedCacheEntry({
     required this.posts,
     required this.sortOption,
     this.lastSyncedAt,
   });
+  final List<Post> posts;
+  final DateTime? lastSyncedAt;
+  final FeedSortOption sortOption;
 }
 
 class FeedCacheService {

@@ -10,8 +10,7 @@ Widget createTestApp(
   return ProviderScope(
     child: MediaQuery(
       data: MediaQueryData(
-        textScaleFactor: textScaleFactor,
-        size: const Size(400, 800),
+        size: const Size(400, 800), textScaler: TextScaler.linear(textScaleFactor),
       ),
       child: MaterialApp(
         theme: ThemeData.light(),

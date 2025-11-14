@@ -2,11 +2,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
 
 class FCMMessagingService {
-  final FirebaseMessaging _firebaseMessaging;
-  final Logger _logger = Logger();
 
   FCMMessagingService({FirebaseMessaging? firebaseMessaging})
       : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging;
+  final Logger _logger = Logger();
 
   /// Initialize FCM and request permissions
   Future<void> initialize() async {

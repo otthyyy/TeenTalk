@@ -1,12 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 class SearchFilters {
-  final String query;
-  final List<String> interests;
-  final int? minSchoolYear;
-  final int? maxSchoolYear;
-  final double? minTrustLevel;
-  final String? school;
 
   const SearchFilters({
     this.query = '',
@@ -16,6 +10,25 @@ class SearchFilters {
     this.minTrustLevel,
     this.school,
   });
+
+  factory SearchFilters.fromJson(Map<String, dynamic> json) {
+    return SearchFilters(
+      query: json['query'] as String? ?? '',
+      interests: json['interests'] != null
+          ? List<String>.from(json['interests'] as List)
+          : [],
+      minSchoolYear: json['minSchoolYear'] as int?,
+      maxSchoolYear: json['maxSchoolYear'] as int?,
+      minTrustLevel: (json['minTrustLevel'] as num?)?.toDouble(),
+      school: json['school'] as String?,
+    );
+  }
+  final String query;
+  final List<String> interests;
+  final int? minSchoolYear;
+  final int? maxSchoolYear;
+  final double? minTrustLevel;
+  final String? school;
 
   SearchFilters copyWith({
     String? query,
@@ -84,19 +97,6 @@ class SearchFilters {
       'minTrustLevel': minTrustLevel,
       'school': school,
     };
-  }
-
-  factory SearchFilters.fromJson(Map<String, dynamic> json) {
-    return SearchFilters(
-      query: json['query'] as String? ?? '',
-      interests: json['interests'] != null
-          ? List<String>.from(json['interests'] as List)
-          : [],
-      minSchoolYear: json['minSchoolYear'] as int?,
-      maxSchoolYear: json['maxSchoolYear'] as int?,
-      minTrustLevel: (json['minTrustLevel'] as num?)?.toDouble(),
-      school: json['school'] as String?,
-    );
   }
 
   @override

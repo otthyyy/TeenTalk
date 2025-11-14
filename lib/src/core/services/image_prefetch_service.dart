@@ -4,9 +4,9 @@ import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'image_cache_service.dart';
 
 class ImagePrefetchService {
-  static final ImagePrefetchService _instance = ImagePrefetchService._internal();
   factory ImagePrefetchService() => _instance;
   ImagePrefetchService._internal();
+  static final ImagePrefetchService _instance = ImagePrefetchService._internal();
 
   final Logger _logger = Logger();
   final ImageCacheService _cacheService = ImageCacheService();

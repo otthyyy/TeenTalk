@@ -3,15 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 class CrashlyticsService {
-  final FirebaseCrashlytics? _crashlytics;
-  final Logger _logger;
-  bool _isInitialized = false;
 
   CrashlyticsService({
     FirebaseCrashlytics? crashlytics,
     Logger? logger,
   })  : _crashlytics = kIsWeb ? null : (crashlytics ?? FirebaseCrashlytics.instance),
         _logger = logger ?? Logger();
+  final FirebaseCrashlytics? _crashlytics;
+  final Logger _logger;
+  bool _isInitialized = false;
 
   Future<void> initialize() async {
     if (kIsWeb) {
@@ -38,7 +38,7 @@ class CrashlyticsService {
   Future<void> setCollectionEnabled(bool enabled) async {
     if (kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.setCrashlyticsCollectionEnabled(enabled);
+      await _crashlytics.setCrashlyticsCollectionEnabled(enabled);
       _logger.i('Crashlytics collection ${enabled ? "enabled" : "disabled"}');
     } catch (e) {
       _logger.e('Failed to set Crashlytics collection: $e');
@@ -48,7 +48,7 @@ class CrashlyticsService {
   Future<void> setUserId(String userId) async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.setUserIdentifier(userId);
+      await _crashlytics.setUserIdentifier(userId);
     } catch (e) {
       _logger.e('Failed to set user ID in Crashlytics: $e');
     }
@@ -57,7 +57,7 @@ class CrashlyticsService {
   Future<void> clearUserId() async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.setUserIdentifier('');
+      await _crashlytics.setUserIdentifier('');
     } catch (e) {
       _logger.e('Failed to clear user ID in Crashlytics: $e');
     }
@@ -66,7 +66,7 @@ class CrashlyticsService {
   Future<void> setCustomKey(String key, dynamic value) async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.setCustomKey(key, value);
+      await _crashlytics.setCustomKey(key, value);
     } catch (e) {
       _logger.e('Failed to set custom key in Crashlytics: $e');
     }
@@ -75,7 +75,7 @@ class CrashlyticsService {
   Future<void> log(String message) async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.log(message);
+      await _crashlytics.log(message);
     } catch (e) {
       _logger.e('Failed to log message in Crashlytics: $e');
     }
@@ -89,7 +89,7 @@ class CrashlyticsService {
   }) async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.recordError(
+      await _crashlytics.recordError(
         exception,
         stackTrace,
         reason: reason,
@@ -103,7 +103,7 @@ class CrashlyticsService {
   Future<void> recordFlutterError(FlutterErrorDetails details) async {
     if (!_isInitialized || kIsWeb || _crashlytics == null) return;
     try {
-      await _crashlytics!.recordFlutterError(details);
+      await _crashlytics.recordFlutterError(details);
     } catch (e) {
       _logger.e('Failed to record Flutter error in Crashlytics: $e');
     }
@@ -116,7 +116,7 @@ class CrashlyticsService {
     }
     if (kDebugMode) {
       _logger.w('Test crash triggered (only works in release mode)');
-      await _crashlytics!.setCrashlyticsCollectionEnabled(true);
+      await _crashlytics.setCrashlyticsCollectionEnabled(true);
       throw Exception('Test crash from Crashlytics');
     } else {
       throw Exception('Test crash from Crashlytics');

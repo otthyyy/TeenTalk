@@ -22,9 +22,9 @@ class ScreenshotBlurOverlay extends StatelessWidget {
                 color: Colors.black.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.visibility_off, size: 36, color: Colors.white),
                   SizedBox(height: 12),
                   Text(

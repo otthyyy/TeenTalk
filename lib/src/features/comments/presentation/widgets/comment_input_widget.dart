@@ -17,11 +17,6 @@ import '../../data/models/comment_failure.dart';
 import '../providers/comments_provider.dart';
 
 class CommentInputWidget extends ConsumerStatefulWidget {
-  final String postId;
-  final String? replyToCommentId;
-  final String? replyToAuthorNickname;
-  final VoidCallback? onCommentPosted;
-  final VoidCallback? onCancelReply;
 
   const CommentInputWidget({
     super.key,
@@ -31,6 +26,11 @@ class CommentInputWidget extends ConsumerStatefulWidget {
     this.onCommentPosted,
     this.onCancelReply,
   });
+  final String postId;
+  final String? replyToCommentId;
+  final String? replyToAuthorNickname;
+  final VoidCallback? onCommentPosted;
+  final VoidCallback? onCancelReply;
 
   @override
   ConsumerState<CommentInputWidget> createState() => _CommentInputWidgetState();
@@ -270,7 +270,7 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: selectedSchool?.isEmpty == true ? null : selectedSchool,
+                      initialValue: selectedSchool?.isEmpty == true ? null : selectedSchool,
                       isDense: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(

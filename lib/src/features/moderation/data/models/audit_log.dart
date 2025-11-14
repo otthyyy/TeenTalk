@@ -19,14 +19,6 @@ enum AuditAction {
 }
 
 class AuditLog {
-  final String id;
-  final String contentId;
-  final String originalAuthorId;
-  final AuditAction action;
-  final String? performedBy;
-  final String? reason;
-  final Map<String, dynamic>? metadata;
-  final DateTime timestamp;
 
   const AuditLog({
     required this.id,
@@ -52,6 +44,14 @@ class AuditLog {
       timestamp: (data['timestamp'] as Timestamp).toDate(),
     );
   }
+  final String id;
+  final String contentId;
+  final String originalAuthorId;
+  final AuditAction action;
+  final String? performedBy;
+  final String? reason;
+  final Map<String, dynamic>? metadata;
+  final DateTime timestamp;
 
   Map<String, dynamic> toFirestore() {
     return {

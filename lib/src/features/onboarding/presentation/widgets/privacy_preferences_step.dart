@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 
 class PrivacyPreferencesStep extends StatefulWidget {
-  final bool allowAnonymousPosts;
-  final bool profileVisible;
-  final bool analyticsEnabled;
-  final Function(bool) onAllowAnonymousPostsChanged;
-  final Function(bool) onProfileVisibleChanged;
-  final Function(bool) onAnalyticsEnabledChanged;
-  final VoidCallback onComplete;
-  final VoidCallback onBack;
-  final bool isSubmitting;
 
   const PrivacyPreferencesStep({
     super.key,
@@ -23,6 +14,15 @@ class PrivacyPreferencesStep extends StatefulWidget {
     required this.onBack,
     required this.isSubmitting,
   });
+  final bool allowAnonymousPosts;
+  final bool profileVisible;
+  final bool analyticsEnabled;
+  final Function(bool) onAllowAnonymousPostsChanged;
+  final Function(bool) onProfileVisibleChanged;
+  final Function(bool) onAnalyticsEnabledChanged;
+  final VoidCallback onComplete;
+  final VoidCallback onBack;
+  final bool isSubmitting;
 
   @override
   State<PrivacyPreferencesStep> createState() => _PrivacyPreferencesStepState();

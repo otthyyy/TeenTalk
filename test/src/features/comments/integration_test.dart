@@ -7,7 +7,7 @@ void main() {
   group('Comments Integration Tests', () {
 
     test('comment count updates correctly when adding comments', () async {
-      final postId = 'test_post_1';
+      const postId = 'test_post_1';
       
       // Create initial comment
       final comment1 = Comment(
@@ -123,7 +123,7 @@ void main() {
     });
 
     test('mention extraction works correctly', () {
-      final contentWithMentions = 'Hello @user1 and @user2, how are you doing @user3?';
+      const contentWithMentions = 'Hello @user1 and @user2, how are you doing @user3?';
       final comment = Comment(
         id: 'comment1',
         postId: 'post1',
@@ -144,7 +144,7 @@ void main() {
     });
 
     test('comment state management works correctly', () {
-      final initialState = CommentsState();
+      const initialState = CommentsState();
       expect(initialState.comments.isEmpty, isTrue);
       expect(initialState.isLoading, isFalse);
       expect(initialState.error, isNull);

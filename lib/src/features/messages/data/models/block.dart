@@ -1,27 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Block {
-  final String blockerId;
-  final String blockedUserId;
-  final DateTime createdAt;
 
   const Block({
     required this.blockerId,
     required this.blockedUserId,
     required this.createdAt,
   });
-
-  Block copyWith({
-    String? blockerId,
-    String? blockedUserId,
-    DateTime? createdAt,
-  }) {
-    return Block(
-      blockerId: blockerId ?? this.blockerId,
-      blockedUserId: blockedUserId ?? this.blockedUserId,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
 
   factory Block.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -37,6 +22,21 @@ class Block {
       blockerId: json['blockerId'] as String,
       blockedUserId: json['blockedUserId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+  final String blockerId;
+  final String blockedUserId;
+  final DateTime createdAt;
+
+  Block copyWith({
+    String? blockerId,
+    String? blockedUserId,
+    DateTime? createdAt,
+  }) {
+    return Block(
+      blockerId: blockerId ?? this.blockerId,
+      blockedUserId: blockedUserId ?? this.blockedUserId,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 

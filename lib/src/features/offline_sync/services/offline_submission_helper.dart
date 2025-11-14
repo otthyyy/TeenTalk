@@ -14,15 +14,15 @@ final offlineSubmissionHelperProvider = Provider<OfflineSubmissionHelper>((ref) 
 });
 
 class OfflineSubmissionHelper {
-  final ConnectivityService connectivityService;
-  final SyncQueueService syncQueueService;
-  final Logger _logger = Logger();
-  final Random _random = Random();
 
   OfflineSubmissionHelper({
     required this.connectivityService,
     required this.syncQueueService,
   });
+  final ConnectivityService connectivityService;
+  final SyncQueueService syncQueueService;
+  final Logger _logger = Logger();
+  final Random _random = Random();
 
   Future<String?> enqueuePost({
     required String authorId,
@@ -51,7 +51,7 @@ class OfflineSubmissionHelper {
 
       final randomSuffix = _random.nextInt(10000);
       final action = QueuedAction(
-        id: '${DateTime.now().millisecondsSinceEpoch}_post_${randomSuffix}',
+        id: '${DateTime.now().millisecondsSinceEpoch}_post_$randomSuffix',
         type: QueuedActionType.post,
         data: {
           'authorId': authorId,
@@ -101,7 +101,7 @@ class OfflineSubmissionHelper {
 
       final randomSuffix = _random.nextInt(10000);
       final action = QueuedAction(
-        id: '${DateTime.now().millisecondsSinceEpoch}_comment_${randomSuffix}',
+        id: '${DateTime.now().millisecondsSinceEpoch}_comment_$randomSuffix',
         type: QueuedActionType.comment,
         data: {
           'postId': postId,
@@ -147,7 +147,7 @@ class OfflineSubmissionHelper {
 
       final randomSuffix = _random.nextInt(10000);
       final action = QueuedAction(
-        id: '${DateTime.now().millisecondsSinceEpoch}_dm_${randomSuffix}',
+        id: '${DateTime.now().millisecondsSinceEpoch}_dm_$randomSuffix',
         type: QueuedActionType.directMessage,
         data: {
           'senderId': senderId,

@@ -10,7 +10,7 @@ void main() {
 
     // Connect to Firestore emulator
     firestore = FirebaseFirestore.instance;
-    await firestore.settings = const Settings(
+    firestore.settings = const Settings(
       host: 'localhost:8080',
       sslEnabled: false,
       persistenceEnabled: false,
@@ -25,7 +25,7 @@ void main() {
   group('Firestore Security Rules - Users Collection', () {
     test('Authenticated user can read visible profiles', () async {
       // Create test data
-      final userId = 'testUser123';
+      const userId = 'testUser123';
       final docRef = firestore.collection('users').doc(userId);
 
       await docRef.set({
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('User can update own profile', () async {
-      final userId = 'testUser456';
+      const userId = 'testUser456';
       final docRef = firestore.collection('users').doc(userId);
 
       // Create initial document
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('Cannot modify immutable fields', () async {
-      final userId = 'testUser789';
+      const userId = 'testUser789';
       final docRef = firestore.collection('users').doc(userId);
 
       final createdAt = Timestamp.now();
@@ -129,8 +129,8 @@ void main() {
 
   group('Firestore Security Rules - Posts Collection', () {
     test('Authenticated user can create post', () async {
-      final postId = 'post123';
-      final authorId = 'author123';
+      const postId = 'post123';
+      const authorId = 'author123';
       final docRef = firestore.collection('posts').doc(postId);
 
       await docRef.set({
@@ -149,7 +149,7 @@ void main() {
     });
 
     test('Cannot create post with invalid content', () async {
-      final postId = 'post456';
+      const postId = 'post456';
       final docRef = firestore.collection('posts').doc(postId);
 
       // Empty content should fail
@@ -171,7 +171,7 @@ void main() {
     });
 
     test('Post like count is initially zero', () async {
-      final postId = 'post789';
+      const postId = 'post789';
       final docRef = firestore.collection('posts').doc(postId);
 
       await docRef.set({
@@ -191,9 +191,9 @@ void main() {
 
   group('Firestore Security Rules - Comments Collection', () {
     test('Can create comment on post', () async {
-      final postId = 'commentPost123';
-      final commentId = 'comment123';
-      final authorId = 'commenter123';
+      const postId = 'commentPost123';
+      const commentId = 'comment123';
+      const authorId = 'commenter123';
 
       // First create a post
       await firestore.collection('posts').doc(postId).set({
@@ -222,8 +222,8 @@ void main() {
     });
 
     test('Comment like count is initially zero', () async {
-      final postId = 'commentPost456';
-      final commentId = 'comment456';
+      const postId = 'commentPost456';
+      const commentId = 'comment456';
 
       // Create post
       await firestore.collection('posts').doc(postId).set({
@@ -253,9 +253,9 @@ void main() {
 
   group('Firestore Security Rules - DirectMessages Collection', () {
     test('Participants can read conversation', () async {
-      final conversationId = 'conv123';
-      final user1 = 'user1';
-      final user2 = 'user2';
+      const conversationId = 'conv123';
+      const user1 = 'user1';
+      const user2 = 'user2';
 
       final docRef = firestore.collection('directMessages').doc(conversationId);
 
@@ -270,9 +270,9 @@ void main() {
     });
 
     test('Can add message to conversation', () async {
-      final conversationId = 'conv456';
-      final messageId = 'msg123';
-      final senderId = 'sender456';
+      const conversationId = 'conv456';
+      const messageId = 'msg123';
+      const senderId = 'sender456';
 
       // Create conversation
       await firestore.collection('directMessages').doc(conversationId).set({
@@ -301,9 +301,9 @@ void main() {
 
   group('Firestore Security Rules - ReportedPosts Collection', () {
     test('User can create report', () async {
-      final reportId = 'report123';
-      final reporterId = 'reporter123';
-      final postId = 'post123';
+      const reportId = 'report123';
+      const reporterId = 'reporter123';
+      const postId = 'post123';
 
       final docRef = firestore.collection('reportedPosts').doc(reportId);
 
@@ -321,7 +321,7 @@ void main() {
     });
 
     test('Report reason must be valid', () async {
-      final reportId = 'report456';
+      const reportId = 'report456';
 
       try {
         await firestore.collection('reportedPosts').doc(reportId).set({
@@ -343,8 +343,8 @@ void main() {
 
   group('Firestore Security Rules - Post Likes', () {
     test('User can like a post', () async {
-      final postId = 'likePost123';
-      final userId = 'liker123';
+      const postId = 'likePost123';
+      const userId = 'liker123';
 
       // Create post
       await firestore.collection('posts').doc(postId).set({
@@ -371,8 +371,8 @@ void main() {
     });
 
     test('User can remove their like', () async {
-      final postId = 'likePost456';
-      final userId = 'liker456';
+      const postId = 'likePost456';
+      const userId = 'liker456';
 
       // Create post
       await firestore.collection('posts').doc(postId).set({
@@ -476,7 +476,7 @@ void main() {
 
   group('Query Performance', () {
     test('Can query posts by author', () async {
-      final authorId = 'queryAuthor123';
+      const authorId = 'queryAuthor123';
 
       // Create multiple posts
       for (int i = 0; i < 3; i++) {
@@ -500,7 +500,7 @@ void main() {
     });
 
     test('Can query users by nickname', () async {
-      final nickname = 'uniquenick123';
+      const nickname = 'uniquenick123';
 
       await firestore.collection('users').doc('user1').set({
         'uid': 'user1',

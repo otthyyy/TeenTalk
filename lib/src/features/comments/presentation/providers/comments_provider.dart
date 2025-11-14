@@ -22,12 +22,6 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 final selectedCommentSchoolProvider = StateProvider<String?>((ref) => null);
 
 class CommentsState {
-  final List<Comment> comments;
-  final bool isLoading;
-  final bool isLoadingMore;
-  final CommentFailure? error;
-  final DocumentSnapshot? lastDocument;
-  final bool hasMore;
 
   const CommentsState({
     this.comments = const [],
@@ -37,6 +31,12 @@ class CommentsState {
     this.lastDocument,
     this.hasMore = true,
   });
+  final List<Comment> comments;
+  final bool isLoading;
+  final bool isLoadingMore;
+  final CommentFailure? error;
+  final DocumentSnapshot? lastDocument;
+  final bool hasMore;
 
   CommentsState copyWith({
     List<Comment>? comments,
@@ -60,10 +60,10 @@ class CommentsState {
 }
 
 class CommentsNotifier extends StateNotifier<CommentsState> {
-  final CommentsRepository _repository;
-  final String _postId;
 
   CommentsNotifier(this._repository, this._postId) : super(const CommentsState());
+  final CommentsRepository _repository;
+  final String _postId;
 
   Future<void> loadComments({bool refresh = false}) async {
     if (refresh) {
@@ -336,13 +336,6 @@ final commentsProvider = StateNotifierProvider.family<CommentsNotifier, Comments
 );
 
 class PostsState {
-  final List<Post> posts;
-  final bool isLoading;
-  final bool isLoadingMore;
-  final String? error;
-  final DocumentSnapshot? lastDocument;
-  final bool hasMore;
-  final String? currentSection;
 
   const PostsState({
     this.posts = const [],
@@ -353,6 +346,13 @@ class PostsState {
     this.hasMore = true,
     this.currentSection,
   });
+  final List<Post> posts;
+  final bool isLoading;
+  final bool isLoadingMore;
+  final String? error;
+  final DocumentSnapshot? lastDocument;
+  final bool hasMore;
+  final String? currentSection;
 
   PostsState copyWith({
     List<Post>? posts,
@@ -376,10 +376,10 @@ class PostsState {
 }
 
 class PostsNotifier extends StateNotifier<PostsState> {
-  final PostsRepository _repository;
-  StreamSubscription? _postsSubscription;
 
   PostsNotifier(this._repository) : super(const PostsState());
+  final PostsRepository _repository;
+  StreamSubscription? _postsSubscription;
 
   @override
   void dispose() {

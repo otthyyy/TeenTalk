@@ -1,27 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FriendEntry {
-  final String friendId;
-  final String? conversationId;
-  final DateTime createdAt;
 
   const FriendEntry({
     required this.friendId,
     this.conversationId,
     required this.createdAt,
   });
-
-  FriendEntry copyWith({
-    String? friendId,
-    String? conversationId,
-    DateTime? createdAt,
-  }) {
-    return FriendEntry(
-      friendId: friendId ?? this.friendId,
-      conversationId: conversationId ?? this.conversationId,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
 
   factory FriendEntry.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -37,6 +22,21 @@ class FriendEntry {
       friendId: json['friendId'] as String,
       conversationId: json['conversationId'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+  final String friendId;
+  final String? conversationId;
+  final DateTime createdAt;
+
+  FriendEntry copyWith({
+    String? friendId,
+    String? conversationId,
+    DateTime? createdAt,
+  }) {
+    return FriendEntry(
+      friendId: friendId ?? this.friendId,
+      conversationId: conversationId ?? this.conversationId,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 

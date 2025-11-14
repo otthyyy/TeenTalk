@@ -3,9 +3,6 @@ import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/direct_message.dart';
 
 class MessageBubble extends StatelessWidget {
-  final DirectMessage message;
-  final bool isCurrentUser;
-  final String? senderName;
 
   const MessageBubble({
     super.key,
@@ -13,6 +10,9 @@ class MessageBubble extends StatelessWidget {
     required this.isCurrentUser,
     this.senderName,
   });
+  final DirectMessage message;
+  final bool isCurrentUser;
+  final String? senderName;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class MessageBubble extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isCurrentUser
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                    : theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),

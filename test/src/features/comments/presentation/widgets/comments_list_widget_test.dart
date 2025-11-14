@@ -10,7 +10,7 @@ void main() {
   group('CommentsListWidget Tests', () {
     testWidgets('displays loading state initially', (WidgetTester tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: CommentsListWidget(
@@ -30,7 +30,7 @@ void main() {
 
     testWidgets('displays empty state when no comments', (WidgetTester tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: CommentsListWidget(
@@ -56,7 +56,7 @@ void main() {
       // This test would require more complex mocking of the Riverpod state
       // For now, we'll just test the basic structure
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: CommentsListWidget(
@@ -78,7 +78,7 @@ void main() {
 
     testWidgets('shows add comment button toggles input', (WidgetTester tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: CommentsListWidget(
@@ -109,7 +109,7 @@ void main() {
 
     testWidgets('refresh indicator triggers refresh', (WidgetTester tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: CommentsListWidget(

@@ -51,7 +51,7 @@ void main() {
       final signOutButtonWidget = tester.widget<OutlinedButton>(signOutButton);
       final renderBox = tester.renderObject(signOutButton) as RenderBox;
       final buttonBottom = renderBox.localToGlobal(Offset.zero).dy + renderBox.size.height;
-      final screenHeight = 800.0;
+      const screenHeight = 800.0;
 
       final expectedBottomPadding = BottomNavMetrics.scrollBottomPadding(
         tester.element(signOutButton),
@@ -106,7 +106,7 @@ void main() {
       for (final element in sizedBoxes.evaluate()) {
         final sizedBox = element.widget as SizedBox;
         if (sizedBox.height != null) {
-          final expectedHeight = BottomNavMetrics.height + testSafeAreaBottom + 16;
+          const expectedHeight = BottomNavMetrics.height + testSafeAreaBottom + 16;
           if ((sizedBox.height! - expectedHeight).abs() < 1.0) {
             foundCorrectPadding = true;
             break;

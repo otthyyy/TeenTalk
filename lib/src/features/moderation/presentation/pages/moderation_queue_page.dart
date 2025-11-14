@@ -119,9 +119,9 @@ class ModerationQueuePage extends ConsumerWidget {
 }
 
 class _ModerationItemCard extends ConsumerWidget {
-  final ModerationItem item;
 
   const _ModerationItemCard({required this.item});
+  final ModerationItem item;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -460,15 +460,15 @@ class _ModerationItemCard extends ConsumerWidget {
 }
 
 class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color? color;
 
   const _InfoChip({
     required this.icon,
     required this.label,
     this.color,
   });
+  final IconData icon;
+  final String label;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -500,10 +500,10 @@ class _InfoChip extends StatelessWidget {
 }
 
 class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
 
   const _DetailRow(this.label, this.value);
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../domain/models/feed_sort_option.dart';
 
 class FeedFilterChips extends StatelessWidget {
-  final FeedSortOption selectedOption;
-  final ValueChanged<FeedSortOption> onOptionSelected;
 
   const FeedFilterChips({
     super.key,
     required this.selectedOption,
     required this.onOptionSelected,
   });
+  final FeedSortOption selectedOption;
+  final ValueChanged<FeedSortOption> onOptionSelected;
 
   @override
   Widget build(BuildContext context) {

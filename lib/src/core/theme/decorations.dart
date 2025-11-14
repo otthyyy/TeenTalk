@@ -134,8 +134,8 @@ class AppDecorations {
             alignment: Alignment.bottomCenter,
             child: FractionallySizedBox(
               heightFactor: heightFactor,
-              child: DecoratedBox(
-                decoration: const BoxDecoration(
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(48),

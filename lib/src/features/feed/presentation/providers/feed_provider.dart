@@ -21,15 +21,6 @@ final feedRepositoryProvider = Provider<PostsRepository>((ref) {
 });
 
 class FeedState {
-  final List<Post> posts;
-  final bool isLoading;
-  final bool isLoadingMore;
-  final String? error;
-  final bool hasMore;
-  final DocumentSnapshot? lastDocument;
-  final FeedSortOption sortOption;
-  final bool isOffline;
-  final DateTime? lastSyncedAt;
 
   const FeedState({
     this.posts = const [],
@@ -42,6 +33,15 @@ class FeedState {
     this.isOffline = false,
     this.lastSyncedAt,
   });
+  final List<Post> posts;
+  final bool isLoading;
+  final bool isLoadingMore;
+  final String? error;
+  final bool hasMore;
+  final DocumentSnapshot? lastDocument;
+  final FeedSortOption sortOption;
+  final bool isOffline;
+  final DateTime? lastSyncedAt;
 
   FeedState copyWith({
     List<Post>? posts,
@@ -69,21 +69,6 @@ class FeedState {
 }
 
 class FeedNotifier extends StateNotifier<FeedState> {
-  final PostsRepository _repository;
-  final FeedCacheService _cacheService;
-  final ConnectivityService _connectivityService;
-  final Logger _logger = Logger();
-
-  StreamSubscription? _postsSubscription;
-  StreamSubscription<bool>? _connectivitySubscription;
-
-  String? _currentSection;
-  String? _currentSchool;
-  FeedSortOption _currentSortOption = FeedSortOption.newest;
-
-  String? get currentSection => _currentSection;
-  String? get currentSchool => _currentSchool;
-  FeedSortOption get currentSortOption => _currentSortOption;
 
   FeedNotifier(
     this._repository,
@@ -105,6 +90,21 @@ class FeedNotifier extends StateNotifier<FeedState> {
       }
     });
   }
+  final PostsRepository _repository;
+  final FeedCacheService _cacheService;
+  final ConnectivityService _connectivityService;
+  final Logger _logger = Logger();
+
+  StreamSubscription? _postsSubscription;
+  StreamSubscription<bool>? _connectivitySubscription;
+
+  String? _currentSection;
+  String? _currentSchool;
+  FeedSortOption _currentSortOption = FeedSortOption.newest;
+
+  String? get currentSection => _currentSection;
+  String? get currentSchool => _currentSchool;
+  FeedSortOption get currentSortOption => _currentSortOption;
 
   @override
   void dispose() {
@@ -520,9 +520,6 @@ final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedS
 );
 
 class SchoolAwareFeedNotifier extends FeedNotifier {
-  final UserRepository _userRepository;
-  final FirebaseAuthService _authService;
-  final FilterPreferencesService _preferencesService = FilterPreferencesService();
   
   SchoolAwareFeedNotifier(
     PostsRepository repository,
@@ -535,6 +532,9 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
           cacheService,
           connectivityService,
         );
+  final UserRepository _userRepository;
+  final FirebaseAuthService _authService;
+  final FilterPreferencesService _preferencesService = FilterPreferencesService();
 
   @override
   Future<void> loadPosts({

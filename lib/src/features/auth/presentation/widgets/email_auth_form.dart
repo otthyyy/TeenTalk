@@ -6,12 +6,12 @@ import '../providers/auth_provider.dart';
 import '../models/auth_form_state.dart';
 
 class EmailAuthForm extends ConsumerStatefulWidget {
-  final bool isSignUp;
 
   const EmailAuthForm({
     super.key,
     required this.isSignUp,
   });
+  final bool isSignUp;
 
   @override
   ConsumerState<EmailAuthForm> createState() => _EmailAuthFormState();

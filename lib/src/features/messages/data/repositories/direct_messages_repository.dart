@@ -15,10 +15,10 @@ final directMessagesRepositoryProvider =
 });
 
 class DirectMessagesRepository {
-  final FirebaseFirestore _firestore;
-  final FriendsRepository _friendsRepository;
 
   DirectMessagesRepository(this._firestore, this._friendsRepository);
+  final FirebaseFirestore _firestore;
+  final FriendsRepository _friendsRepository;
 
   /// Generate a conversation ID from two user IDs (ensures consistency)
   String _generateConversationId(String userId1, String userId2) {

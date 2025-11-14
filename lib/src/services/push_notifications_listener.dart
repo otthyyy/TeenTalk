@@ -8,12 +8,12 @@ import '../features/auth/presentation/providers/auth_provider.dart';
 import 'push_notifications_provider.dart';
 
 class PushNotificationsListener extends ConsumerStatefulWidget {
-  final Widget child;
 
   const PushNotificationsListener({
     required this.child,
     super.key,
   });
+  final Widget child;
 
   @override
   ConsumerState<PushNotificationsListener> createState() =>

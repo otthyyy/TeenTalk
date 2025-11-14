@@ -5,12 +5,12 @@ import '../providers/auth_provider.dart';
 import '../../data/models/auth_user.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
-  final AuthUser user;
 
   const OnboardingPage({
     super.key,
     required this.user,
   });
+  final AuthUser user;
 
   @override
   ConsumerState<OnboardingPage> createState() => _OnboardingPageState();

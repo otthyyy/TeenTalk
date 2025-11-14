@@ -77,7 +77,7 @@ class SkeletonPostCard extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
       ),
     );
@@ -88,7 +88,7 @@ class SkeletonPostCard extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -99,7 +99,7 @@ class SkeletonPostCard extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -110,7 +110,7 @@ class SkeletonPostCard extends StatelessWidget {
       width: 60,
       height: 32,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
     );

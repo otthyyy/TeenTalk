@@ -293,11 +293,11 @@ class AppLocalizationsES extends AppLocalizations {
     } else {
       final minutes = (seconds / 60).floor();
       final remainingSeconds = seconds % 60;
-      final minuteLabel = 'minuto' + (minutes == 1 ? '' : 's');
+      final minuteLabel = 'minuto${minutes == 1 ? '' : 's'}';
       if (remainingSeconds == 0) {
         return 'Espera $minutes $minuteLabel';
       } else {
-        final secondLabel = 'segundo' + (remainingSeconds == 1 ? '' : 's');
+        final secondLabel = 'segundo${remainingSeconds == 1 ? '' : 's'}';
         return 'Espera $minutes $minuteLabel y $remainingSeconds $secondLabel';
       }
     }

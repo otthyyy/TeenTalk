@@ -44,7 +44,7 @@ class FirebaseBootstrap {
       _logger.i('Firebase Analytics initialized');
 
       // Initialize Cloud Functions with appropriate region
-      FirebaseFunctions functions = FirebaseFunctions.instance;
+      final FirebaseFunctions functions = FirebaseFunctions.instance;
       if (AppConfig.isDevelopment) {
         functions.useFunctionsEmulator('localhost', 5001);
       }

@@ -26,13 +26,13 @@ final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((r
 });
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
-  final FirebaseAuthService _authService;
-  final AnalyticsService _analyticsService;
 
   AuthStateNotifier(this._authService, this._analyticsService) 
       : super(AuthState.initial()) {
     _init();
   }
+  final FirebaseAuthService _authService;
+  final AnalyticsService _analyticsService;
 
   void _init() {
     _authService.authStateChanges.listen((user) {

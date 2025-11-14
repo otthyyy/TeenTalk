@@ -1,19 +1,4 @@
 class Comment {
-  final String id;
-  final String postId;
-  final String authorId;
-  final String authorNickname;
-  final bool isAnonymous;
-  final String content;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final int likeCount;
-  final List<String> likedBy;
-  final List<String> mentionedUserIds;
-  final bool isModerated;
-  final String? replyToCommentId;
-  final int replyCount;
-  final String? school;
 
   const Comment({
     required this.id,
@@ -32,6 +17,41 @@ class Comment {
     this.replyCount = 0,
     this.school,
   });
+
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    return Comment(
+      id: json['id'] as String,
+      postId: json['postId'] as String,
+      authorId: json['authorId'] as String,
+      authorNickname: json['authorNickname'] as String,
+      isAnonymous: json['isAnonymous'] as bool? ?? false,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      likeCount: json['likeCount'] as int? ?? 0,
+      likedBy: List<String>.from(json['likedBy'] as List? ?? []),
+      mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
+      isModerated: json['isModerated'] as bool? ?? false,
+      replyToCommentId: json['replyToCommentId'] as String?,
+      replyCount: json['replyCount'] as int? ?? 0,
+      school: json['school'] as String?,
+    );
+  }
+  final String id;
+  final String postId;
+  final String authorId;
+  final String authorNickname;
+  final bool isAnonymous;
+  final String content;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int likeCount;
+  final List<String> likedBy;
+  final List<String> mentionedUserIds;
+  final bool isModerated;
+  final String? replyToCommentId;
+  final int replyCount;
+  final String? school;
 
   Comment copyWith({
     String? id,
@@ -69,26 +89,6 @@ class Comment {
     );
   }
 
-  factory Comment.fromJson(Map<String, dynamic> json) {
-    return Comment(
-      id: json['id'] as String,
-      postId: json['postId'] as String,
-      authorId: json['authorId'] as String,
-      authorNickname: json['authorNickname'] as String,
-      isAnonymous: json['isAnonymous'] as bool? ?? false,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      likeCount: json['likeCount'] as int? ?? 0,
-      likedBy: List<String>.from(json['likedBy'] as List? ?? []),
-      mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
-      isModerated: json['isModerated'] as bool? ?? false,
-      replyToCommentId: json['replyToCommentId'] as String?,
-      replyCount: json['replyCount'] as int? ?? 0,
-      school: json['school'] as String?,
-    );
-  }
-
   Map<String, dynamic> toJson() => {
     'id': id,
     'postId': postId,
@@ -109,23 +109,6 @@ class Comment {
 }
 
 class Post {
-  final String id;
-  final String authorId;
-  final String authorNickname;
-  final bool isAnonymous;
-  final String content;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final int likeCount;
-  final List<String> likedBy;
-  final int commentCount;
-  final List<String> mentionedUserIds;
-  final bool isModerated;
-  final String? imageUrl;
-  final String section;
-  final String? school;
-  final double engagementScore;
-  final List<String> searchKeywords;
 
    const Post({
      required this.id,
@@ -146,6 +129,45 @@ class Post {
      this.engagementScore = 0.0,
      this.searchKeywords = const [],
    });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'] as String,
+      authorId: json['authorId'] as String,
+      authorNickname: json['authorNickname'] as String,
+      isAnonymous: json['isAnonymous'] as bool? ?? false,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      likeCount: json['likeCount'] as int? ?? 0,
+      likedBy: List<String>.from(json['likedBy'] as List? ?? []),
+      commentCount: json['commentCount'] as int? ?? 0,
+      mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
+      isModerated: json['isModerated'] as bool? ?? false,
+      imageUrl: json['imageUrl'] as String?,
+      section: json['section'] as String? ?? 'spotted',
+      school: json['school'] as String?,
+      engagementScore: (json['engagementScore'] as num?)?.toDouble() ?? 0.0,
+      searchKeywords: List<String>.from(json['searchKeywords'] as List? ?? []),
+    );
+  }
+  final String id;
+  final String authorId;
+  final String authorNickname;
+  final bool isAnonymous;
+  final String content;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int likeCount;
+  final List<String> likedBy;
+  final int commentCount;
+  final List<String> mentionedUserIds;
+  final bool isModerated;
+  final String? imageUrl;
+  final String section;
+  final String? school;
+  final double engagementScore;
+  final List<String> searchKeywords;
 
   Post copyWith({
     String? id,
@@ -184,28 +206,6 @@ class Post {
       school: school ?? this.school,
       engagementScore: engagementScore ?? this.engagementScore,
       searchKeywords: searchKeywords ?? this.searchKeywords,
-    );
-  }
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      id: json['id'] as String,
-      authorId: json['authorId'] as String,
-      authorNickname: json['authorNickname'] as String,
-      isAnonymous: json['isAnonymous'] as bool? ?? false,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      likeCount: json['likeCount'] as int? ?? 0,
-      likedBy: List<String>.from(json['likedBy'] as List? ?? []),
-      commentCount: json['commentCount'] as int? ?? 0,
-      mentionedUserIds: List<String>.from(json['mentionedUserIds'] as List? ?? []),
-      isModerated: json['isModerated'] as bool? ?? false,
-      imageUrl: json['imageUrl'] as String?,
-      section: json['section'] as String? ?? 'spotted',
-      school: json['school'] as String?,
-      engagementScore: (json['engagementScore'] as num?)?.toDouble() ?? 0.0,
-      searchKeywords: List<String>.from(json['searchKeywords'] as List? ?? []),
     );
   }
 

@@ -7,10 +7,6 @@ import '../providers/moderation_provider.dart';
 import 'report_dialog.dart';
 
 class ReportButton extends ConsumerWidget {
-  final String contentId;
-  final ContentType contentType;
-  final String contentAuthorId;
-  final bool isIconButton;
 
   const ReportButton({
     super.key,
@@ -19,6 +15,10 @@ class ReportButton extends ConsumerWidget {
     required this.contentAuthorId,
     this.isIconButton = true,
   });
+  final String contentId;
+  final ContentType contentType;
+  final String contentAuthorId;
+  final bool isIconButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,8 +40,8 @@ class ReportButton extends ConsumerWidget {
       data: (hasReported) {
         if (hasReported) {
           return isIconButton
-              ? IconButton(
-                  icon: const Icon(Icons.flag),
+              ? const IconButton(
+                  icon: Icon(Icons.flag),
                   onPressed: null,
                   tooltip: 'Already reported',
                   color: Colors.orange,

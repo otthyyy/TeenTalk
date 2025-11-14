@@ -81,7 +81,7 @@ void main() {
 
       expect(
         theme.colorScheme.primary,
-        hasSufficientContrastWith(theme.colorScheme.background, ratio: 3.0),
+        hasSufficientContrastWith(theme.colorScheme.surface, ratio: 3.0),
         reason: 'Primary color must be visible on background',
       );
     });
@@ -90,8 +90,8 @@ void main() {
       final theme = ThemeData.dark();
 
       expect(
-        theme.colorScheme.onBackground,
-        hasSufficientContrastWith(theme.colorScheme.background, ratio: 4.5),
+        theme.colorScheme.onSurface,
+        hasSufficientContrastWith(theme.colorScheme.surface, ratio: 4.5),
         reason: 'Text color must be readable on dark background',
       );
     });

@@ -95,7 +95,7 @@ Future<void> backfillPosts(FirebaseFirestore firestore) async {
     }
     
     // Process in batches of 500 (Firestore limit)
-    final batchSize = 500;
+    const batchSize = 500;
     for (var i = 0; i < posts.length; i += batchSize) {
       final batch = firestore.batch();
       final end = (i + batchSize < posts.length) ? i + batchSize : posts.length;
@@ -145,7 +145,7 @@ Future<void> backfillPosts(FirebaseFirestore firestore) async {
       // Commit batch
       if (totalUpdated > 0) {
         await batch.commit();
-        print('   Processed ${totalProcessed}/${posts.length} posts (${totalUpdated} updated)');
+        print('   Processed $totalProcessed/${posts.length} posts ($totalUpdated updated)');
       }
     }
     
@@ -178,7 +178,7 @@ Future<void> backfillUsers(FirebaseFirestore firestore) async {
     }
     
     // Process in batches of 500
-    final batchSize = 500;
+    const batchSize = 500;
     for (var i = 0; i < users.length; i += batchSize) {
       final batch = firestore.batch();
       final end = (i + batchSize < users.length) ? i + batchSize : users.length;
@@ -230,7 +230,7 @@ Future<void> backfillUsers(FirebaseFirestore firestore) async {
       // Commit batch
       if (totalUpdated > 0) {
         await batch.commit();
-        print('   Processed ${totalProcessed}/${users.length} users (${totalUpdated} updated)');
+        print('   Processed $totalProcessed/${users.length} users ($totalUpdated updated)');
       }
     }
     

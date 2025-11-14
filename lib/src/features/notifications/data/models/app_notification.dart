@@ -34,14 +34,6 @@ enum NotificationType {
 }
 
 class AppNotification {
-  final String id;
-  final String userId;
-  final NotificationType type;
-  final String title;
-  final String body;
-  final Map<String, String> data;
-  final DateTime createdAt;
-  final bool read;
 
   const AppNotification({
     required this.id,
@@ -67,6 +59,14 @@ class AppNotification {
       read: rawData['read'] as bool? ?? false,
     );
   }
+  final String id;
+  final String userId;
+  final NotificationType type;
+  final String title;
+  final String body;
+  final Map<String, String> data;
+  final DateTime createdAt;
+  final bool read;
 
   AppNotification copyWith({
     String? id,

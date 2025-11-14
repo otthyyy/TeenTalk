@@ -150,7 +150,7 @@ class _FilterDrawerState extends ConsumerState<FilterDrawer> {
           children: [
             Expanded(
               child: DropdownButtonFormField<int?>(
-                value: _workingFilters.minSchoolYear,
+                initialValue: _workingFilters.minSchoolYear,
                 decoration: const InputDecoration(
                   labelText: 'From',
                   border: OutlineInputBorder(),
@@ -184,7 +184,7 @@ class _FilterDrawerState extends ConsumerState<FilterDrawer> {
             const SizedBox(width: 16),
             Expanded(
               child: DropdownButtonFormField<int?>(
-                value: _workingFilters.maxSchoolYear,
+                initialValue: _workingFilters.maxSchoolYear,
                 decoration: const InputDecoration(
                   labelText: 'To',
                   border: OutlineInputBorder(),

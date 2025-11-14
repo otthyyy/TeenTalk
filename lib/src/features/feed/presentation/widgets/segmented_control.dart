@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 class SegmentedControl<T> extends StatelessWidget {
-  final List<T> values;
-  final T selectedValue;
-  final ValueChanged<T> onChanged;
-  final String Function(T) labelBuilder;
 
   const SegmentedControl({
     super.key,
@@ -13,6 +9,10 @@ class SegmentedControl<T> extends StatelessWidget {
     required this.onChanged,
     required this.labelBuilder,
   });
+  final List<T> values;
+  final T selectedValue;
+  final ValueChanged<T> onChanged;
+  final String Function(T) labelBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class SegmentedControl<T> extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(4),

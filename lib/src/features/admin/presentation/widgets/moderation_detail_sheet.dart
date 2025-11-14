@@ -6,12 +6,12 @@ import 'package:teen_talk_app/src/features/admin/presentation/providers/admin_pr
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 
 class ModerationDetailSheet extends ConsumerStatefulWidget {
-  final Report report;
 
   const ModerationDetailSheet({
     super.key,
     required this.report,
   });
+  final Report report;
 
   @override
   ConsumerState<ModerationDetailSheet> createState() =>
@@ -252,12 +252,12 @@ class _ModerationDetailSheetState extends ConsumerState<ModerationDetailSheet>
       child: contentAsyncValue.when(
         data: (content) {
           if (content == null) {
-            return Card(
+            return const Card(
               child: Padding(
-                padding: const EdgeInsets.all(32),
+                padding: EdgeInsets.all(32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(Icons.error_outline, size: 48, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
@@ -398,12 +398,12 @@ class _ModerationDetailSheetState extends ConsumerState<ModerationDetailSheet>
       child: moderationHistoryAsyncValue.when(
         data: (decisions) {
           if (decisions.isEmpty) {
-            return Card(
+            return const Card(
               child: Padding(
-                padding: const EdgeInsets.all(32),
+                padding: EdgeInsets.all(32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(Icons.history, size: 48, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
@@ -495,7 +495,7 @@ class _ModerationDetailSheetState extends ConsumerState<ModerationDetailSheet>
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<String>(
-            value: _selectedAction,
+            initialValue: _selectedAction,
             decoration: const InputDecoration(
               labelText: 'Action',
               border: OutlineInputBorder(),

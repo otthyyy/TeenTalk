@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../comments/data/models/comment.dart';
 
 class PostSearchDelegate extends SearchDelegate<Post?> {
-  final List<Post> posts;
 
   PostSearchDelegate(this.posts);
+  final List<Post> posts;
 
   @override
   String get searchFieldLabel => 'Cerca post...';

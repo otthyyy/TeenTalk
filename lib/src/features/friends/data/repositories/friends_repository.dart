@@ -9,9 +9,9 @@ final friendsRepositoryProvider = Provider<FriendsRepository>((ref) {
 });
 
 class FriendsRepository {
-  final FirebaseFirestore _firestore;
 
   FriendsRepository(this._firestore);
+  final FirebaseFirestore _firestore;
 
   String _generateConversationId(String userId1, String userId2) {
     final ids = [userId1, userId2]..sort();

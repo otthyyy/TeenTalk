@@ -59,8 +59,8 @@ void main() {
 
     group('sendMessage', () {
       test('creates new conversation when sending first message', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
 
         await makeFriends(senderId, receiverId);
 
@@ -84,8 +84,8 @@ void main() {
       });
 
       test('updates existing conversation when sending message', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
         final conversationId = _generateConversationId(senderId, receiverId);
 
         await makeFriends(senderId, receiverId);
@@ -118,8 +118,8 @@ void main() {
       });
 
       test('throws exception when users are not friends', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
 
         expect(
           () => repository.sendMessage(
@@ -132,8 +132,8 @@ void main() {
       });
 
       test('throws exception when sender is blocked by receiver', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
 
         await makeFriends(senderId, receiverId);
 
@@ -162,8 +162,8 @@ void main() {
       });
 
       test('increments unread count for receiver', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
 
         await makeFriends(senderId, receiverId);
 
@@ -185,8 +185,8 @@ void main() {
       });
 
       test('stores message with correct timestamp', () async {
-        final senderId = 'user1';
-        final receiverId = 'user2';
+        const senderId = 'user1';
+        const receiverId = 'user2';
 
         await makeFriends(senderId, receiverId);
 
@@ -209,15 +209,15 @@ void main() {
         final messageData = messages.docs.first.data();
         final messageTime = (messageData['createdAt'] as Timestamp).toDate();
 
-        expect(messageTime.isAfter(beforeSend.subtract(Duration(seconds: 1))), true);
-        expect(messageTime.isBefore(afterSend.add(Duration(seconds: 1))), true);
+        expect(messageTime.isAfter(beforeSend.subtract(const Duration(seconds: 1))), true);
+        expect(messageTime.isBefore(afterSend.add(const Duration(seconds: 1))), true);
       });
     });
 
     group('blockUser', () {
       test('creates block document and adds user to blocked list', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         await repository.blockUser(blockerId, blockedUserId);
 
@@ -235,7 +235,7 @@ void main() {
       });
 
       test('handles blocking multiple users', () async {
-        final blockerId = 'user1';
+        const blockerId = 'user1';
 
         await repository.blockUser(blockerId, 'user2');
         await repository.blockUser(blockerId, 'user3');
@@ -250,8 +250,8 @@ void main() {
       });
 
       test('creates blocker document if it does not exist', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         final blockerDocBefore = await firestore
             .collection('blocks')
@@ -271,8 +271,8 @@ void main() {
 
     group('unblockUser', () {
       test('removes user from blocked list', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         await repository.blockUser(blockerId, blockedUserId);
 
@@ -286,8 +286,8 @@ void main() {
       });
 
       test('handles unblocking user that was not blocked', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         expect(
           () => repository.unblockUser(blockerId, blockedUserId),
@@ -298,8 +298,8 @@ void main() {
 
     group('isUserBlocked', () {
       test('returns true when user is blocked', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         await repository.blockUser(blockerId, blockedUserId);
 
@@ -308,16 +308,16 @@ void main() {
       });
 
       test('returns false when user is not blocked', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         final isBlocked = await repository.isUserBlocked(blockerId, blockedUserId);
         expect(isBlocked, false);
       });
 
       test('returns false after unblocking', () async {
-        final blockerId = 'user1';
-        final blockedUserId = 'user2';
+        const blockerId = 'user1';
+        const blockedUserId = 'user2';
 
         await repository.blockUser(blockerId, blockedUserId);
         await repository.unblockUser(blockerId, blockedUserId);
@@ -327,8 +327,8 @@ void main() {
       });
 
       test('blocking is directional (A blocks B does not mean B blocks A)', () async {
-        final user1 = 'user1';
-        final user2 = 'user2';
+        const user1 = 'user1';
+        const user2 = 'user2';
 
         await repository.blockUser(user1, user2);
 
@@ -342,7 +342,7 @@ void main() {
 
     group('getBlockedUsers', () {
       test('returns list of blocked user IDs', () async {
-        final blockerId = 'user1';
+        const blockerId = 'user1';
 
         await repository.blockUser(blockerId, 'user2');
         await repository.blockUser(blockerId, 'user3');
@@ -355,7 +355,7 @@ void main() {
       });
 
       test('returns empty list when no users are blocked', () async {
-        final blockerId = 'user1';
+        const blockerId = 'user1';
 
         final blockedUsers = await repository.getBlockedUsers(blockerId);
 
@@ -365,8 +365,8 @@ void main() {
 
     group('getConversation', () {
       test('returns conversation if it exists', () async {
-        final user1 = 'user1';
-        final user2 = 'user2';
+        const user1 = 'user1';
+        const user2 = 'user2';
         final conversationId = _generateConversationId(user1, user2);
 
         await firestore.collection('conversations').doc(conversationId).set({
@@ -393,8 +393,8 @@ void main() {
 
     group('markConversationAsRead', () {
       test('resets unread count for specific user', () async {
-        final user1 = 'user1';
-        final user2 = 'user2';
+        const user1 = 'user1';
+        const user2 = 'user2';
         final conversationId = _generateConversationId(user1, user2);
 
         await firestore.collection('conversations').doc(conversationId).set({
@@ -420,8 +420,8 @@ void main() {
       });
 
       test('marks all unread messages as read', () async {
-        final user1 = 'user1';
-        final user2 = 'user2';
+        const user1 = 'user1';
+        const user2 = 'user2';
         final conversationId = _generateConversationId(user1, user2);
 
         await firestore.collection('conversations').doc(conversationId).set({
@@ -472,8 +472,8 @@ void main() {
 
     group('deleteConversation', () {
       test('deletes conversation and all messages', () async {
-        final user1 = 'user1';
-        final user2 = 'user2';
+        const user1 = 'user1';
+        const user2 = 'user2';
         final conversationId = _generateConversationId(user1, user2);
 
         await firestore.collection('conversations').doc(conversationId).set({
@@ -515,7 +515,7 @@ void main() {
 
     group('getUnreadCount', () {
       test('calculates total unread messages for user', () async {
-        final userId = 'user1';
+        const userId = 'user1';
 
         final conv1 = _generateConversationId(userId, 'user2');
         await firestore.collection('conversations').doc(conv1).set({
@@ -543,7 +543,7 @@ void main() {
       });
 
       test('returns 0 when user has no unread messages', () async {
-        final userId = 'user1';
+        const userId = 'user1';
 
         final totalUnread = await repository.getUnreadCount(userId);
 

@@ -6,38 +6,6 @@ import '../../../../core/utils/search_keywords_generator.dart';
 import 'trust_level.dart';
 
 class UserProfile {
-  final String uid;
-  final String nickname;
-  final bool nicknameVerified;
-  final String? gender;
-  final String? school;
-  final String? schoolYear;
-  final List<String> interests;
-  final List<String> clubs;
-  final List<String> searchKeywords;
-  final int trustScore;
-  final TrustLevel trustLevel;
-  final int anonymousPostsCount;
-  final DateTime createdAt;
-  final DateTime? lastNicknameChangeAt;
-  final bool privacyConsentGiven;
-  final DateTime privacyConsentTimestamp;
-  final bool? isMinor;
-  final String? guardianContact;
-  final bool? parentalConsentGiven;
-  final DateTime? parentalConsentTimestamp;
-  final bool onboardingComplete;
-  final bool allowAnonymousPosts;
-  final bool profileVisible;
-  final bool analyticsEnabled;
-  final DateTime? updatedAt;
-  final bool isAdmin;
-  final bool isModerator;
-  final bool isBetaTester;
-  final bool? betaConsentGiven;
-  final DateTime? betaConsentTimestamp;
-  final bool crashReportingEnabled;
-  final bool screenshotProtectionEnabled;
 
   const UserProfile({
     required this.uid,
@@ -133,6 +101,57 @@ class UserProfile {
     );
   }
 
+  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      return UserProfile(
+        uid: doc.id,
+        nickname: '',
+        nicknameVerified: false,
+        createdAt: DateTime.now(),
+        privacyConsentGiven: false,
+        privacyConsentTimestamp: DateTime.now(),
+      );
+    }
+
+    return UserProfile.fromJson({
+      'uid': doc.id,
+      ...data,
+    });
+  }
+  final String uid;
+  final String nickname;
+  final bool nicknameVerified;
+  final String? gender;
+  final String? school;
+  final String? schoolYear;
+  final List<String> interests;
+  final List<String> clubs;
+  final List<String> searchKeywords;
+  final int trustScore;
+  final TrustLevel trustLevel;
+  final int anonymousPostsCount;
+  final DateTime createdAt;
+  final DateTime? lastNicknameChangeAt;
+  final bool privacyConsentGiven;
+  final DateTime privacyConsentTimestamp;
+  final bool? isMinor;
+  final String? guardianContact;
+  final bool? parentalConsentGiven;
+  final DateTime? parentalConsentTimestamp;
+  final bool onboardingComplete;
+  final bool allowAnonymousPosts;
+  final bool profileVisible;
+  final bool analyticsEnabled;
+  final DateTime? updatedAt;
+  final bool isAdmin;
+  final bool isModerator;
+  final bool isBetaTester;
+  final bool? betaConsentGiven;
+  final DateTime? betaConsentTimestamp;
+  final bool crashReportingEnabled;
+  final bool screenshotProtectionEnabled;
+
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
       'uid': uid,
@@ -180,25 +199,6 @@ class UserProfile {
 
     data.removeWhere((_, value) => value == null);
     return data;
-  }
-
-  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
-      return UserProfile(
-        uid: doc.id,
-        nickname: '',
-        nicknameVerified: false,
-        createdAt: DateTime.now(),
-        privacyConsentGiven: false,
-        privacyConsentTimestamp: DateTime.now(),
-      );
-    }
-
-    return UserProfile.fromJson({
-      'uid': doc.id,
-      ...data,
-    });
   }
 
   static Map<String, dynamic> toFirestore(UserProfile profile) {

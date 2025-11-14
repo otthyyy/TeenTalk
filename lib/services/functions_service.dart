@@ -13,12 +13,12 @@ class FunctionsService {
     String? region,
   }) async {
     try {
-      HttpsCallable callable = _functions.httpsCallable(
+      final HttpsCallable callable = _functions.httpsCallable(
         functionName,
         options: region != null ? HttpsCallableOptions(region: region) : null,
       );
 
-      HttpsCallableResult result = await callable.call(parameters);
+      final HttpsCallableResult result = await callable.call(parameters);
       
       _logger.d('Function $functionName called successfully');
       return result.data as T;
@@ -36,7 +36,7 @@ class FunctionsService {
     String? region,
   }) async {
     try {
-      HttpsCallable callable = _functions.httpsCallable(
+      final HttpsCallable callable = _functions.httpsCallable(
         functionName,
         options: HttpsCallableOptions(
           region: region,
@@ -44,7 +44,7 @@ class FunctionsService {
         ),
       );
 
-      HttpsCallableResult result = await callable.call(parameters);
+      final HttpsCallableResult result = await callable.call(parameters);
       
       _logger.d('Function $functionName called successfully with timeout');
       return result.data as T;

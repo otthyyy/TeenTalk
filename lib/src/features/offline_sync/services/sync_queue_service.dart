@@ -37,6 +37,10 @@ final pendingQueueCountProvider = StreamProvider<int>((ref) {
 });
 
 class SyncQueueService {
+
+  SyncQueueService({
+    required this.connectivityService,
+  });
   static const String _boxName = 'sync_queue';
   final Logger _logger = Logger();
   final ConnectivityService connectivityService;
@@ -48,10 +52,6 @@ class SyncQueueService {
   Timer? _syncTimer;
 
   Stream<List<QueuedAction>> get queueStream => _queueController.stream;
-
-  SyncQueueService({
-    required this.connectivityService,
-  });
 
   Future<void> initialize() async {
     try {

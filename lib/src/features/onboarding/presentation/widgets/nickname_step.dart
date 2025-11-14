@@ -4,9 +4,6 @@ import '../../../profile/data/repositories/user_repository.dart';
 import 'dart:async';
 
 class NicknameStep extends ConsumerStatefulWidget {
-  final String initialNickname;
-  final Function(String) onNicknameChanged;
-  final VoidCallback onNext;
 
   const NicknameStep({
     super.key,
@@ -14,6 +11,9 @@ class NicknameStep extends ConsumerStatefulWidget {
     required this.onNicknameChanged,
     required this.onNext,
   });
+  final String initialNickname;
+  final Function(String) onNicknameChanged;
+  final VoidCallback onNext;
 
   @override
   ConsumerState<NicknameStep> createState() => _NicknameStepState();
@@ -131,7 +131,7 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
-              ExcludeSemantics(
+              const ExcludeSemantics(
                 child: Icon(
                   Icons.person_outline,
                   size: 80,

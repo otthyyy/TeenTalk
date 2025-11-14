@@ -24,9 +24,7 @@ class AppTheme {
       error: DesignTokens.errorColor,
       surface: DesignTokens.lightSurface,
       onSurface: DesignTokens.lightOnSurface,
-      background: DesignTokens.lightBackground,
-      onBackground: DesignTokens.lightOnBackground,
-      surfaceVariant: DesignTokens.lightSurfaceVariant,
+      surfaceContainerHighest: DesignTokens.lightSurfaceVariant,
       onSurfaceVariant: DesignTokens.lightOnSurfaceVariant,
       outline: DesignTokens.lightOutline,
     ),
@@ -98,8 +96,8 @@ class AppTheme {
         ),
         animationDuration: DesignTokens.durationFast,
       ).copyWith(
-        overlayColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
             return DesignTokens.lightOnPrimary.withOpacity(0.15);
           }
           return null;
@@ -272,9 +270,7 @@ class AppTheme {
       error: DesignTokens.errorColor,
       surface: DesignTokens.darkSurface,
       onSurface: DesignTokens.darkOnSurface,
-      background: DesignTokens.darkBackground,
-      onBackground: DesignTokens.darkOnBackground,
-      surfaceVariant: DesignTokens.darkSurfaceVariant,
+      surfaceContainerHighest: DesignTokens.darkSurfaceVariant,
       onSurfaceVariant: DesignTokens.darkOnSurfaceVariant,
       outline: DesignTokens.darkOutline,
     ),
@@ -346,8 +342,8 @@ class AppTheme {
         ),
         animationDuration: DesignTokens.durationFast,
       ).copyWith(
-        overlayColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
             return DesignTokens.darkOnPrimary.withOpacity(0.1);
           }
           return null;

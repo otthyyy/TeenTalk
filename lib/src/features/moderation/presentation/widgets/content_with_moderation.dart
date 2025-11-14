@@ -7,12 +7,6 @@ import 'report_button.dart';
 /// Example widget showing how to integrate moderation features with content display
 /// This can be used as a reference for implementing moderation in post/comment widgets
 class ContentWithModeration extends ConsumerWidget {
-  final String contentId;
-  final String contentAuthorId;
-  final String contentText;
-  final ContentType contentType;
-  final Widget? authorWidget;
-  final Widget? timestampWidget;
 
   const ContentWithModeration({
     super.key,
@@ -23,6 +17,12 @@ class ContentWithModeration extends ConsumerWidget {
     this.authorWidget,
     this.timestampWidget,
   });
+  final String contentId;
+  final String contentAuthorId;
+  final String contentText;
+  final ContentType contentType;
+  final Widget? authorWidget;
+  final Widget? timestampWidget;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,12 +181,12 @@ class SimplePostExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ContentWithModeration(
+    return const ContentWithModeration(
       contentId: 'post_123',
       contentAuthorId: 'user_456',
       contentType: ContentType.post,
       contentText: 'This is an example post with moderation features enabled.',
-      authorWidget: const Row(
+      authorWidget: Row(
         children: [
           CircleAvatar(
             radius: 16,
@@ -199,7 +199,7 @@ class SimplePostExample extends StatelessWidget {
           ),
         ],
       ),
-      timestampWidget: const Text(
+      timestampWidget: Text(
         '2 hours ago',
         style: TextStyle(color: Colors.grey, fontSize: 12),
       ),

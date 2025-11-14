@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/core/services/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/services/analytics_service.dart';

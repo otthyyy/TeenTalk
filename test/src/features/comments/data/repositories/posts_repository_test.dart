@@ -30,8 +30,8 @@ class _FakeStorageReference extends Fake implements Reference {
 }
 
 class _FakeUploadTask extends Fake implements UploadTask {
-  final bool success;
   _FakeUploadTask({required this.success});
+  final bool success;
 
   @override
   Stream<TaskSnapshot> asStream() => Stream.fromFuture(future);
@@ -69,10 +69,10 @@ class _FakeStorageReferenceWithUrl extends Fake implements Reference {
 
 class _TestPostsRepository extends PostsRepository {
   _TestPostsRepository({
-    required FirebaseFirestore firestore,
-    FirebaseStorage? storage,
+    required FirebaseFirestore super.firestore,
+    super.storage,
     this.onUpload,
-  }) : super(firestore: firestore, storage: storage);
+  });
 
   final Future<String?> Function(
     File? imageFile, {
@@ -114,7 +114,7 @@ void main() {
       );
     });
 
-    Future<DocumentReference<Map<String, dynamic>>> _createPost({
+    Future<DocumentReference<Map<String, dynamic>>> createPost({
       required String content,
       bool isModerated = false,
       int likeCount = 0,
@@ -143,9 +143,9 @@ void main() {
 
     group('getPosts', () {
       test('filters by section and excludes moderated posts', () async {
-        await _createPost(content: 'Spotted post', section: 'spotted');
-        await _createPost(content: 'Help post', section: 'help');
-        await _createPost(
+        await createPost(content: 'Spotted post', section: 'spotted');
+        await createPost(content: 'Help post', section: 'help');
+        await createPost(
           content: 'Moderated post',
           section: 'spotted',
           isModerated: true,
@@ -163,8 +163,8 @@ void main() {
       });
 
       test('orders posts by createdAt descending for newest sort option', () async {
-        final oldest = await _createPost(content: 'Oldest');
-        final newest = await _createPost(content: 'Newest');
+        final oldest = await createPost(content: 'Oldest');
+        final newest = await createPost(content: 'Newest');
 
         // Update timestamps to ensure ordering
         await oldest.update({'createdAt': DateTime(2023, 1, 1).toIso8601String()});
@@ -380,7 +380,7 @@ void main() {
 
     group('likePost', () {
       test('increments like count and adds user to likedBy', () async {
-        final docRef = await _createPost(content: 'Like me');
+        final docRef = await createPost(content: 'Like me');
 
         await repository.likePost(docRef.id, 'user42');
 
@@ -390,7 +390,7 @@ void main() {
       });
 
       test('does not add duplicate likes', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Already liked',
           likeCount: 1,
           likedBy: const ['user42'],
@@ -415,7 +415,7 @@ void main() {
       });
 
       test('handles concurrent likes correctly', () async {
-        final docRef = await _createPost(content: 'Popular post');
+        final docRef = await createPost(content: 'Popular post');
 
         await Future.wait([
           repository.likePost(docRef.id, 'user1'),
@@ -430,7 +430,7 @@ void main() {
       });
 
       test('handles duplicate concurrent likes', () async {
-        final docRef = await _createPost(content: 'Double tap test');
+        final docRef = await createPost(content: 'Double tap test');
 
         await Future.wait([
           repository.likePost(docRef.id, 'user42'),
@@ -444,7 +444,7 @@ void main() {
       });
 
       test('allows multiple users to like the same post', () async {
-        final docRef = await _createPost(content: 'Multi-user like test');
+        final docRef = await createPost(content: 'Multi-user like test');
 
         await repository.likePost(docRef.id, 'user1');
         await repository.likePost(docRef.id, 'user2');
@@ -457,7 +457,7 @@ void main() {
 
     group('unlikePost', () {
       test('decrements like count and removes user from likedBy', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Unlike me',
           likeCount: 2,
           likedBy: const ['user42', 'user99'],
@@ -471,7 +471,7 @@ void main() {
       });
 
       test('does not decrement below zero', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Never negative',
           likeCount: 1,
           likedBy: const ['user42'],
@@ -486,7 +486,7 @@ void main() {
       });
 
       test('handles concurrent unlikes correctly', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Popular post',
           likeCount: 3,
           likedBy: const ['user1', 'user2', 'user3'],
@@ -503,7 +503,7 @@ void main() {
       });
 
       test('ignores duplicate concurrent unlikes', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Repeated unlike teen',
           likeCount: 1,
           likedBy: const ['user42'],
@@ -539,7 +539,7 @@ void main() {
       });
 
       test('returns post with transformed data', () async {
-        final docRef = await _createPost(
+        final docRef = await createPost(
           content: 'Transform me',
           likeCount: 3,
           likedBy: const ['user1', 'user2', 'user3'],

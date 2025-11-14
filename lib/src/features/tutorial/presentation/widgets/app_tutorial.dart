@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTargets {
-  final GlobalKey feedKey;
-  final GlobalKey createPostKey;
-  final GlobalKey searchKey;
-  final GlobalKey messagesNavKey;
-  final GlobalKey profileNavKey;
-  final GlobalKey? safetyKey;
 
   TutorialTargets({
     required this.feedKey,
@@ -17,13 +11,15 @@ class TutorialTargets {
     required this.profileNavKey,
     this.safetyKey,
   });
+  final GlobalKey feedKey;
+  final GlobalKey createPostKey;
+  final GlobalKey searchKey;
+  final GlobalKey messagesNavKey;
+  final GlobalKey profileNavKey;
+  final GlobalKey? safetyKey;
 }
 
 class AppTutorial {
-  final BuildContext context;
-  final TutorialTargets targets;
-  final VoidCallback onFinish;
-  final VoidCallback onSkip;
 
   AppTutorial({
     required this.context,
@@ -31,6 +27,10 @@ class AppTutorial {
     required this.onFinish,
     required this.onSkip,
   });
+  final BuildContext context;
+  final TutorialTargets targets;
+  final VoidCallback onFinish;
+  final VoidCallback onSkip;
 
   List<TargetFocus> _createTargets() {
     final theme = Theme.of(context);
@@ -39,7 +39,7 @@ class AppTutorial {
     return [
       // Step 1: Feed swipe/interaction
       TargetFocus(
-        identify: "feed",
+        identify: 'feed',
         keyTarget: targets.feedKey,
         alignSkip: Alignment.topRight,
         contents: [
@@ -47,9 +47,9 @@ class AppTutorial {
             align: ContentAlign.bottom,
             builder: (context, controller) {
               return _buildContent(
-                title: "Feed Spotted",
-                description: "Scorri per vedere i post condivisi dalla tua scuola. "
-                    "Tocca i cuori per mettere mi piace o i commenti per rispondere!",
+                title: 'Feed Spotted',
+                description: 'Scorri per vedere i post condivisi dalla tua scuola. '
+                    'Tocca i cuori per mettere mi piace o i commenti per rispondere!',
                 icon: Icons.home,
                 theme: theme,
                 isDark: isDark,
@@ -61,7 +61,7 @@ class AppTutorial {
 
       // Step 2: Create post
       TargetFocus(
-        identify: "create_post",
+        identify: 'create_post',
         keyTarget: targets.createPostKey,
         alignSkip: Alignment.topRight,
         contents: [
@@ -69,9 +69,9 @@ class AppTutorial {
             align: ContentAlign.top,
             builder: (context, controller) {
               return _buildContent(
-                title: "Crea un Post",
-                description: "Tocca qui per condividere qualcosa che hai notato! "
-                    "Puoi scegliere di postare in modo anonimo per proteggere la tua privacy.",
+                title: 'Crea un Post',
+                description: 'Tocca qui per condividere qualcosa che hai notato! '
+                    'Puoi scegliere di postare in modo anonimo per proteggere la tua privacy.',
                 icon: Icons.add_circle,
                 theme: theme,
                 isDark: isDark,
@@ -83,7 +83,7 @@ class AppTutorial {
 
       // Step 3: Search
       TargetFocus(
-        identify: "search",
+        identify: 'search',
         keyTarget: targets.searchKey,
         alignSkip: Alignment.bottomLeft,
         contents: [
@@ -91,8 +91,8 @@ class AppTutorial {
             align: ContentAlign.bottom,
             builder: (context, controller) {
               return _buildContent(
-                title: "Cerca nel Feed",
-                description: "Usa la lente per trovare post, parole chiave o argomenti che ti interessano.",
+                title: 'Cerca nel Feed',
+                description: 'Usa la lente per trovare post, parole chiave o argomenti che ti interessano.',
                 icon: Icons.search,
                 theme: theme,
                 isDark: isDark,
@@ -104,7 +104,7 @@ class AppTutorial {
 
       // Step 4: Messages
       TargetFocus(
-        identify: "messages",
+        identify: 'messages',
         keyTarget: targets.messagesNavKey,
         alignSkip: Alignment.topRight,
         contents: [
@@ -112,9 +112,9 @@ class AppTutorial {
             align: ContentAlign.top,
             builder: (context, controller) {
               return _buildContent(
-                title: "Messaggi",
-                description: "Chatta privatamente con altri utenti in modo sicuro. "
-                    "I tuoi messaggi sono protetti e privati.",
+                title: 'Messaggi',
+                description: 'Chatta privatamente con altri utenti in modo sicuro. '
+                    'I tuoi messaggi sono protetti e privati.',
                 icon: Icons.message,
                 theme: theme,
                 isDark: isDark,
@@ -126,7 +126,7 @@ class AppTutorial {
 
       // Step 5: Profile
       TargetFocus(
-        identify: "profile",
+        identify: 'profile',
         keyTarget: targets.profileNavKey,
         alignSkip: Alignment.topLeft,
         contents: [
@@ -134,9 +134,9 @@ class AppTutorial {
             align: ContentAlign.top,
             builder: (context, controller) {
               return _buildContent(
-                title: "Profilo",
-                description: "Gestisci il tuo profilo, le impostazioni sulla privacy "
-                    "e visualizza la tua attività. Puoi anche riavviare questo tutorial da qui.",
+                title: 'Profilo',
+                description: 'Gestisci il tuo profilo, le impostazioni sulla privacy '
+                    'e visualizza la tua attività. Puoi anche riavviare questo tutorial da qui.',
                 icon: Icons.person,
                 theme: theme,
                 isDark: isDark,
@@ -149,7 +149,7 @@ class AppTutorial {
       // Step 6: Safety/reporting (if available)
       if (targets.safetyKey != null)
         TargetFocus(
-          identify: "safety",
+          identify: 'safety',
           keyTarget: targets.safetyKey!,
           alignSkip: Alignment.topLeft,
           contents: [
@@ -157,9 +157,9 @@ class AppTutorial {
               align: ContentAlign.bottom,
               builder: (context, controller) {
                 return _buildContent(
-                  title: "Sicurezza",
-                  description: "Se vedi contenuti inappropriati, puoi segnalarli usando il menu. "
-                      "La tua sicurezza è la nostra priorità!",
+                  title: 'Sicurezza',
+                  description: 'Se vedi contenuti inappropriati, puoi segnalarli usando il menu. '
+                      'La tua sicurezza è la nostra priorità!',
                   icon: Icons.shield,
                   theme: theme,
                   isDark: isDark,
@@ -252,10 +252,10 @@ class AppTutorial {
       colorShadow: Colors.black87,
       paddingFocus: 10,
       opacityShadow: 0.8,
-      textSkip: "SALTA",
+      textSkip: 'SALTA',
       skipWidget: Semantics(
         button: true,
-        label: "Salta tutorial",
+        label: 'Salta tutorial',
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
@@ -263,7 +263,7 @@ class AppTutorial {
             borderRadius: BorderRadius.circular(20),
           ),
           child: const Text(
-            "SALTA",
+            'SALTA',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black87,

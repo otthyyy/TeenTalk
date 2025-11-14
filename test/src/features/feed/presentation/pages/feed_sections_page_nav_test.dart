@@ -99,7 +99,7 @@ void main() {
       bool foundBottomSpacer = false;
       const testSafeAreaBottom = 34.0;
       const extraPadding = 36.0;
-      final expectedHeight = BottomNavMetrics.height + testSafeAreaBottom + extraPadding;
+      const expectedHeight = BottomNavMetrics.height + testSafeAreaBottom + extraPadding;
 
       for (final element in sizedBoxes.evaluate()) {
         final sizedBox = element.widget as SizedBox;

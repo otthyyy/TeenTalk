@@ -28,7 +28,7 @@ class AppLocalizationsIT extends AppLocalizations {
   @override
   String get authAlreadyHaveAccount => 'Hai già un account? Accedi';
   @override
-  String get authNoAccount => "Non hai un account? Registrati";
+  String get authNoAccount => 'Non hai un account? Registrati';
   @override
   String get authForgotPassword => 'Password Dimenticata?';
   @override
@@ -299,11 +299,11 @@ class AppLocalizationsIT extends AppLocalizations {
     } else {
       final minutes = (seconds / 60).floor();
       final remainingSeconds = seconds % 60;
-      final minuteLabel = 'minuto' + (minutes == 1 ? '' : 'i');
+      final minuteLabel = 'minuto${minutes == 1 ? '' : 'i'}';
       if (remainingSeconds == 0) {
         return 'Attendi $minutes $minuteLabel';
       } else {
-        final secondLabel = 'second' + (remainingSeconds == 1 ? 'o' : 'i');
+        final secondLabel = 'second${remainingSeconds == 1 ? 'o' : 'i'}';
         return 'Attendi $minutes $minuteLabel e $remainingSeconds $secondLabel';
       }
     }

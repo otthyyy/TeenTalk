@@ -51,9 +51,9 @@ final notificationsActionsProvider = Provider<NotificationsActions>((ref) {
 });
 
 class NotificationsActions {
-  final Ref _ref;
 
   NotificationsActions(this._ref);
+  final Ref _ref;
 
   Future<void> markAsRead(String notificationId) async {
     final repository = _ref.read(notificationsRepositoryProvider);

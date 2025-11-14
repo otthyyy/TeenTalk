@@ -15,7 +15,7 @@ void main() {
       repository = UserRepository(firestore);
     });
 
-    Future<void> _createUser({
+    Future<void> createUser({
       required String uid,
       required String nickname,
       String? school,
@@ -51,7 +51,7 @@ void main() {
       });
 
       test('returns false when nickname is taken (case-insensitive)', () async {
-        await _createUser(uid: 'user1', nickname: 'TakenNick');
+        await createUser(uid: 'user1', nickname: 'TakenNick');
 
         final isAvailable1 = await repository.isNicknameAvailable('TakenNick');
         final isAvailable2 = await repository.isNicknameAvailable('takennick');
@@ -63,7 +63,7 @@ void main() {
       });
 
       test('ignores whitespace when checking availability', () async {
-        await _createUser(uid: 'user1', nickname: 'SpaceyNick');
+        await createUser(uid: 'user1', nickname: 'SpaceyNick');
 
         final isAvailable = await repository.isNicknameAvailable('  SpaceyNick  ');
         expect(isAvailable, false);
@@ -77,7 +77,7 @@ void main() {
       });
 
       test('returns profile with correct data', () async {
-        await _createUser(
+        await createUser(
           uid: 'user1',
           nickname: 'TestUser',
           school: 'Harvard',
@@ -127,7 +127,7 @@ void main() {
 
     group('updateUserProfile', () {
       test('updates profile and regenerates search keywords', () async {
-        await _createUser(
+        await createUser(
           uid: 'user1',
           nickname: 'OldNick',
           school: 'MIT',
@@ -150,8 +150,8 @@ void main() {
       });
 
       test('rejects nickname change if new nickname is taken', () async {
-        await _createUser(uid: 'user1', nickname: 'User1');
-        await _createUser(uid: 'user2', nickname: 'User2');
+        await createUser(uid: 'user1', nickname: 'User1');
+        await createUser(uid: 'user2', nickname: 'User2');
 
         final success = await repository.updateUserProfile('user1', {
           'nickname': 'User2',
@@ -164,7 +164,7 @@ void main() {
       });
 
       test('updates nickname with normalized form and updates search keywords', () async {
-        await _createUser(uid: 'user1', nickname: 'OldNick');
+        await createUser(uid: 'user1', nickname: 'OldNick');
 
         final success = await repository.updateUserProfile('user1', {
           'nickname': 'NewNick',
@@ -183,7 +183,7 @@ void main() {
       });
 
       test('updates multiple fields and regenerates keywords', () async {
-        await _createUser(
+        await createUser(
           uid: 'user1',
           nickname: 'User1',
           school: 'MIT',
@@ -214,7 +214,7 @@ void main() {
 
     group('canChangeNickname', () {
       test('returns true when user has never changed nickname', () async {
-        await _createUser(uid: 'user1', nickname: 'User1');
+        await createUser(uid: 'user1', nickname: 'User1');
 
         final canChange = await repository.canChangeNickname('user1');
         expect(canChange, true);
@@ -227,7 +227,7 @@ void main() {
           'nicknameLowercase': 'user1',
           'nicknameVerified': true,
           'lastNicknameChangeAt': Timestamp.fromDate(
-            DateTime.now().subtract(Duration(days: 15)),
+            DateTime.now().subtract(const Duration(days: 15)),
           ),
           'createdAt': Timestamp.now(),
           'privacyConsentGiven': true,
@@ -246,7 +246,7 @@ void main() {
           'nicknameLowercase': 'user1',
           'nicknameVerified': true,
           'lastNicknameChangeAt': Timestamp.fromDate(
-            DateTime.now().subtract(Duration(days: 31)),
+            DateTime.now().subtract(const Duration(days: 31)),
           ),
           'createdAt': Timestamp.now(),
           'privacyConsentGiven': true,
@@ -261,7 +261,7 @@ void main() {
 
     group('getDaysUntilNicknameChange', () {
       test('returns 0 when user has never changed nickname', () async {
-        await _createUser(uid: 'user1', nickname: 'User1');
+        await createUser(uid: 'user1', nickname: 'User1');
 
         final days = await repository.getDaysUntilNicknameChange('user1');
         expect(days, 0);
@@ -274,7 +274,7 @@ void main() {
           'nicknameLowercase': 'user1',
           'nicknameVerified': true,
           'lastNicknameChangeAt': Timestamp.fromDate(
-            DateTime.now().subtract(Duration(days: 20)),
+            DateTime.now().subtract(const Duration(days: 20)),
           ),
           'createdAt': Timestamp.now(),
           'privacyConsentGiven': true,
@@ -293,7 +293,7 @@ void main() {
           'nicknameLowercase': 'user1',
           'nicknameVerified': true,
           'lastNicknameChangeAt': Timestamp.fromDate(
-            DateTime.now().subtract(Duration(days: 35)),
+            DateTime.now().subtract(const Duration(days: 35)),
           ),
           'createdAt': Timestamp.now(),
           'privacyConsentGiven': true,

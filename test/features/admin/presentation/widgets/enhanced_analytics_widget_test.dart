@@ -74,10 +74,10 @@ void main() {
 
     testWidgets('renders loading state', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -97,9 +97,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -126,9 +126,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -153,9 +153,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -177,9 +177,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -201,9 +201,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -225,9 +225,9 @@ void main() {
               (ref) => Future.value(mockExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -247,9 +247,9 @@ void main() {
               (ref) => Future.error('Test error'),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),
@@ -261,7 +261,7 @@ void main() {
     });
 
     testWidgets('handles empty data gracefully', (tester) async {
-      final emptyExtendedAnalytics = const ExtendedAnalytics(
+      const emptyExtendedAnalytics = ExtendedAnalytics(
         dailyMetrics: [],
         schoolMetrics: [],
         reportReasons: {},
@@ -281,9 +281,9 @@ void main() {
               (ref) => Future.value(emptyExtendedAnalytics),
             ),
           ],
-          child: MaterialApp(
+          child: const MaterialApp(
             home: Scaffold(
-              body: const EnhancedAnalyticsWidget(),
+              body: EnhancedAnalyticsWidget(),
             ),
           ),
         ),

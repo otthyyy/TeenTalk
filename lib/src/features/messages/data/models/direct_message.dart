@@ -1,12 +1,4 @@
 class DirectMessage {
-  final String id;
-  final String conversationId;
-  final String senderId;
-  final String senderName;
-  final String content;
-  final DateTime createdAt;
-  final bool isRead;
-  final String? imageUrl;
 
   const DirectMessage({
     required this.id,
@@ -32,6 +24,14 @@ class DirectMessage {
       imageUrl: data['imageUrl'] as String?,
     );
   }
+  final String id;
+  final String conversationId;
+  final String senderId;
+  final String senderName;
+  final String content;
+  final DateTime createdAt;
+  final bool isRead;
+  final String? imageUrl;
 
   DirectMessage copyWith({
     String? id,

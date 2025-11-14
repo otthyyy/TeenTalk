@@ -3,9 +3,9 @@ import '../models/app_notification.dart';
 import '../../../comments/data/services/notification_service.dart';
 
 class NotificationsRepository {
-  final NotificationService _notificationService;
 
   NotificationsRepository(this._notificationService);
+  final NotificationService _notificationService;
 
   Stream<List<AppNotification>> watchAll(String userId) {
     return _notificationService

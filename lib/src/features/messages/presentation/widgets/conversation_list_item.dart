@@ -3,12 +3,6 @@ import '../../../profile/domain/models/user_profile.dart';
 import '../../data/models/conversation.dart';
 
 class ConversationListItem extends StatelessWidget {
-  final Conversation conversation;
-  final UserProfile? otherUserProfile;
-  final String? otherUserId;
-  final int unreadCount;
-  final bool isProfileLoading;
-  final VoidCallback onTap;
 
   const ConversationListItem({
     super.key,
@@ -19,6 +13,12 @@ class ConversationListItem extends StatelessWidget {
     this.isProfileLoading = false,
     required this.onTap,
   });
+  final Conversation conversation;
+  final UserProfile? otherUserProfile;
+  final String? otherUserId;
+  final int unreadCount;
+  final bool isProfileLoading;
+  final VoidCallback onTap;
 
   String _formatTime(DateTime? time) {
     if (time == null) return '';

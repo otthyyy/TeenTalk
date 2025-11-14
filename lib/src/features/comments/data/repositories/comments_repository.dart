@@ -5,12 +5,12 @@ import '../models/comment.dart';
 import '../models/comment_failure.dart';
 
 class CommentsRepository {
-  final FirebaseFirestore _firestore;
-  static const String _commentsCollection = 'comments';
-  static const String _postsCollection = 'posts';
 
   CommentsRepository({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
+  static const String _commentsCollection = 'comments';
+  static const String _postsCollection = 'posts';
 
   Future<(List<Comment>, DocumentSnapshot?)> getCommentsByPostId({
     required String postId,

@@ -3,10 +3,6 @@ import '../../core/localization/app_localizations.dart';
 import '../../features/profile/domain/models/trust_level.dart';
 
 class TrustBadge extends StatelessWidget {
-  final TrustLevel trustLevel;
-  final bool showLabel;
-  final double size;
-  final VoidCallback? onTap;
 
   const TrustBadge({
     super.key,
@@ -15,6 +11,10 @@ class TrustBadge extends StatelessWidget {
     this.size = 20,
     this.onTap,
   });
+  final TrustLevel trustLevel;
+  final bool showLabel;
+  final double size;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -18,17 +18,6 @@ enum ModerationStatus {
 }
 
 class ModerationItem {
-  final String contentId;
-  final ContentType contentType;
-  final String authorId;
-  final int reportCount;
-  final ModerationStatus status;
-  final DateTime? hiddenAt;
-  final DateTime? reviewedAt;
-  final String? reviewedBy;
-  final bool isAnonymous;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   const ModerationItem({
     required this.contentId,
@@ -64,6 +53,17 @@ class ModerationItem {
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
   }
+  final String contentId;
+  final ContentType contentType;
+  final String authorId;
+  final int reportCount;
+  final ModerationStatus status;
+  final DateTime? hiddenAt;
+  final DateTime? reviewedAt;
+  final String? reviewedBy;
+  final bool isAnonymous;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   Map<String, dynamic> toFirestore() {
     return {

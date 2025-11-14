@@ -5,16 +5,6 @@ import '../../../legal/presentation/pages/legal_document_page.dart';
 import '../../../../core/localization/app_localizations.dart';
 
 class ConsentStep extends StatefulWidget {
-  final bool? isMinor;
-  final String? guardianContact;
-  final bool parentalConsentGiven;
-  final bool privacyConsentGiven;
-  final Function(bool?) onIsMinorChanged;
-  final Function(String?) onGuardianContactChanged;
-  final Function(bool) onParentalConsentChanged;
-  final Function(bool) onPrivacyConsentChanged;
-  final VoidCallback onNext;
-  final VoidCallback onBack;
 
   const ConsentStep({
     super.key,
@@ -29,6 +19,16 @@ class ConsentStep extends StatefulWidget {
     required this.onNext,
     required this.onBack,
   });
+  final bool? isMinor;
+  final String? guardianContact;
+  final bool parentalConsentGiven;
+  final bool privacyConsentGiven;
+  final Function(bool?) onIsMinorChanged;
+  final Function(String?) onGuardianContactChanged;
+  final Function(bool) onParentalConsentChanged;
+  final Function(bool) onPrivacyConsentChanged;
+  final VoidCallback onNext;
+  final VoidCallback onBack;
 
   @override
   State<ConsentStep> createState() => _ConsentStepState();

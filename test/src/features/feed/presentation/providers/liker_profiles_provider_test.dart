@@ -8,9 +8,9 @@ import 'package:teen_talk_app/src/features/profile/domain/models/user_profile.da
 import 'package:teen_talk_app/src/features/profile/domain/models/trust_level.dart';
 
 class MockUserRepository extends UserRepository {
-  final Map<String, UserProfile> _profiles;
 
   MockUserRepository(this._profiles) : super(null as dynamic);
+  final Map<String, UserProfile> _profiles;
 
   @override
   Future<UserProfile?> getUserProfile(String uid) async {
@@ -19,20 +19,20 @@ class MockUserRepository extends UserRepository {
 }
 
 class MockFirebaseAuthService implements FirebaseAuthService {
-  final String? _currentUserId;
 
   MockFirebaseAuthService(this._currentUserId);
+  final String? _currentUserId;
 
   @override
   dynamic get currentUser => _currentUserId != null ? MockUser(_currentUserId) : null;
 
   @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class MockUser {
-  final String uid;
   MockUser(this.uid);
+  final String uid;
 }
 
 void main() {

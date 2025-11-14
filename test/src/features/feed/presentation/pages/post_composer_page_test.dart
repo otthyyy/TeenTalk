@@ -74,12 +74,10 @@ class _FakeOfflineSubmissionHelper extends Fake implements OfflineSubmissionHelp
 }
 
 class _FakeAuthNotifier extends StateNotifier<AuthState> {
-  _FakeAuthNotifier(AuthState state) : super(state);
+  _FakeAuthNotifier(super.state);
 }
 
 class _MockPostsRepository extends PostsRepository {
-  final Future<void> Function()? onCreatePost;
-  final Duration? delay;
 
   _MockPostsRepository({this.onCreatePost, this.delay})
       : super(
@@ -87,6 +85,8 @@ class _MockPostsRepository extends PostsRepository {
           storage: _FakeFirebaseStorage(),
           logger: Logger(level: Level.nothing),
         );
+  final Future<void> Function()? onCreatePost;
+  final Duration? delay;
 
   @override
   Future<Post> createPost({

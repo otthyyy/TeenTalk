@@ -18,15 +18,6 @@ final searchPreferencesRepositoryProvider =
 });
 
 class SearchState {
-  static const _sentinel = Object();
-
-  final List<UserProfile> results;
-  final bool isLoading;
-  final bool isSavingDefault;
-  final String? error;
-  final SearchFilters filters;
-  final List<SearchFilters> recentFilters;
-  final SearchFilters? defaultFilters;
 
   const SearchState({
     this.results = const [],
@@ -37,6 +28,15 @@ class SearchState {
     this.recentFilters = const [],
     this.defaultFilters,
   });
+  static const _sentinel = Object();
+
+  final List<UserProfile> results;
+  final bool isLoading;
+  final bool isSavingDefault;
+  final String? error;
+  final SearchFilters filters;
+  final List<SearchFilters> recentFilters;
+  final SearchFilters? defaultFilters;
 
   SearchState copyWith({
     List<UserProfile>? results,
@@ -150,7 +150,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
       final updated = [...state.recentFilters];
       updated.removeWhere((f) => f == filters);
       state = state.copyWith(recentFilters: updated);
-      await _preferencesRepository!.removeRecentFilter(filters);
+      await _preferencesRepository.removeRecentFilter(filters);
     } catch (e) {
       _logger.e('Failed to remove recent filter', error: e);
     }
@@ -161,7 +161,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
 
     try {
       state = state.copyWith(isSavingDefault: true);
-      await _preferencesRepository!.saveDefaultFilters(state.filters);
+      await _preferencesRepository.saveDefaultFilters(state.filters);
       state = state.copyWith(
         isSavingDefault: false,
         defaultFilters: state.filters,
@@ -193,7 +193,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     if (_preferencesRepository == null) return;
 
     try {
-      await _preferencesRepository!.clearDefaultFilters();
+      await _preferencesRepository.clearDefaultFilters();
       state = state.copyWith(defaultFilters: null);
     } catch (e) {
       _logger.e('Failed to clear default filters', error: e);
@@ -217,7 +217,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     if (_preferencesRepository == null) return;
 
     try {
-      final filters = _preferencesRepository!.getRecentFilters();
+      final filters = _preferencesRepository.getRecentFilters();
       state = state.copyWith(recentFilters: filters);
     } catch (e) {
       _logger.e('Failed to load recent filters', error: e);
@@ -228,7 +228,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     if (_preferencesRepository == null) return;
 
     try {
-      final defaultFilters = _preferencesRepository!.getDefaultFilters();
+      final defaultFilters = _preferencesRepository.getDefaultFilters();
       state = state.copyWith(defaultFilters: defaultFilters);
     } catch (e) {
       _logger.e('Failed to load default filters', error: e);
@@ -251,7 +251,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
     state = state.copyWith(recentFilters: recent);
 
     try {
-      await _preferencesRepository!.addRecentFilter(filters);
+      await _preferencesRepository.addRecentFilter(filters);
     } catch (e) {
       _logger.e('Failed to persist recent filters', error: e);
     }

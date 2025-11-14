@@ -1,15 +1,4 @@
 class Report {
-  final String id;
-  final String itemId;
-  final String itemType;
-  final String authorId;
-  final String authorNickname;
-  final String content;
-  final String reason;
-  final String status;
-  final String? severity;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   const Report({
     required this.id,
@@ -24,6 +13,33 @@ class Report {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  factory Report.fromJson(Map<String, dynamic> json) {
+    return Report(
+      id: json['id'] as String,
+      itemId: json['itemId'] as String,
+      itemType: json['itemType'] as String,
+      authorId: json['authorId'] as String,
+      authorNickname: json['authorNickname'] as String,
+      content: json['content'] as String,
+      reason: json['reason'] as String,
+      status: json['status'] as String? ?? 'pending',
+      severity: json['severity'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
+  }
+  final String id;
+  final String itemId;
+  final String itemType;
+  final String authorId;
+  final String authorNickname;
+  final String content;
+  final String reason;
+  final String status;
+  final String? severity;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   Report copyWith({
     String? id,
@@ -53,22 +69,6 @@ class Report {
     );
   }
 
-  factory Report.fromJson(Map<String, dynamic> json) {
-    return Report(
-      id: json['id'] as String,
-      itemId: json['itemId'] as String,
-      itemType: json['itemType'] as String,
-      authorId: json['authorId'] as String,
-      authorNickname: json['authorNickname'] as String,
-      content: json['content'] as String,
-      reason: json['reason'] as String,
-      status: json['status'] as String? ?? 'pending',
-      severity: json['severity'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
-  }
-
   Map<String, dynamic> toJson() => {
         'id': id,
         'itemId': itemId,
@@ -85,12 +85,6 @@ class Report {
   }
 
 class ModerationDecision {
-  final String id;
-  final String reportId;
-  final String moderatorId;
-  final String decision;
-  final String? notes;
-  final DateTime createdAt;
 
   const ModerationDecision({
     required this.id,
@@ -111,6 +105,12 @@ class ModerationDecision {
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
+  final String id;
+  final String reportId;
+  final String moderatorId;
+  final String decision;
+  final String? notes;
+  final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -123,12 +123,6 @@ class ModerationDecision {
 }
 
 class AdminAnalytics {
-  final int activeReportCount;
-  final int flaggedPostCount;
-  final int flaggedCommentCount;
-  final int userBanCount;
-  final int resolvedReportCount;
-  final int dismissedReportCount;
 
   const AdminAnalytics({
     required this.activeReportCount,
@@ -149,4 +143,10 @@ class AdminAnalytics {
       dismissedReportCount: json['dismissedReportCount'] as int? ?? 0,
     );
   }
+  final int activeReportCount;
+  final int flaggedPostCount;
+  final int flaggedCommentCount;
+  final int userBanCount;
+  final int resolvedReportCount;
+  final int dismissedReportCount;
 }

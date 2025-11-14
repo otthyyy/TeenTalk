@@ -5,9 +5,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logger/logger.dart';
 
 class ImageCacheService {
-  static final ImageCacheService _instance = ImageCacheService._internal();
   factory ImageCacheService() => _instance;
   ImageCacheService._internal();
+  static final ImageCacheService _instance = ImageCacheService._internal();
 
   final Logger _logger = Logger();
   

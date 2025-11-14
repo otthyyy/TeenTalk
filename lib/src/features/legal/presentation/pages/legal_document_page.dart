@@ -120,7 +120,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage> {
   Future<String> _loadDocument(String localeCode) async {
     final normalizedCode = localeCode == 'it' ? 'it' : 'en';
     final assetCandidates = <String>[
-      'assets/legal/${widget.documentType.assetBaseName}_${normalizedCode}.md',
+      'assets/legal/${widget.documentType.assetBaseName}_$normalizedCode.md',
     ];
 
     if (normalizedCode != 'en') {

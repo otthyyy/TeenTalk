@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../localization/app_localizations.dart';
 
 class RateLimitDialog extends StatelessWidget {
-  final String contentType;
-  final Duration? cooldownDuration;
-  final VoidCallback onDismiss;
-  final VoidCallback? onViewGuidelines;
 
   const RateLimitDialog({
     super.key,
@@ -14,6 +10,10 @@ class RateLimitDialog extends StatelessWidget {
     required this.onDismiss,
     this.onViewGuidelines,
   });
+  final String contentType;
+  final Duration? cooldownDuration;
+  final VoidCallback onDismiss;
+  final VoidCallback? onViewGuidelines;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class RateLimitDialog extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(

@@ -557,7 +557,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                             ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            value: _gender,
+                            initialValue: _gender,
                             decoration: InputDecoration(
                               labelText: 'Gender (Optional)',
                               hintText: 'Select your gender',
@@ -581,7 +581,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            value: _school,
+                            initialValue: _school,
                             decoration: InputDecoration(
                               labelText: 'School (Optional)',
                               hintText: 'Select your school',
@@ -602,7 +602,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            value: _schoolYear,
+                            initialValue: _schoolYear,
                             decoration: InputDecoration(
                               labelText: 'School Year *',
                               hintText: 'Select your year',

@@ -11,14 +11,14 @@ import 'comment_input_widget.dart';
 import 'comment_widget.dart';
 
 class CommentsListWidget extends ConsumerStatefulWidget {
-  final String postId;
-  final ValueChanged<int>? onCommentCountChanged;
 
   const CommentsListWidget({
     super.key,
     required this.postId,
     this.onCommentCountChanged,
   });
+  final String postId;
+  final ValueChanged<int>? onCommentCountChanged;
 
   @override
   ConsumerState<CommentsListWidget> createState() => _CommentsListWidgetState();
