@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logger/logger.dart';
 import '../utils/error_handler.dart';
@@ -31,7 +32,7 @@ class StorageService {
 
   // Upload file from bytes
   Future<String> uploadBytes(
-    List<int> bytes,
+    Uint8List bytes,
     String storagePath, {
     String? contentType,
   }) async {

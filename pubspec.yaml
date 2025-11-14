@@ -127,7 +127,7 @@ dev_dependencies:
   fake_cloud_firestore: ^2.4.1
   integration_test:
     sdk: flutter
-  firebase_functions: ^4.6.0
+  firebase_functions: ^0.0.1-dev
   test: ^1.24.9
   
   # Branding Assets Generation

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/models/comment.dart';
+import '../../../feed/data/models/post.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../../../../core/layout/bottom_nav_metrics.dart';
-import '../providers/comments_provider.dart';
-import '../widgets/post_widget.dart';
+import '../../../feed/presentation/providers/feed_provider.dart';
+import '../../../feed/presentation/widgets/post_card_widget.dart';
 import '../widgets/comments_list_widget.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 class FeedWithCommentsPage extends ConsumerStatefulWidget {
   const FeedWithCommentsPage({super.key});
@@ -27,7 +28,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(postsProvider.notifier).loadPosts();
+      ref.read(feedProvider('all').notifier).loadPosts();
     });
   }
 
@@ -40,13 +41,13 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(postsProvider.notifier).loadMorePosts();
+      ref.read(feedProvider('all').notifier).loadMorePosts();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final postsState = ref.watch(postsProvider);
+    final postsState = ref.watch(feedProvider('all'));
     final authState = ref.watch(authStateProvider);
     final theme = Theme.of(context);
 
@@ -78,12 +79,12 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     );
   }
 
-  Widget _buildFeedView(PostsState postsState, ThemeData theme, dynamic authState) {
+  Widget _buildFeedView(FeedState postsState, ThemeData theme, AuthState authState) {
     final currentUserId = authState.user?.uid ?? '';
     
     return RefreshIndicator(
       onRefresh: () async {
-        await ref.read(postsProvider.notifier).loadPosts(refresh: true);
+        await ref.read(feedProvider('all').notifier).loadPosts(refresh: true);
       },
       child: postsState.isLoading && postsState.posts.isEmpty
           ? const Center(
@@ -115,7 +116,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          ref.read(postsProvider.notifier).loadPosts();
+                          ref.read(feedProvider('all').notifier).loadPosts();
                         },
                         child: const Text('Retry'),
                       ),
@@ -166,7 +167,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                         }
 
                         final post = postsState.posts[index];
-                        return PostWidget(
+                        return PostCardWidget(
                           key: ValueKey(post.id),
                           post: post,
                           currentUserId: currentUserId,
@@ -185,7 +186,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                               _showAuthRequiredDialog();
                               return;
                             }
-                            ref.read(postsProvider.notifier).likePost(
+                            ref.read(feedProvider('all').notifier).likePost(
                                   post.id,
                                   authState.user!.uid,
                                 );
@@ -195,7 +196,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
                               _showAuthRequiredDialog();
                               return;
                             }
-                            ref.read(postsProvider.notifier).unlikePost(
+                            ref.read(feedProvider('all').notifier).unlikePost(
                                   post.id,
                                   authState.user!.uid,
                                 );
@@ -219,9 +220,6 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     
     return CommentsListWidget(
       postId: _selectedPostId!,
-      currentUserId: authState.user!.uid,
-      currentUserNickname: userProfile.nickname,
-      currentUserIsAnonymous: false,
     );
   }
   
@@ -300,7 +298,7 @@ class _FeedWithCommentsPageState extends ConsumerState<FeedWithCommentsPage> {
     
     // Refresh posts if user successfully created a post
     if (result == true && mounted) {
-      ref.read(postsProvider.notifier).loadPosts(refresh: true);
+      ref.read(feedProvider('all').notifier).loadPosts(refresh: true);
     }
   }
 

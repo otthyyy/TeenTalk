@@ -10,12 +10,10 @@ class FunctionsService {
   Future<T> callFunction<T>(
     String functionName, {
     Map<String, dynamic>? parameters,
-    String? region,
   }) async {
     try {
       final HttpsCallable callable = _functions.httpsCallable(
         functionName,
-        options: region != null ? HttpsCallableOptions(region: region) : null,
       );
 
       final HttpsCallableResult result = await callable.call(parameters);
@@ -33,13 +31,11 @@ class FunctionsService {
     String functionName, {
     Map<String, dynamic>? parameters,
     Duration timeout = const Duration(seconds: 30),
-    String? region,
   }) async {
     try {
       final HttpsCallable callable = _functions.httpsCallable(
         functionName,
         options: HttpsCallableOptions(
-          region: region,
           timeout: timeout,
         ),
       );
@@ -55,13 +51,11 @@ class FunctionsService {
   }
 
   // Get function reference for advanced usage
-  HttpsCallableReference getFunctionReference(
+  HttpsCallable getFunctionReference(
     String functionName, {
-    String? region,
   }) {
     return _functions.httpsCallable(
       functionName,
-      options: region != null ? HttpsCallableOptions(region: region) : null,
     );
   }
 }

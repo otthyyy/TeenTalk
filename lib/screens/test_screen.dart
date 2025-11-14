@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
@@ -70,7 +71,7 @@ class _TestScreenState extends State<TestScreen> {
 
       // Test Storage
       try {
-        final testBytes = 'Test data for Firebase Storage'.codeUnits;
+        final testBytes = Uint8List.fromList('Test data for Firebase Storage'.codeUnits);
         final downloadUrl = await _storageService.uploadBytes(
           testBytes,
           'test/test-file.txt',

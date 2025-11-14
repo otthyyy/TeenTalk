@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,7 +64,7 @@ class FirebaseBootstrap {
       await FirebaseStorage.instance.ref().child('test').getDownloadURL().catchError((e) {
         if (e is FirebaseException && e.code == 'object-not-found') {
           // Expected for test
-          return;
+          return null;
         }
         throw e;
       });
