@@ -144,9 +144,16 @@ class CommentsRepository {
           ...commentData,
           'id': commentRef.id,
         });
-      });
+      }).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          debugPrint('createComment timeout after 15 seconds');
+          throw CommentFailure.timeout(
+            message: 'Comment submission timed out. Please check your connection and try again.',
+          );
+        },
+      );
     } catch (error, stackTrace) {
-      // Log error and stack trace to help debug "converted Future" issues
       debugPrint('createComment error: $error');
       debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
