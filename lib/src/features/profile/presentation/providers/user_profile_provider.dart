@@ -10,13 +10,24 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
 
   if (authState.user == null) {
+    print('👤 USER PROFILE PROVIDER: No auth user, returning null');
     return Stream.value(null);
   }
   
+  print('👤 USER PROFILE PROVIDER: Watching profile for uid=${authState.user!.uid}');
+  
   // Add timeout to prevent indefinite loading
-  return userRepository.watchUserProfile(authState.user!.uid).timeout(
+  return userRepository.watchUserProfile(authState.user!.uid).map((profile) {
+    print('👤 USER PROFILE PROVIDER: Stream emitted profile:');
+    print('   - hasProfile: ${profile != null}');
+    print('   - onboardingComplete: ${profile?.onboardingComplete}');
+    print('   - school: ${profile?.school}');
+    print('   - interests: ${profile?.interests}');
+    return profile;
+  }).timeout(
     const Duration(seconds: 10),
     onTimeout: (sink) {
+      print('👤 USER PROFILE PROVIDER: ⚠️ Timeout after 10 seconds');
       sink.addError(Exception('Failed to load user profile: timeout after 10 seconds'));
     },
   );

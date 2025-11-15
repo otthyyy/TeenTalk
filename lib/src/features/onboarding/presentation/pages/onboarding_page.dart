@@ -7,6 +7,7 @@ import '../widgets/consent_step.dart';
 import '../widgets/privacy_preferences_step.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/data/repositories/user_repository.dart';
+import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../auth/data/auth_service.dart';
 import '../../../../core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -89,6 +90,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         throw Exception('User not authenticated');
       }
 
+      print('✅ ONBOARDING: Starting completion for uid=${user.uid}');
+
       if (_isMinor == true && !_parentalConsentGiven) {
         _showError('Parental consent is required for minors');
         setState(() => _isSubmitting = false);
@@ -149,7 +152,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         analyticsEnabled: _analyticsEnabled,
       );
 
+      print('✅ ONBOARDING: Creating profile with data:');
+      print('   - uid: ${profile.uid}');
+      print('   - nickname: ${profile.nickname}');
+      print('   - school: ${profile.school}');
+      print('   - schoolYear: ${profile.schoolYear}');
+      print('   - interests: ${profile.interests}');
+      print('   - onboardingComplete: ${profile.onboardingComplete}');
+
       await ref.read(userRepositoryProvider).createUserProfile(profile);
+      print('✅ ONBOARDING: Profile created successfully in Firestore');
+
       final analyticsService = ref.read(analyticsServiceProvider);
       await analyticsService.setUserProperties(
         school: _school,
@@ -165,10 +178,44 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         await analyticsService.setEnabled(false);
       }
 
+      // FIX: Prevent onboarding loop by ensuring the profile stream has the updated data
+      // before navigation. This fixes a race condition where:
+      // 1. Profile is written to Firestore
+      // 2. Navigation happens immediately
+      // 3. Router checks profile stream which hasn't received the update yet
+      // 4. Router sees onboardingComplete=false and redirects back to onboarding
+      print('✅ ONBOARDING: Invalidating user profile provider to force refresh');
+      ref.invalidate(userProfileProvider);
+
+      print('✅ ONBOARDING: Waiting for profile stream to emit updated data');
+      bool profileConfirmed = false;
+      try {
+        // Wait for the stream to emit the updated profile with onboardingComplete=true
+        final refreshedProfile = await ref.read(userProfileProvider.future).timeout(
+          const Duration(seconds: 5),
+        );
+        
+        if (refreshedProfile != null && refreshedProfile.onboardingComplete) {
+          print('✅ ONBOARDING: Profile confirmed with onboardingComplete=true');
+          profileConfirmed = true;
+        } else {
+          print('⚠️ ONBOARDING: Profile not confirmed: profile=${refreshedProfile != null}, onboardingComplete=${refreshedProfile?.onboardingComplete}');
+        }
+      } catch (e) {
+        print('⚠️ ONBOARDING: Timeout waiting for profile refresh: $e');
+      }
+
+      if (!profileConfirmed) {
+        print('⚠️ ONBOARDING: Profile not confirmed but proceeding anyway (timeout or error)');
+      }
+
+      print('✅ ONBOARDING: Navigating to /feed');
       if (mounted) {
         context.go('/feed');
       }
     } catch (e) {
+      print('❌ ONBOARDING ERROR: ${e.toString()}');
+      print('   Stack trace: ${StackTrace.current}');
       _showError('Failed to complete onboarding: ${e.toString()}');
       setState(() => _isSubmitting = false);
     }

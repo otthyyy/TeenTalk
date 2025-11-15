@@ -37,21 +37,29 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   void _init() {
     _authService.authStateChanges.listen((user) {
       if (user != null) {
+        final authUser = AuthUser(
+          uid: user.uid,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          isAnonymous: user.isAnonymous,
+          createdAt: user.metadata.creationTime ?? DateTime.now(),
+          authMethods: user.providerData.map((p) => p.providerId).toList(),
+        );
+
+        print('🔐 AUTH PROVIDER: Auth state change detected -> user signed in');
+        print('   uid: ${authUser.uid}');
+        print('   email: ${authUser.email}');
+        print('   authMethods: ${authUser.authMethods}');
+
         state = state.copyWith(
           isAuthenticated: true,
-          user: AuthUser(
-            uid: user.uid,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            emailVerified: user.emailVerified,
-            isAnonymous: user.isAnonymous,
-            createdAt: user.metadata.creationTime ?? DateTime.now(),
-            authMethods: user.providerData.map((p) => p.providerId).toList(),
-          ),
+          user: authUser,
         );
       } else {
+        print('🔐 AUTH PROVIDER: Auth state change detected -> user signed out');
         state = AuthState.initial();
       }
     });

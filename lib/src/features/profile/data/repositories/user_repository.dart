@@ -48,8 +48,12 @@ class UserRepository {
     data['nicknameLowercase'] = profile.nickname.trim().toLowerCase();
     data['searchKeywords'] = profile.generateSearchKeywords();
 
-    batch.set(userRef, data);
+    print('📄 USER REPOSITORY: Saving user profile for uid=${profile.uid}');
+    print('   Data: ${Map<String, dynamic>.from(data)}');
+
+    batch.set(userRef, data, SetOptions(merge: true));
     await batch.commit();
+    print('📄 USER REPOSITORY: Profile saved successfully with merge:true');
   }
 
   Future<bool> updateUserProfile(

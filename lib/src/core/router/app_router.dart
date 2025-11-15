@@ -47,32 +47,45 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnAdminPage = path.startsWith('/admin');
       final isOnLoadingPage = path == '/loading';
 
+      print('🔀 ROUTER REDIRECT DEBUG:');
+      print('   Path: $path');
+      print('   Auth: isAuthenticated=$isAuthenticated, isLoading=$isAuthLoading, uid=${authState.user?.uid}');
+      print('   Profile: hasProfile=$hasProfile, isLoading=$isProfileLoading, hasError=$hasProfileError');
+      print('   Profile Data: onboardingComplete=$hasCompletedOnboarding, school=${profile?.school}, interests=${profile?.interests}');
+
       if (isAuthLoading || isProfileLoading) {
+        print('   ➡️  Redirecting to loading (auth or profile loading)');
         return isOnLoadingPage ? null : '/loading';
       }
 
       if (hasProfileError && isAuthenticated) {
+        print('   ➡️  Redirecting to onboarding (profile error)');
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
       if (!isAuthenticated) {
+        print('   ➡️  Redirecting to auth (not authenticated)');
         return isOnAuthPage ? null : '/auth';
       }
 
       // Only redirect to onboarding if user hasn't completed it yet
       // Don't redirect if they've completed onboarding but profile is incomplete
       if (isAuthenticated && (!hasProfile || !hasCompletedOnboarding)) {
+        print('   ➡️  Redirecting to onboarding (no profile or onboarding not complete)');
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
       if (isOnAdminPage && !isAdminUser) {
+        print('   ➡️  Redirecting to feed (non-admin accessing admin)');
         return '/feed';
       }
 
       if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage || isOnLoadingPage)) {
+        print('   ➡️  Redirecting to feed (authenticated and onboarded)');
         return '/feed';
       }
 
+      print('   ✅ No redirect needed');
       return null;
     },
     routes: [
