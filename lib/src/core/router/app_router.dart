@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,46 +47,49 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnOnboardingPage = path == '/onboarding';
       final isOnAdminPage = path.startsWith('/admin');
       final isOnLoadingPage = path == '/loading';
+      final shouldShowOnboarding = isAuthenticated && (!hasProfile || !hasCompletedOnboarding);
 
-      print('🔀 ROUTER REDIRECT DEBUG:');
-      print('   Path: $path');
-      print('   Auth: isAuthenticated=$isAuthenticated, isLoading=$isAuthLoading, uid=${authState.user?.uid}');
-      print('   Profile: hasProfile=$hasProfile, isLoading=$isProfileLoading, hasError=$hasProfileError');
-      print('   Profile Data: onboardingComplete=$hasCompletedOnboarding, school=${profile?.school}, interests=${profile?.interests}');
+      debugPrint('🔀 ROUTER REDIRECT DEBUG:');
+      debugPrint('   Path: $path');
+      debugPrint('   Auth: isAuthenticated=$isAuthenticated, isLoading=$isAuthLoading, uid=${authState.user?.uid}');
+      debugPrint('   Profile: hasProfile=$hasProfile, isLoading=$isProfileLoading, hasError=$hasProfileError');
+      debugPrint('   Profile UID: ${profile?.uid}');
+      debugPrint('   Profile Data: onboardingComplete=$hasCompletedOnboarding, isProfileComplete=$isProfileComplete, school=${profile?.school}, interests=${profile?.interests}');
+      debugPrint('   shouldShowOnboarding=$shouldShowOnboarding');
 
       if (isAuthLoading || isProfileLoading) {
-        print('   ➡️  Redirecting to loading (auth or profile loading)');
+        debugPrint('   ➡️  Redirecting to loading (auth or profile loading)');
         return isOnLoadingPage ? null : '/loading';
       }
 
       if (hasProfileError && isAuthenticated) {
-        print('   ➡️  Redirecting to onboarding (profile error)');
+        debugPrint('   ➡️  Redirecting to onboarding (profile error)');
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
       if (!isAuthenticated) {
-        print('   ➡️  Redirecting to auth (not authenticated)');
+        debugPrint('   ➡️  Redirecting to auth (not authenticated)');
         return isOnAuthPage ? null : '/auth';
       }
 
       // Only redirect to onboarding if user hasn't completed it yet
       // Don't redirect if they've completed onboarding but profile is incomplete
       if (isAuthenticated && (!hasProfile || !hasCompletedOnboarding)) {
-        print('   ➡️  Redirecting to onboarding (no profile or onboarding not complete)');
+        debugPrint('   ➡️  Redirecting to onboarding (no profile or onboarding not complete)');
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
       if (isOnAdminPage && !isAdminUser) {
-        print('   ➡️  Redirecting to feed (non-admin accessing admin)');
+        debugPrint('   ➡️  Redirecting to feed (non-admin accessing admin)');
         return '/feed';
       }
 
       if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage || isOnLoadingPage)) {
-        print('   ➡️  Redirecting to feed (authenticated and onboarded)');
+        debugPrint('   ➡️  Redirecting to feed (authenticated and onboarded)');
         return '/feed';
       }
 
-      print('   ✅ No redirect needed');
+      debugPrint('   ✅ No redirect needed');
       return null;
     },
     routes: [
