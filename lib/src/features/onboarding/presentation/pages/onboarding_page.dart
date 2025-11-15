@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/nickname_step.dart';
@@ -90,7 +91,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         throw Exception('User not authenticated');
       }
 
-      print('✅ ONBOARDING: Starting completion for uid=${user.uid}');
+      debugPrint('✅ ONBOARDING: Starting completion for uid=${user.uid}');
 
       if (_isMinor == true && !_parentalConsentGiven) {
         _showError('Parental consent is required for minors');
@@ -152,16 +153,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         analyticsEnabled: _analyticsEnabled,
       );
 
-      print('✅ ONBOARDING: Creating profile with data:');
-      print('   - uid: ${profile.uid}');
-      print('   - nickname: ${profile.nickname}');
-      print('   - school: ${profile.school}');
-      print('   - schoolYear: ${profile.schoolYear}');
-      print('   - interests: ${profile.interests}');
-      print('   - onboardingComplete: ${profile.onboardingComplete}');
+      debugPrint('✅ ONBOARDING: Creating profile with data:');
+      debugPrint('   - uid: ${profile.uid}');
+      debugPrint('   - nickname: ${profile.nickname}');
+      debugPrint('   - school: ${profile.school}');
+      debugPrint('   - schoolYear: ${profile.schoolYear}');
+      debugPrint('   - interests: ${profile.interests}');
+      debugPrint('   - onboardingComplete: ${profile.onboardingComplete}');
 
       await ref.read(userRepositoryProvider).createUserProfile(profile);
-      print('✅ ONBOARDING: Profile created successfully in Firestore');
+      debugPrint('✅ ONBOARDING: Profile created successfully in Firestore');
 
       final analyticsService = ref.read(analyticsServiceProvider);
       await analyticsService.setUserProperties(
@@ -184,10 +185,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       // 2. Navigation happens immediately
       // 3. Router checks profile stream which hasn't received the update yet
       // 4. Router sees onboardingComplete=false and redirects back to onboarding
-      print('✅ ONBOARDING: Invalidating user profile provider to force refresh');
+      debugPrint('✅ ONBOARDING: Invalidating user profile provider to force refresh');
       ref.invalidate(userProfileProvider);
 
-      print('✅ ONBOARDING: Waiting for profile stream to emit updated data');
+      debugPrint('✅ ONBOARDING: Waiting for profile stream to emit updated data');
       bool profileConfirmed = false;
       try {
         // Wait for the stream to emit the updated profile with onboardingComplete=true
@@ -196,26 +197,26 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         );
         
         if (refreshedProfile != null && refreshedProfile.onboardingComplete) {
-          print('✅ ONBOARDING: Profile confirmed with onboardingComplete=true');
+          debugPrint('✅ ONBOARDING: Profile confirmed with onboardingComplete=true');
           profileConfirmed = true;
         } else {
-          print('⚠️ ONBOARDING: Profile not confirmed: profile=${refreshedProfile != null}, onboardingComplete=${refreshedProfile?.onboardingComplete}');
+          debugPrint('⚠️ ONBOARDING: Profile not confirmed: profile=${refreshedProfile != null}, onboardingComplete=${refreshedProfile?.onboardingComplete}');
         }
       } catch (e) {
-        print('⚠️ ONBOARDING: Timeout waiting for profile refresh: $e');
+        debugPrint('⚠️ ONBOARDING: Timeout waiting for profile refresh: $e');
       }
 
       if (!profileConfirmed) {
-        print('⚠️ ONBOARDING: Profile not confirmed but proceeding anyway (timeout or error)');
+        debugPrint('⚠️ ONBOARDING: Profile not confirmed but proceeding anyway (timeout or error)');
       }
 
-      print('✅ ONBOARDING: Navigating to /feed');
+      debugPrint('✅ ONBOARDING: Navigating to /feed');
       if (mounted) {
         context.go('/feed');
       }
     } catch (e) {
-      print('❌ ONBOARDING ERROR: ${e.toString()}');
-      print('   Stack trace: ${StackTrace.current}');
+      debugPrint('❌ ONBOARDING ERROR: ${e.toString()}');
+      debugPrint('   Stack trace: ${StackTrace.current}');
       _showError('Failed to complete onboarding: ${e.toString()}');
       setState(() => _isSubmitting = false);
     }

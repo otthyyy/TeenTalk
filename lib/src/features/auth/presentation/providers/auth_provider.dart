@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/auth_form_state.dart';
@@ -36,6 +37,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   void _init() {
     _authService.authStateChanges.listen((user) {
+      debugPrint('🔐 AUTH PROVIDER: authStateChanges event received. user=${user?.uid ?? 'null'}');
       if (user != null) {
         final authUser = AuthUser(
           uid: user.uid,
@@ -49,20 +51,53 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           authMethods: user.providerData.map((p) => p.providerId).toList(),
         );
 
-        print('🔐 AUTH PROVIDER: Auth state change detected -> user signed in');
-        print('   uid: ${authUser.uid}');
-        print('   email: ${authUser.email}');
-        print('   authMethods: ${authUser.authMethods}');
+        debugPrint('   uid: ${authUser.uid}');
+        debugPrint('   email: ${authUser.email}');
+        debugPrint('   authMethods: ${authUser.authMethods}');
 
+        if (_authUsersEqual(state.user, authUser)) {
+          debugPrint('   ⚠️ Auth user unchanged. Skipping state update to prevent rebuild loops.');
+          if (!state.isAuthenticated || state.isLoading) {
+            debugPrint('   ℹ️ Ensuring state reflects authenticated=true and loading=false');
+            state = state.copyWith(
+              isAuthenticated: true,
+              isLoading: false,
+            );
+          }
+          return;
+        }
+
+        debugPrint('   ➡️ Updating auth state with new user data');
         state = state.copyWith(
           isAuthenticated: true,
+          isLoading: false,
           user: authUser,
         );
       } else {
-        print('🔐 AUTH PROVIDER: Auth state change detected -> user signed out');
+        debugPrint('🔐 AUTH PROVIDER: Auth state change detected -> user signed out');
         state = AuthState.initial();
       }
     });
+  }
+
+  bool _authUsersEqual(AuthUser? current, AuthUser next) {
+    if (current == null) {
+      return false;
+    }
+
+    return current.uid == next.uid &&
+        current.email == next.email &&
+        current.phoneNumber == next.phoneNumber &&
+        current.displayName == next.displayName &&
+        current.photoURL == next.photoURL &&
+        current.emailVerified == next.emailVerified &&
+        current.isAnonymous == next.isAnonymous &&
+        current.createdAt == next.createdAt &&
+        listEquals(current.authMethods, next.authMethods) &&
+        current.isMinor == next.isMinor &&
+        current.parentalConsentProvided == next.parentalConsentProvided &&
+        current.gdprConsentProvided == next.gdprConsentProvided &&
+        current.termsAccepted == next.termsAccepted;
   }
 
   Future<void> signUpWithEmail({

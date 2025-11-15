@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/user_profile.dart';
 
@@ -33,11 +34,25 @@ class UserRepository {
   }
 
   Stream<UserProfile?> watchUserProfile(String uid) {
+    debugPrint('📄 USER REPOSITORY: Subscribing to users/$uid');
     return _firestore
         .collection('users')
         .doc(uid)
         .snapshots()
-        .map((doc) => doc.exists ? UserProfile.fromFirestore(doc) : null);
+        .map((doc) {
+          debugPrint('📄 USER REPOSITORY: Snapshot received for users/$uid (exists=${doc.exists})');
+          if (!doc.exists) {
+            debugPrint('📄 USER REPOSITORY: Document missing for users/$uid');
+            return null;
+          }
+
+          final data = doc.data();
+          debugPrint('📄 USER REPOSITORY: Document data: $data');
+
+          final profile = UserProfile.fromFirestore(doc);
+          debugPrint('📄 USER REPOSITORY: Parsed profile -> onboardingComplete=${profile.onboardingComplete}, school=${profile.school}, interests=${profile.interests}');
+          return profile;
+        });
   }
 
   Future<void> createUserProfile(UserProfile profile) async {
@@ -48,12 +63,12 @@ class UserRepository {
     data['nicknameLowercase'] = profile.nickname.trim().toLowerCase();
     data['searchKeywords'] = profile.generateSearchKeywords();
 
-    print('📄 USER REPOSITORY: Saving user profile for uid=${profile.uid}');
-    print('   Data: ${Map<String, dynamic>.from(data)}');
+    debugPrint('📄 USER REPOSITORY: Saving user profile for uid=${profile.uid}');
+    debugPrint('   Data: ${Map<String, dynamic>.from(data)}');
 
     batch.set(userRef, data, SetOptions(merge: true));
     await batch.commit();
-    print('📄 USER REPOSITORY: Profile saved successfully with merge:true');
+    debugPrint('📄 USER REPOSITORY: Profile saved successfully with merge:true');
   }
 
   Future<bool> updateUserProfile(
