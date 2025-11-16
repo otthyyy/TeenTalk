@@ -62,21 +62,35 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isOnLoadingPage ? null : '/loading';
       }
 
-      if (hasProfileError && isAuthenticated) {
-        debugPrint('   ➡️  Redirecting to onboarding (profile error)');
-        return isOnOnboardingPage ? null : '/onboarding';
-      }
-
       if (!isAuthenticated) {
         debugPrint('   ➡️  Redirecting to auth (not authenticated)');
         return isOnAuthPage ? null : '/auth';
       }
 
-      // Only redirect to onboarding if user hasn't completed it yet
-      // Don't redirect if they've completed onboarding but profile is incomplete
-      if (isAuthenticated && (!hasProfile || !hasCompletedOnboarding)) {
-        debugPrint('   ➡️  Redirecting to onboarding (no profile or onboarding not complete)');
+      // If there's a profile error but NO cached data, stay on loading
+      // This prevents redirecting to onboarding when we have an error but valid cached profile
+      if (hasProfileError && !hasProfile && isAuthenticated) {
+        debugPrint('   ➡️  Staying on loading (profile error with no cached data)');
+        return isOnLoadingPage ? null : '/loading';
+      }
+
+      // If we have no profile yet and no errors, send user to onboarding
+      if (isAuthenticated && !hasProfile && !hasProfileError) {
+        debugPrint('   ➡️  Redirecting to onboarding (profile missing)');
         return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      // Trust cached profile data for routing decisions, even if hasError=true
+      // Only redirect to onboarding if profile data shows onboarding is not complete
+      if (isAuthenticated && hasProfile && !hasCompletedOnboarding) {
+        debugPrint('   ➡️  Redirecting to onboarding (onboarding not complete)');
+        return isOnOnboardingPage ? null : '/onboarding';
+      }
+
+      // If we have a profile with completed onboarding, allow access
+      // This works even with hasError=true by trusting cached data
+      if (isAuthenticated && hasProfile && hasCompletedOnboarding) {
+        debugPrint('   ✅ Has completed onboarding - allowing navigation (hasError=$hasProfileError)');
       }
 
       if (isOnAdminPage && !isAdminUser) {
