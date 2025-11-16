@@ -121,7 +121,21 @@ class PostsRepository {
       query = query.startAfterDocument(lastDocument);
     }
 
-    final QuerySnapshot snapshot = await query.get();
+    final QuerySnapshot snapshot;
+    try {
+      snapshot = await query.get();
+    } on FirebaseException catch (e, stackTrace) {
+      _logger.e('Firestore query failed', error: e, stackTrace: stackTrace);
+      debugPrint('🔥 FIRESTORE QUERY ERROR: ${e.code}');
+      debugPrint('   Message: ${e.message}');
+      debugPrintStack(stackTrace: stackTrace);
+      
+      if (e.code == 'failed-precondition' && e.message?.contains('index') == true) {
+        _logger.e('Missing Firestore index. Query: isModerated=false, section=$section, school=$school, sort=${sortOption.name}');
+        throw Exception('Database index required for this query. Please check Firebase Console and deploy indexes.');
+      }
+      rethrow;
+    }
 
     final posts = snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;

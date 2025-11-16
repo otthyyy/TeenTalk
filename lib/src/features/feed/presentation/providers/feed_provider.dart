@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
@@ -212,8 +213,52 @@ class FeedNotifier extends StateNotifier<FeedState> {
       );
 
       _setupRealtimeUpdates(resolvedSection, resolvedSchool);
-    } catch (e) {
-      _logger.e('Error loading posts', error: e);
+    } on FirebaseException catch (e, stackTrace) {
+      _logger.e('Firestore error loading posts', error: e, stackTrace: stackTrace);
+      debugPrint('🔥 FIRESTORE ERROR: ${e.code}');
+      debugPrint('   Message: ${e.message}');
+      debugPrintStack(stackTrace: stackTrace);
+
+      String errorMessage = e.toString();
+      
+      if (e.code == 'failed-precondition' && e.message?.contains('index') == true) {
+        errorMessage = 'Database index required. Please contact support or check Firebase Console to create the required index.';
+        _logger.e('Missing Firestore index for posts query. Section: $section, School: $school, Sort: ${effectiveSortOption.name}');
+        _logger.e('Index configuration needed in firestore.indexes.json');
+      } else if (e.code == 'permission-denied') {
+        errorMessage = 'Permission denied. Please check if you\'re signed in.';
+      }
+
+      if (!_connectivityService.isConnected) {
+        final resolvedSection = _currentSection ?? 'spotted';
+        final cacheEntry = await _cacheService.getCachedPosts(
+          sortOption: effectiveSortOption,
+          section: resolvedSection,
+          school: _currentSchool,
+        );
+
+        if (cacheEntry != null && cacheEntry.posts.isNotEmpty) {
+          _logger.i('Fallback to cache after Firestore error');
+          state = state.copyWith(
+            posts: cacheEntry.posts,
+            isLoading: false,
+            hasMore: false,
+            isOffline: true,
+            lastSyncedAt: cacheEntry.lastSyncedAt,
+            error: null,
+          );
+          return;
+        }
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+    } catch (e, stackTrace) {
+      _logger.e('Error loading posts', error: e, stackTrace: stackTrace);
+      debugPrint('❌ ERROR loading posts: $e');
+      debugPrintStack(stackTrace: stackTrace);
 
       if (!_connectivityService.isConnected) {
         final resolvedSection = _currentSection ?? 'spotted';
