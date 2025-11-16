@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,15 +30,18 @@ final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((r
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
 
-  AuthStateNotifier(this._authService, this._analyticsService) 
-      : super(AuthState.initial()) {
+  AuthStateNotifier(
+    this._authService,
+    this._analyticsService,
+  ) : super(AuthState.initial()) {
     _init();
   }
   final FirebaseAuthService _authService;
   final AnalyticsService _analyticsService;
+  StreamSubscription<User?>? _authSubscription;
 
   void _init() {
-    _authService.authStateChanges.listen((user) {
+    _authSubscription = _authService.authStateChanges.listen((user) {
       debugPrint('🔐 AUTH PROVIDER: authStateChanges event received. user=${user?.uid ?? 'null'}');
       if (user != null) {
         final authUser = AuthUser(
@@ -78,6 +83,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         state = AuthState.initial();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 
   bool _authUsersEqual(AuthUser? current, AuthUser next) {

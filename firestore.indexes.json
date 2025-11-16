@@ -111,6 +111,24 @@
       ]
     },
     {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "searchKeywords",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "profileVisible",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nicknameLowercase",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "posts",
       "queryScope": "COLLECTION",
       "fields": [
@@ -131,6 +149,156 @@
         {
           "fieldPath": "isAnonymous",
           "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "school",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likeCount",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "school",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likeCount",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "engagementScore",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isModerated",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "section",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "school",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "engagementScore",
+          "order": "DESCENDING"
         },
         {
           "fieldPath": "createdAt",
@@ -246,169 +414,6 @@
         },
         {
           "fieldPath": "timestamp",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "searchKeywords",
-          "arrayConfig": "CONTAINS"
-        },
-        {
-          "fieldPath": "school",
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "searchKeywords",
-          "arrayConfig": "CONTAINS"
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "school",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "searchKeywords",
-          "arrayConfig": "CONTAINS"
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "likeCount",
-          "order": "DESCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "users",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "searchKeywords",
-          "arrayConfig": "CONTAINS"
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "school",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "likeCount",
-          "order": "DESCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "users",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "searchKeywords",
-          "arrayConfig": "CONTAINS"
-        },
-        {
-          "fieldPath": "profileVisible",
-          "order": "ASCENDING"
-        },
-        {
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "engagementScore",
-          "order": "DESCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "isModerated",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "section",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "school",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "engagementScore",
-          "order": "DESCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
           "order": "DESCENDING"
         }
       ]
