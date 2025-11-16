@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../profile/data/repositories/user_repository.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import 'dart:async';
 
 class NicknameStep extends ConsumerStatefulWidget {
@@ -66,8 +67,13 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
 
   Future<void> _checkNicknameAvailability(String nickname) async {
     try {
-      final isAvailable =
-          await ref.read(userRepositoryProvider).isNicknameAvailable(nickname);
+      // Get current user's UID to exclude their own nickname from availability check
+      final currentUid = ref.read(firebaseAuthServiceProvider).currentUser?.uid;
+      
+      final isAvailable = await ref.read(userRepositoryProvider).isNicknameAvailable(
+        nickname,
+        excludeUid: currentUid,
+      );
 
       if (mounted) {
         setState(() {

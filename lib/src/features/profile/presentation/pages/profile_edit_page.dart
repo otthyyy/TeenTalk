@@ -8,7 +8,6 @@ import '../providers/user_profile_provider.dart';
 import '../../../../core/constants/brescia_schools.dart';
 import '../../../../core/providers/image_cache_provider.dart';
 import '../../../../core/constants/user_interests.dart';
-import 'dart:async';
 
 class ProfileEditPage extends ConsumerStatefulWidget {
   const ProfileEditPage({super.key});
@@ -124,8 +123,13 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
 
   Future<void> _checkNicknameAvailability(String nickname) async {
     try {
-      final isAvailable =
-          await ref.read(userRepositoryProvider).isNicknameAvailable(nickname);
+      final profileAsync = ref.read(userProfileProvider);
+      final currentUid = profileAsync.value?.uid;
+      
+      final isAvailable = await ref.read(userRepositoryProvider).isNicknameAvailable(
+        nickname,
+        excludeUid: currentUid,
+      );
 
       if (mounted) {
         setState(() {
