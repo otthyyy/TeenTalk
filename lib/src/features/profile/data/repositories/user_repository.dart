@@ -183,11 +183,11 @@ class UserRepository {
             throw Exception('Nickname already taken');
           }
 
+          final existingCreatedAt = newUsernameDoc.data()?['createdAt'];
+
           transaction.set(newUsernameRef, {
             'uid': uid,
-            'createdAt': newUsernameDoc.exists
-                ? newUsernameDoc.data()?['createdAt']
-                : FieldValue.serverTimestamp(),
+            'createdAt': existingCreatedAt ?? FieldValue.serverTimestamp(),
             'updatedAt': FieldValue.serverTimestamp(),
           });
 
