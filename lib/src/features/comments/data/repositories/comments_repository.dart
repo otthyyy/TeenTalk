@@ -41,6 +41,15 @@ class CommentsRepository {
 
       final lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
       return (comments, lastDoc);
+    } on FirebaseException catch (error, stackTrace) {
+      debugPrint('getCommentsByPostId Firebase error: ${error.message}');
+      debugPrintStack(stackTrace: stackTrace);
+      _logMissingIndexHint(
+        error,
+        queryDescription:
+            'comments where postId == $postId, isModerated == false, ordered by createdAt',
+      );
+      throw _mapError(error);
     } catch (error, stackTrace) {
       debugPrint('getCommentsByPostId error: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -385,10 +394,40 @@ class CommentsRepository {
           'id': doc.id,
         });
       }).toList();
+    } on FirebaseException catch (error, stackTrace) {
+      debugPrint('getRepliesForComment Firebase error: ${error.message}');
+      debugPrintStack(stackTrace: stackTrace);
+      _logMissingIndexHint(
+        error,
+        queryDescription:
+            'comments where replyToCommentId == $commentId, isModerated == false, ordered by createdAt',
+      );
+      throw _mapError(error);
     } catch (error, stackTrace) {
       debugPrint('getRepliesForComment error: $error');
       debugPrintStack(stackTrace: stackTrace);
       throw _mapError(error);
+    }
+  }
+
+  void _logMissingIndexHint(
+    FirebaseException exception, {
+    required String queryDescription,
+  }) {
+    if (exception.code != 'failed-precondition') {
+      return;
+    }
+
+    final message = exception.message ?? '';
+    if (!message.toLowerCase().contains('index')) {
+      return;
+    }
+
+    debugPrint('⚠️ Firestore index missing for $queryDescription');
+
+    final match = RegExp(r'https://[^\s)]+').firstMatch(message);
+    if (match != null) {
+      debugPrint('➡️ Create index: ${match.group(0)}');
     }
   }
 

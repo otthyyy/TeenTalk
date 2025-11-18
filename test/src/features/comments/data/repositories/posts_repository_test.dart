@@ -188,6 +188,7 @@ void main() {
           authorNickname: 'Author One',
           isAnonymous: false,
           content: 'Hello @friend1 and @friend2',
+          section: 'spotted',
         );
 
         expect(post.mentionedUserIds, ['friend1', 'friend2']);
@@ -203,6 +204,7 @@ void main() {
           authorNickname: 'Mystery',
           isAnonymous: true,
           content: 'Anonymous post content',
+          section: 'general',
         );
 
         expect(post.isAnonymous, true);
@@ -219,9 +221,39 @@ void main() {
             authorNickname: 'Author One',
             isAnonymous: false,
             content: '   ',
+            section: 'general',
           ),
           throwsA(isA<PostValidationException>()),
         );
+      });
+
+      test('throws PostValidationException when section is empty', () async {
+        expect(
+          () => repository.createPost(
+            authorId: 'author1',
+            authorNickname: 'Author One',
+            isAnonymous: false,
+            content: 'Valid content',
+            section: '   ',
+          ),
+          throwsA(isA<PostValidationException>()),
+        );
+      });
+
+      test('creates post with correct section field', () async {
+        final post = await repository.createPost(
+          authorId: 'author1',
+          authorNickname: 'Author One',
+          isAnonymous: false,
+          content: 'Post for general section',
+          section: 'general',
+        );
+
+        expect(post.section, 'general');
+
+        final stored = await firestore.collection('posts').doc(post.id).get();
+        expect(stored.exists, true);
+        expect(stored.get('section'), 'general');
       });
 
       test('creates post with image after upload completes', () async {
@@ -234,6 +266,7 @@ void main() {
           content: 'Post with image',
           imageBytes: imageBytes,
           imageName: 'test.jpg',
+          section: 'spotted',
         );
 
         expect(post.imageUrl, isNotNull);
@@ -250,6 +283,7 @@ void main() {
           authorNickname: 'Author One',
           isAnonymous: false,
           content: 'Test merge post',
+          section: 'general',
         );
 
         final stored = await firestore.collection('posts').doc(post.id).get();
@@ -335,6 +369,7 @@ void main() {
           isAnonymous: false,
           content: 'Test content',
           imageBytes: imageBytes,
+          section: 'spotted',
         );
 
         await Future<void>.delayed(const Duration(milliseconds: 20));
@@ -369,6 +404,7 @@ void main() {
             isAnonymous: false,
             content: 'Test content',
             imageBytes: imageBytes,
+            section: 'spotted',
           ),
           throwsA(isA<PostStorageException>()),
         );

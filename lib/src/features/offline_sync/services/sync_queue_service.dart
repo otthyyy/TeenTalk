@@ -196,12 +196,18 @@ class SyncQueueService {
     final data = action.data;
     final repository = PostsRepository();
 
+    final rawSection = data['section'] as String?;
+    final section = rawSection?.trim();
+    if (section == null || section.isEmpty) {
+      throw Exception('Cannot sync post without a valid section.');
+    }
+
     await repository.createPost(
       authorId: data['authorId'] as String,
       authorNickname: data['authorNickname'] as String,
       isAnonymous: data['isAnonymous'] as bool,
       content: data['content'] as String,
-      section: data['section'] as String? ?? 'spotted',
+      section: section,
       school: data['school'] as String?,
     );
   }

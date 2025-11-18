@@ -310,11 +310,18 @@ class PostsRepository {
     File? imageFile,
     Uint8List? imageBytes,
     String? imageName,
-    String section = 'spotted',
+    required String section,
     String? school,
   }) async {
     _logger.i('[PostsRepository] createPost start author=$authorId section=$section');
     try {
+      if (section.trim().isEmpty) {
+        throw const PostValidationException(
+          'Post section cannot be empty',
+          userMessage: 'Please select a section for your post.',
+        );
+      }
+      
       await validatePostContent(content);
 
       final now = DateTime.now();
