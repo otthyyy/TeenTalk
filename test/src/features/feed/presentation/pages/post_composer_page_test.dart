@@ -97,7 +97,7 @@ class _MockPostsRepository extends PostsRepository {
     File? imageFile,
     Uint8List? imageBytes,
     String? imageName,
-    String section = 'spotted',
+    required String section,
     String? school,
   }) async {
     if (delay != null) {

@@ -94,14 +94,37 @@ class AnalyticsService {
     if (!_isEnabled) return;
 
     try {
+      final coercedParameters = parameters != null 
+          ? _coerceParameters(parameters) 
+          : null;
+      
       await _analytics.logEvent(
         name: name,
-        parameters: parameters,
+        parameters: coercedParameters,
       );
-      _logger.d('Analytics event logged: $name with parameters: $parameters');
+      _logger.d('Analytics event logged: $name with parameters: $coercedParameters');
     } catch (e) {
       _logger.e('Error logging event $name: $e');
     }
+  }
+
+  /// Coerce parameter values to Firebase Analytics compatible types.
+  /// Firebase Analytics only accepts String and num (int/double) values.
+  /// Converts booleans to 0/1 and other types to strings.
+  Map<String, Object> _coerceParameters(Map<String, dynamic> parameters) {
+    return parameters.map((key, value) {
+      final Object coercedValue;
+      if (value is bool) {
+        coercedValue = value ? 1 : 0;
+      } else if (value is String || value is num) {
+        coercedValue = value;
+      } else if (value == null) {
+        coercedValue = 'null';
+      } else {
+        coercedValue = value.toString();
+      }
+      return MapEntry(key, coercedValue);
+    });
   }
 
   // Auth & Onboarding Events
