@@ -98,6 +98,98 @@ flutter pub run flutter_native_splash:create
 
 No manual editing of platform-specific folders required. These tools automatically generate all density-specific icons and splash screens.
 
+## Icon System and Asset Pipeline
+
+### Naming Conventions
+All asset files must follow **kebab-case** naming (lowercase with hyphens):
+- ✅ Good: `profile-icon.png`, `loading-animation.json`, `success-checkmark.riv`
+- ❌ Bad: `ProfileIcon.png`, `loading_animation.json`, `SuccessCheckmark.riv`
+
+### Storage Locations
+
+#### Icons (Package-based)
+The app uses the `remixicon` and `feather_icons` packages for all primary navigation and action icons. Access them via the `TTIcons` class:
+```dart
+import 'package:teen_talk_app/src/core/theme/app_icons.dart';
+
+Icon(TTIcons.home)           // Primary state
+Icon(TTIcons.homeFilled)     // Active/selected state
+```
+
+#### Custom Icons/Images
+For custom icons or images not available in the icon packages:
+- Location: `assets/icons/`
+- Usage: Reference via `TTAssets` class
+```dart
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+
+Image.asset(TTAssets.icon('custom-icon-name.png'))
+// Or for predefined icons:
+Image.asset(TTAssets.iconsGoogle)
+```
+
+#### Animations
+
+**Rive Animations**
+- Location: `assets/animations/rive/`
+- Supported formats: `.riv`
+- Usage:
+```dart
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+RiveAnimation.asset(TTAssets.rive('loading-spinner.riv'))
+```
+
+**Lottie Animations**
+- Location: `assets/animations/lottie/`
+- Supported formats: `.json`
+- Usage:
+```dart
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+Lottie.asset(TTAssets.lottie('success-animation.json'))
+```
+
+### Adding New Assets
+
+#### Icons
+1. For standard UI icons, check if they exist in `TTIcons` first (covers 200+ icons)
+2. For custom icons:
+   - Add file to `assets/icons/` with kebab-case name
+   - Use PNG format with transparency
+   - Provide @2x and @3x variants for different densities
+   - Reference via `TTAssets.icon('file-name.png')`
+
+#### Animations
+1. For Rive animations:
+   - Export from Rive editor as `.riv` file
+   - Use kebab-case naming
+   - Place in `assets/animations/rive/`
+   - Reference via `TTAssets.rive('animation-name.riv')`
+
+2. For Lottie animations:
+   - Export from After Effects or use LottieFiles
+   - Use kebab-case naming
+   - Place in `assets/animations/lottie/`
+   - Reference via `TTAssets.lottie('animation-name.json')`
+
+### Icon Sizes and Accessibility
+All icons follow design tokens from `DesignTokens`:
+- **Small**: 16dp (secondary actions)
+- **Medium**: 20dp (inline actions)
+- **Default**: 24dp (primary actions)
+- **Large**: 32dp (featured actions)
+- **Extra Large**: 40dp (hero elements)
+
+**Important**: All interactive icon buttons must have a minimum tap target of 44dp × 44dp for accessibility. Use appropriate padding to ensure this.
+
+### Asset Pipeline Checklist
+When adding assets:
+1. ✅ Use kebab-case naming
+2. ✅ Place in correct directory (`icons/`, `animations/rive/`, or `animations/lottie/`)
+3. ✅ Update `TTAssets` if adding predefined constants
+4. ✅ For images: provide @2x and @3x variants
+5. ✅ Run `flutter pub get` after updating `pubspec.yaml`
+6. ✅ Test on multiple screen densities and dark/light themes
+
 ## Testing
 
 After adding actual images, run `flutter pub get` and test the app with `flutter run` to ensure all assets load correctly on different platforms.

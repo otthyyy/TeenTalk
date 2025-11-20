@@ -14,6 +14,9 @@ import 'package:teen_talk_app/src/core/analytics/analytics_provider.dart';
 import 'package:teen_talk_app/src/core/services/rate_limit_service.dart';
 import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
+import 'package:teen_talk_app/src/core/motion/motion_presets.dart';
+import 'package:teen_talk_app/src/core/theme/design_tokens.dart';
+import 'package:teen_talk_app/src/core/theme/app_icons.dart';
 import 'package:teen_talk_app/src/features/offline_sync/services/offline_submission_helper.dart';
 import 'package:teen_talk_app/src/core/exceptions/post_exceptions.dart';
 import 'package:teen_talk_app/src/features/comments/presentation/providers/comments_provider.dart';
@@ -125,7 +128,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt),
+              leading: const Icon(TTIcons.camera, size: TTIcons.sizeDefault),
               title: const Text('Take Photo'),
               onTap: () {
                 Navigator.of(context).pop();
@@ -133,7 +136,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library),
+              leading: const Icon(TTIcons.image, size: TTIcons.sizeDefault),
               title: const Text('Choose from Gallery'),
               onTap: () {
                 Navigator.of(context).pop();
@@ -142,7 +145,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             ),
             if (_selectedImageFile != null || _selectedImageBytes != null)
               ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
+                leading: const Icon(TTIcons.delete, color: Colors.red, size: TTIcons.sizeDefault),
                 title: const Text('Remove Image', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -162,6 +165,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final theme = Theme.of(context);
     final authState = ref.read(authStateProvider);
     final userProfile = ref.read(userProfileProvider).value;
     final rateLimitService = ref.read(rateLimitServiceProvider);
@@ -294,7 +298,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.userMessage ?? e.message),
-          backgroundColor: Colors.red,
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } on PostStorageException catch (e) {
@@ -302,7 +307,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.userMessage ?? 'Failed to upload image. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } on ImageValidationException catch (e) {
@@ -310,7 +316,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.userMessage ?? e.message),
-          backgroundColor: Colors.red,
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } on PostException catch (e, stackTrace) {
@@ -319,7 +326,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.userMessage ?? 'Failed to create post. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: theme.colorScheme.error,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } catch (e, stackTrace) {
@@ -407,6 +415,17 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Post'),
+        bottom: _isUploading
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(4),
+                child: LinearProgressIndicator(
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
+                  ),
+                ),
+              )
+            : null,
         actions: [
           TextButton(
             onPressed: _isUploading ? null : _showPostingGuidelines,
@@ -449,12 +468,12 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 if (status.canSubmit && status.isNearLimit) 
                   _buildWarningBanner(status, theme, l10n),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing, vertical: DesignTokens.spacingMd),
                   child: _buildRateLimitProgress(status, config, theme, l10n),
                 ),
                 // Section selection
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(DesignTokens.spacing),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -462,22 +481,24 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                         'Section',
                         style: theme.textTheme.titleSmall,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: DesignTokens.spacingSm),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: _sections.map((section) {
                             final isSelected = section['value'] == _selectedSection;
                             return Padding(
-                              padding: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.only(right: DesignTokens.spacingSm),
                               child: FilterChip(
                                 label: Text(section['label']!),
                                 selected: isSelected,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    _selectedSection = section['value']!;
-                                  });
-                                },
+                                onSelected: _isUploading
+                                    ? null
+                                    : (selected) {
+                                        setState(() {
+                                          _selectedSection = section['value']!;
+                                        });
+                                      },
                               ),
                             );
                           }).toList(),
@@ -490,11 +511,12 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 // Content input
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(DesignTokens.spacing),
                     child: TextFormField(
                       controller: _contentController,
                       maxLines: null,
                       expands: true,
+                      enabled: !_isUploading,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please enter some content';
@@ -520,8 +542,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 // Image preview
                 if (_selectedImageFile != null || _selectedImageBytes != null)
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing),
+                    padding: const EdgeInsets.all(DesignTokens.spacingSm),
                     decoration: BoxDecoration(
                       border: Border.all(color: theme.colorScheme.outline),
                       borderRadius: BorderRadius.circular(12),
@@ -565,6 +587,19 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                           top: 8,
                           right: 8,
                           child: IconButton(
+                            onPressed: _isUploading
+                                ? null
+                                : () {
+                                    setState(() {
+                                      _selectedImageFile = null;
+                                      _selectedImageBytes = null;
+                                      _selectedImageName = null;
+                                    });
+                                  },
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54,
+                              disabledBackgroundColor: Colors.black26,
                             onPressed: () {
                               setState(() {
                                 _selectedImageFile = null;
@@ -572,9 +607,10 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                                 _selectedImageName = null;
                               });
                             },
-                            icon: const Icon(Icons.close, color: Colors.white),
+                            icon: const Icon(TTIcons.close, color: Colors.white, size: TTIcons.sizeDefault),
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.black54,
+                              minimumSize: const Size(TTIcons.minTapTarget, TTIcons.minTapTarget),
                             ),
                           ),
                         ),
@@ -584,7 +620,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 
                 // Anonymous toggle and image button
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(DesignTokens.spacing),
                   child: Row(
                     children: [
                       Expanded(
@@ -592,11 +628,13 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                           children: [
                             Switch(
                               value: _isAnonymous,
-                              onChanged: (value) {
-                                setState(() {
-                                  _isAnonymous = value;
-                                });
-                              },
+                              onChanged: _isUploading
+                                  ? null
+                                  : (value) {
+                                      setState(() {
+                                        _isAnonymous = value;
+                                      });
+                                    },
                             ),
                             const Text('Post anonymously'),
                           ],
@@ -604,7 +642,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                       ),
                       IconButton.outlined(
                         onPressed: _isUploading ? null : _showImagePicker,
-                        icon: const Icon(Icons.photo_library),
+                        icon: const Icon(TTIcons.image, size: TTIcons.sizeDefault),
                       ),
                     ],
                   ),
@@ -639,9 +677,19 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                           ),
                   ),
                 ),
+                if (_isUploading)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing),
+                    child: LinearProgressIndicator(
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
               ],
             ),
-          );
+          ).composerEntrance();
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) {
@@ -665,7 +713,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.block, color: theme.colorScheme.onErrorContainer),
+              Icon(
+                TTIcons.blockFilled,
+                color: theme.colorScheme.onErrorContainer,
+                size: TTIcons.sizeDefault,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -703,7 +755,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: theme.colorScheme.onTertiaryContainer),
+          Icon(
+            TTIcons.warningFilled,
+            color: theme.colorScheme.onTertiaryContainer,
+            size: TTIcons.sizeDefault,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
