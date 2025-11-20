@@ -14,8 +14,8 @@ class AnimationUtils {
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: duration ?? DesignTokens.duration,
-      curve: curve ?? DesignTokens.curveEmphasized,
+      duration: duration ?? AppMotion.base,
+      curve: curve ?? AppMotion.emphasized,
       builder: (context, value, child) {
         return Transform.translate(
           offset: Offset(0, 20 * (1 - value)),
@@ -37,8 +37,8 @@ class AnimationUtils {
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.8, end: 1.0),
-      duration: duration ?? DesignTokens.durationFast,
-      curve: curve ?? DesignTokens.curveBounce,
+      duration: duration ?? AppMotion.fast,
+      curve: curve ?? AppMotion.bounce,
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
@@ -121,7 +121,7 @@ class _AnimatedCardState extends State<AnimatedCard>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: DesignTokens.curveEmphasized,
+        curve: AppMotion.emphasized,
       ),
     );
 
@@ -131,7 +131,7 @@ class _AnimatedCardState extends State<AnimatedCard>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: DesignTokens.curveEmphasized,
+        curve: AppMotion.emphasized,
       ),
     );
 
@@ -198,7 +198,7 @@ class _AnimatedPressableState extends State<AnimatedPressable>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: DesignTokens.curveSnappy,
+        curve: AppMotion.snappy,
       ),
     );
   }
@@ -290,7 +290,7 @@ class SmoothPageRoute<T> extends PageRouteBuilder<T> {
             final tween = Tween(begin: begin, end: end);
             final offsetAnimation = animation.drive(
               tween.chain(
-                CurveTween(curve: DesignTokens.curveEmphasized),
+                CurveTween(curve: AppMotion.emphasized),
               ),
             );
 
