@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -10,6 +11,7 @@ import '../../../../core/services/analytics_provider.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
+import '../../../../core/motion/motion_presets.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import 'liker_list_modal.dart';
@@ -334,13 +336,17 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
     return Semantics(
       label: 'Post image',
       image: true,
-      child: CachedImageWidget(
-        imageUrl: widget.post.imageUrl!,
-        width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
-        borderRadius: BorderRadius.circular(12),
-        enableInstrumentation: true,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(DesignTokens.radiusMd),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: CachedImageWidget(
+            imageUrl: widget.post.imageUrl!,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            enableInstrumentation: true,
+          ),
+        ),
       ),
     );
   }
@@ -375,48 +381,53 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                   widget.onLike();
                 }
               },
-              child: AnimatedScale(
-                scale: _isLikeAnimating ? 1.2 : 1.0,
-                duration: DesignTokens.durationFast,
-                curve: DesignTokens.curveBounce,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  decoration: BoxDecoration(
-                    color: isLiked
-                        ? DesignTokens.vibrantPink
-                        : theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        size: 20,
-                        color: isLiked
-                            ? Colors.white
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: widget.post.likeCount > 0 ? _onLikeCountTap : null,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            widget.post.likeCount.toString(),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: isLiked
-                                  ? Colors.white
-                                  : theme.colorScheme.onSurfaceVariant,
-                              fontWeight:
-                                  widget.post.likeCount > 0 ? FontWeight.w600 : FontWeight.normal,
-                            ),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                decoration: BoxDecoration(
+                  color: isLiked
+                      ? DesignTokens.vibrantPink
+                      : theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isLiked ? Icons.favorite : Icons.favorite_border,
+                      size: 20,
+                      color: isLiked
+                          ? Colors.white
+                          : theme.colorScheme.onSurfaceVariant,
+                    )
+                        .animate(
+                          target: _isLikeAnimating ? 1 : 0,
+                        )
+                        .scale(
+                          begin: const Offset(1.0, 1.0),
+                          end: const Offset(1.3, 1.3),
+                          duration: MotionPresets.microDuration,
+                          curve: MotionPresets.microCurve,
+                        ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: widget.post.likeCount > 0 ? _onLikeCountTap : null,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Text(
+                          widget.post.likeCount.toString(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isLiked
+                                ? Colors.white
+                                : theme.colorScheme.onSurfaceVariant,
+                            fontWeight:
+                                widget.post.likeCount > 0 ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -429,7 +440,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
             child: AnimatedPressable(
               onPressed: widget.onComments,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
@@ -442,7 +454,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                       size: 20,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     Text(
                       widget.post.commentCount.toString(),
                       style: theme.textTheme.bodySmall?.copyWith(

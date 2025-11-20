@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/motion/motion_presets.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
@@ -133,12 +134,15 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
           ),
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
+          duration: MotionPresets.durationNormal,
           transitionBuilder: (child, animation) {
             final slideAnimation = Tween<Offset>(
               begin: const Offset(0, 0.1),
               end: Offset.zero,
-            ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: MotionPresets.curveSnappy,
+            ));
 
             return FadeTransition(
               opacity: animation,
@@ -156,7 +160,7 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
                   replyToAuthorNickname: _replyToAuthorNickname,
                   onCommentPosted: _handleCommentPosted,
                   onCancelReply: _closeComposer,
-                )
+                ).composerEntrance()
               : const SizedBox.shrink(),
         ),
       ],
@@ -287,53 +291,42 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
         }
 
         final comment = commentsState.comments[index];
-        return TweenAnimationBuilder<double>(
+        return CommentWidget(
           key: ValueKey(comment.id),
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) => Opacity(
-            opacity: value,
-            child: Transform.translate(
-              offset: Offset(0, (1 - value) * 12),
-              child: child,
-            ),
-          ),
-          child: CommentWidget(
-            comment: comment,
-            currentUserId: currentUserId ?? '',
-            onReply: () {
-              final nickname = comment.isAnonymous
-                  ? 'Anonymous'
-                  : comment.authorNickname;
-              _openComposer(
-                replyToCommentId: comment.id,
-                replyToAuthor: nickname,
-              );
-            },
-            onLike: () {
-              if (currentUserId == null || currentUserId.isEmpty) {
-                _showAuthRequiredMessage();
-                return;
-              }
-              ref.read(commentsProvider(widget.postId).notifier).likeComment(
-                    comment.id,
-                    currentUserId,
-                  );
-            },
-            onUnlike: () {
-              if (currentUserId == null || currentUserId.isEmpty) {
-                _showAuthRequiredMessage();
-                return;
-              }
-              ref.read(commentsProvider(widget.postId).notifier).unlikeComment(
-                    comment.id,
-                    currentUserId,
-                  );
-            },
-            onReport: () => _showReportDialog(comment),
-          ),
-        );
+          comment: comment,
+          currentUserId: currentUserId ?? '',
+          onReply: () {
+            final nickname = comment.isAnonymous
+                ? 'Anonymous'
+                : comment.authorNickname;
+            _openComposer(
+              replyToCommentId: comment.id,
+              replyToAuthor: nickname,
+            );
+          },
+          onLike: () {
+            if (currentUserId == null || currentUserId.isEmpty) {
+              _showAuthRequiredMessage();
+              return;
+            }
+            ref.read(commentsProvider(widget.postId).notifier).likeComment(
+                  comment.id,
+                  currentUserId,
+                );
+          },
+          onUnlike: () {
+            if (currentUserId == null || currentUserId.isEmpty) {
+              _showAuthRequiredMessage();
+              return;
+            }
+            ref.read(commentsProvider(widget.postId).notifier).unlikeComment(
+                  comment.id,
+                  currentUserId,
+                );
+          },
+          onReport: () => _showReportDialog(comment),
+        ).staggeredListItem(index);
+
       },
     );
   }
