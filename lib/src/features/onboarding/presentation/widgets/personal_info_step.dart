@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+import 'package:teen_talk_app/src/core/providers/animation_preferences_provider.dart';
+import 'package:teen_talk_app/src/core/widgets/lazy_lottie.dart';
 import '../../../../core/constants/brescia_schools.dart';
 
-class PersonalInfoStep extends StatefulWidget {
+class PersonalInfoStep extends ConsumerStatefulWidget {
 
   const PersonalInfoStep({
     super.key,
@@ -20,10 +24,10 @@ class PersonalInfoStep extends StatefulWidget {
   final VoidCallback onBack;
 
   @override
-  State<PersonalInfoStep> createState() => _PersonalInfoStepState();
+  ConsumerState<PersonalInfoStep> createState() => _PersonalInfoStepState();
 }
 
-class _PersonalInfoStepState extends State<PersonalInfoStep> {
+class _PersonalInfoStepState extends ConsumerState<PersonalInfoStep> {
   String? _selectedGender;
   String? _selectedSchool;
 
@@ -42,16 +46,25 @@ class _PersonalInfoStepState extends State<PersonalInfoStep> {
 
   @override
   Widget build(BuildContext context) {
+    final motionEnabledAsync = ref.watch(isMotionEnabledProvider);
+    final shouldAnimate = motionEnabledAsync.when(
+      data: (enabled) => enabled,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 32),
-          const Icon(
-            Icons.school_outlined,
-            size: 80,
-            color: Colors.blue,
+          LazyLottie(
+            assetPath: TTAssets.lottieOnboardingWelcome,
+            shouldAnimate: shouldAnimate,
+            width: 160,
+            height: 160,
+            fallbackIcon: Icons.school_outlined,
           ),
           const SizedBox(height: 24),
           Text(

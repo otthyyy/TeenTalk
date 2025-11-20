@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+import 'package:teen_talk_app/src/core/providers/animation_preferences_provider.dart';
+import 'package:teen_talk_app/src/core/widgets/lazy_lottie.dart';
 import '../pages/feed_sections_page.dart';
 
-class EmptyStateWidget extends StatelessWidget {
+class EmptyStateWidget extends ConsumerWidget {
 
   const EmptyStateWidget({
     super.key,
@@ -10,17 +14,25 @@ class EmptyStateWidget extends StatelessWidget {
   final FeedSection section;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final motionEnabledAsync = ref.watch(isMotionEnabledProvider);
+    final shouldAnimate = motionEnabledAsync.when(
+      data: (enabled) => enabled,
+      loading: () => false,
+      error: (_, __) => false,
+    );
     
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            _getSectionIcon(),
-            size: 64,
-            color: theme.colorScheme.onSurfaceVariant,
+          LazyLottie(
+            assetPath: TTAssets.lottieEmptyState,
+            shouldAnimate: shouldAnimate,
+            width: 200,
+            height: 200,
+            fallbackIcon: _getSectionIcon(),
           ),
           const SizedBox(height: 16),
           Text(

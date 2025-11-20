@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/connectivity_provider.dart';
+import '../../../../core/providers/animation_preferences_provider.dart';
 import '../../../../core/widgets/splash_screen.dart';
+import '../../../../core/widgets/rive_splash.dart';
+import '../../../../core/widgets/first_run_intro_overlay.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 
@@ -18,6 +21,11 @@ class SplashPage extends ConsumerStatefulWidget {
 class _SplashPageState extends ConsumerState<SplashPage> {
   Timer? _timeoutTimer;
   bool _timedOut = false;
+  bool _showRiveSplash = false;
+  bool _riveCompleted = false;
+  bool _motionEnabled = true;
+  bool _shouldShowIntroOverlay = false;
+  bool _introDialogVisible = false;
 
   void _restartTimeout() {
     _timeoutTimer?.cancel();
@@ -50,6 +58,85 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _checkIfShouldShowRiveSplash();
+  }
+
+  Future<void> _checkIfShouldShowRiveSplash() async {
+    final animationService = ref.read(animationPreferencesServiceProvider);
+    final hasSeenIntro = await animationService.hasSeenIntro();
+    final skipAnimation = animationService.shouldSkipSplashAnimation();
+    final motionEnabled = await animationService.isMotionEnabled();
+
+    if (!mounted) return;
+
+    setState(() {
+      _motionEnabled = motionEnabled;
+      _shouldShowIntroOverlay = !hasSeenIntro && !skipAnimation;
+      _showRiveSplash = !hasSeenIntro && !skipAnimation && motionEnabled;
+      _riveCompleted = hasSeenIntro || skipAnimation || !motionEnabled;
+    });
+
+    if (_riveCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showIntroOverlayIfNeeded();
+      });
+    }
+  }
+
+  Future<void> _onRiveSplashComplete() async {
+    if (!mounted) return;
+    setState(() {
+      _riveCompleted = true;
+      _showRiveSplash = false;
+    });
+    await _showIntroOverlayIfNeeded();
+  }
+
+  Future<void> _showIntroOverlayIfNeeded() async {
+    if (!_shouldShowIntroOverlay || _introDialogVisible || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _introDialogVisible = true;
+    });
+
+    final animationService = ref.read(animationPreferencesServiceProvider);
+
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'TeenTalk intro',
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (dialogContext, _, __) {
+        return FirstRunIntroOverlay(
+          shouldAnimate: _motionEnabled,
+          onContinue: () => Navigator.of(dialogContext).pop(),
+          onSkip: () => Navigator.of(dialogContext).pop(),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+          child: child,
+        );
+      },
+    );
+
+    await animationService.markIntroSeen();
+
+    if (mounted) {
+      setState(() {
+        _introDialogVisible = false;
+        _shouldShowIntroOverlay = false;
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _cancelTimeout();
     super.dispose();
@@ -57,6 +144,13 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showRiveSplash && !_riveCompleted) {
+      return RiveSplash(
+        onAnimationComplete: _onRiveSplashComplete,
+        shouldAnimate: _motionEnabled,
+      );
+    }
+
     final authState = ref.watch(authStateProvider);
     final profileState = ref.watch(userProfileProvider);
     final connectivityState = ref.watch(connectivityStatusProvider);

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+import 'package:teen_talk_app/src/core/providers/animation_preferences_provider.dart';
+import 'package:teen_talk_app/src/core/widgets/lazy_lottie.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
@@ -390,16 +393,25 @@ class _CommentsListWidgetState extends ConsumerState<CommentsListWidget> {
   }
 
   Widget _buildEmptyState(ThemeData theme) {
+    final motionEnabledAsync = ref.watch(isMotionEnabledProvider);
+    final shouldAnimate = motionEnabledAsync.when(
+      data: (enabled) => enabled,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 48,
-              color: theme.colorScheme.onSurfaceVariant,
+            LazyLottie(
+              assetPath: TTAssets.lottieEmptyState,
+              shouldAnimate: shouldAnimate,
+              width: 120,
+              height: 120,
+              fallbackIcon: Icons.chat_bubble_outline,
             ),
             const SizedBox(height: 12),
             Text(
