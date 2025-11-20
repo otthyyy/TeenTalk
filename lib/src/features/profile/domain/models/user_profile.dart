@@ -40,6 +40,9 @@ class UserProfile {
     this.betaConsentTimestamp,
     this.crashReportingEnabled = true,
     this.screenshotProtectionEnabled = true,
+    this.prefersReducedMotion = false,
+    this.prefersHighContrast = false,
+    this.allowHeavyAnimations = false,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -98,6 +101,12 @@ class UserProfile {
           json['crashReportingEnabled'] as bool? ?? true,
       screenshotProtectionEnabled:
           json['screenshotProtectionEnabled'] as bool? ?? true,
+      prefersReducedMotion:
+          json['prefersReducedMotion'] as bool? ?? false,
+      prefersHighContrast:
+          json['prefersHighContrast'] as bool? ?? false,
+      allowHeavyAnimations:
+          json['allowHeavyAnimations'] as bool? ?? false,
     );
   }
 
@@ -151,6 +160,9 @@ class UserProfile {
   final DateTime? betaConsentTimestamp;
   final bool crashReportingEnabled;
   final bool screenshotProtectionEnabled;
+  final bool prefersReducedMotion;
+  final bool prefersHighContrast;
+  final bool allowHeavyAnimations;
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{
@@ -195,6 +207,9 @@ class UserProfile {
           : null,
       'crashReportingEnabled': crashReportingEnabled,
       'screenshotProtectionEnabled': screenshotProtectionEnabled,
+      'prefersReducedMotion': prefersReducedMotion,
+      'prefersHighContrast': prefersHighContrast,
+      'allowHeavyAnimations': allowHeavyAnimations,
     };
 
     data.removeWhere((_, value) => value == null);
@@ -267,6 +282,9 @@ class UserProfile {
     DateTime? betaConsentTimestamp,
     bool? crashReportingEnabled,
     bool? screenshotProtectionEnabled,
+    bool? prefersReducedMotion,
+    bool? prefersHighContrast,
+    bool? allowHeavyAnimations,
   }) {
     return UserProfile(
       uid: uid ?? this.uid,
@@ -305,6 +323,12 @@ class UserProfile {
           crashReportingEnabled ?? this.crashReportingEnabled,
       screenshotProtectionEnabled:
           screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
+      prefersReducedMotion:
+          prefersReducedMotion ?? this.prefersReducedMotion,
+      prefersHighContrast:
+          prefersHighContrast ?? this.prefersHighContrast,
+      allowHeavyAnimations:
+          allowHeavyAnimations ?? this.allowHeavyAnimations,
     );
   }
 
@@ -347,7 +371,10 @@ class UserProfile {
         other.betaConsentGiven == betaConsentGiven &&
         other.betaConsentTimestamp == betaConsentTimestamp &&
         other.crashReportingEnabled == crashReportingEnabled &&
-        other.screenshotProtectionEnabled == screenshotProtectionEnabled;
+        other.screenshotProtectionEnabled == screenshotProtectionEnabled &&
+        other.prefersReducedMotion == prefersReducedMotion &&
+        other.prefersHighContrast == prefersHighContrast &&
+        other.allowHeavyAnimations == allowHeavyAnimations;
   }
 
   @override
@@ -385,6 +412,9 @@ class UserProfile {
       betaConsentTimestamp,
       crashReportingEnabled,
       screenshotProtectionEnabled,
+      prefersReducedMotion,
+      prefersHighContrast,
+      allowHeavyAnimations,
     ]);
   }
 

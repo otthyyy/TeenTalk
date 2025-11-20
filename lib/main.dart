@@ -16,12 +16,15 @@ import 'firebase_options.dart';
 import 'src/core/localization/app_localizations.dart';
 import 'src/core/providers/crashlytics_provider.dart';
 import 'src/core/providers/feed_cache_provider.dart';
+import 'src/core/providers/motion_preferences_provider.dart';
 import 'src/core/router/app_router.dart';
 import 'src/core/services/crashlytics_service.dart';
 import 'src/core/services/feed_cache_service.dart';
+import 'src/core/services/motion_preferences_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/core/theme/theme_provider.dart';
 import 'src/core/widgets/crashlytics_listener.dart';
+import 'src/core/widgets/motion_listener.dart';
 import 'src/features/notifications/presentation/providers/push_notification_handler_provider.dart';
 import 'src/features/screenshot_protection/presentation/widgets/screenshot_protected_content.dart';
 import 'src/services/push_notifications_listener.dart';
@@ -88,6 +91,9 @@ Future<void> main() async {
     final feedCacheService = await _initializeFeedCache();
     // Initialize SharedPreferences
     final sharedPreferences = await SharedPreferences.getInstance();
+    
+    // Initialize MotionPreferencesService
+    final motionPreferencesService = MotionPreferencesService(sharedPreferences);
 
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
@@ -110,6 +116,7 @@ Future<void> main() async {
           if (feedCacheService != null)
             feedCacheServiceProvider.overrideWithValue(feedCacheService),
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+          motionPreferencesServiceProvider.overrideWithValue(motionPreferencesService),
         ],
         child: const TeenTalkApp(),
       ),
@@ -169,26 +176,28 @@ class _TeenTalkAppState extends ConsumerState<TeenTalkApp> {
     final router = ref.watch(routerProvider);
 
     return CrashlyticsListener(
-      child: PushNotificationsListener(
-        child: ScreenshotProtectedContent(
-          child: MaterialApp.router(
-            title: 'TeenTalk',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
-            routerConfig: router,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en', ''),
-              Locale('es', ''),
-              Locale('it', ''),
-            ],
+      child: MotionListener(
+        child: PushNotificationsListener(
+          child: ScreenshotProtectedContent(
+            child: MaterialApp.router(
+              title: 'TeenTalk',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              routerConfig: router,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en', ''),
+                Locale('es', ''),
+                Locale('it', ''),
+              ],
+            ),
           ),
         ),
       ),

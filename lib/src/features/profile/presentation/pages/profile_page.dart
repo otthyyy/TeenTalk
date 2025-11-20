@@ -47,6 +47,8 @@ class ProfilePage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       _buildPrivacySettingsCard(context, profile, isDark),
                       const SizedBox(height: 16),
+                      _buildAccessibilitySettingsCard(context, ref, profile, isDark),
+                      const SizedBox(height: 16),
                       _buildTutorialCard(context, ref, isDark),
                       const SizedBox(height: 16),
                       _buildConsentCard(context, profile, isDark),
@@ -479,6 +481,141 @@ class ProfilePage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildAccessibilitySettingsCard(BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.accessibility_new,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Accessibility & Motion',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile.adaptive(
+              value: profile.prefersReducedMotion,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) => _handleMotionPreferenceToggle(
+                context,
+                ref,
+                profile,
+                'prefersReducedMotion',
+                value,
+              ),
+              activeColor: theme.colorScheme.primary,
+              title: const Text('Reduced Motion'),
+              subtitle: const Text('Minimize animations and transitions'),
+            ),
+            const Divider(),
+            SwitchListTile.adaptive(
+              value: profile.prefersHighContrast,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) => _handleMotionPreferenceToggle(
+                context,
+                ref,
+                profile,
+                'prefersHighContrast',
+                value,
+              ),
+              activeColor: theme.colorScheme.primary,
+              title: const Text('High Contrast'),
+              subtitle: const Text('Increase visual contrast for better readability'),
+            ),
+            const Divider(),
+            SwitchListTile.adaptive(
+              value: profile.allowHeavyAnimations,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (value) => _handleMotionPreferenceToggle(
+                context,
+                ref,
+                profile,
+                'allowHeavyAnimations',
+                value,
+              ),
+              activeColor: theme.colorScheme.primary,
+              title: const Text('Heavy Animations (Beta)'),
+              subtitle: const Text('Enable experimental animations and visual effects'),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withOpacity(isDark ? 0.15 : 0.35),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'These settings help make TeenTalk more accessible and comfortable to use. Motion settings affect animations throughout the app.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleMotionPreferenceToggle(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile profile,
+    String key,
+    bool value,
+  ) async {
+    final userRepository = ref.read(userRepositoryProvider);
+
+    try {
+      await userRepository.updateUserProfile(profile.uid, {key: value});
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text('Unable to update setting: $e'),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildConsentCard(BuildContext context, dynamic profile, bool isDark) {
