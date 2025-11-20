@@ -83,6 +83,8 @@ dependencies:
   url_launcher: ^6.2.5
   flutter_dotenv: ^5.1.0
   collection: ^1.18.0
+  remixicon: ^1.2.0
+  feather_icons: ^1.2.0
   
   # Persistence
   hive: ^2.2.3
@@ -152,6 +154,8 @@ flutter:
     - assets/icons/
     - assets/icons/google.svg
     - assets/icons/incognito.svg
+    - assets/animations/rive/
+    - assets/animations/lottie/
     - assets/legal/
 
   # An image asset can refer to one or more resolution-specific "variants", see

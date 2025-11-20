@@ -23,6 +23,7 @@ import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_prov
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import 'package:teen_talk_app/src/features/tutorial/presentation/providers/tutorial_provider.dart';
 import 'package:teen_talk_app/src/core/theme/decorations.dart';
+import 'package:teen_talk_app/src/core/theme/app_icons.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/pages/splash_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -259,30 +260,30 @@ class MainNavigationShell extends ConsumerWidget {
                 elevation: 0,
                 items: [
                   const BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined),
-                    activeIcon: Icon(Icons.home_rounded),
+                    icon: _NavIcon(icon: TTIcons.home),
+                    activeIcon: _NavIcon(icon: TTIcons.homeFilled),
                     label: 'Feed',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.message_outlined,
-                      key: tutorialAnchors.messagesNavKey,
+                    icon: _NavIcon(
+                      icon: TTIcons.messages,
+                      iconKey: tutorialAnchors.messagesNavKey,
                     ),
-                    activeIcon: const Icon(Icons.message_rounded),
+                    activeIcon: const _NavIcon(icon: TTIcons.messagesFilled),
                     label: 'Messages',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.person_outline,
-                      key: tutorialAnchors.profileNavKey,
+                    icon: _NavIcon(
+                      icon: TTIcons.profile,
+                      iconKey: tutorialAnchors.profileNavKey,
                     ),
-                    activeIcon: const Icon(Icons.person_rounded),
+                    activeIcon: const _NavIcon(icon: TTIcons.profileFilled),
                     label: 'Profile',
                   ),
                   if (isAdmin)
                     const BottomNavigationBarItem(
-                      icon: Icon(Icons.admin_panel_settings_outlined),
-                      activeIcon: Icon(Icons.admin_panel_settings_rounded),
+                      icon: _NavIcon(icon: TTIcons.admin),
+                      activeIcon: _NavIcon(icon: TTIcons.adminFilled),
                       label: 'Admin',
                     ),
                 ],
@@ -326,5 +327,30 @@ class MainNavigationShell extends ConsumerWidget {
         }
         break;
     }
+  }
+}
+
+class _NavIcon extends StatelessWidget {
+  const _NavIcon({
+    required this.icon,
+    this.iconKey,
+  });
+
+  final IconData icon;
+  final Key? iconKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: TTIcons.minTapTarget,
+      height: TTIcons.minTapTarget,
+      child: Center(
+        child: Icon(
+          icon,
+          key: iconKey,
+          size: TTIcons.sizeDefault,
+        ),
+      ),
+    );
   }
 }

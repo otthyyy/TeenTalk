@@ -16,6 +16,7 @@ import 'package:teen_talk_app/src/core/widgets/rate_limit_dialog.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 import 'package:teen_talk_app/src/core/motion/motion_presets.dart';
 import 'package:teen_talk_app/src/core/theme/design_tokens.dart';
+import 'package:teen_talk_app/src/core/theme/app_icons.dart';
 import 'package:teen_talk_app/src/features/offline_sync/services/offline_submission_helper.dart';
 import 'package:teen_talk_app/src/core/exceptions/post_exceptions.dart';
 import 'package:teen_talk_app/src/features/comments/presentation/providers/comments_provider.dart';
@@ -127,7 +128,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.camera_alt),
+              leading: const Icon(TTIcons.camera, size: TTIcons.sizeDefault),
               title: const Text('Take Photo'),
               onTap: () {
                 Navigator.of(context).pop();
@@ -135,7 +136,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library),
+              leading: const Icon(TTIcons.image, size: TTIcons.sizeDefault),
               title: const Text('Choose from Gallery'),
               onTap: () {
                 Navigator.of(context).pop();
@@ -144,7 +145,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             ),
             if (_selectedImageFile != null || _selectedImageBytes != null)
               ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
+                leading: const Icon(TTIcons.delete, color: Colors.red, size: TTIcons.sizeDefault),
                 title: const Text('Remove Image', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -599,6 +600,17 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.black54,
                               disabledBackgroundColor: Colors.black26,
+                            onPressed: () {
+                              setState(() {
+                                _selectedImageFile = null;
+                                _selectedImageBytes = null;
+                                _selectedImageName = null;
+                              });
+                            },
+                            icon: const Icon(TTIcons.close, color: Colors.white, size: TTIcons.sizeDefault),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54,
+                              minimumSize: const Size(TTIcons.minTapTarget, TTIcons.minTapTarget),
                             ),
                           ),
                         ),
@@ -630,7 +642,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                       ),
                       IconButton.outlined(
                         onPressed: _isUploading ? null : _showImagePicker,
-                        icon: const Icon(Icons.photo_library),
+                        icon: const Icon(TTIcons.image, size: TTIcons.sizeDefault),
                       ),
                     ],
                   ),
@@ -701,7 +713,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.block, color: theme.colorScheme.onErrorContainer),
+              Icon(
+                TTIcons.blockFilled,
+                color: theme.colorScheme.onErrorContainer,
+                size: TTIcons.sizeDefault,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -739,7 +755,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: theme.colorScheme.onTertiaryContainer),
+          Icon(
+            TTIcons.warningFilled,
+            color: theme.colorScheme.onTertiaryContainer,
+            size: TTIcons.sizeDefault,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
