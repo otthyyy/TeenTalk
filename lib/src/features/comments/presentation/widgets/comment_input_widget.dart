@@ -8,6 +8,7 @@ import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/providers/analytics_provider.dart';
 import '../../../../core/providers/rate_limit_provider.dart';
 import '../../../../core/services/rate_limit_service.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/widgets/rate_limit_dialog.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../profile/domain/models/user_profile.dart';
@@ -154,8 +155,8 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.reply,
-                        size: 18,
+                        TTIcons.comment,
+                        size: TTIcons.sizeMedium,
                         color: theme.colorScheme.onPrimaryContainer,
                       ),
                       const SizedBox(width: 8),
@@ -172,8 +173,8 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                       IconButton(
                         onPressed: widget.onCancelReply,
                         icon: Icon(
-                          Icons.close,
-                          size: 16,
+                          TTIcons.close,
+                          size: TTIcons.sizeSmall,
                           color: theme.colorScheme.onPrimaryContainer,
                         ),
                         tooltip: 'Cancel reply',
@@ -219,7 +220,10 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                               color: theme.colorScheme.onPrimary,
                             ),
                           )
-                        : const Icon(Icons.send),
+                        : const Icon(TTIcons.send, size: TTIcons.sizeMedium),
+                    style: IconButton.styleFrom(
+                      minimumSize: const Size(TTIcons.minTapTarget, TTIcons.minTapTarget),
+                    ),
                     tooltip: 'Send',
                   ),
                 ],
@@ -228,8 +232,8 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
               Row(
                 children: [
                   Icon(
-                    Icons.visibility_off,
-                    size: 16,
+                    TTIcons.eyeOff,
+                    size: TTIcons.sizeSmall,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),
@@ -256,8 +260,8 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
               Row(
                 children: [
                   Icon(
-                    Icons.school,
-                    size: 16,
+                    TTIcons.school,
+                    size: TTIcons.sizeSmall,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),
@@ -305,8 +309,8 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
                 Row(
                   children: [
                     Icon(
-                      Icons.info_outline,
-                      size: 16,
+                      TTIcons.info,
+                      size: TTIcons.sizeSmall,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 6),
@@ -338,7 +342,7 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline),
+            const Icon(TTIcons.error, size: TTIcons.sizeDefault),
             const SizedBox(height: 8),
             Text('Unable to load profile information: $error'),
           ],
@@ -357,7 +361,11 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
       ),
       child: Row(
         children: [
-          Icon(Icons.timer_off, size: 18, color: theme.colorScheme.onErrorContainer),
+          Icon(
+            TTIcons.clockFilled,
+            size: TTIcons.sizeMedium,
+            color: theme.colorScheme.onErrorContainer,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -384,7 +392,11 @@ class _CommentInputWidgetState extends ConsumerState<CommentInputWidget> {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, size: 18, color: theme.colorScheme.onTertiaryContainer),
+          Icon(
+            TTIcons.warningFilled,
+            size: TTIcons.sizeMedium,
+            color: theme.colorScheme.onTertiaryContainer,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

@@ -8,6 +8,7 @@ import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
 import '../../../../core/theme/design_tokens.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
 import '../../../comments/data/models/comment.dart';
@@ -195,8 +196,9 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 backgroundColor: Colors.transparent,
                 child: isAnonymous
                     ? Icon(
-                        Icons.person_outline,
+                        TTIcons.anonymous,
                         color: theme.colorScheme.onPrimary,
+                        size: TTIcons.sizeDefault,
                       )
                     : Text(
                         widget.post.authorNickname.isNotEmpty
@@ -304,7 +306,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                   value: 'report',
                   child: Row(
                     children: [
-                      Icon(Icons.flag_outlined),
+                      Icon(TTIcons.report, size: TTIcons.sizeDefault),
                       SizedBox(width: 8),
                       Text('Report'),
                     ],
@@ -380,7 +382,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 duration: DesignTokens.durationFast,
                 curve: DesignTokens.curveBounce,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: isLiked
                         ? DesignTokens.vibrantPink
@@ -391,8 +393,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        size: 20,
+                        isLiked ? TTIcons.likeFilled : TTIcons.like,
+                        size: TTIcons.sizeMedium,
                         color: isLiked
                             ? Colors.white
                             : theme.colorScheme.onSurfaceVariant,
@@ -429,7 +431,7 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
             child: AnimatedPressable(
               onPressed: widget.onComments,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
@@ -438,8 +440,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.comment_outlined,
-                      size: 20,
+                      TTIcons.comment,
+                      size: TTIcons.sizeMedium,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
