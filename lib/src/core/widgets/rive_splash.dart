@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 import '../constants/tt_assets.dart';
 
 class RiveSplash extends StatefulWidget {
@@ -24,8 +24,8 @@ class RiveSplash extends StatefulWidget {
 }
 
 class _RiveSplashState extends State<RiveSplash> {
-  Artboard? _riveArtboard;
-  StateMachineController? _controller;
+  rive.Artboard? _riveArtboard;
+  rive.StateMachineController? _controller;
   bool _loadFailed = false;
   Timer? _maxDurationTimer;
   bool _completed = false;
@@ -79,10 +79,10 @@ class _RiveSplashState extends State<RiveSplash> {
 
   Future<void> _loadRiveFile() async {
     try {
-      final data = await RiveFile.asset(TTAssets.riveSplashLogo);
+      final data = await rive.RiveFile.asset(TTAssets.riveSplashLogo);
       final artboard = data.mainArtboard;
       
-      final controller = StateMachineController.fromArtboard(
+      final controller = rive.StateMachineController.fromArtboard(
         artboard,
         'State Machine 1',
       );
@@ -143,7 +143,7 @@ class _RiveSplashState extends State<RiveSplash> {
             child: SizedBox(
               width: 300,
               height: 300,
-              child: Rive(
+              child: rive.Rive(
                 artboard: _riveArtboard!,
                 fit: BoxFit.contain,
               ),

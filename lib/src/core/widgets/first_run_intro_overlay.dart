@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' as rive;
 import '../constants/tt_assets.dart';
 
 class FirstRunIntroOverlay extends StatefulWidget {
@@ -19,7 +19,7 @@ class FirstRunIntroOverlay extends StatefulWidget {
 }
 
 class _FirstRunIntroOverlayState extends State<FirstRunIntroOverlay> {
-  Artboard? _artboard;
+  rive.Artboard? _artboard;
   bool _loadFailed = false;
 
   @override
@@ -32,7 +32,7 @@ class _FirstRunIntroOverlayState extends State<FirstRunIntroOverlay> {
 
   Future<void> _loadRiveBackground() async {
     try {
-      final file = await RiveFile.asset(TTAssets.riveIntroBackground);
+      final file = await rive.RiveFile.asset(TTAssets.riveIntroBackground);
       if (!mounted) return;
       setState(() {
         _artboard = file.mainArtboard;
@@ -181,7 +181,7 @@ class _FirstRunIntroOverlayState extends State<FirstRunIntroOverlay> {
       );
     }
 
-    return Rive(
+    return rive.Rive(
       artboard: _artboard!,
       fit: BoxFit.cover,
     );
