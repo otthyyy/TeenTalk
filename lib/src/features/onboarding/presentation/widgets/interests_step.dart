@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+import 'package:teen_talk_app/src/core/providers/animation_preferences_provider.dart';
+import 'package:teen_talk_app/src/core/widgets/lazy_lottie.dart';
 import '../../../../core/constants/user_interests.dart';
 
-class InterestsStep extends StatefulWidget {
+class InterestsStep extends ConsumerStatefulWidget {
 
   const InterestsStep({
     super.key,
@@ -24,10 +28,10 @@ class InterestsStep extends StatefulWidget {
   final VoidCallback onBack;
 
   @override
-  State<InterestsStep> createState() => _InterestsStepState();
+  ConsumerState<InterestsStep> createState() => _InterestsStepState();
 }
 
-class _InterestsStepState extends State<InterestsStep> {
+class _InterestsStepState extends ConsumerState<InterestsStep> {
   String? _selectedSchoolYear;
   final Set<String> _selectedInterests = {};
   final Set<String> _selectedClubs = {};
@@ -98,16 +102,25 @@ class _InterestsStepState extends State<InterestsStep> {
 
   @override
   Widget build(BuildContext context) {
+    final motionEnabledAsync = ref.watch(isMotionEnabledProvider);
+    final shouldAnimate = motionEnabledAsync.when(
+      data: (enabled) => enabled,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 16),
-          const Icon(
-            Icons.interests_outlined,
-            size: 64,
-            color: Colors.purple,
+          LazyLottie(
+            assetPath: TTAssets.lottieOnboardingWelcome,
+            shouldAnimate: shouldAnimate,
+            width: 140,
+            height: 140,
+            fallbackIcon: Icons.interests_outlined,
           ),
           const SizedBox(height: 16),
           Text(

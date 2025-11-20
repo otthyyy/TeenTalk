@@ -63,6 +63,10 @@ dependencies:
   # Preferences
   shared_preferences: ^2.2.2
   
+  # Animations
+  rive: ^0.12.4
+  lottie: ^2.7.0
+  
   # Localization
   intl: 0.20.2
   flutter_localizations:
@@ -157,6 +161,8 @@ flutter:
     - assets/animations/rive/
     - assets/animations/lottie/
     - assets/legal/
+    - assets/animations/rive/
+    - assets/animations/lottie/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

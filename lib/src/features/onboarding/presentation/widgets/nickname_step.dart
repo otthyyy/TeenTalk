@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:teen_talk_app/src/core/constants/tt_assets.dart';
+import 'package:teen_talk_app/src/core/providers/animation_preferences_provider.dart';
+import 'package:teen_talk_app/src/core/widgets/lazy_lottie.dart';
 import '../../../profile/data/repositories/user_repository.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import 'dart:async';
@@ -126,6 +129,13 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
 
   @override
   Widget build(BuildContext context) {
+    final motionEnabledAsync = ref.watch(isMotionEnabledProvider);
+    final shouldAnimate = motionEnabledAsync.when(
+      data: (enabled) => enabled,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+
     return Semantics(
       container: true,
       label: 'Onboarding step: Choose your nickname. This is how other users will see you.',
@@ -137,11 +147,13 @@ class _NicknameStepState extends ConsumerState<NicknameStep> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
-              const ExcludeSemantics(
-                child: Icon(
-                  Icons.person_outline,
-                  size: 80,
-                  color: Colors.blue,
+              ExcludeSemantics(
+                child: LazyLottie(
+                  assetPath: TTAssets.lottieOnboardingWelcome,
+                  shouldAnimate: shouldAnimate,
+                  width: 160,
+                  height: 160,
+                  fallbackIcon: Icons.person_outline,
                 ),
               ),
               const SizedBox(height: 24),
