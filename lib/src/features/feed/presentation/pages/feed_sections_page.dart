@@ -11,6 +11,8 @@ import '../../../comments/presentation/widgets/comments_list_widget.dart';
 import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../../../../core/providers/image_cache_provider.dart';
 import '../../../../core/layout/bottom_nav_metrics.dart';
+import '../../../../core/motion/motion_presets.dart';
+import '../../../../core/theme/design_tokens.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../tutorial/presentation/widgets/app_tutorial.dart';
 import '../providers/feed_provider.dart';
@@ -78,9 +80,11 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
 
     _trendingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (!mounted || _trendingPosts.length < 2) return;
-      setState(() {
-        _trendingIndex = (_trendingIndex + 1) % _trendingPosts.length;
-      });
+      if (mounted) {
+        setState(() {
+          _trendingIndex = (_trendingIndex + 1) % _trendingPosts.length;
+        });
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -406,21 +410,23 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     final authState = ref.watch(authStateProvider);
     final userProfile = ref.watch(userProfileProvider).value;
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        await ref
-            .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
-            .loadPosts(
-              refresh: true,
-              section: _selectedSection.value,
-            );
-      },
-      child: CustomScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
+    return SafeArea(
+      bottom: false,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+              .loadPosts(
+                refresh: true,
+                section: _selectedSection.value,
+              );
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
           SliverAppBar(
             expandedHeight: 280,
             pinned: true,
@@ -587,7 +593,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
                       onReport: () {
                         _showReportDialog(post);
                       },
-                    );
+                    ).staggeredListItem(index);
                   },
                   childCount:
                       postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
@@ -600,7 +606,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildHeroHeader(

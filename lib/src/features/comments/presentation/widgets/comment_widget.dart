@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/animation_utils.dart';
+import '../../../../core/motion/motion_presets.dart';
 import '../../data/models/comment.dart';
 import '../providers/comments_provider.dart';
 
@@ -172,35 +174,40 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
                     widget.onLike?.call();
                   }
                 },
-                child: AnimatedScale(
-                  scale: _isLikeAnimating ? 1.15 : 1.0,
-                  duration: DesignTokens.durationFast,
-                  curve: DesignTokens.curveBounce,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: isLiked
-                          ? DesignTokens.vibrantPink
-                          : theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          size: 16,
-                          color: isLiked ? Colors.white : theme.colorScheme.onSurface,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          widget.comment.likeCount.toString(),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isLiked ? Colors.white : null,
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: isLiked
+                        ? DesignTokens.vibrantPink
+                        : theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 16,
+                        color: isLiked ? Colors.white : theme.colorScheme.onSurface,
+                      )
+                          .animate(
+                            target: _isLikeAnimating ? 1 : 0,
+                          )
+                          .scale(
+                            begin: const Offset(1.0, 1.0),
+                            end: const Offset(1.25, 1.25),
+                            duration: MotionPresets.microDuration,
+                            curve: MotionPresets.microCurve,
                           ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.comment.likeCount.toString(),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: isLiked ? Colors.white : null,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -208,7 +215,8 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
               AnimatedPressable(
                 onPressed: widget.onReply,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
@@ -218,7 +226,7 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
                     children: [
                       Icon(
                         Icons.reply,
-                        size: 16,
+                        size: 18,
                         color: theme.colorScheme.onSurface,
                       ),
                       const SizedBox(width: 4),
