@@ -11,23 +11,22 @@ class AppDecorations {
     Gradient? gradient,
   }) {
     return BoxDecoration(
-      gradient: gradient ?? DesignTokens.primaryGradient,
+      gradient: gradient ?? AppGradients.primary,
     );
   }
 
   static BoxDecoration surfaceGradientBackground({
     bool isDark = false,
   }) {
+    final tokens = isDark ? AppColorTokens.dark : AppColorTokens.light;
     return BoxDecoration(
-      gradient: isDark
-          ? DesignTokens.darkSurfaceGradient
-          : DesignTokens.surfaceGradient,
+      gradient: tokens.surfaceGradient,
     );
   }
 
   static BoxDecoration glass({
     bool isDark = false,
-    double borderRadius = DesignTokens.radiusLg,
+    double borderRadius = AppRadii.lg,
     double opacity = 0.85,
     Gradient? gradient,
   }) {
@@ -45,14 +44,7 @@ class AppDecorations {
         color: Colors.white.withOpacity(isDark ? 0.12 : 0.2),
         width: 1.5,
       ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(isDark ? 0.25 : 0.08),
-          blurRadius: 24,
-          spreadRadius: 2,
-          offset: const Offset(0, 8),
-        ),
-      ],
+      boxShadow: AppElevation.level4(Colors.black),
       backgroundBlendMode: BlendMode.srcOver,
     );
   }
@@ -60,8 +52,8 @@ class AppDecorations {
   static Widget glassContainer({
     required Widget child,
     bool isDark = false,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    double borderRadius = DesignTokens.radiusXl,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(AppSpacing.base),
+    double borderRadius = AppRadii.xl,
   }) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
@@ -80,14 +72,14 @@ class AppDecorations {
     required Widget child,
     Gradient? gradient,
     BorderRadius? borderRadius,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(20),
+    EdgeInsetsGeometry padding = const EdgeInsets.all(AppSpacing.lg),
     List<BoxShadow>? shadows,
   }) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: gradient ?? DesignTokens.accentGradient,
-        borderRadius: borderRadius ?? BorderRadius.circular(DesignTokens.radiusLg),
-        boxShadow: shadows ?? [DesignTokens.coloredShadow(DesignTokens.lightPurple)],
+        gradient: gradient ?? AppGradients.accent,
+        borderRadius: borderRadius ?? BorderRadius.circular(AppRadii.lg),
+        boxShadow: shadows ?? AppElevation.colored(BrandColors.lightPurple),
       ),
       child: Padding(
         padding: padding,
@@ -98,15 +90,15 @@ class AppDecorations {
 
   static Widget glowCard({
     required Widget child,
-    Color color = DesignTokens.vibrantPurple,
+    Color color = BrandColors.vibrantPurple,
     BorderRadius? borderRadius,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(20),
+    EdgeInsetsGeometry padding = const EdgeInsets.all(AppSpacing.lg),
   }) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: color.withOpacity(0.15),
-        borderRadius: borderRadius ?? BorderRadius.circular(DesignTokens.radiusLg),
-        boxShadow: [DesignTokens.glowShadow(color)],
+        borderRadius: borderRadius ?? BorderRadius.circular(AppRadii.lg),
+        boxShadow: AppElevation.glow(color),
       ),
       child: Padding(
         padding: padding,
@@ -125,7 +117,7 @@ class AppDecorations {
         Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              gradient: gradient ?? DesignTokens.primaryGradient,
+              gradient: gradient ?? AppGradients.primary,
             ),
           ),
         ),
@@ -138,8 +130,8 @@ class AppDecorations {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(48),
-                    topRight: Radius.circular(48),
+                    topLeft: Radius.circular(AppSpacing.xxxl),
+                    topRight: Radius.circular(AppSpacing.xxxl),
                   ),
                 ),
               ),
