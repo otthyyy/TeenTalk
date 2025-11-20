@@ -2,6 +2,8 @@
 
 This directory contains all the visual assets for the TeenTalk Flutter application.
 
+For comprehensive information about the design system, motion guidelines, and asset usage conventions, see [docs/STYLE_GUIDE.md](../docs/STYLE_GUIDE.md).
+
 ## Directory Structure
 
 ### `branding/`

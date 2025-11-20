@@ -37,6 +37,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   bool _allowAnonymousPosts = true;
   bool _profileVisible = true;
   bool _analyticsEnabled = true;
+  bool _prefersReducedMotion = false;
+  bool _prefersHighContrast = false;
+  bool _allowHeavyAnimations = false;
   bool _isSubmitting = false;
 
   @override
@@ -151,7 +154,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         allowAnonymousPosts: _allowAnonymousPosts,
         profileVisible: _profileVisible,
         analyticsEnabled: _analyticsEnabled,
-      );
+        prefersReducedMotion: _prefersReducedMotion,
+        prefersHighContrast: _prefersHighContrast,
+        allowHeavyAnimations: _allowHeavyAnimations,
+        );
 
       debugPrint('✅ ONBOARDING: Creating profile with data:');
       debugPrint('   - uid: ${profile.uid}');
@@ -293,12 +299,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   allowAnonymousPosts: _allowAnonymousPosts,
                   profileVisible: _profileVisible,
                   analyticsEnabled: _analyticsEnabled,
+                  prefersReducedMotion: _prefersReducedMotion,
+                  prefersHighContrast: _prefersHighContrast,
+                  allowHeavyAnimations: _allowHeavyAnimations,
                   onAllowAnonymousPostsChanged: (value) =>
                       setState(() => _allowAnonymousPosts = value),
                   onProfileVisibleChanged: (value) =>
                       setState(() => _profileVisible = value),
                   onAnalyticsEnabledChanged: (value) =>
                       setState(() => _analyticsEnabled = value),
+                  onPrefersReducedMotionChanged: (value) =>
+                      setState(() => _prefersReducedMotion = value),
+                  onPrefersHighContrastChanged: (value) =>
+                      setState(() => _prefersHighContrast = value),
+                  onAllowHeavyAnimationsChanged: (value) =>
+                      setState(() => _allowHeavyAnimations = value),
                   onComplete: _completeOnboarding,
                   onBack: _previousStep,
                   isSubmitting: _isSubmitting,

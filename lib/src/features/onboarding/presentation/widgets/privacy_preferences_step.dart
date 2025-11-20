@@ -7,9 +7,15 @@ class PrivacyPreferencesStep extends StatefulWidget {
     required this.allowAnonymousPosts,
     required this.profileVisible,
     this.analyticsEnabled = true,
+    this.prefersReducedMotion = false,
+    this.prefersHighContrast = false,
+    this.allowHeavyAnimations = false,
     required this.onAllowAnonymousPostsChanged,
     required this.onProfileVisibleChanged,
     required this.onAnalyticsEnabledChanged,
+    required this.onPrefersReducedMotionChanged,
+    required this.onPrefersHighContrastChanged,
+    required this.onAllowHeavyAnimationsChanged,
     required this.onComplete,
     required this.onBack,
     required this.isSubmitting,
@@ -17,9 +23,15 @@ class PrivacyPreferencesStep extends StatefulWidget {
   final bool allowAnonymousPosts;
   final bool profileVisible;
   final bool analyticsEnabled;
+  final bool prefersReducedMotion;
+  final bool prefersHighContrast;
+  final bool allowHeavyAnimations;
   final Function(bool) onAllowAnonymousPostsChanged;
   final Function(bool) onProfileVisibleChanged;
   final Function(bool) onAnalyticsEnabledChanged;
+  final Function(bool) onPrefersReducedMotionChanged;
+  final Function(bool) onPrefersHighContrastChanged;
+  final Function(bool) onAllowHeavyAnimationsChanged;
   final VoidCallback onComplete;
   final VoidCallback onBack;
   final bool isSubmitting;
@@ -32,6 +44,9 @@ class _PrivacyPreferencesStepState extends State<PrivacyPreferencesStep> {
   late bool _allowAnonymousPosts;
   late bool _profileVisible;
   late bool _analyticsEnabled;
+  late bool _prefersReducedMotion;
+  late bool _prefersHighContrast;
+  late bool _allowHeavyAnimations;
 
   @override
   void initState() {
@@ -39,17 +54,24 @@ class _PrivacyPreferencesStepState extends State<PrivacyPreferencesStep> {
     _allowAnonymousPosts = widget.allowAnonymousPosts;
     _profileVisible = widget.profileVisible;
     _analyticsEnabled = widget.analyticsEnabled;
+    _prefersReducedMotion = widget.prefersReducedMotion;
+    _prefersHighContrast = widget.prefersHighContrast;
+    _allowHeavyAnimations = widget.allowHeavyAnimations;
   }
 
   void _handleComplete() {
     widget.onAllowAnonymousPostsChanged(_allowAnonymousPosts);
     widget.onProfileVisibleChanged(_profileVisible);
     widget.onAnalyticsEnabledChanged(_analyticsEnabled);
+    widget.onPrefersReducedMotionChanged(_prefersReducedMotion);
+    widget.onPrefersHighContrastChanged(_prefersHighContrast);
+    widget.onAllowHeavyAnimationsChanged(_allowHeavyAnimations);
     widget.onComplete();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -188,6 +210,66 @@ class _PrivacyPreferencesStepState extends State<PrivacyPreferencesStep> {
                         ],
                       ),
                     ),
+                  const SizedBox(height: 16),
+                  const Divider(thickness: 2),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Accessibility',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: SwitchListTile(
+                      value: _prefersReducedMotion,
+                      onChanged: (value) {
+                        setState(() => _prefersReducedMotion = value);
+                      },
+                      title: const Text('Reduced Motion'),
+                      subtitle: const Text(
+                        'Minimize animations and transitions',
+                      ),
+                      secondary: const Icon(Icons.motion_photos_off),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: SwitchListTile(
+                      value: _prefersHighContrast,
+                      onChanged: (value) {
+                        setState(() => _prefersHighContrast = value);
+                      },
+                      title: const Text('High Contrast'),
+                      subtitle: const Text(
+                        'Increase visual contrast for better readability',
+                      ),
+                      secondary: const Icon(Icons.contrast),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(thickness: 2),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Developer Options',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: SwitchListTile(
+                      value: _allowHeavyAnimations,
+                      onChanged: (value) {
+                        setState(() => _allowHeavyAnimations = value);
+                      },
+                      title: const Text('Heavy Animations (Beta)'),
+                      subtitle: const Text(
+                        'Enable experimental animations and visual effects',
+                      ),
+                      secondary: const Icon(Icons.animation),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   Card(
                     color: Colors.blue.shade50,
