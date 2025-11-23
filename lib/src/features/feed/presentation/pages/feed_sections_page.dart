@@ -24,8 +24,9 @@ import '../widgets/segmented_control.dart';
 import '../widgets/post_search_delegate.dart';
 import '../widgets/feed_filter_chips.dart';
 import '../widgets/offline_banner.dart';
+import '../widgets/animated_header.dart';
+import '../widgets/trending_posts_section.dart';
 import '../../domain/models/feed_sort_option.dart';
-import '../../../offline_sync/presentation/widgets/sync_status_indicator.dart';
 
 enum FeedSection {
   spotted('spotted', 'Spotted'),
@@ -48,18 +49,11 @@ class FeedSectionsPage extends ConsumerStatefulWidget {
   ConsumerState<FeedSectionsPage> createState() => _FeedSectionsPageState();
 }
 
-class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
-    with SingleTickerProviderStateMixin {
+class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
   late ScrollController _scrollController;
-  late AnimationController _headerAnimationController;
   FeedSection _selectedSection = FeedSection.spotted;
   String? _selectedPostId;
   bool _showComments = false;
-  Timer? _trendingTimer;
-  Timer? _trendingDebounce;
-  int _trendingIndex = 0;
-  List<Post> _trendingPosts = [];
-  ProviderSubscription<FeedState>? _trendingSubscription;
   String? _lastHandledDeepLinkPostId;
   bool _isProcessingDeepLink = false;
   late final TutorialAnchors _tutorialAnchors;
@@ -73,56 +67,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
 
-    _headerAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat(reverse: true);
-
-    _trendingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (!mounted || _trendingPosts.length < 2) return;
-      if (mounted) {
-        setState(() {
-          _trendingIndex = (_trendingIndex + 1) % _trendingPosts.length;
-        });
-      }
-    });
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _trendingSubscription = ref.listenManual<FeedState>(
-        schoolAwareFeedProvider(FeedSection.spotted.value),
-        (previous, next) {
-          _trendingDebounce?.cancel();
-          _trendingDebounce = Timer(const Duration(milliseconds: 500), () {
-            if (!mounted) return;
-            
-            final sortedPosts = [...next.posts]
-              ..sort((a, b) {
-                final engagementComparison =
-                    b.engagementScore.compareTo(a.engagementScore);
-                if (engagementComparison != 0) return engagementComparison;
-
-                final likeComparison = b.likeCount.compareTo(a.likeCount);
-                if (likeComparison != 0) return likeComparison;
-
-                return b.createdAt.compareTo(a.createdAt);
-              });
-            final spotlightCandidates = sortedPosts.take(5).toList();
-
-            if (!_trendingListsEqual(_trendingPosts, spotlightCandidates)) {
-              setState(() {
-                _trendingPosts = spotlightCandidates;
-                if (_trendingPosts.isEmpty) {
-                  _trendingIndex = 0;
-                } else {
-                  _trendingIndex = _trendingIndex % _trendingPosts.length;
-                }
-              });
-            }
-          });
-        },
-        fireImmediately: true,
-      );
-
       ref
           .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
           .loadPosts(
@@ -264,11 +209,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
 
   @override
   void dispose() {
-    _trendingTimer?.cancel();
-    _trendingDebounce?.cancel();
-    _trendingSubscription?.close();
     _scrollController.dispose();
-    _headerAnimationController.dispose();
     super.dispose();
   }
 
@@ -322,14 +263,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
 
   void _resetPrefetchTracking() {
     ref.read(imagePrefetchServiceProvider).clearPrefetchTracking();
-  }
-
-  bool _trendingListsEqual(List<Post> a, List<Post> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i].id != b[i].id) return false;
-    }
-    return true;
   }
 
   void _onSectionChanged(FeedSection section) {
@@ -434,10 +367,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             automaticallyImplyLeading: false,
             backgroundColor: theme.colorScheme.surface,
             flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeroHeader(
-                theme,
-                userProfile,
-                postsState.sortOption,
+              background: AnimatedHeader(
+                userProfile: userProfile,
+                sortOption: postsState.sortOption,
               ),
               collapseMode: CollapseMode.parallax,
             ),
@@ -513,6 +445,24 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: _buildSafetyBanner(theme),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TrendingPostsSection(
+                section: _selectedSection.value,
+                onPostSelected: (post) {
+                  if (authState.user == null) {
+                    _showAuthRequiredDialog();
+                    return;
+                  }
+                  setState(() {
+                    _selectedPostId = post.id;
+                    _showComments = true;
+                  });
+                },
+              ),
             ),
           ),
           if (postsState.isLoading && postsState.posts.isEmpty)
@@ -608,159 +558,6 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage>
       ),
     ),
   );
-  }
-
-  Widget _buildHeroHeader(
-    ThemeData theme,
-    UserProfile? userProfile,
-    FeedSortOption sortOption,
-  ) {
-    return AnimatedBuilder(
-      animation: _headerAnimationController,
-      builder: (context, child) {
-        IconData badgeIcon;
-        String badgeText;
-
-        switch (sortOption) {
-          case FeedSortOption.newest:
-            badgeIcon = Icons.access_time;
-            badgeText = 'Latest';
-            break;
-          case FeedSortOption.mostLiked:
-            badgeIcon = Icons.favorite;
-            badgeText = 'Most Liked';
-            break;
-          case FeedSortOption.trending:
-            badgeIcon = Icons.trending_up;
-            badgeText = 'Trending Now';
-            break;
-        }
-
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.secondary,
-                theme.colorScheme.tertiary,
-              ],
-              stops: [
-                0.0,
-                _headerAnimationController.value,
-                1.0,
-              ],
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: 100 + (_headerAnimationController.value * 20),
-                right: 30 - (_headerAnimationController.value * 30),
-                child: const Opacity(
-                  opacity: 0.1,
-                  child: Icon(
-                    Icons.visibility,
-                    size: 120,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '👀 Spotted',
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Share what you\'ve spotted around campus',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                      if (userProfile?.school != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.school,
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                userProfile!.school ?? '',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  badgeIcon,
-                                  size: 16,
-                                  color: theme.colorScheme.primary,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  badgeText,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Widget _buildSafetyBanner(ThemeData theme) {
