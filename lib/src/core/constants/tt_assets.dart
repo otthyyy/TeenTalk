@@ -1,5 +1,5 @@
 class TTAssets {
-  TTAssets._();
+  const TTAssets._();
 
   static const String _riveBase = 'assets/animations/rive';
   static const String _lottieBase = 'assets/animations/lottie';
@@ -11,7 +11,6 @@ class TTAssets {
   static const String lottieEmptyState = '$_lottieBase/empty_state.json';
   static const String lottieLoading = '$_lottieBase/loading.json';
   static const String lottieSuccess = '$_lottieBase/success.json';
-  const TTAssets._();
 
   static const String _iconsBase = 'assets/icons';
   static const String iconsGoogle = '$_iconsBase/google.svg';

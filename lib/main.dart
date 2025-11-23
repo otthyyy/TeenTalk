@@ -116,7 +116,7 @@ Future<void> main() async {
           if (feedCacheService != null)
             feedCacheServiceProvider.overrideWithValue(feedCacheService),
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-          motionPreferencesServiceProvider.overrideWithValue(motionPreferencesService),
+          motionPreferencesServiceProvider.overrideWith((ref) => motionPreferencesService),
         ],
         child: const TeenTalkApp(),
       ),

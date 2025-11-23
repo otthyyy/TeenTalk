@@ -596,20 +596,10 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                                       _selectedImageName = null;
                                     });
                                   },
-                            icon: const Icon(Icons.close, color: Colors.white),
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black54,
-                              disabledBackgroundColor: Colors.black26,
-                            onPressed: () {
-                              setState(() {
-                                _selectedImageFile = null;
-                                _selectedImageBytes = null;
-                                _selectedImageName = null;
-                              });
-                            },
                             icon: const Icon(TTIcons.close, color: Colors.white, size: TTIcons.sizeDefault),
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.black54,
+                              disabledBackgroundColor: Colors.black26,
                               minimumSize: const Size(TTIcons.minTapTarget, TTIcons.minTapTarget),
                             ),
                           ),
