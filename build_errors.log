@@ -1,483 +1,723 @@
-C:\Users\othma\Desktop\TeenTalk>flutter run -d edge
+C:\Users\othma\Desktop\TeenTalk>flutter run
+Connected devices:
+Windows (desktop) • windows • windows-x64    • Microsoft Windows [Versione 10.0.26200.7171]
+Edge (web)        • edge    • web-javascript • Microsoft Edge 142.0.3595.90
+[1]: Windows (windows)
+[2]: Edge (edge)
+Please choose one (or "q" to quit): 2
 Launching lib\main.dart on Edge in debug mode...
-Warning: In index.html:49: Local variable for "serviceWorkerVersion" is deprecated. Use
+Warning: In index.html:40: Local variable for "serviceWorkerVersion" is deprecated. Use
 "{{flutter_service_worker_version}}" template token instead. See
 https://docs.flutter.dev/platform-integration/web/initialization for more details.
-Warning: In index.html:58: "FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See
+Warning: In index.html:49: "FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See
 https://docs.flutter.dev/platform-integration/web/initialization for more details.
-lib/src/features/feed/presentation/pages/post_composer_page.dart:26:70: Error: Can't find '}' to match '{'.
-class _PostComposerPageState extends ConsumerState<PostComposerPage> {
-                                                                     ^
-lib/src/features/profile/domain/models/trust_level_localizations.dart:1:8: Error: Error when reading
-'lib/src/features/core/localization/app_localizations.dart': Impossibile trovare il percorso specificato.
-
-import '../../../core/localization/app_localizations.dart';
-       ^
-lib/src/features/offline_sync/models/queued_action.dart:3:6: Error: Error when reading
-'lib/src/features/offline_sync/models/queued_action.g.dart': Impossibile trovare il file specificato.
-
-part 'queued_action.g.dart';
-     ^
-lib/src/core/services/image_prefetch_service.dart:3:8: Error: Error when reading
-'lib/features/comments/data/models/comment.dart': Impossibile trovare il percorso specificato.
-
-import '../../../features/comments/data/models/comment.dart';
-       ^
-lib/src/features/offline_sync/models/queued_action.dart:3:6: Error: Can't use
-'lib/src/features/offline_sync/models/queued_action.g.dart' as a part, because it has no 'part of' declaration.
-part 'queued_action.g.dart';
-     ^
-lib/src/features/profile/domain/models/user_profile.dart:427:23: Error: '_normalizeStringList' is already declared in
-this scope.
-  static List<String> _normalizeStringList(dynamic value) {
-                      ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:391:23: Context: Previous declaration of
-'_normalizeStringList'.
-  static List<String> _normalizeStringList(dynamic value) {
-                      ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:435:20: Error: '_timestampToDate' is already declared in this
-scope.
-  static DateTime? _timestampToDate(dynamic value) {
-                   ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/user_profile.dart:399:20: Context: Previous declaration of '_timestampToDate'.
-  static DateTime? _timestampToDate(dynamic value) {
-                   ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/trust_level_localizations.dart:4:47: Error: Type 'AppLocalizations' not found.
-String trustLevelLabel(TrustLevel trustLevel, AppLocalizations? localization) {
-                                              ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/trust_level_localizations.dart:17:53: Error: Type 'AppLocalizations' not found.
-String trustLevelDescription(TrustLevel trustLevel, AppLocalizations? localization) {
-                                                    ^^^^^^^^^^^^^^^^
-lib/src/core/services/image_prefetch_service.dart:17:19: Error: Type 'Post' not found.
-    required List<Post> posts,
-                  ^^^^
-lib/src/core/services/image_prefetch_service.dart:56:35: Error: Type 'Post' not found.
-  Future<void> batchPrefetch(List<Post> posts) async {
-                                  ^^^^
-lib/src/features/admin/data/services/analytics_export_service.dart:11:9: Error: Type 'AnalyticsExportDelegate' not
-found.
-  final AnalyticsExportDelegate _delegate = buildAnalyticsExportDelegate();
-        ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/core/services/feed_cache_service.dart:47:25: Error: The getter 'schoolKey_' isn't defined for the type
-'FeedCacheService'.
- - 'FeedCacheService' is from 'package:teen_talk_app/src/core/services/feed_cache_service.dart'
- ('lib/src/core/services/feed_cache_service.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'schoolKey_'.
-    return '${section}_$schoolKey_${sortOption.name}';
-                        ^^^^^^^^^^
-lib/src/core/theme/app_theme.dart:246:17: Error: Method not found: 'FocusThemeData'.
-    focusTheme: FocusThemeData(
-                ^^^^^^^^^^^^^^
-lib/src/core/theme/app_theme.dart:246:5: Error: No named parameter with the name 'focusTheme'.
-    focusTheme: FocusThemeData(
-    ^^^^^^^^^^
-../flutter/packages/flutter/lib/src/material/theme_data.dart:265:11: Context: Found this candidate, but the arguments
-don't match.
-  factory ThemeData({
-          ^
-lib/src/core/theme/app_theme.dart:492:17: Error: Method not found: 'FocusThemeData'.
-    focusTheme: FocusThemeData(
-                ^^^^^^^^^^^^^^
-lib/src/core/theme/app_theme.dart:492:5: Error: No named parameter with the name 'focusTheme'.
-    focusTheme: FocusThemeData(
-    ^^^^^^^^^^
-../flutter/packages/flutter/lib/src/material/theme_data.dart:265:11: Context: Found this candidate, but the arguments
-don't match.
-  factory ThemeData({
-          ^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:185:30: Error: The method 'logRateLimitHit' isn't
-defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
- ('lib/src/core/analytics/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitHit'.
-      await analyticsService.logRateLimitHit(
-                             ^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:277:30: Error: The method 'logContentSubmission' isn't
-defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
- ('lib/src/core/analytics/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logContentSubmission'.
-      await analyticsService.logContentSubmission(
-                             ^^^^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:301:34: Error: The method 'logRateLimitHit' isn't
-defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
- ('lib/src/core/analytics/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitHit'.
-          await analyticsService.logRateLimitHit(
-                                 ^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/pages/post_composer_page.dart:389:52: Error: The method 'logRateLimitWarning' isn't
-defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/analytics/analytics_service.dart'
- ('lib/src/core/analytics/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logRateLimitWarning'.
-                ref.read(analyticsServiceProvider).logRateLimitWarning(
-                                                   ^^^^^^^^^^^^^^^^^^^
-lib/src/features/messages/presentation/pages/chat_screen.dart:47:46: Error: 'userProfileByIdProvider' is imported from
-both 'package:teen_talk_app/src/features/messages/presentation/providers/direct_messages_provider.dart' and
-'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart'.
-      final otherUserProfileAsync = ref.read(userProfileByIdProvider(widget.otherUserId));
-                                             ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/messages/presentation/pages/chat_screen.dart:83:15: Error: The method 'logLowTrustWarning' isn't
-defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/services/analytics_service.dart'
- ('lib/src/core/services/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logLowTrustWarning'.
-    analytics.logLowTrustWarning(widget.otherUserId, 'direct_message');
-              ^^^^^^^^^^^^^^^^^^
-lib/src/features/messages/presentation/pages/chat_screen.dart:110:25: Error: The method 'logLowTrustWarningDismiss'
-isn't defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/services/analytics_service.dart'
- ('lib/src/core/services/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logLowTrustWarningDismiss'.
-              analytics.logLowTrustWarningDismiss(
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/messages/presentation/pages/chat_screen.dart:122:25: Error: The method 'logLowTrustWarningProceed'
-isn't defined for the type 'AnalyticsService'.
- - 'AnalyticsService' is from 'package:teen_talk_app/src/core/services/analytics_service.dart'
- ('lib/src/core/services/analytics_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'logLowTrustWarningProceed'.
-              analytics.logLowTrustWarningProceed(
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/profile/presentation/pages/profile_page.dart:204:25: Error: The getter 'ref' isn't defined for the type
-'ProfilePage'.
- - 'ProfilePage' is from 'package:teen_talk_app/src/features/profile/presentation/pages/profile_page.dart'
- ('lib/src/features/profile/presentation/pages/profile_page.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
-                        ref.read(analyticsServiceProvider).logTrustBadgeTap(
-                        ^^^
-lib/src/features/profile/presentation/pages/public_profile_page.dart:163:40: Error: 'userProfileByIdProvider' is
-imported from both 'package:teen_talk_app/src/features/messages/presentation/providers/direct_messages_provider.dart'
-and 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart'.
-    final userProfileAsync = ref.watch(userProfileByIdProvider(widget.userId));
-                                       ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:7: Error: Expected ';' after this.
-      ),
-      ^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:8: Error: Expected an identifier, but got ','.
-Try inserting an identifier before ','.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:8: Error: Unexpected token ';'.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:596:5: Error: Expected an identifier, but got ')'.
-Try inserting an identifier before ')'.
-    );
-    ^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:595:8: Error: Expected ';' after this.
-      ),
-       ^
-lib/src/features/feed/presentation/pages/feed_sections_page.dart:596:5: Error: Unexpected token ';'.
-    );
-    ^
-lib/src/features/comments/data/repositories/posts_repository.dart:130:19: Error: The method 'select' isn't defined for
-the type 'Query<Object?>'.
- - 'Query' is from 'package:cloud_firestore/cloud_firestore.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing method, or defining a method named 'select'.
-    query = query.select(_listFields);
-                  ^^^^^^
-lib/src/features/profile/domain/models/trust_level_localizations.dart:4:47: Error: 'AppLocalizations' isn't a type.
-String trustLevelLabel(TrustLevel trustLevel, AppLocalizations? localization) {
-                                              ^^^^^^^^^^^^^^^^
-lib/src/features/profile/domain/models/trust_level_localizations.dart:17:53: Error: 'AppLocalizations' isn't a type.
-String trustLevelDescription(TrustLevel trustLevel, AppLocalizations? localization) {
-                                                    ^^^^^^^^^^^^^^^^
-lib/src/features/offline_sync/services/sync_queue_service.dart:60:20: Error: This expression has type 'void' and can't
-be used.
-        await Hive.init('./hive_boxes');
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:361:20: Error: Can't find ')' to match '('.
+          Semantics(
                    ^
-lib/src/features/offline_sync/services/sync_queue_service.dart:66:30: Error: The method 'QueuedActionAdapter' isn't
-defined for the type 'SyncQueueService'.
- - 'SyncQueueService' is from 'package:teen_talk_app/src/features/offline_sync/services/sync_queue_service.dart'
- ('lib/src/features/offline_sync/services/sync_queue_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'QueuedActionAdapter'.
-        Hive.registerAdapter(QueuedActionAdapter());
-                             ^^^^^^^^^^^^^^^^^^^
-lib/src/features/offline_sync/services/sync_queue_service.dart:69:30: Error: The method 'QueuedActionTypeAdapter' isn't
-defined for the type 'SyncQueueService'.
- - 'SyncQueueService' is from 'package:teen_talk_app/src/features/offline_sync/services/sync_queue_service.dart'
- ('lib/src/features/offline_sync/services/sync_queue_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'QueuedActionTypeAdapter'.
-        Hive.registerAdapter(QueuedActionTypeAdapter());
-                             ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/offline_sync/services/sync_queue_service.dart:72:30: Error: The method 'QueuedActionStatusAdapter'
-isn't defined for the type 'SyncQueueService'.
- - 'SyncQueueService' is from 'package:teen_talk_app/src/features/offline_sync/services/sync_queue_service.dart'
- ('lib/src/features/offline_sync/services/sync_queue_service.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'QueuedActionStatusAdapter'.
-        Hive.registerAdapter(QueuedActionStatusAdapter());
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:333:13: Error: The matched value of type '({bool
-hasMore, DocumentSnapshot<Object?>? lastDocument, String? paginationToken, List<Post> posts})' isn't assignable to the
-required type '(Object?, Object?)'.
- - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
- - 'Object' is from 'dart:core'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-Try changing the required type of the pattern, or the matched value type.
-      final (posts, lastDoc) = await _repository.getPosts(
-            ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:339:17: Error: The getter 'isEmpty' isn't
-defined for the type 'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isEmpty'.
-      if (posts.isEmpty) {
-                ^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:348:62: Error: An expression whose value can be
-'null' must be null-checked before it can be dereferenced.
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
-                                                             ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:348:62: Error: Unexpected type 'Object?' of a
-spread.  Expected 'dynamic' or an Iterable.
- - 'Object' is from 'dart:core'.
-      final allPosts = refresh ? posts : [...state.posts, ...posts];
-                                                             ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:354:24: Error: The getter 'length' isn't defined
-for the type 'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'length'.
-        hasMore: posts.length == 20,
-                       ^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:351:16: Error: The argument type 'Object?' can't
-be assigned to the parameter type 'List<Post>?'.
- - 'Object' is from 'dart:core'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-        posts: allPosts,
-               ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:353:23: Error: The argument type 'Object?' can't
-be assigned to the parameter type 'DocumentSnapshot<Object?>?'.
- - 'Object' is from 'dart:core'.
- - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
-        lastDocument: lastDoc,
-                      ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:396:13: Error: The matched value of type '({bool
-hasMore, DocumentSnapshot<Object?>? lastDocument, String? paginationToken, List<Post> posts})' isn't assignable to the
-required type '(Object?, Object?)'.
- - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
- - 'Object' is from 'dart:core'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-Try changing the required type of the pattern, or the matched value type.
-      final (posts, lastDoc) = await _repository.getPosts(
-            ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:402:17: Error: The getter 'isEmpty' isn't
-defined for the type 'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isEmpty'.
-      if (posts.isEmpty) {
-                ^^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:410:44: Error: An expression whose value can be
-'null' must be null-checked before it can be dereferenced.
-      final allPosts = [...state.posts, ...posts];
-                                           ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:410:44: Error: Unexpected type 'Object?' of a
-spread.  Expected 'dynamic' or an Iterable.
- - 'Object' is from 'dart:core'.
-      final allPosts = [...state.posts, ...posts];
-                                           ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:416:24: Error: The getter 'length' isn't defined
-for the type 'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'length'.
-        hasMore: posts.length == 20,
-                       ^^^^^^
-lib/src/features/comments/presentation/providers/comments_provider.dart:413:16: Error: The argument type 'List<dynamic>'
-can't be assigned to the parameter type 'List<Post>?'.
- - 'List' is from 'dart:core'.
- - 'Post' is from 'package:teen_talk_app/src/features/comments/data/models/comment.dart'
- ('lib/src/features/comments/data/models/comment.dart').
-        posts: allPosts,
-               ^
-lib/src/features/comments/presentation/providers/comments_provider.dart:415:23: Error: The argument type 'Object?' can't
-be assigned to the parameter type 'DocumentSnapshot<Object?>?'.
- - 'Object' is from 'dart:core'.
- - 'DocumentSnapshot' is from 'package:cloud_firestore/cloud_firestore.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/cloud_firestore-4.17.5/lib/cloud_firestore.dart').
-        lastDocument: lastDoc,
-                      ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:80:25: Error: Too few positional arguments: 1 required,
-0 given.
-      analytics.logEvent(
-                        ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:165:34: Error: Too many positional arguments: 1
-allowed, but 2 found.
+lib/src/core/theme/design_tokens.dart:507:55: Error: Not a constant expression.
+  static const Color lightBackground = AppColorTokens.light.background;
+                                                      ^^^^^
+lib/src/core/theme/design_tokens.dart:508:52: Error: Not a constant expression.
+  static const Color lightSurface = AppColorTokens.light.surface;
+                                                   ^^^^^
+lib/src/core/theme/design_tokens.dart:509:59: Error: Not a constant expression.
+  static const Color lightSurfaceVariant = AppColorTokens.light.surfaceVariant;
+                                                          ^^^^^
+lib/src/core/theme/design_tokens.dart:510:52: Error: Not a constant expression.
+  static const Color lightOutline = AppColorTokens.light.outline;
+                                                   ^^^^^
+lib/src/core/theme/design_tokens.dart:511:54: Error: Not a constant expression.
+  static const Color lightOnPrimary = AppColorTokens.light.onPrimary;
+                                                     ^^^^^
+lib/src/core/theme/design_tokens.dart:512:56: Error: Not a constant expression.
+  static const Color lightOnSecondary = AppColorTokens.light.onSecondary;
+                                                       ^^^^^
+lib/src/core/theme/design_tokens.dart:513:57: Error: Not a constant expression.
+  static const Color lightOnBackground = AppColorTokens.light.onBackground;
+                                                        ^^^^^
+lib/src/core/theme/design_tokens.dart:514:54: Error: Not a constant expression.
+  static const Color lightOnSurface = AppColorTokens.light.onSurface;
+                                                     ^^^^^
+lib/src/core/theme/design_tokens.dart:515:61: Error: Not a constant expression.
+  static const Color lightOnSurfaceVariant = AppColorTokens.light.onSurfaceVariant;
+                                                            ^^^^^
+lib/src/core/theme/design_tokens.dart:517:54: Error: Not a constant expression.
+  static const Color darkBackground = AppColorTokens.dark.background;
+                                                     ^^^^
+lib/src/core/theme/design_tokens.dart:518:51: Error: Not a constant expression.
+  static const Color darkSurface = AppColorTokens.dark.surface;
+                                                  ^^^^
+lib/src/core/theme/design_tokens.dart:519:58: Error: Not a constant expression.
+  static const Color darkSurfaceVariant = AppColorTokens.dark.surfaceVariant;
+                                                         ^^^^
+lib/src/core/theme/design_tokens.dart:520:51: Error: Not a constant expression.
+  static const Color darkOutline = AppColorTokens.dark.outline;
+                                                  ^^^^
+lib/src/core/theme/design_tokens.dart:521:53: Error: Not a constant expression.
+  static const Color darkOnPrimary = AppColorTokens.dark.onPrimary;
+                                                    ^^^^
+lib/src/core/theme/design_tokens.dart:522:55: Error: Not a constant expression.
+  static const Color darkOnSecondary = AppColorTokens.dark.onSecondary;
+                                                      ^^^^
+lib/src/core/theme/design_tokens.dart:523:56: Error: Not a constant expression.
+  static const Color darkOnBackground = AppColorTokens.dark.onBackground;
+                                                       ^^^^
+lib/src/core/theme/design_tokens.dart:524:53: Error: Not a constant expression.
+  static const Color darkOnSurface = AppColorTokens.dark.onSurface;
+                                                    ^^^^
+lib/src/core/theme/design_tokens.dart:525:60: Error: Not a constant expression.
+  static const Color darkOnSurfaceVariant = AppColorTokens.dark.onSurfaceVariant;
+                                                           ^^^^
+lib/src/core/theme/app_theme.dart:96:33: Error: Too many positional arguments: 0 allowed, but 1 found.
 Try removing the extra positional arguments.
-                    _buildContent(theme, l10n),
-                                 ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:168:34: Error: Too many positional arguments: 1
-allowed, but 2 found.
-Try removing the extra positional arguments.
-                      _buildImage(theme, l10n),
-                                 ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:171:33: Error: Too many positional arguments: 2
-allowed, but 3 found.
-Try removing the extra positional arguments.
-                    _buildFooter(theme, l10n, isLiked),
+          borderSide: BorderSide(colorScheme.primary, width: 2),
                                 ^
-lib/src/features/feed/presentation/widgets/post_card_widget.dart:364:9: Error: No named parameter with the name 'child'.
-        child: CachedNetworkImage(
-        ^^^^^
-lib/src/core/widgets/cached_image_widget.dart:17:9: Context: Found this candidate, but the arguments don't match.
-  const CachedImageWidget({
-        ^^^^^^^^^^^^^^^^^
-lib/src/features/admin/presentation/widgets/reports_list_widget.dart:521:22: Error: The getter 'shade100' isn't defined
-for the type 'Color'.
- - 'Color' is from 'dart:ui'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'shade100'.
-        color: color.shade100,
-                     ^^^^^^^^
-lib/src/features/admin/presentation/widgets/reports_list_widget.dart:527:60: Error: The getter 'shade900' isn't defined
-for the type 'Color'.
- - 'Color' is from 'dart:ui'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'shade900'.
-          Icon(Icons.priority_high, size: 12, color: color.shade900),
-                                                           ^^^^^^^^
-lib/src/features/admin/presentation/widgets/reports_list_widget.dart:534:28: Error: The getter 'shade900' isn't defined
-for the type 'Color'.
- - 'Color' is from 'dart:ui'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'shade900'.
-              color: color.shade900,
-                           ^^^^^^^^
-lib/src/features/admin/presentation/widgets/enhanced_analytics_widget.dart:178:17: Error: Member not found:
-'person_check'.
-          Icons.person_check,
-                ^^^^^^^^^^^^
-lib/src/features/tutorial/presentation/widgets/app_tutorial.dart:275:15: Error: The argument type 'void Function()'
-can't be assigned to the parameter type 'bool Function()?'.
-      onSkip: onSkip,
-              ^
-lib/src/features/feed/presentation/providers/feed_provider.dart:294:29: Error: The getter 'posts' isn't defined for the
-type 'FeedNotifier'.
- - 'FeedNotifier' is from 'package:teen_talk_app/src/features/feed/presentation/providers/feed_provider.dart'
- ('lib/src/features/feed/presentation/providers/feed_provider.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'posts'.
-        [...state.posts, ...posts],
-                            ^^^^^
-lib/src/features/feed/presentation/providers/feed_provider.dart:300:44: Error: The getter 'posts' isn't defined for the
-type 'FeedNotifier'.
- - 'FeedNotifier' is from 'package:teen_talk_app/src/features/feed/presentation/providers/feed_provider.dart'
- ('lib/src/features/feed/presentation/providers/feed_provider.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'posts'.
-      final allPosts = [...state.posts, ...posts];
-                                           ^^^^^
-lib/src/features/offline_sync/services/connectivity_service.dart:33:48: Error: The argument type 'void
-Function(List<ConnectivityResult>)' can't be assigned to the parameter type 'void Function(ConnectivityResult)?'.
- - 'List' is from 'dart:core'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
-    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
-                                               ^
-lib/src/features/offline_sync/services/connectivity_service.dart:51:37: Error: The getter 'isNotEmpty' isn't defined for
-the type 'ConnectivityResult'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isNotEmpty'.
-      final hasConnection = results.isNotEmpty &&
-                                    ^^^^^^^^^^
-lib/src/features/offline_sync/services/connectivity_service.dart:52:20: Error: The method 'every' isn't defined for the
-type 'ConnectivityResult'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'every'.
-          !results.every((result) => result == ConnectivityResult.none);
-                   ^^^^^
-lib/src/features/offline_sync/services/connectivity_service.dart:69:22: Error: The getter 'isNotEmpty' isn't defined for
-the type 'ConnectivityResult'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'isNotEmpty'.
-      return results.isNotEmpty &&
-                     ^^^^^^^^^^
-lib/src/features/offline_sync/services/connectivity_service.dart:70:20: Error: The method 'every' isn't defined for the
-type 'ConnectivityResult'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'every'.
-          !results.every((result) => result == ConnectivityResult.none);
-                   ^^^^^
-lib/src/core/services/image_cache_service.dart:50:46: Error: The method 'getFilesFromCache' isn't defined for the type
-'DefaultCacheManager'.
- - 'DefaultCacheManager' is from 'package:flutter_cache_manager/src/cache_managers/default_cache_manager.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib/src/cache_managers/default_cache_manager
- .dart').
-Try correcting the name to the name of an existing method, or defining a method named 'getFilesFromCache'.
-      final files = await customCacheManager.getFilesFromCache();
-                                             ^^^^^^^^^^^^^^^^^
-lib/src/core/services/image_cache_service.dart:55:21: Error: A value of type 'num' can't be assigned to a variable of
-type 'int'.
-          totalSize += await file.file!.length();
+../flutter/packages/flutter/lib/src/painting/borders.dart:69:9: Context: Found this candidate, but the arguments don't
+match.
+  const BorderSide({
+        ^^^^^^^^^^
+lib/src/core/theme/app_theme.dart:58:18: Error: The argument type 'CardTheme' can't be assigned to the parameter type
+'CardThemeData?'.
+ - 'CardTheme' is from 'package:flutter/src/material/card_theme.dart'
+ ('../flutter/packages/flutter/lib/src/material/card_theme.dart').
+ - 'CardThemeData' is from 'package:flutter/src/material/card_theme.dart'
+ ('../flutter/packages/flutter/lib/src/material/card_theme.dart').
+      cardTheme: CardTheme(
+                 ^
+lib/src/core/theme/app_theme.dart:235:20: Error: The argument type 'DialogTheme' can't be assigned to the parameter type
+'DialogThemeData?'.
+ - 'DialogTheme' is from 'package:flutter/src/material/dialog_theme.dart'
+ ('../flutter/packages/flutter/lib/src/material/dialog_theme.dart').
+ - 'DialogThemeData' is from 'package:flutter/src/material/dialog_theme.dart'
+ ('../flutter/packages/flutter/lib/src/material/dialog_theme.dart').
+      dialogTheme: DialogTheme(
+                   ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:427:21: Error: Expected an identifier, but got ')'.
+Try inserting an identifier before ')'.
+                    ),
                     ^
-lib/src/core/services/image_prefetch_service.dart:17:19: Error: 'Post' isn't a type.
-    required List<Post> posts,
-                  ^^^^
-lib/src/core/services/image_prefetch_service.dart:56:35: Error: 'Post' isn't a type.
-  Future<void> batchPrefetch(List<Post> posts) async {
-                                  ^^^^
-lib/src/core/services/image_prefetch_service.dart:58:31: Error: The getter 'imageUrl' isn't defined for the type
-'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'imageUrl'.
-        .where((post) => post.imageUrl != null && post.imageUrl!.isNotEmpty)
-                              ^^^^^^^^
-lib/src/core/services/image_prefetch_service.dart:58:56: Error: The getter 'imageUrl' isn't defined for the type
-'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'imageUrl'.
-        .where((post) => post.imageUrl != null && post.imageUrl!.isNotEmpty)
-                                                       ^^^^^^^^
-lib/src/core/services/image_prefetch_service.dart:59:29: Error: The getter 'imageUrl' isn't defined for the type
-'Object?'.
- - 'Object' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'imageUrl'.
-        .map((post) => post.imageUrl!)
-                            ^^^^^^^^
-lib/src/features/feed/presentation/widgets/liker_list_modal.dart:214:58: Error: Too few positional arguments: 1
-required, 0 given.
-        await ref.read(analyticsServiceProvider).logEvent(
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:427:21: Error: Expected ']' before this.
+                    ),
+                    ^
+lib/src/features/feed/presentation/widgets/post_card_widget.dart:361:20: Error: Too many positional arguments: 0
+allowed, but 4 found.
+Try removing the extra positional arguments.
+          Semantics(
+                   ^
+../flutter/packages/flutter/lib/src/widgets/basic.dart:7874:3: Context: Found this candidate, but the arguments don't
+match.
+  Semantics({
+  ^^^^^^^^^
+lib/src/core/theme/design_tokens.dart:511:60: Error: Constant evaluation error:
+  static const Color lightOnPrimary = AppColorTokens.light.onPrimary;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:511:60: Context: The property 'onPrimary' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOnPrimary = AppColorTokens.light.onPrimary;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:511:22: Context: While analyzing:
+  static const Color lightOnPrimary = AppColorTokens.light.onPrimary;
+                     ^
+lib/src/core/theme/design_tokens.dart:507:61: Error: Constant evaluation error:
+  static const Color lightBackground = AppColorTokens.light.background;
+                                                            ^
+lib/src/core/theme/design_tokens.dart:507:61: Context: The property 'background' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightBackground = AppColorTokens.light.background;
+                                                            ^
+lib/src/core/theme/design_tokens.dart:507:22: Context: While analyzing:
+  static const Color lightBackground = AppColorTokens.light.background;
+                     ^
+lib/src/core/theme/design_tokens.dart:508:58: Error: Constant evaluation error:
+  static const Color lightSurface = AppColorTokens.light.surface;
                                                          ^
-lib/src/features/admin/data/services/analytics_export_service.dart:11:9: Error: 'AnalyticsExportDelegate' isn't a type.
-  final AnalyticsExportDelegate _delegate = buildAnalyticsExportDelegate();
-        ^^^^^^^^^^^^^^^^^^^^^^^
-lib/src/core/services/connectivity_service.dart:28:59: Error: A value of type 'StreamSubscription<ConnectivityResult>'
-can't be assigned to a variable of type 'StreamSubscription<List<ConnectivityResult>>?'.
- - 'StreamSubscription' is from 'dart:async'.
- - 'ConnectivityResult' is from 'package:connectivity_plus_platform_interface/src/enums.dart'
- ('../../AppData/Local/Pub/Cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4/lib/src/enums.dart').
- - 'List' is from 'dart:core'.
-      _subscription = _connectivity.onConnectivityChanged.listen((results) {
+lib/src/core/theme/design_tokens.dart:508:58: Context: The property 'surface' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightSurface = AppColorTokens.light.surface;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:508:22: Context: While analyzing:
+  static const Color lightSurface = AppColorTokens.light.surface;
+                     ^
+lib/src/core/theme/design_tokens.dart:509:65: Error: Constant evaluation error:
+  static const Color lightSurfaceVariant = AppColorTokens.light.surfaceVariant;
+                                                                ^
+lib/src/core/theme/design_tokens.dart:509:65: Context: The property 'surfaceVariant' can't be accessed on
+'AppColorTokens {brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}},
+onPrimary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color
+{a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary:
+Color {a: 1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a:
+1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.5411764705882353, b: 0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.3215686274509804, b: 0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765,
+g: 0.803921568627451, b: 0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b:
+1.0, colorSpace: ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g:
+0.7176470588235294, b: 0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451,
+g: 0.9803921568627451, b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0,
+r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r:
+0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color
+{a: 1.0, r: 0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color
+{a: 1.0, r: 0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor:
+Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightSurfaceVariant = AppColorTokens.light.surfaceVariant;
+                                                                ^
+lib/src/core/theme/design_tokens.dart:509:22: Context: While analyzing:
+  static const Color lightSurfaceVariant = AppColorTokens.light.surfaceVariant;
+                     ^
+lib/src/core/theme/design_tokens.dart:510:58: Error: Constant evaluation error:
+  static const Color lightOutline = AppColorTokens.light.outline;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:510:58: Context: The property 'outline' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOutline = AppColorTokens.light.outline;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:510:22: Context: While analyzing:
+  static const Color lightOutline = AppColorTokens.light.outline;
+                     ^
+lib/src/core/theme/design_tokens.dart:512:62: Error: Constant evaluation error:
+  static const Color lightOnSecondary = AppColorTokens.light.onSecondary;
+                                                             ^
+lib/src/core/theme/design_tokens.dart:512:62: Context: The property 'onSecondary' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOnSecondary = AppColorTokens.light.onSecondary;
+                                                             ^
+lib/src/core/theme/design_tokens.dart:512:22: Context: While analyzing:
+  static const Color lightOnSecondary = AppColorTokens.light.onSecondary;
+                     ^
+lib/src/core/theme/design_tokens.dart:513:63: Error: Constant evaluation error:
+  static const Color lightOnBackground = AppColorTokens.light.onBackground;
+                                                              ^
+lib/src/core/theme/design_tokens.dart:513:63: Context: The property 'onBackground' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOnBackground = AppColorTokens.light.onBackground;
+                                                              ^
+lib/src/core/theme/design_tokens.dart:513:22: Context: While analyzing:
+  static const Color lightOnBackground = AppColorTokens.light.onBackground;
+                     ^
+lib/src/core/theme/design_tokens.dart:514:60: Error: Constant evaluation error:
+  static const Color lightOnSurface = AppColorTokens.light.onSurface;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:514:60: Context: The property 'onSurface' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.2901960784313726, g:
+0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary: Color {a:
+1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r:
+1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b: 0.9176470588235294,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451, g: 0.9803921568627451,
+b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b:
+0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.9607843137254902, g:
+0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOnSurface = AppColorTokens.light.onSurface;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:514:22: Context: While analyzing:
+  static const Color lightOnSurface = AppColorTokens.light.onSurface;
+                     ^
+lib/src/core/theme/design_tokens.dart:515:67: Error: Constant evaluation error:
+  static const Color lightOnSurfaceVariant = AppColorTokens.light.onSurfaceVariant;
+                                                                  ^
+lib/src/core/theme/design_tokens.dart:515:67: Context: The property 'onSurfaceVariant' can't be accessed on
+'AppColorTokens {brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}},
+onPrimary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, onPrimaryContainer: Color
+{a: 1.0, r: 0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, secondary:
+Color {a: 1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a:
+1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.5411764705882353, b: 0.5019607843137255, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.3215686274509804, b: 0.3215686274509804, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765,
+g: 0.803921568627451, b: 0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b:
+1.0, colorSpace: ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g:
+0.7176470588235294, b: 0.6862745098039216, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.9803921568627451,
+g: 0.9803921568627451, b: 0.9803921568627451, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surface: Color {a: 1.0,
+r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r:
+0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902, colorSpace: ColorSpace {}}, onSurfaceVariant: Color
+{a: 1.0, r: 0.4588235294117647, g: 0.4588235294117647, b: 0.4588235294117647, colorSpace: ColorSpace {}}, outline: Color
+{a: 1.0, r: 0.8784313725490196, g: 0.8784313725490196, b: 0.8784313725490196, colorSpace: ColorSpace {}}, shadowColor:
+Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color lightOnSurfaceVariant = AppColorTokens.light.onSurfaceVariant;
+                                                                  ^
+lib/src/core/theme/design_tokens.dart:515:22: Context: While analyzing:
+  static const Color lightOnSurfaceVariant = AppColorTokens.light.onSurfaceVariant;
+                     ^
+lib/src/core/theme/design_tokens.dart:517:59: Error: Constant evaluation error:
+  static const Color darkBackground = AppColorTokens.dark.background;
                                                           ^
-Unhandled exception:
-Unsupported operation: Unsupported invalid type InvalidType(<invalid>) (InvalidType). Encountered while compiling
-file:///C:/Users/othma/Desktop/TeenTalk/lib/src/features/admin/data/services/analytics_export_service.dart, which
-contains the type: InvalidType(<invalid>).
-#0      LibraryCompiler._typeCompilationError (package:dev_compiler/src/kernel/compiler_new.dart:4451)
-#1      LibraryCompiler._emitType (package:dev_compiler/src/kernel/compiler_new.dart:4416)
-#2      LibraryCompiler._emitClassSignature.emitClassFieldSignature
-(package:dev_compiler/src/kernel/compiler_new.dart:2127)
-#3      LibraryCompiler._emitClassSignature (package:dev_compiler/src/kernel/compiler_new.dart:2301)
-#4      LibraryCompiler._emitClassDeclaration (package:dev_compiler/src/kernel/compiler_new.dart:1524)
-#5      LibraryCompiler._emitClass (package:dev_compiler/src/kernel/compiler_new.dart:1390)
-#6      List.forEach (dart:core-patch/growable_array.dart:425)
-#7      LibraryCompiler._emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:1312)
-#8      LibraryCompiler.emitLibrary (package:dev_compiler/src/kernel/compiler_new.dart:926)
-#9      LibraryBundleCompiler.emitModule (package:dev_compiler/src/kernel/compiler_new.dart:163)
-#10     IncrementalJavaScriptBundler.compile (package:frontend_server/src/javascript_bundle.dart:300)
-#11     FrontendCompiler.writeJavaScriptBundle (package:frontend_server/frontend_server.dart:898)
-<asynchronous suspension>
-#12     FrontendCompiler.compile (package:frontend_server/frontend_server.dart:708)
-<asynchronous suspension>
-#13     listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
-<asynchronous suspension>
-The Dart compiler exited unexpectedly.
-Waiting for connection from debug service on Edge...               53,0s
-Failed to compile application.
+lib/src/core/theme/design_tokens.dart:517:59: Context: The property 'background' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkBackground = AppColorTokens.dark.background;
+                                                          ^
+lib/src/core/theme/design_tokens.dart:517:22: Context: While analyzing:
+  static const Color darkBackground = AppColorTokens.dark.background;
+                     ^
+lib/src/core/theme/design_tokens.dart:518:56: Error: Constant evaluation error:
+  static const Color darkSurface = AppColorTokens.dark.surface;
+                                                       ^
+lib/src/core/theme/design_tokens.dart:518:56: Context: The property 'surface' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkSurface = AppColorTokens.dark.surface;
+                                                       ^
+lib/src/core/theme/design_tokens.dart:518:22: Context: While analyzing:
+  static const Color darkSurface = AppColorTokens.dark.surface;
+                     ^
+lib/src/core/theme/design_tokens.dart:519:63: Error: Constant evaluation error:
+  static const Color darkSurfaceVariant = AppColorTokens.dark.surfaceVariant;
+                                                              ^
+lib/src/core/theme/design_tokens.dart:519:63: Context: The property 'surfaceVariant' can't be accessed on
+'AppColorTokens {brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}},
+onPrimary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer:
+Color {a: 1.0, r: 0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}},
+secondary: Color {a: 1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary:
+Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.3215686274509804, b: 0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.5411764705882353, b: 0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765,
+g: 0.803921568627451, b: 0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b:
+1.0, colorSpace: ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g:
+0.8705882352941177, b: 0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b:
+0.0, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b:
+0.0392156862745098, colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902,
+b: 0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkSurfaceVariant = AppColorTokens.dark.surfaceVariant;
+                                                              ^
+lib/src/core/theme/design_tokens.dart:519:22: Context: While analyzing:
+  static const Color darkSurfaceVariant = AppColorTokens.dark.surfaceVariant;
+                     ^
+lib/src/core/theme/design_tokens.dart:520:56: Error: Constant evaluation error:
+  static const Color darkOutline = AppColorTokens.dark.outline;
+                                                       ^
+lib/src/core/theme/design_tokens.dart:520:56: Context: The property 'outline' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOutline = AppColorTokens.dark.outline;
+                                                       ^
+lib/src/core/theme/design_tokens.dart:520:22: Context: While analyzing:
+  static const Color darkOutline = AppColorTokens.dark.outline;
+                     ^
+lib/src/core/theme/design_tokens.dart:521:58: Error: Constant evaluation error:
+  static const Color darkOnPrimary = AppColorTokens.dark.onPrimary;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:521:58: Context: The property 'onPrimary' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOnPrimary = AppColorTokens.dark.onPrimary;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:521:22: Context: While analyzing:
+  static const Color darkOnPrimary = AppColorTokens.dark.onPrimary;
+                     ^
+lib/src/core/theme/design_tokens.dart:522:60: Error: Constant evaluation error:
+  static const Color darkOnSecondary = AppColorTokens.dark.onSecondary;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:522:60: Context: The property 'onSecondary' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOnSecondary = AppColorTokens.dark.onSecondary;
+                                                           ^
+lib/src/core/theme/design_tokens.dart:522:22: Context: While analyzing:
+  static const Color darkOnSecondary = AppColorTokens.dark.onSecondary;
+                     ^
+lib/src/core/theme/design_tokens.dart:523:61: Error: Constant evaluation error:
+  static const Color darkOnBackground = AppColorTokens.dark.onBackground;
+                                                            ^
+lib/src/core/theme/design_tokens.dart:523:61: Context: The property 'onBackground' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOnBackground = AppColorTokens.dark.onBackground;
+                                                            ^
+lib/src/core/theme/design_tokens.dart:523:22: Context: While analyzing:
+  static const Color darkOnBackground = AppColorTokens.dark.onBackground;
+                     ^
+lib/src/core/theme/design_tokens.dart:524:58: Error: Constant evaluation error:
+  static const Color darkOnSurface = AppColorTokens.dark.onSurface;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:524:58: Context: The property 'onSurface' can't be accessed on 'AppColorTokens
+{brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}, onPrimary: Color
+{a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer: Color {a: 1.0, r:
+0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}}, secondary: Color {a: 1.0,
+r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary: Color {a: 1.0, r: 1.0, g:
+1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g: 0.3215686274509804, b:
+0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g: 0.5411764705882353, b:
+0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765, g: 0.803921568627451, b:
+0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace:
+ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b: 0.6862745098039216,
+colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g: 0.8705882352941177, b:
+0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace:
+ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b: 0.9607843137254902,
+colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b: 0.0392156862745098,
+colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOnSurface = AppColorTokens.dark.onSurface;
+                                                         ^
+lib/src/core/theme/design_tokens.dart:524:22: Context: While analyzing:
+  static const Color darkOnSurface = AppColorTokens.dark.onSurface;
+                     ^
+lib/src/core/theme/design_tokens.dart:525:65: Error: Constant evaluation error:
+  static const Color darkOnSurfaceVariant = AppColorTokens.dark.onSurfaceVariant;
+                                                                ^
+lib/src/core/theme/design_tokens.dart:525:65: Context: The property 'onSurfaceVariant' can't be accessed on
+'AppColorTokens {brightness: Brightness {}, primary: Color {a: 1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}},
+onPrimary: Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, primaryContainer: Color {a: 1.0, r:
+0.10196078431372549, g: 0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onPrimaryContainer:
+Color {a: 1.0, r: 0.2901960784313726, g: 0.2901960784313726, b: 0.2901960784313726, colorSpace: ColorSpace {}},
+secondary: Color {a: 1.0, r: 1.0, g: 0.4196078431372549, b: 0.4196078431372549, colorSpace: ColorSpace {}}, onSecondary:
+Color {a: 1.0, r: 1.0, g: 1.0, b: 1.0, colorSpace: ColorSpace {}}, secondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.3215686274509804, b: 0.3215686274509804, colorSpace: ColorSpace {}}, onSecondaryContainer: Color {a: 1.0, r: 1.0, g:
+0.5411764705882353, b: 0.5019607843137255, colorSpace: ColorSpace {}}, tertiary: Color {a: 1.0, r: 0.3058823529411765,
+g: 0.803921568627451, b: 0.7686274509803922, colorSpace: ColorSpace {}}, onTertiary: Color {a: 1.0, r: 1.0, g: 1.0, b:
+1.0, colorSpace: ColorSpace {}}, tertiaryContainer: Color {a: 1.0, r: 0.27058823529411763, g: 0.7176470588235294, b:
+0.6862745098039216, colorSpace: ColorSpace {}}, onTertiaryContainer: Color {a: 1.0, r: 0.5019607843137255, g:
+0.8705882352941177, b: 0.9176470588235294, colorSpace: ColorSpace {}}, background: Color {a: 1.0, r: 0.0, g: 0.0, b:
+0.0, colorSpace: ColorSpace {}}, onBackground: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902, b:
+0.9607843137254902, colorSpace: ColorSpace {}}, surface: Color {a: 1.0, r: 0.0392156862745098, g: 0.0392156862745098, b:
+0.0392156862745098, colorSpace: ColorSpace {}}, onSurface: Color {a: 1.0, r: 0.9607843137254902, g: 0.9607843137254902,
+b: 0.9607843137254902, colorSpace: ColorSpace {}}, surfaceVariant: Color {a: 1.0, r: 0.10196078431372549, g:
+0.10196078431372549, b: 0.10196078431372549, colorSpace: ColorSpace {}}, onSurfaceVariant: Color {a: 1.0, r:
+0.6196078431372549, g: 0.6196078431372549, b: 0.6196078431372549, colorSpace: ColorSpace {}}, outline: Color {a: 1.0, r:
+0.16470588235294117, g: 0.16470588235294117, b: 0.16470588235294117, colorSpace: ColorSpace {}}, shadowColor: Color {a:
+1.0, r: 0.0, g: 0.0, b: 0.0, colorSpace: ColorSpace {}}}' in a constant expression.
+ - 'AppColorTokens' is from 'package:teen_talk_app/src/core/theme/design_tokens.dart'
+ ('lib/src/core/theme/design_tokens.dart').
+ - 'Brightness' is from 'dart:ui'.
+ - 'Color' is from 'dart:ui'.
+ - 'ColorSpace' is from 'dart:ui'.
+  static const Color darkOnSurfaceVariant = AppColorTokens.dark.onSurfaceVariant;
+                                                                ^
+lib/src/core/theme/design_tokens.dart:525:22: Context: While analyzing:
+  static const Color darkOnSurfaceVariant = AppColorTokens.dark.onSurfaceVariant;
+                     ^
+Waiting for connection from debug service on Edge...               44,0s
