@@ -55,7 +55,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: colors.surface,
         elevation: 0,
         shadowColor: colors.shadowColor.withOpacity(isDark ? 0.06 : 0.08),
@@ -93,7 +93,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.md),
-          borderSide: BorderSide(colorScheme.primary, width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.md),
@@ -232,7 +232,7 @@ class AppTheme {
           );
         }),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: colors.surface,
         elevation: 8,
         shape: RoundedRectangleBorder(
