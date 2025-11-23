@@ -504,25 +504,25 @@ class DesignTokens {
   static const Color neonGreen = BrandColors.neonGreen;
   static const Color limeGreen = BrandColors.limeGreen;
 
-  static const Color lightBackground = AppColorTokens.light.background;
-  static const Color lightSurface = AppColorTokens.light.surface;
-  static const Color lightSurfaceVariant = AppColorTokens.light.surfaceVariant;
-  static const Color lightOutline = AppColorTokens.light.outline;
-  static const Color lightOnPrimary = AppColorTokens.light.onPrimary;
-  static const Color lightOnSecondary = AppColorTokens.light.onSecondary;
-  static const Color lightOnBackground = AppColorTokens.light.onBackground;
-  static const Color lightOnSurface = AppColorTokens.light.onSurface;
-  static const Color lightOnSurfaceVariant = AppColorTokens.light.onSurfaceVariant;
+  static Color get lightBackground => AppColorTokens.light.background;
+  static Color get lightSurface => AppColorTokens.light.surface;
+  static Color get lightSurfaceVariant => AppColorTokens.light.surfaceVariant;
+  static Color get lightOutline => AppColorTokens.light.outline;
+  static Color get lightOnPrimary => AppColorTokens.light.onPrimary;
+  static Color get lightOnSecondary => AppColorTokens.light.onSecondary;
+  static Color get lightOnBackground => AppColorTokens.light.onBackground;
+  static Color get lightOnSurface => AppColorTokens.light.onSurface;
+  static Color get lightOnSurfaceVariant => AppColorTokens.light.onSurfaceVariant;
 
-  static const Color darkBackground = AppColorTokens.dark.background;
-  static const Color darkSurface = AppColorTokens.dark.surface;
-  static const Color darkSurfaceVariant = AppColorTokens.dark.surfaceVariant;
-  static const Color darkOutline = AppColorTokens.dark.outline;
-  static const Color darkOnPrimary = AppColorTokens.dark.onPrimary;
-  static const Color darkOnSecondary = AppColorTokens.dark.onSecondary;
-  static const Color darkOnBackground = AppColorTokens.dark.onBackground;
-  static const Color darkOnSurface = AppColorTokens.dark.onSurface;
-  static const Color darkOnSurfaceVariant = AppColorTokens.dark.onSurfaceVariant;
+  static Color get darkBackground => AppColorTokens.dark.background;
+  static Color get darkSurface => AppColorTokens.dark.surface;
+  static Color get darkSurfaceVariant => AppColorTokens.dark.surfaceVariant;
+  static Color get darkOutline => AppColorTokens.dark.outline;
+  static Color get darkOnPrimary => AppColorTokens.dark.onPrimary;
+  static Color get darkOnSecondary => AppColorTokens.dark.onSecondary;
+  static Color get darkOnBackground => AppColorTokens.dark.onBackground;
+  static Color get darkOnSurface => AppColorTokens.dark.onSurface;
+  static Color get darkOnSurfaceVariant => AppColorTokens.dark.onSurfaceVariant;
 
   static const Color errorColor = BrandColors.error;
   static const Color successColor = BrandColors.success;
