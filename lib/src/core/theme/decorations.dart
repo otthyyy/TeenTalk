@@ -32,16 +32,19 @@ class AppDecorations {
   }) {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(borderRadius),
-      gradient: gradient ?? LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(isDark ? 0.08 : 0.16),
-          Colors.white.withOpacity(isDark ? 0.04 : 0.08),
-        ],
-      ),
+      gradient: gradient ??
+          LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              (isDark ? Colors.black : Colors.white)
+                  .withOpacity(isDark ? 0.6 : 0.16),
+              (isDark ? Colors.black : Colors.white)
+                  .withOpacity(isDark ? 0.4 : 0.08),
+            ],
+          ),
       border: Border.all(
-        color: Colors.white.withOpacity(isDark ? 0.12 : 0.2),
+        color: Colors.white.withOpacity(isDark ? 0.05 : 0.2),
         width: 1.5,
       ),
       boxShadow: AppElevation.level4(Colors.black),
@@ -61,7 +64,8 @@ class AppDecorations {
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
           padding: padding,
-          decoration: AppDecorations.glass(isDark: isDark, borderRadius: borderRadius),
+          decoration:
+              AppDecorations.glass(isDark: isDark, borderRadius: borderRadius),
           child: child,
         ),
       ),

@@ -260,10 +260,10 @@ class MainNavigationShell extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: AppDecorations.glassContainer(
               isDark: isDark,
-              borderRadius: 28,
+              borderRadius: 100,
               padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
+                horizontal: 8,
+                vertical: 8,
               ),
               child: BottomNavigationBar(
                 currentIndex: _calculateSelectedIndex(context, isAdmin),
