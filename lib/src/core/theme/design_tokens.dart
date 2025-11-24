@@ -1,31 +1,43 @@
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Brand color constants shared across light and dark palettes.
 class BrandColors {
   const BrandColors._();
 
-  static const Color vibrantPurple = Color(0xFF000000);
-  static const Color deepPurple = Color(0xFF1A1A1A);
-  static const Color lightPurple = Color(0xFF4A4A4A);
+  // Primary: Electric Violet / Deep Indigo
+  static const Color vibrantPurple = Color(0xFF6C63FF);
+  static const Color deepPurple = Color(0xFF4834D4);
+  static const Color lightPurple = Color(0xFFA29BFE);
 
-  static const Color vibrantPink = Color(0xFFFF6B6B);
-  static const Color deepPink = Color(0xFFFF5252);
-  static const Color lightPink = Color(0xFFFF8A80);
+  // Secondary: Hot Pink / Rose
+  static const Color vibrantPink = Color(0xFFFF4757);
+  static const Color deepPink = Color(0xFFD63031);
+  static const Color lightPink = Color(0xFFFF7675);
 
-  static const Color vibrantCyan = Color(0xFF4ECDC4);
-  static const Color deepCyan = Color(0xFF45B7AF);
-  static const Color lightCyan = Color(0xFF80DEEA);
+  // Tertiary: Cyan / Teal
+  static const Color vibrantCyan = Color(0xFF00CEC9);
+  static const Color deepCyan = Color(0xFF00B894);
+  static const Color lightCyan = Color(0xFF81ECEC);
 
-  static const Color vibrantYellow = Color(0xFFFFE66D);
-  static const Color vibrantOrange = Color(0xFFFF9F43);
+  // Accents
+  static const Color vibrantYellow = Color(0xFFFDCB6E);
+  static const Color vibrantOrange = Color(0xFFE17055);
+  static const Color neonGreen = Color(0xFF55EFC4);
+  static const Color limeGreen = Color(0xFF00B894);
 
-  static const Color neonGreen = Color(0xFF6BCF7F);
-  static const Color limeGreen = Color(0xFF95E1A4);
+  // Functional
+  static const Color error = Color(0xFFFF4757);
+  static const Color success = Color(0xFF00B894);
+  static const Color warning = Color(0xFFFDCB6E);
 
-  static const Color error = Color(0xFFEF4444);
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFFBBF24);
+  // Neutrals
+  static const Color darkBackground = Color(0xFF0F0F1E);
+  static const Color darkSurface = Color(0xFF1A1A2E);
+  static const Color lightBackground = Color(0xFFFDFBF7);
+  static const Color lightSurface = Color(0xFFFFFFFF);
 }
 
 /// Light/dark specific color system aligned with Material 3 [`ColorScheme`].
@@ -146,23 +158,23 @@ class AppColorTokens {
     primary: BrandColors.vibrantPurple,
     onPrimary: Colors.white,
     primaryContainer: BrandColors.lightPurple,
-    onPrimaryContainer: BrandColors.deepPurple,
+    onPrimaryContainer: Colors.white,
     secondary: BrandColors.vibrantPink,
     onSecondary: Colors.white,
     secondaryContainer: BrandColors.lightPink,
-    onSecondaryContainer: BrandColors.deepPink,
+    onSecondaryContainer: Colors.white,
     tertiary: BrandColors.vibrantCyan,
     onTertiary: Colors.white,
     tertiaryContainer: BrandColors.lightCyan,
     onTertiaryContainer: BrandColors.deepCyan,
-    background: Color(0xFFFAFAFA),
-    onBackground: Color(0xFF1A1A1A),
-    surface: Color(0xFFFFFFFF),
-    onSurface: Color(0xFF1A1A1A),
-    surfaceVariant: Color(0xFFF5F5F5),
-    onSurfaceVariant: Color(0xFF757575),
-    outline: Color(0xFFE0E0E0),
-    shadowColor: Colors.black,
+    background: BrandColors.lightBackground,
+    onBackground: Color(0xFF2D3436),
+    surface: BrandColors.lightSurface,
+    onSurface: Color(0xFF2D3436),
+    surfaceVariant: Color(0xFFF1F2F6),
+    onSurfaceVariant: Color(0xFF636E72),
+    outline: Color(0xFFDFE6E9),
+    shadowColor: Color(0xFF2D3436),
   );
 
   static const AppColorTokens dark = AppColorTokens(
@@ -179,13 +191,13 @@ class AppColorTokens {
     onTertiary: Colors.white,
     tertiaryContainer: BrandColors.deepCyan,
     onTertiaryContainer: BrandColors.lightCyan,
-    background: Color(0xFF000000),
-    onBackground: Color(0xFFF5F5F5),
-    surface: Color(0xFF0A0A0A),
-    onSurface: Color(0xFFF5F5F5),
-    surfaceVariant: Color(0xFF1A1A1A),
-    onSurfaceVariant: Color(0xFF9E9E9E),
-    outline: Color(0xFF2A2A2A),
+    background: BrandColors.darkBackground,
+    onBackground: Color(0xFFDFE6E9),
+    surface: BrandColors.darkSurface,
+    onSurface: Color(0xFFDFE6E9),
+    surfaceVariant: Color(0xFF2D3436),
+    onSurfaceVariant: Color(0xFFB2BEC3),
+    outline: Color(0xFF2D3436),
     shadowColor: Colors.black,
   );
 
@@ -257,13 +269,13 @@ class AppSpacing {
 class AppRadii {
   const AppRadii._();
 
-  static const double xs = 6.0;
-  static const double sm = 10.0;
+  static const double xs = 8.0;
+  static const double sm = 12.0;
   static const double md = 16.0;
-  static const double base = 20.0;
-  static const double lg = 24.0;
-  static const double xl = 28.0;
-  static const double xxl = 36.0;
+  static const double base = 24.0;
+  static const double lg = 32.0;
+  static const double xl = 40.0;
+  static const double xxl = 48.0;
   static const double full = 9999.0;
 
   static BorderRadius border(double radius) => BorderRadius.circular(radius);
@@ -302,56 +314,56 @@ class AppElevation {
   static List<BoxShadow> level1(Color shadow) => [
         BoxShadow(
           color: shadow.withOpacity(0.05),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
       ];
 
   static List<BoxShadow> level2(Color shadow) => [
         BoxShadow(
           color: shadow.withOpacity(0.08),
-          blurRadius: 8,
-          offset: const Offset(0, 4),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
         ),
       ];
 
   static List<BoxShadow> level3(Color shadow) => [
         BoxShadow(
           color: shadow.withOpacity(0.1),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
+          blurRadius: 30,
+          offset: const Offset(0, 12),
         ),
       ];
 
   static List<BoxShadow> level4(Color shadow) => [
         BoxShadow(
           color: shadow.withOpacity(0.12),
-          blurRadius: 16,
-          offset: const Offset(0, 8),
+          blurRadius: 40,
+          offset: const Offset(0, 16),
         ),
       ];
 
   static List<BoxShadow> level5(Color shadow) => [
         BoxShadow(
           color: shadow.withOpacity(0.15),
-          blurRadius: 24,
-          offset: const Offset(0, 12),
+          blurRadius: 50,
+          offset: const Offset(0, 20),
         ),
       ];
 
   static List<BoxShadow> colored(Color color) => [
         BoxShadow(
-          color: color.withOpacity(0.3),
-          blurRadius: 16,
+          color: color.withOpacity(0.25),
+          blurRadius: 20,
           offset: const Offset(0, 8),
         ),
       ];
 
   static List<BoxShadow> glow(Color color) => [
         BoxShadow(
-          color: color.withOpacity(0.5),
+          color: color.withOpacity(0.4),
           blurRadius: 20,
-          spreadRadius: 2,
+          spreadRadius: 0,
         ),
       ];
 }
@@ -359,98 +371,98 @@ class AppElevation {
 class AppTypography {
   const AppTypography._();
 
-  static const TextTheme base = TextTheme(
-    displayLarge: TextStyle(
-      fontSize: 40,
-      fontWeight: FontWeight.w800,
-      letterSpacing: -1.0,
-      height: 1.1,
-    ),
-    displayMedium: TextStyle(
-      fontSize: 36,
-      fontWeight: FontWeight.w800,
-      letterSpacing: -0.75,
-      height: 1.15,
-    ),
-    displaySmall: TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.w700,
-      letterSpacing: -0.5,
-      height: 1.2,
-    ),
-    headlineLarge: TextStyle(
-      fontSize: 28,
-      fontWeight: FontWeight.w700,
-      letterSpacing: -0.25,
-      height: 1.2,
-    ),
-    headlineMedium: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 0,
-      height: 1.25,
-    ),
-    headlineSmall: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0,
-      height: 1.3,
-    ),
-    titleLarge: TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0,
-      height: 1.4,
-    ),
-    titleMedium: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.15,
-      height: 1.4,
-    ),
-    titleSmall: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.1,
-      height: 1.4,
-    ),
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.5,
-      height: 1.5,
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-      height: 1.5,
-    ),
-    bodySmall: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.4,
-      height: 1.5,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.5,
-      height: 1.4,
-    ),
-    labelMedium: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.5,
-      height: 1.4,
-    ),
-    labelSmall: TextStyle(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.5,
-      height: 1.4,
-    ),
-  );
+  static TextTheme get base => GoogleFonts.outfitTextTheme().copyWith(
+        displayLarge: GoogleFonts.outfit(
+          fontSize: 40,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -1.0,
+          height: 1.1,
+        ),
+        displayMedium: GoogleFonts.outfit(
+          fontSize: 36,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.75,
+          height: 1.15,
+        ),
+        displaySmall: GoogleFonts.outfit(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
+          height: 1.2,
+        ),
+        headlineLarge: GoogleFonts.outfit(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.25,
+          height: 1.2,
+        ),
+        headlineMedium: GoogleFonts.outfit(
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0,
+          height: 1.25,
+        ),
+        headlineSmall: GoogleFonts.outfit(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          height: 1.3,
+        ),
+        titleLarge: GoogleFonts.outfit(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+          height: 1.4,
+        ),
+        titleMedium: GoogleFonts.outfit(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.15,
+          height: 1.4,
+        ),
+        titleSmall: GoogleFonts.outfit(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+          height: 1.4,
+        ),
+        bodyLarge: GoogleFonts.outfit(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.5,
+          height: 1.5,
+        ),
+        bodyMedium: GoogleFonts.outfit(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.25,
+          height: 1.5,
+        ),
+        bodySmall: GoogleFonts.outfit(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.4,
+          height: 1.5,
+        ),
+        labelLarge: GoogleFonts.outfit(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+          height: 1.4,
+        ),
+        labelMedium: GoogleFonts.outfit(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+          height: 1.4,
+        ),
+        labelSmall: GoogleFonts.outfit(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
+          height: 1.4,
+        ),
+      );
 
   static TextTheme scale(TextScaler scaler) {
     TextStyle? scaleStyle(TextStyle? style) {
@@ -460,22 +472,23 @@ class AppTypography {
       return style.copyWith(fontSize: scaler.scale(style.fontSize!));
     }
 
+    final b = base;
     return TextTheme(
-      displayLarge: scaleStyle(base.displayLarge),
-      displayMedium: scaleStyle(base.displayMedium),
-      displaySmall: scaleStyle(base.displaySmall),
-      headlineLarge: scaleStyle(base.headlineLarge),
-      headlineMedium: scaleStyle(base.headlineMedium),
-      headlineSmall: scaleStyle(base.headlineSmall),
-      titleLarge: scaleStyle(base.titleLarge),
-      titleMedium: scaleStyle(base.titleMedium),
-      titleSmall: scaleStyle(base.titleSmall),
-      bodyLarge: scaleStyle(base.bodyLarge),
-      bodyMedium: scaleStyle(base.bodyMedium),
-      bodySmall: scaleStyle(base.bodySmall),
-      labelLarge: scaleStyle(base.labelLarge),
-      labelMedium: scaleStyle(base.labelMedium),
-      labelSmall: scaleStyle(base.labelSmall),
+      displayLarge: scaleStyle(b.displayLarge),
+      displayMedium: scaleStyle(b.displayMedium),
+      displaySmall: scaleStyle(b.displaySmall),
+      headlineLarge: scaleStyle(b.headlineLarge),
+      headlineMedium: scaleStyle(b.headlineMedium),
+      headlineSmall: scaleStyle(b.headlineSmall),
+      titleLarge: scaleStyle(b.titleLarge),
+      titleMedium: scaleStyle(b.titleMedium),
+      titleSmall: scaleStyle(b.titleSmall),
+      bodyLarge: scaleStyle(b.bodyLarge),
+      bodyMedium: scaleStyle(b.bodyMedium),
+      bodySmall: scaleStyle(b.bodySmall),
+      labelLarge: scaleStyle(b.labelLarge),
+      labelMedium: scaleStyle(b.labelMedium),
+      labelSmall: scaleStyle(b.labelSmall),
     );
   }
 }

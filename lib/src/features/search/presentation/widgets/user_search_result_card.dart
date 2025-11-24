@@ -82,11 +82,11 @@ class UserSearchResultCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (profile.trustLevel > 0) ...[
+            if (profile.trustScore > 0) ...[
               const Icon(Icons.verified, size: 16),
               const SizedBox(width: 4),
               Text(
-                profile.trustLevel.toStringAsFixed(0),
+                profile.trustScore.toStringAsFixed(0),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

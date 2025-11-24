@@ -11,7 +11,7 @@ class AppTheme {
 
   static ThemeData _buildTheme(AppColorTokens colors) {
     final colorScheme = colors.colorScheme;
-    const textTheme = AppTypography.base;
+    final textTheme = AppTypography.base;
     final isDark = colors.brightness == Brightness.dark;
 
     Color subtleOnSurface(double opacity) =>
@@ -36,7 +36,7 @@ class AppTheme {
         size: AppIconSizes.base,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: colors.surface.withOpacity(0.95),
+        backgroundColor: Colors.transparent, // Glassmorphism ready
         foregroundColor: colors.onBackground,
         elevation: 0,
         centerTitle: true,
@@ -51,18 +51,13 @@ class AppTheme {
           color: colors.onBackground,
           size: AppIconSizes.base,
         ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(AppRadii.lg),
-          ),
-        ),
       ),
       cardTheme: CardThemeData(
         color: colors.surface,
         elevation: 0,
         shadowColor: colors.shadowColor.withOpacity(isDark ? 0.06 : 0.08),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadii.lg),
+          borderRadius: BorderRadius.circular(AppRadii.base),
           side: BorderSide(
             color: colors.outline.withOpacity(isDark ? 0.35 : 0.5),
             width: 1,
@@ -185,7 +180,7 @@ class AppTheme {
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: colors.surface.withOpacity(0.95),
+        backgroundColor: Colors.transparent, // Glassmorphism ready
         selectedItemColor:
             isDark ? BrandColors.lightPurple : colorScheme.primary,
         unselectedItemColor: colors.onSurfaceVariant,
@@ -211,7 +206,7 @@ class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colors.surface.withOpacity(0.95),
+        backgroundColor: Colors.transparent, // Glassmorphism ready
         indicatorColor:
             (isDark ? BrandColors.deepPurple : BrandColors.lightPurple)
                 .withOpacity(0.2),
