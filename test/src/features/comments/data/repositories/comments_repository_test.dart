@@ -1,6 +1,5 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'package:teen_talk_app/src/features/comments/data/models/comment_failure.dart';
 import 'package:teen_talk_app/src/features/comments/data/repositories/comments_repository.dart';
 
@@ -40,7 +39,8 @@ void main() {
 
         expect(comment.mentionedUserIds, ['friend1', 'friend2']);
 
-        final stored = await firestore.collection('comments').doc(comment.id).get();
+        final stored =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(stored.get('mentionedUserIds'), ['friend1', 'friend2']);
 
         final post = await firestore.collection('posts').doc('post1').get();
@@ -69,7 +69,8 @@ void main() {
           replyToCommentId: parent.id,
         );
 
-        final parentDoc = await firestore.collection('comments').doc(parent.id).get();
+        final parentDoc =
+            await firestore.collection('comments').doc(parent.id).get();
         expect(parentDoc.get('replyCount'), 1);
 
         final post = await firestore.collection('posts').doc('post1').get();
@@ -102,7 +103,8 @@ void main() {
           'isModerated': true,
         });
 
-        final (comments, lastDoc) = await repository.getCommentsByPostId(postId: 'post1');
+        final (comments, lastDoc) =
+            await repository.getCommentsByPostId(postId: 'post1');
 
         expect(comments.length, 1);
         expect(comments.first.id, active.id);
@@ -140,7 +142,8 @@ void main() {
           school: 'Test School',
         );
 
-        final replies = await repository.getRepliesForComment(commentId: parent.id);
+        final replies =
+            await repository.getRepliesForComment(commentId: parent.id);
 
         expect(replies.length, 1);
         expect(replies.first.id, reply1.id);
@@ -161,7 +164,8 @@ void main() {
 
         await repository.likeComment(comment.id, 'user42');
 
-        final updated = await firestore.collection('comments').doc(comment.id).get();
+        final updated =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(updated.get('likeCount'), 1);
         expect(updated.get('likedBy'), ['user42']);
       });
@@ -180,7 +184,8 @@ void main() {
         await repository.likeComment(comment.id, 'user42');
         await repository.likeComment(comment.id, 'user42');
 
-        final updated = await firestore.collection('comments').doc(comment.id).get();
+        final updated =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(updated.get('likeCount'), 1);
         expect(updated.get('likedBy'), ['user42']);
       });
@@ -200,7 +205,8 @@ void main() {
         await repository.likeComment(comment.id, 'user99');
         await repository.unlikeComment(comment.id, 'user42');
 
-        final updated = await firestore.collection('comments').doc(comment.id).get();
+        final updated =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(updated.get('likeCount'), 1);
         expect(updated.get('likedBy'), ['user99']);
       });
@@ -218,7 +224,8 @@ void main() {
 
         await repository.unlikeComment(comment.id, 'user42');
 
-        final updated = await firestore.collection('comments').doc(comment.id).get();
+        final updated =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(updated.get('likeCount'), 0);
         expect((updated.get('likedBy') as List).isEmpty, true);
       });
@@ -241,7 +248,8 @@ void main() {
         final post = await firestore.collection('posts').doc('post1').get();
         expect(post.get('commentCount'), 0);
 
-        final deleted = await firestore.collection('comments').doc(comment.id).get();
+        final deleted =
+            await firestore.collection('comments').doc(comment.id).get();
         expect(deleted.exists, false);
       });
 
@@ -267,7 +275,8 @@ void main() {
 
         await repository.deleteComment(reply.id);
 
-        final parentDoc = await firestore.collection('comments').doc(parent.id).get();
+        final parentDoc =
+            await firestore.collection('comments').doc(parent.id).get();
         expect(parentDoc.get('replyCount'), 0);
 
         final post = await firestore.collection('posts').doc('post1').get();
@@ -276,7 +285,8 @@ void main() {
     });
 
     group('error handling', () {
-      test('createComment throws CommentFailure when post does not exist', () async {
+      test('createComment throws CommentFailure when post does not exist',
+          () async {
         expect(
           () => repository.createComment(
             postId: 'nonexistent',
@@ -314,7 +324,9 @@ void main() {
         );
       });
 
-      test('createComment throws CommentFailure when replying to nonexistent comment', () async {
+      test(
+          'createComment throws CommentFailure when replying to nonexistent comment',
+          () async {
         await createPost('post1');
 
         expect(
@@ -335,7 +347,8 @@ void main() {
         );
       });
 
-      test('deleteComment throws CommentFailure for nonexistent comment', () async {
+      test('deleteComment throws CommentFailure for nonexistent comment',
+          () async {
         expect(
           () => repository.deleteComment('nonexistent'),
           throwsA(isA<CommentFailure>().having(
@@ -346,7 +359,8 @@ void main() {
         );
       });
 
-      test('likeComment throws CommentFailure for nonexistent comment', () async {
+      test('likeComment throws CommentFailure for nonexistent comment',
+          () async {
         expect(
           () => repository.likeComment('nonexistent', 'user1'),
           throwsA(isA<CommentFailure>().having(
@@ -357,7 +371,8 @@ void main() {
         );
       });
 
-      test('unlikeComment throws CommentFailure for nonexistent comment', () async {
+      test('unlikeComment throws CommentFailure for nonexistent comment',
+          () async {
         expect(
           () => repository.unlikeComment('nonexistent', 'user1'),
           throwsA(isA<CommentFailure>().having(
@@ -393,7 +408,8 @@ void main() {
         );
       });
 
-      test('reportComment throws CommentFailure for nonexistent comment', () async {
+      test('reportComment throws CommentFailure for nonexistent comment',
+          () async {
         expect(
           () => repository.reportComment('nonexistent', 'spam'),
           throwsA(isA<CommentFailure>().having(

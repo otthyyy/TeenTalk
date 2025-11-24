@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
 import 'image_cache_service.dart';
@@ -6,7 +5,8 @@ import 'image_cache_service.dart';
 class ImagePrefetchService {
   factory ImagePrefetchService() => _instance;
   ImagePrefetchService._internal();
-  static final ImagePrefetchService _instance = ImagePrefetchService._internal();
+  static final ImagePrefetchService _instance =
+      ImagePrefetchService._internal();
 
   final Logger _logger = Logger();
   final ImageCacheService _cacheService = ImageCacheService();
@@ -22,7 +22,7 @@ class ImagePrefetchService {
 
     // Prefetch images for next few posts
     final endIndex = (currentIndex + lookAhead).clamp(0, posts.length);
-    
+
     for (var i = currentIndex; i < endIndex; i++) {
       final post = posts[i];
       if (post.imageUrl != null && post.imageUrl!.isNotEmpty) {
@@ -63,7 +63,7 @@ class ImagePrefetchService {
     if (imageUrls.isEmpty) return;
 
     _logger.d('Batch prefetching ${imageUrls.length} images');
-    
+
     for (final url in imageUrls) {
       _prefetchImage(url);
     }

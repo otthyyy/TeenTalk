@@ -68,7 +68,8 @@ class _FakeAnalyticsService extends Fake implements AnalyticsService {
   }) async {}
 }
 
-class _FakeOfflineSubmissionHelper extends Fake implements OfflineSubmissionHelper {
+class _FakeOfflineSubmissionHelper extends Fake
+    implements OfflineSubmissionHelper {
   @override
   Future<bool> isOnline() async => true;
 }
@@ -78,8 +79,7 @@ class _FakeAuthNotifier extends StateNotifier<AuthState> {
 }
 
 class _MockPostsRepository extends PostsRepository {
-
-  _MockPostsRepository({this.onCreatePost, this.delay})
+  _MockPostsRepository({this.delay})
       : super(
           firestore: FakeFirebaseFirestore(),
           storage: _FakeFirebaseStorage(),

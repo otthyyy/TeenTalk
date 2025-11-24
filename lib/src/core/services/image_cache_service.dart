@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logger/logger.dart';
 
@@ -10,14 +7,14 @@ class ImageCacheService {
   static final ImageCacheService _instance = ImageCacheService._internal();
 
   final Logger _logger = Logger();
-  
+
   // Use the default cache manager from cached_network_image
   static final customCacheManager = DefaultCacheManager();
 
   // Pre-cache a single image
   Future<void> precacheImage(String url) async {
     if (url.isEmpty) return;
-    
+
     try {
       await customCacheManager.downloadFile(url);
       _logger.d('Pre-cached image: $url');
@@ -29,7 +26,7 @@ class ImageCacheService {
   // Pre-cache multiple images
   Future<void> precacheImages(List<String> urls) async {
     if (urls.isEmpty) return;
-    
+
     for (final url in urls) {
       await precacheImage(url);
     }

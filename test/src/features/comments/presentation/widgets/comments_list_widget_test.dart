@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:teen_talk_app/src/features/comments/data/models/comment.dart';
-import 'package:teen_talk_app/src/features/comments/presentation/providers/comments_provider.dart';
 import 'package:teen_talk_app/src/features/comments/presentation/widgets/comments_list_widget.dart';
 
 void main() {
   group('CommentsListWidget Tests', () {
-    testWidgets('displays loading state initially', (WidgetTester tester) async {
+    testWidgets('displays loading state initially',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -28,7 +27,8 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('displays empty state when no comments', (WidgetTester tester) async {
+    testWidgets('displays empty state when no comments',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -52,7 +52,8 @@ void main() {
       expect(find.text('Be the first to share your thoughts!'), findsOneWidget);
     });
 
-    testWidgets('displays comments when available', (WidgetTester tester) async {
+    testWidgets('displays comments when available',
+        (WidgetTester tester) async {
       // This test would require more complex mocking of the Riverpod state
       // For now, we'll just test the basic structure
       await tester.pumpWidget(
@@ -76,7 +77,8 @@ void main() {
       expect(find.text('No comments yet'), findsOneWidget);
     });
 
-    testWidgets('shows add comment button toggles input', (WidgetTester tester) async {
+    testWidgets('shows add comment button toggles input',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -107,7 +109,8 @@ void main() {
       expect(find.text('Write a comment...'), findsOneWidget);
     });
 
-    testWidgets('refresh indicator triggers refresh', (WidgetTester tester) async {
+    testWidgets('refresh indicator triggers refresh',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(

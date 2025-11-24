@@ -59,7 +59,7 @@ void main() {
     });
 
     test('filters by interests using array-contains-any', () async {
-      const filters = SearchFilters(interests: const ['Music']);
+      const filters = SearchFilters(interests: ['Music']);
 
       final results = await repository.searchProfiles(filters);
 
@@ -87,7 +87,7 @@ void main() {
 
     test('supports combined filters', () async {
       const filters = SearchFilters(
-        interests: const ['Music', 'Art'],
+        interests: ['Music', 'Art'],
         minTrustLevel: 70,
         minSchoolYear: 9,
         maxSchoolYear: 11,

@@ -5,7 +5,6 @@ import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
 import '../../data/models/comment.dart';
-import '../providers/comments_provider.dart';
 import '../../../friends/presentation/providers/friends_provider.dart';
 import '../../../friends/data/models/friendship_status.dart';
 import '../../../friends/data/repositories/friends_repository.dart';

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
-import '../providers/auth_provider.dart';
 import '../../data/models/auth_user.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
-
   const OnboardingPage({
     super.key,
     required this.user,
@@ -46,7 +44,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations?.onboardingCompleteProfile ?? 'Complete Profile'),
+        title: Text(
+            localizations?.onboardingCompleteProfile ?? 'Complete Profile'),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -58,14 +57,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  localizations?.onboardingCreateProfile ?? 'Create Your Profile',
+                  localizations?.onboardingCreateProfile ??
+                      'Create Your Profile',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
                   controller: _firstNameController,
                   decoration: InputDecoration(
-                    labelText: localizations?.onboardingFirstName ?? 'First Name',
+                    labelText:
+                        localizations?.onboardingFirstName ?? 'First Name',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -73,7 +74,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return localizations?.errorEmailRequired ?? 'First name is required';
+                      return localizations?.errorEmailRequired ??
+                          'First name is required';
                     }
                     return null;
                   },
@@ -90,7 +92,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return localizations?.errorEmailRequired ?? 'Last name is required';
+                      return localizations?.errorEmailRequired ??
+                          'Last name is required';
                     }
                     return null;
                   },
@@ -100,7 +103,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   onTap: _selectDateOfBirth,
                   child: InputDecorator(
                     decoration: InputDecoration(
-                      labelText: localizations?.onboardingDateOfBirth ?? 'Date of Birth',
+                      labelText: localizations?.onboardingDateOfBirth ??
+                          'Date of Birth',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -110,7 +114,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     child: Text(
                       _dateOfBirth != null
                           ? '${_dateOfBirth!.day}/${_dateOfBirth!.month}/${_dateOfBirth!.year}'
-                          : (localizations?.onboardingDateOfBirth ?? 'Select date'),
+                          : (localizations?.onboardingDateOfBirth ??
+                              'Select date'),
                     ),
                   ),
                 ),
@@ -127,7 +132,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                               children: [
                                 Text(
                                   '${_calculateAge(_dateOfBirth!)}',
-                                  style: Theme.of(context).textTheme.headlineMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
                                 ),
                                 Text(
                                   localizations?.onboardingAge ?? 'Age',
@@ -140,7 +147,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                       ),
                     ],
                   ),
-                if (_calculateAge(_dateOfBirth ?? DateTime.now()) < 18 && _dateOfBirth != null)
+                if (_calculateAge(_dateOfBirth ?? DateTime.now()) < 18 &&
+                    _dateOfBirth != null)
                   Column(
                     children: [
                       const SizedBox(height: 16),

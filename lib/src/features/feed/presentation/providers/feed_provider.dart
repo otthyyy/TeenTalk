@@ -22,7 +22,6 @@ final feedRepositoryProvider = Provider<PostsRepository>((ref) {
 });
 
 class FeedState {
-
   const FeedState({
     this.posts = const [],
     this.isLoading = false,
@@ -70,13 +69,13 @@ class FeedState {
 }
 
 class FeedNotifier extends StateNotifier<FeedState> {
-
   FeedNotifier(
     this._repository,
     this._cacheService,
     this._connectivityService,
   ) : super(const FeedState()) {
-    _connectivitySubscription = _connectivityService.connectivityStream.listen((isConnected) {
+    _connectivitySubscription =
+        _connectivityService.connectivityStream.listen((isConnected) {
       state = state.copyWith(isOffline: !isConnected);
 
       if (isConnected && state.posts.isEmpty) {
@@ -154,7 +153,8 @@ class FeedNotifier extends StateNotifier<FeedState> {
         );
 
         if (cacheEntry != null && cacheEntry.posts.isNotEmpty) {
-          _logger.i('Loaded ${cacheEntry.posts.length} posts from cache (offline mode)');
+          _logger.i(
+              'Loaded ${cacheEntry.posts.length} posts from cache (offline mode)');
           state = state.copyWith(
             posts: cacheEntry.posts,
             isLoading: false,
@@ -200,7 +200,8 @@ class FeedNotifier extends StateNotifier<FeedState> {
         school: resolvedSchool,
       );
 
-      final allPosts = refresh ? result.posts : [...state.posts, ...result.posts];
+      final allPosts =
+          refresh ? result.posts : [...state.posts, ...result.posts];
 
       state = state.copyWith(
         posts: allPosts,
@@ -214,16 +215,20 @@ class FeedNotifier extends StateNotifier<FeedState> {
 
       _setupRealtimeUpdates(resolvedSection, resolvedSchool);
     } on FirebaseException catch (e, stackTrace) {
-      _logger.e('Firestore error loading posts', error: e, stackTrace: stackTrace);
+      _logger.e('Firestore error loading posts',
+          error: e, stackTrace: stackTrace);
       debugPrint('🔥 FIRESTORE ERROR: ${e.code}');
       debugPrint('   Message: ${e.message}');
       debugPrintStack(stackTrace: stackTrace);
 
       String errorMessage = e.toString();
-      
-      if (e.code == 'failed-precondition' && e.message?.contains('index') == true) {
-        errorMessage = 'Database index required. Please contact support or check Firebase Console to create the required index.';
-        _logger.e('Missing Firestore index for posts query. Section: $section, School: $school, Sort: ${effectiveSortOption.name}');
+
+      if (e.code == 'failed-precondition' &&
+          e.message?.contains('index') == true) {
+        errorMessage =
+            'Database index required. Please contact support or check Firebase Console to create the required index.';
+        _logger.e(
+            'Missing Firestore index for posts query. Section: $section, School: $school, Sort: ${effectiveSortOption.name}');
         _logger.e('Index configuration needed in firestore.indexes.json');
       } else if (e.code == 'permission-denied') {
         errorMessage = 'Permission denied. Please check if you\'re signed in.';
@@ -409,7 +414,8 @@ class FeedNotifier extends StateNotifier<FeedState> {
 
       state = state.copyWith(posts: updatedPosts);
     } catch (error, stackTrace) {
-      _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
+      _logger.e('Failed to like post $postId',
+          error: error, stackTrace: stackTrace);
       final message = _extractFriendlyError(
         error,
         fallback: 'We couldn\'t register your like. Please try again.',
@@ -433,8 +439,10 @@ class FeedNotifier extends StateNotifier<FeedState> {
           return post;
         }
 
-        final updatedLikedBy = post.likedBy.where((id) => id != userId).toList();
-        final updatedLikeCount = (post.likeCount - 1).clamp(0, double.infinity).toInt();
+        final updatedLikedBy =
+            post.likedBy.where((id) => id != userId).toList();
+        final updatedLikeCount =
+            (post.likeCount - 1).clamp(0, double.infinity).toInt();
 
         return post.copyWith(
           likeCount: updatedLikeCount,
@@ -444,7 +452,8 @@ class FeedNotifier extends StateNotifier<FeedState> {
 
       state = state.copyWith(posts: updatedPosts);
     } catch (error, stackTrace) {
-      _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
+      _logger.e('Failed to unlike post $postId',
+          error: error, stackTrace: stackTrace);
       final message = _extractFriendlyError(
         error,
         fallback: 'We couldn\'t update your like. Please try again.',
@@ -474,20 +483,21 @@ class FeedNotifier extends StateNotifier<FeedState> {
 
   void _setupRealtimeUpdates(String? section, String? school) {
     _postsSubscription?.cancel();
-    
+
     _postsSubscription = _repository
         .getPostsStream(
-          section: section,
-          school: school,
-          limit: 50,
-          sortOption: _currentSortOption,
-        )
+      section: section,
+      school: school,
+      limit: 50,
+      sortOption: _currentSortOption,
+    )
         .listen((realtimePosts) {
       if (state.posts.isNotEmpty && realtimePosts.isNotEmpty) {
         // Merge real-time updates with existing posts
         final existingPostIds = state.posts.map((p) => p.id).toSet();
-        final newPosts = realtimePosts.where((p) => !existingPostIds.contains(p.id));
-        
+        final newPosts =
+            realtimePosts.where((p) => !existingPostIds.contains(p.id));
+
         if (newPosts.isNotEmpty) {
           final updatedPosts = [...newPosts, ...state.posts];
           state = state.copyWith(posts: updatedPosts);
@@ -529,9 +539,8 @@ class FeedNotifier extends StateNotifier<FeedState> {
   }
 }
 
-
-
-final feedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, String>(
+final feedProvider =
+    StateNotifierProvider.family<FeedNotifier, FeedState, String>(
   (ref, section) {
     final repository = ref.watch(feedRepositoryProvider);
     final cacheService = ref.watch(feedCacheServiceProvider);
@@ -546,14 +555,15 @@ final feedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, Strin
 );
 
 // School-aware feed provider that gets user's school and applies filtering
-final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedState, String>(
+final schoolAwareFeedProvider =
+    StateNotifierProvider.family<FeedNotifier, FeedState, String>(
   (ref, section) {
     final repository = ref.watch(feedRepositoryProvider);
     final userRepository = ref.watch(userRepositoryProvider);
     final authService = ref.watch(firebaseAuthServiceProvider);
     final cacheService = ref.watch(feedCacheServiceProvider);
     final connectivityService = ref.watch(connectivityServiceProvider);
-    
+
     return SchoolAwareFeedNotifier(
       repository,
       cacheService,
@@ -565,21 +575,17 @@ final schoolAwareFeedProvider = StateNotifierProvider.family<FeedNotifier, FeedS
 );
 
 class SchoolAwareFeedNotifier extends FeedNotifier {
-  
   SchoolAwareFeedNotifier(
-    PostsRepository repository,
-    FeedCacheService cacheService,
-    ConnectivityService connectivityService,
+    super.repository,
+    super.cacheService,
+    super.connectivityService,
     this._userRepository,
     this._authService,
-  ) : super(
-          repository,
-          cacheService,
-          connectivityService,
-        );
+  );
   final UserRepository _userRepository;
   final FirebaseAuthService _authService;
-  final FilterPreferencesService _preferencesService = FilterPreferencesService();
+  final FilterPreferencesService _preferencesService =
+      FilterPreferencesService();
 
   @override
   Future<void> loadPosts({
@@ -610,7 +616,7 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
         effectiveSortOption = FeedSortOption.newest;
       }
     }
-    
+
     await super.loadPosts(
       refresh: refresh,
       section: section,
@@ -638,7 +644,7 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
         }
       }
     }
-    
+
     await super.loadMorePosts(
       section: section,
       school: effectiveSchool,
@@ -687,7 +693,7 @@ class SchoolAwareFeedNotifier extends FeedNotifier {
         }
       }
     }
-    
+
     await super.addPost(
       authorId: authorId,
       authorNickname: authorNickname,

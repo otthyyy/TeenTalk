@@ -5,10 +5,8 @@ import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/motion/motion_presets.dart';
 import '../../data/models/comment.dart';
-import '../providers/comments_provider.dart';
 
 class CommentWidget extends ConsumerStatefulWidget {
-
   const CommentWidget({
     super.key,
     required this.comment,
@@ -49,216 +47,228 @@ class _CommentWidgetState extends ConsumerState<CommentWidget> {
             color: theme.colorScheme.outline.withOpacity(0.3),
           ),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      theme.colorScheme.primary,
-                      theme.colorScheme.primary.withOpacity(0.7),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.primary.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.transparent,
+                    child: widget.comment.isAnonymous
+                        ? Icon(
+                            Icons.person_outline,
+                            size: 18,
+                            color: theme.colorScheme.onPrimary,
+                          )
+                        : Text(
+                            widget.comment.authorNickname.isNotEmpty
+                                ? widget.comment.authorNickname[0].toUpperCase()
+                                : 'A',
+                            style: TextStyle(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.comment.isAnonymous
+                            ? 'Anonymous'
+                            : widget.comment.authorNickname,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        _formatTimestamp(widget.comment.createdAt),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.transparent,
-                  child: widget.comment.isAnonymous
-                      ? Icon(
-                          Icons.person_outline,
-                          size: 18,
-                          color: theme.colorScheme.onPrimary,
-                        )
-                      : Text(
-                          widget.comment.authorNickname.isNotEmpty
-                              ? widget.comment.authorNickname[0].toUpperCase()
-                              : 'A',
-                          style: TextStyle(
-                            color: theme.colorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.comment.isAnonymous ? 'Anonymous' : widget.comment.authorNickname,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      _formatTimestamp(widget.comment.createdAt),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'report':
+                        widget.onReport?.call();
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'report',
+                      child: Row(
+                        children: [
+                          Icon(Icons.flag, size: 16),
+                          SizedBox(width: 8),
+                          Text('Report'),
+                        ],
                       ),
                     ),
                   ],
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.comment.content,
+              style: theme.textTheme.bodyMedium,
+            ),
+            if (widget.comment.mentionedUserIds.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 4,
+                children: widget.comment.mentionedUserIds.map((userId) {
+                  return Chip(
+                    label: Text('@$userId'),
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    labelStyle: TextStyle(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontSize: 12,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                  );
+                }).toList(),
               ),
-              PopupMenuButton<String>(
-                onSelected: (value) {
-                  switch (value) {
-                    case 'report':
-                      widget.onReport?.call();
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'report',
+            ],
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                AnimatedPressable(
+                  onPressed: () {
+                    setState(() {
+                      _isLikeAnimating = true;
+                    });
+                    Future.delayed(DesignTokens.durationFast, () {
+                      if (mounted) {
+                        setState(() {
+                          _isLikeAnimating = false;
+                        });
+                      }
+                    });
+
+                    if (isLiked) {
+                      widget.onUnlike?.call();
+                    } else {
+                      widget.onLike?.call();
+                    }
+                  },
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(minHeight: 44, minWidth: 44),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: isLiked
+                          ? DesignTokens.vibrantPink
+                          : theme.colorScheme.surfaceContainerHighest,
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.radiusFull),
+                    ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.flag, size: 16),
-                        SizedBox(width: 8),
-                        Text('Report'),
+                        Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          size: 16,
+                          color: isLiked
+                              ? Colors.white
+                              : theme.colorScheme.onSurface,
+                        )
+                            .animate(
+                              target: _isLikeAnimating ? 1 : 0,
+                            )
+                            .scale(
+                              begin: const Offset(1.0, 1.0),
+                              end: const Offset(1.25, 1.25),
+                              duration: MotionPresets.microDuration,
+                              curve: MotionPresets.microCurve,
+                            ),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.comment.likeCount.toString(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isLiked ? Colors.white : null,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.comment.content,
-            style: theme.textTheme.bodyMedium,
-          ),
-          if (widget.comment.mentionedUserIds.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 4,
-              children: widget.comment.mentionedUserIds.map((userId) {
-                return Chip(
-                  label: Text('@$userId'),
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  labelStyle: TextStyle(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontSize: 12,
-                  ),
-                  visualDensity: VisualDensity.compact,
-                );
-              }).toList(),
-            ),
-          ],
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              AnimatedPressable(
-                onPressed: () {
-                  setState(() {
-                    _isLikeAnimating = true;
-                  });
-                  Future.delayed(DesignTokens.durationFast, () {
-                    if (mounted) {
-                      setState(() {
-                        _isLikeAnimating = false;
-                      });
-                    }
-                  });
-
-                  if (isLiked) {
-                    widget.onUnlike?.call();
-                  } else {
-                    widget.onLike?.call();
-                  }
-                },
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: isLiked
-                        ? DesignTokens.vibrantPink
-                        : theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        size: 16,
-                        color: isLiked ? Colors.white : theme.colorScheme.onSurface,
-                      )
-                          .animate(
-                            target: _isLikeAnimating ? 1 : 0,
-                          )
-                          .scale(
-                            begin: const Offset(1.0, 1.0),
-                            end: const Offset(1.25, 1.25),
-                            duration: MotionPresets.microDuration,
-                            curve: MotionPresets.microCurve,
-                          ),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.comment.likeCount.toString(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isLiked ? Colors.white : null,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              AnimatedPressable(
-                onPressed: widget.onReply,
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.reply,
-                        size: 18,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Reply',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (widget.comment.replyCount > 0) ...[
                 const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
-                  ),
-                  child: Text(
-                    '${widget.comment.replyCount}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.w600,
+                AnimatedPressable(
+                  onPressed: widget.onReply,
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(minHeight: 44, minWidth: 44),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 8.0),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.radiusFull),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.reply,
+                          size: 18,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Reply',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ],
                     ),
                   ),
                 ),
+                if (widget.comment.replyCount > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondaryContainer,
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.radiusFull),
+                    ),
+                    child: Text(
+                      '${widget.comment.replyCount}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSecondaryContainer,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
       ),
     );
   }

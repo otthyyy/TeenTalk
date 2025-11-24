@@ -9,13 +9,11 @@ import '../../../profile/domain/models/user_profile.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/services/analytics_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
-import '../../../profile/domain/models/trust_level_localizations.dart';
 import '../../../friends/data/repositories/friends_repository.dart';
 import '../../../friends/data/models/friend_entry.dart';
 import '../../../friends/presentation/providers/friends_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-
   const ChatScreen({
     super.key,
     required this.conversationId,
@@ -57,7 +55,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void _checkForLowTrustWarning() {
     Future.microtask(() {
       if (!mounted) return;
-      final otherUserProfileAsync = ref.read(userProfileByIdProvider(widget.otherUserId));
+      final otherUserProfileAsync =
+          ref.read(userProfileByIdProvider(widget.otherUserId));
       otherUserProfileAsync.whenData((otherUserProfile) {
         if (otherUserProfile != null &&
             otherUserProfile.trustLevel.isLowTrust &&
@@ -154,7 +153,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       if (currentUserId == null) return;
 
       final friendsRepository = ref.read(friendsRepositoryProvider);
-      final areFriends = await friendsRepository.areFriends(currentUserId, widget.otherUserId);
+      final areFriends =
+          await friendsRepository.areFriends(currentUserId, widget.otherUserId);
 
       if (mounted) {
         setState(() {
@@ -179,14 +179,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       final currentUserId = ref.read(dm_provider.currentUserIdProvider);
       if (currentUserId == null) return;
 
-      final isFriend = friends.any((entry) => entry.friendId == widget.otherUserId);
-      
+      final isFriend =
+          friends.any((entry) => entry.friendId == widget.otherUserId);
+
       if (_canMessage != isFriend) {
         setState(() {
           _canMessage = isFriend;
         });
 
-        if (!isFriend && !_friendshipDialogShown && mounted && context.mounted) {
+        if (!isFriend &&
+            !_friendshipDialogShown &&
+            mounted &&
+            context.mounted) {
           _friendshipDialogShown = true;
           _showNotFriendsDialog();
         }
@@ -205,7 +209,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final currentUserId = ref.watch(dm_provider.currentUserIdProvider);
-    final messagesAsync = ref.watch(dm_provider.messagesProvider(widget.conversationId));
+    final messagesAsync =
+        ref.watch(dm_provider.messagesProvider(widget.conversationId));
     final sendMessageAsync = ref.watch(dm_provider.sendMessageProvider);
 
     final theme = Theme.of(context);
@@ -235,8 +240,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
-          if (_isFriendshipLoading)
-            const LinearProgressIndicator(minHeight: 2),
+          if (_isFriendshipLoading) const LinearProgressIndicator(minHeight: 2),
           if (!_canMessage && !_isFriendshipLoading)
             Container(
               width: double.infinity,
@@ -287,7 +291,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           Text(
                             'Start the conversation by sending a message below',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.6),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -307,15 +312,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
-                    final isCurrentUser =
-                        message.senderId == currentUserId;
+                    final isCurrentUser = message.senderId == currentUserId;
 
                     return MessageBubble(
                       message: message,
                       isCurrentUser: isCurrentUser,
-                      senderName: isCurrentUser
-                          ? 'You'
-                          : widget.otherUserDisplayName,
+                      senderName:
+                          isCurrentUser ? 'You' : widget.otherUserDisplayName,
                     );
                   },
                 );
@@ -360,7 +363,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(
-                top: BorderSide(color: theme.colorScheme.surfaceContainerHighest),
+                top: BorderSide(
+                    color: theme.colorScheme.surfaceContainerHighest),
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -370,7 +374,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                        color: theme.colorScheme.surfaceContainerHighest
+                            .withOpacity(0.4),
                         borderRadius: BorderRadius.circular(24),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -387,7 +392,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                   : 'Friends only',
                           hintStyle: !_canMessage
                               ? TextStyle(
-                                  color: theme.colorScheme.error.withOpacity(0.7),
+                                  color:
+                                      theme.colorScheme.error.withOpacity(0.7),
                                 )
                               : null,
                           border: InputBorder.none,
@@ -444,11 +450,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     final offlineHelper = ref.read(offlineSubmissionHelperProvider);
     final currentUserId = ref.read(dm_provider.currentUserIdProvider);
-    
+
     if (currentUserId == null) return;
 
     final friendsRepository = ref.read(friendsRepositoryProvider);
-    final areFriends = await friendsRepository.areFriends(currentUserId, widget.otherUserId);
+    final areFriends =
+        await friendsRepository.areFriends(currentUserId, widget.otherUserId);
 
     if (!areFriends) {
       if (mounted && context.mounted) {
@@ -472,7 +479,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (queuedId != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Message queued. We'll send it when you're online."),
+              content:
+                  Text("Message queued. We'll send it when you're online."),
               duration: Duration(seconds: 2),
             ),
           );

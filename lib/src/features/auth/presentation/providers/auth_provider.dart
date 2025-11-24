@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/auth_form_state.dart';
 import '../../data/models/auth_user.dart';
 import '../../data/services/firebase_auth_service.dart';
 import '../../../../core/analytics/analytics_provider.dart';
@@ -22,14 +21,14 @@ final currentAuthUserProvider = FutureProvider<AuthUser?>((ref) async {
   return ref.watch(firebaseAuthServiceProvider).getCurrentAuthUser();
 });
 
-final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
+final authStateProvider =
+    StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   final authService = ref.watch(firebaseAuthServiceProvider);
   final analyticsService = ref.watch(analyticsServiceProvider);
   return AuthStateNotifier(authService, analyticsService);
 });
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
-
   AuthStateNotifier(
     this._authService,
     this._analyticsService,
@@ -42,7 +41,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   void _init() {
     _authSubscription = _authService.authStateChanges.listen((user) {
-      debugPrint('🔐 AUTH PROVIDER: authStateChanges event received. user=${user?.uid ?? 'null'}');
+      debugPrint(
+          '🔐 AUTH PROVIDER: authStateChanges event received. user=${user?.uid ?? 'null'}');
       if (user != null) {
         final authUser = AuthUser(
           uid: user.uid,
@@ -61,9 +61,11 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         debugPrint('   authMethods: ${authUser.authMethods}');
 
         if (_authUsersEqual(state.user, authUser)) {
-          debugPrint('   ⚠️ Auth user unchanged. Skipping state update to prevent rebuild loops.');
+          debugPrint(
+              '   ⚠️ Auth user unchanged. Skipping state update to prevent rebuild loops.');
           if (!state.isAuthenticated || state.isLoading) {
-            debugPrint('   ℹ️ Ensuring state reflects authenticated=true and loading=false');
+            debugPrint(
+                '   ℹ️ Ensuring state reflects authenticated=true and loading=false');
             state = state.copyWith(
               isAuthenticated: true,
               isLoading: false,
@@ -79,7 +81,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           user: authUser,
         );
       } else {
-        debugPrint('🔐 AUTH PROVIDER: Auth state change detected -> user signed out');
+        debugPrint(
+            '🔐 AUTH PROVIDER: Auth state change detected -> user signed out');
         state = AuthState.initial();
       }
     });

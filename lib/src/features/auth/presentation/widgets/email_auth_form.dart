@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teen_talk_app/src/core/localization/app_localizations.dart';
 import '../providers/auth_provider.dart';
-import '../models/auth_form_state.dart';
 
 class EmailAuthForm extends ConsumerStatefulWidget {
-
   const EmailAuthForm({
     super.key,
     required this.isSignUp,
@@ -49,7 +47,8 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
               TextFormField(
                 controller: _displayNameController,
                 decoration: InputDecoration(
-                  labelText: localizations?.onboardingFirstName ?? 'Display Name',
+                  labelText:
+                      localizations?.onboardingFirstName ?? 'Display Name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -57,7 +56,8 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
                 ),
                 validator: (value) {
                   if (widget.isSignUp && (value == null || value.isEmpty)) {
-                    return localizations?.errorEmailRequired ?? 'Name is required';
+                    return localizations?.errorEmailRequired ??
+                        'Name is required';
                   }
                   return null;
                 },
@@ -75,7 +75,8 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return localizations?.errorEmailRequired ?? 'Email is required';
+                  return localizations?.errorEmailRequired ??
+                      'Email is required';
                 }
                 if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
                     .hasMatch(value)) {
@@ -107,10 +108,12 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
               obscureText: !_showPassword,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return localizations?.errorPasswordRequired ?? 'Password is required';
+                  return localizations?.errorPasswordRequired ??
+                      'Password is required';
                 }
                 if (value.length < 8) {
-                  return localizations?.errorPasswordTooShort ?? 'Password must be at least 8 characters';
+                  return localizations?.errorPasswordTooShort ??
+                      'Password must be at least 8 characters';
                 }
                 return null;
               },
@@ -120,7 +123,8 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: InputDecoration(
-                  labelText: localizations?.authConfirmPassword ?? 'Confirm Password',
+                  labelText:
+                      localizations?.authConfirmPassword ?? 'Confirm Password',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -139,11 +143,12 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
                 obscureText: !_showConfirmPassword,
                 validator: (value) {
                   if (widget.isSignUp && (value == null || value.isEmpty)) {
-                    return localizations?.errorPasswordRequired ?? 'Confirm password is required';
+                    return localizations?.errorPasswordRequired ??
+                        'Confirm password is required';
                   }
-                  if (widget.isSignUp &&
-                      value != _passwordController.text) {
-                    return localizations?.errorPasswordMismatch ?? 'Passwords do not match';
+                  if (widget.isSignUp && value != _passwordController.text) {
+                    return localizations?.errorPasswordMismatch ??
+                        'Passwords do not match';
                   }
                   return null;
                 },
@@ -202,8 +207,10 @@ class _EmailAuthFormState extends ConsumerState<EmailAuthForm> {
               },
               child: Text(
                 widget.isSignUp
-                    ? (localizations?.authAlreadyHaveAccount ?? 'Already have an account?')
-                    : (localizations?.authNoAccount ?? "Don't have an account?"),
+                    ? (localizations?.authAlreadyHaveAccount ??
+                        'Already have an account?')
+                    : (localizations?.authNoAccount ??
+                        "Don't have an account?"),
               ),
             ),
           ],

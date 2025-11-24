@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import '../../../../core/utils/search_keywords_generator.dart';
 
 import 'trust_level.dart';
 
 class UserProfile {
-
   const UserProfile({
     required this.uid,
     required this.nickname,
@@ -76,8 +73,7 @@ class UserProfile {
       trustLevel: TrustLevel.fromString(json['trustLevel'] as String?),
       anonymousPostsCount: json['anonymousPostsCount'] as int? ?? 0,
       createdAt: _timestampToDate(json['createdAt']) ?? DateTime.now(),
-      lastNicknameChangeAt:
-          _timestampToDate(json['lastNicknameChangeAt']),
+      lastNicknameChangeAt: _timestampToDate(json['lastNicknameChangeAt']),
       privacyConsentGiven: json['privacyConsentGiven'] as bool? ?? false,
       privacyConsentTimestamp:
           _timestampToDate(json['privacyConsentTimestamp']) ?? DateTime.now(),
@@ -95,18 +91,13 @@ class UserProfile {
       isModerator: json['isModerator'] as bool? ?? false,
       isBetaTester: json['isBetaTester'] as bool? ?? false,
       betaConsentGiven: json['betaConsentGiven'] as bool?,
-      betaConsentTimestamp:
-          _timestampToDate(json['betaConsentTimestamp']),
-      crashReportingEnabled:
-          json['crashReportingEnabled'] as bool? ?? true,
+      betaConsentTimestamp: _timestampToDate(json['betaConsentTimestamp']),
+      crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
       screenshotProtectionEnabled:
           json['screenshotProtectionEnabled'] as bool? ?? true,
-      prefersReducedMotion:
-          json['prefersReducedMotion'] as bool? ?? false,
-      prefersHighContrast:
-          json['prefersHighContrast'] as bool? ?? false,
-      allowHeavyAnimations:
-          json['allowHeavyAnimations'] as bool? ?? false,
+      prefersReducedMotion: json['prefersReducedMotion'] as bool? ?? false,
+      prefersHighContrast: json['prefersHighContrast'] as bool? ?? false,
+      allowHeavyAnimations: json['allowHeavyAnimations'] as bool? ?? false,
     );
   }
 
@@ -183,8 +174,7 @@ class UserProfile {
           ? Timestamp.fromDate(lastNicknameChangeAt!)
           : null,
       'privacyConsentGiven': privacyConsentGiven,
-      'privacyConsentTimestamp':
-          Timestamp.fromDate(privacyConsentTimestamp),
+      'privacyConsentTimestamp': Timestamp.fromDate(privacyConsentTimestamp),
       'isMinor': isMinor,
       'guardianContact': guardianContact,
       'parentalConsentGiven': parentalConsentGiven,
@@ -195,9 +185,7 @@ class UserProfile {
       'allowAnonymousPosts': allowAnonymousPosts,
       'profileVisible': profileVisible,
       'analyticsEnabled': analyticsEnabled,
-      'updatedAt': updatedAt != null
-          ? Timestamp.fromDate(updatedAt!)
-          : null,
+      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       'isAdmin': isAdmin,
       'isModerator': isModerator,
       'isBetaTester': isBetaTester,
@@ -323,12 +311,9 @@ class UserProfile {
           crashReportingEnabled ?? this.crashReportingEnabled,
       screenshotProtectionEnabled:
           screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
-      prefersReducedMotion:
-          prefersReducedMotion ?? this.prefersReducedMotion,
-      prefersHighContrast:
-          prefersHighContrast ?? this.prefersHighContrast,
-      allowHeavyAnimations:
-          allowHeavyAnimations ?? this.allowHeavyAnimations,
+      prefersReducedMotion: prefersReducedMotion ?? this.prefersReducedMotion,
+      prefersHighContrast: prefersHighContrast ?? this.prefersHighContrast,
+      allowHeavyAnimations: allowHeavyAnimations ?? this.allowHeavyAnimations,
     );
   }
 

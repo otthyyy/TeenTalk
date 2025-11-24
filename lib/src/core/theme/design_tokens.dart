@@ -97,8 +97,6 @@ class AppColorTokens {
           surfaceContainerHighest: surfaceVariant,
           onSurfaceVariant: onSurfaceVariant,
           outline: outline,
-          background: background,
-          onBackground: onBackground,
         )
       : ColorScheme.light(
           primary: primary,
@@ -119,8 +117,6 @@ class AppColorTokens {
           surfaceContainerHighest: surfaceVariant,
           onSurfaceVariant: onSurfaceVariant,
           outline: outline,
-          background: background,
-          onBackground: onBackground,
         );
 
   LinearGradient get surfaceGradient => brightness == Brightness.dark
@@ -141,8 +137,10 @@ class AppColorTokens {
           ],
         );
 
-  Color get focusColor => primary.withOpacity(brightness == Brightness.dark ? 0.18 : 0.2);
-  Color get hoverColor => primary.withOpacity(brightness == Brightness.dark ? 0.12 : 0.08);
+  Color get focusColor =>
+      primary.withOpacity(brightness == Brightness.dark ? 0.18 : 0.2);
+  Color get hoverColor =>
+      primary.withOpacity(brightness == Brightness.dark ? 0.12 : 0.08);
 
   static const AppColorTokens light = AppColorTokens(
     brightness: Brightness.light,
@@ -224,7 +222,11 @@ class AppGradients {
   static const LinearGradient accent = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [BrandColors.lightPurple, BrandColors.lightPink, BrandColors.lightCyan],
+    colors: [
+      BrandColors.lightPurple,
+      BrandColors.lightPink,
+      BrandColors.lightCyan
+    ],
   );
 }
 
@@ -245,7 +247,11 @@ class AppSpacing {
   static EdgeInsets all(double value) => EdgeInsets.all(value);
   static EdgeInsets symmetric({double horizontal = 0, double vertical = 0}) =>
       EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
-  static EdgeInsets only({double left = 0, double top = 0, double right = 0, double bottom = 0}) =>
+  static EdgeInsets only(
+          {double left = 0,
+          double top = 0,
+          double right = 0,
+          double bottom = 0}) =>
       EdgeInsets.only(left: left, top: top, right: right, bottom: bottom);
 }
 
@@ -486,7 +492,8 @@ class ResponsiveTypography {
   static TextTheme scale(TextScaler scaler) => AppTypography.scale(scaler);
 }
 
-@Deprecated('Use AppColorTokens, AppSpacing, AppRadii, etc. instead for better type safety')
+@Deprecated(
+    'Use AppColorTokens, AppSpacing, AppRadii, etc. instead for better type safety')
 class DesignTokens {
   const DesignTokens._();
 
@@ -512,7 +519,8 @@ class DesignTokens {
   static Color get lightOnSecondary => AppColorTokens.light.onSecondary;
   static Color get lightOnBackground => AppColorTokens.light.onBackground;
   static Color get lightOnSurface => AppColorTokens.light.onSurface;
-  static Color get lightOnSurfaceVariant => AppColorTokens.light.onSurfaceVariant;
+  static Color get lightOnSurfaceVariant =>
+      AppColorTokens.light.onSurfaceVariant;
 
   static Color get darkBackground => AppColorTokens.dark.background;
   static Color get darkSurface => AppColorTokens.dark.surface;
@@ -532,8 +540,10 @@ class DesignTokens {
   static const LinearGradient secondaryGradient = AppGradients.secondary;
   static const LinearGradient tertiaryGradient = AppGradients.tertiary;
   static const LinearGradient accentGradient = AppGradients.accent;
-  static LinearGradient get surfaceGradient => AppColorTokens.light.surfaceGradient;
-  static LinearGradient get darkSurfaceGradient => AppColorTokens.dark.surfaceGradient;
+  static LinearGradient get surfaceGradient =>
+      AppColorTokens.light.surfaceGradient;
+  static LinearGradient get darkSurfaceGradient =>
+      AppColorTokens.dark.surfaceGradient;
 
   static const double spacing2xs = AppSpacing.xxs;
   static const double spacingXs = AppSpacing.xs;
@@ -579,6 +589,7 @@ class DesignTokens {
   static BoxShadow get shadowMd => AppElevation.level3(Colors.black).first;
   static BoxShadow get shadowLg => AppElevation.level4(Colors.black).first;
   static BoxShadow get shadowXl => AppElevation.level5(Colors.black).first;
-  static BoxShadow coloredShadow(Color color) => AppElevation.colored(color).first;
+  static BoxShadow coloredShadow(Color color) =>
+      AppElevation.colored(color).first;
   static BoxShadow glowShadow(Color color) => AppElevation.glow(color).first;
 }

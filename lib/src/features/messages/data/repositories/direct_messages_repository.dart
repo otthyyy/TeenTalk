@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/direct_message.dart';
 import '../models/conversation.dart';
-import '../models/block.dart';
 import '../../../friends/data/repositories/friends_repository.dart';
 
 final directMessagesRepositoryProvider =
@@ -15,7 +14,6 @@ final directMessagesRepositoryProvider =
 });
 
 class DirectMessagesRepository {
-
   DirectMessagesRepository(this._firestore, this._friendsRepository);
   final FirebaseFirestore _firestore;
   final FriendsRepository _friendsRepository;
@@ -34,7 +32,8 @@ class DirectMessagesRepository {
     String? imageUrl,
   }) async {
     // Validate friendship
-    final areFriends = await _friendsRepository.areFriends(senderId, receiverId);
+    final areFriends =
+        await _friendsRepository.areFriends(senderId, receiverId);
     if (!areFriends) {
       throw Exception('You can only message accepted friends');
     }
@@ -49,9 +48,10 @@ class DirectMessagesRepository {
     final batch = _firestore.batch();
 
     // Create or get conversation
-    final conversationRef = _firestore.collection('conversations').doc(conversationId);
+    final conversationRef =
+        _firestore.collection('conversations').doc(conversationId);
     final conversationDoc = await conversationRef.get();
-    
+
     if (!conversationDoc.exists) {
       final now = DateTime.now();
       final participantIds = [senderId, receiverId]..sort();
@@ -70,22 +70,23 @@ class DirectMessagesRepository {
       });
     } else {
       final data = conversationDoc.data() as Map<String, dynamic>;
-      final rawUnreadCounts =
-          (data['unreadCounts'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+      final rawUnreadCounts = (data['unreadCounts'] as Map<String, dynamic>?) ??
+          <String, dynamic>{};
       final unreadCounts = rawUnreadCounts.map(
         (key, value) => MapEntry(key, (value as num).toInt()),
       );
       unreadCounts[senderId] = 0;
       unreadCounts[receiverId] = (unreadCounts[receiverId] ?? 0) + 1;
-      
+
       final participantIds = data['participantIds'] != null
           ? List<String>.from(data['participantIds'] as List)
           : [data['userId1'] as String, data['userId2'] as String];
-      
+
       batch.update(conversationRef, {
         'updatedAt': Timestamp.fromDate(DateTime.now()),
         'unreadCounts': unreadCounts,
-        'unreadCount': unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
+        'unreadCount':
+            unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
         if (data['participantIds'] == null) 'participantIds': participantIds,
       });
     }
@@ -142,7 +143,8 @@ class DirectMessagesRepository {
   /// Get a single conversation
   Future<Conversation?> getConversation(String userId1, String userId2) async {
     final conversationId = _generateConversationId(userId1, userId2);
-    final doc = await _firestore.collection('conversations').doc(conversationId).get();
+    final doc =
+        await _firestore.collection('conversations').doc(conversationId).get();
     return doc.exists ? Conversation.fromFirestore(doc) : null;
   }
 
@@ -184,7 +186,8 @@ class DirectMessagesRepository {
   }
 
   /// Mark all messages in a conversation as read for a specific user
-  Future<void> markConversationAsRead(String conversationId, String userId) async {
+  Future<void> markConversationAsRead(
+      String conversationId, String userId) async {
     final messagesRef = _firestore
         .collection('conversations')
         .doc(conversationId)
@@ -200,20 +203,22 @@ class DirectMessagesRepository {
       });
     }
 
-    final conversationRef = _firestore.collection('conversations').doc(conversationId);
+    final conversationRef =
+        _firestore.collection('conversations').doc(conversationId);
     final conversationDoc = await conversationRef.get();
     if (conversationDoc.exists) {
       final data = conversationDoc.data() as Map<String, dynamic>;
-      final rawUnreadCounts =
-          (data['unreadCounts'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+      final rawUnreadCounts = (data['unreadCounts'] as Map<String, dynamic>?) ??
+          <String, dynamic>{};
       final unreadCounts = rawUnreadCounts.map(
         (key, value) => MapEntry(key, (value as num).toInt()),
       );
       unreadCounts[userId] = 0;
-      
+
       batch.update(conversationRef, {
         'unreadCounts': unreadCounts,
-        'unreadCount': unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
+        'unreadCount':
+            unreadCounts.values.fold<int>(0, (sum, count) => sum + count),
       });
     }
 
@@ -224,9 +229,9 @@ class DirectMessagesRepository {
   Future<void> blockUser(String blockerId, String blockedUserId) async {
     final blockRef = _firestore.collection('blocks').doc(blockerId);
     final blocksCollection = blockRef.collection('blockedUsers');
-    
+
     final batch = _firestore.batch();
-    
+
     // Create or get the blocker's document
     final blockerDoc = await blockRef.get();
     if (!blockerDoc.exists) {
@@ -258,7 +263,8 @@ class DirectMessagesRepository {
   }
 
   /// Check if a user is blocked
-  Future<bool> isUserBlocked(String blockerId, String potentialBlockedUser) async {
+  Future<bool> isUserBlocked(
+      String blockerId, String potentialBlockedUser) async {
     final doc = await _firestore
         .collection('blocks')
         .doc(blockerId)

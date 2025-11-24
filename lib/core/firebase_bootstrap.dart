@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -17,8 +16,9 @@ class FirebaseBootstrap {
 
   static Future<void> initialize() async {
     try {
-      _logger.i('Initializing Firebase for environment: ${AppConfig.environment}');
-      
+      _logger
+          .i('Initializing Firebase for environment: ${AppConfig.environment}');
+
       // Validate configuration
       if (!AppConfig.isFirebaseConfigValid) {
         _logger.e('Firebase configuration is invalid. Check your .env file.');
@@ -61,7 +61,11 @@ class FirebaseBootstrap {
       _logger.i('Firestore connectivity verified');
 
       // Test Storage connectivity
-      await FirebaseStorage.instance.ref().child('test').getDownloadURL().catchError((e) {
+      await FirebaseStorage.instance
+          .ref()
+          .child('test')
+          .getDownloadURL()
+          .catchError((e) {
         if (e is FirebaseException && e.code == 'object-not-found') {
           // Expected for test
           return null;
@@ -71,7 +75,6 @@ class FirebaseBootstrap {
       _logger.i('Firebase Storage connectivity verified');
 
       _logger.i('All Firebase services initialized successfully');
-
     } catch (e) {
       _logger.e('Failed to initialize Firebase: $e');
       rethrow;

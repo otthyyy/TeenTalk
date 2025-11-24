@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/nickname_step.dart';
@@ -60,9 +59,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     if (_currentStep < 4) {
       final stepNames = ['nickname', 'personal_info', 'consent', 'privacy'];
       ref.read(analyticsServiceProvider).logOnboardingStepCompleted(
-        stepNumber: _currentStep + 1,
-        stepName: stepNames[_currentStep],
-      );
+            stepNumber: _currentStep + 1,
+            stepName: stepNames[_currentStep],
+          );
       setState(() => _currentStep++);
       _pageController.animateToPage(
         _currentStep,
@@ -157,7 +156,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         prefersReducedMotion: _prefersReducedMotion,
         prefersHighContrast: _prefersHighContrast,
         allowHeavyAnimations: _allowHeavyAnimations,
-        );
+      );
 
       debugPrint('✅ ONBOARDING: Creating profile with data:');
       debugPrint('   - uid: ${profile.uid}');
@@ -191,29 +190,35 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       // 2. Navigation happens immediately
       // 3. Router checks profile stream which hasn't received the update yet
       // 4. Router sees onboardingComplete=false and redirects back to onboarding
-      debugPrint('✅ ONBOARDING: Invalidating user profile provider to force refresh');
+      debugPrint(
+          '✅ ONBOARDING: Invalidating user profile provider to force refresh');
       ref.invalidate(userProfileProvider);
 
-      debugPrint('✅ ONBOARDING: Waiting for profile stream to emit updated data');
+      debugPrint(
+          '✅ ONBOARDING: Waiting for profile stream to emit updated data');
       bool profileConfirmed = false;
       try {
         // Wait for the stream to emit the updated profile with onboardingComplete=true
-        final refreshedProfile = await ref.read(userProfileProvider.future).timeout(
-          const Duration(seconds: 5),
-        );
-        
+        final refreshedProfile =
+            await ref.read(userProfileProvider.future).timeout(
+                  const Duration(seconds: 5),
+                );
+
         if (refreshedProfile != null && refreshedProfile.onboardingComplete) {
-          debugPrint('✅ ONBOARDING: Profile confirmed with onboardingComplete=true');
+          debugPrint(
+              '✅ ONBOARDING: Profile confirmed with onboardingComplete=true');
           profileConfirmed = true;
         } else {
-          debugPrint('⚠️ ONBOARDING: Profile not confirmed: profile=${refreshedProfile != null}, onboardingComplete=${refreshedProfile?.onboardingComplete}');
+          debugPrint(
+              '⚠️ ONBOARDING: Profile not confirmed: profile=${refreshedProfile != null}, onboardingComplete=${refreshedProfile?.onboardingComplete}');
         }
       } catch (e) {
         debugPrint('⚠️ ONBOARDING: Timeout waiting for profile refresh: $e');
       }
 
       if (!profileConfirmed) {
-        debugPrint('⚠️ ONBOARDING: Profile not confirmed but proceeding anyway (timeout or error)');
+        debugPrint(
+            '⚠️ ONBOARDING: Profile not confirmed but proceeding anyway (timeout or error)');
       }
 
       debugPrint('✅ ONBOARDING: Navigating to /feed');

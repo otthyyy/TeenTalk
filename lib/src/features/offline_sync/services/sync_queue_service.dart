@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -32,19 +31,18 @@ final queuedActionsProvider = StreamProvider<List<QueuedAction>>((ref) {
 
 final pendingQueueCountProvider = StreamProvider<int>((ref) {
   final service = ref.watch(syncQueueServiceProvider);
-  return service.queueStream.map((actions) => 
-    actions.where((a) => a.isPending || a.isSyncing).length);
+  return service.queueStream.map(
+      (actions) => actions.where((a) => a.isPending || a.isSyncing).length);
 });
 
 class SyncQueueService {
-
   SyncQueueService({
     required this.connectivityService,
   });
   static const String _boxName = 'sync_queue';
   final Logger _logger = Logger();
   final ConnectivityService connectivityService;
-  
+
   Box<QueuedAction>? _queueBox;
   final StreamController<List<QueuedAction>> _queueController =
       StreamController<List<QueuedAction>>.broadcast();
@@ -62,7 +60,7 @@ class SyncQueueService {
       } else {
         await Hive.initFlutter();
       }
-      
+
       if (!Hive.isAdapterRegistered(0)) {
         final adapter = QueuedActionAdapter();
         Hive.registerAdapter(adapter);
@@ -80,8 +78,9 @@ class SyncQueueService {
       _logger.i('Sync queue initialized with ${_queueBox?.length ?? 0} items');
 
       _emitQueueUpdate();
-      
-      _connectivitySubscription = connectivityService.connectivityStream.listen((status) {
+
+      _connectivitySubscription =
+          connectivityService.connectivityStream.listen((status) {
         if (status == ConnectivityStatus.online) {
           _logger.d('Connection restored, triggering sync');
           _triggerSync();
@@ -90,7 +89,8 @@ class SyncQueueService {
 
       _startPeriodicSync();
     } catch (e, stackTrace) {
-      _logger.e('Failed to initialize sync queue', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to initialize sync queue',
+          error: e, stackTrace: stackTrace);
     }
   }
 
@@ -114,11 +114,11 @@ class SyncQueueService {
       await _queueBox?.put(action.id, action);
       _logger.i('Enqueued ${action.type.name} action: ${action.id}');
       _emitQueueUpdate();
-      
+
       if (await connectivityService.isOnline()) {
         unawaited(_triggerSync());
       }
-      
+
       return action.id;
     } catch (e, stackTrace) {
       _logger.e('Failed to enqueue action', error: e, stackTrace: stackTrace);
@@ -139,7 +139,8 @@ class SyncQueueService {
     }
 
     final pendingActions = box.values
-        .where((action) => action.isPending || (action.hasFailed && action.canRetry))
+        .where((action) =>
+            action.isPending || (action.hasFailed && action.canRetry))
         .toList();
 
     if (pendingActions.isEmpty) {
@@ -164,11 +165,13 @@ class SyncQueueService {
 
         action.markAsCompleted();
         await action.save();
-        _logger.i('Successfully synced ${action.type.name} action: ${action.id}');
-        
+        _logger
+            .i('Successfully synced ${action.type.name} action: ${action.id}');
+
         _emitQueueUpdate();
       } catch (e, stackTrace) {
-        _logger.e('Failed to sync action ${action.id}', error: e, stackTrace: stackTrace);
+        _logger.e('Failed to sync action ${action.id}',
+            error: e, stackTrace: stackTrace);
         action.markAsFailed(e.toString());
         await action.save();
         _emitQueueUpdate();
@@ -215,12 +218,12 @@ class SyncQueueService {
   Future<void> _syncComment(QueuedAction action) async {
     final data = action.data;
     final repository = CommentsRepository();
-    
+
     final school = data['school'] as String?;
     if (school == null || school.isEmpty) {
       throw Exception('Comment requires a valid school to be synced');
     }
-    
+
     await repository.createComment(
       postId: data['postId'] as String,
       authorId: data['authorId'] as String,
@@ -256,8 +259,8 @@ class SyncQueueService {
 
     final toDelete = <String>[];
     for (final action in box.values) {
-      if (action.isCompleted && 
-          action.completedAt != null && 
+      if (action.isCompleted &&
+          action.completedAt != null &&
           action.completedAt!.isBefore(cutoffDate)) {
         toDelete.add(action.id);
       }
@@ -303,7 +306,7 @@ class SyncQueueService {
         await action.save();
         _logger.i('Retrying action: $actionId');
         _emitQueueUpdate();
-        
+
         if (await connectivityService.isOnline()) {
           await syncPendingActions();
         }
@@ -316,8 +319,9 @@ class SyncQueueService {
 
   List<QueuedAction> getPendingActions() {
     return _queueBox?.values
-        .where((action) => action.isPending || action.isSyncing)
-        .toList() ?? [];
+            .where((action) => action.isPending || action.isSyncing)
+            .toList() ??
+        [];
   }
 
   List<QueuedAction> getAllActions() {

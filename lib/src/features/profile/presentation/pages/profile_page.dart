@@ -13,7 +13,6 @@ import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../../../../core/services/analytics_provider.dart';
-import '../../domain/models/trust_level_localizations.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -47,7 +46,8 @@ class ProfilePage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       _buildPrivacySettingsCard(context, profile, isDark),
                       const SizedBox(height: 16),
-                      _buildAccessibilitySettingsCard(context, ref, profile, isDark),
+                      _buildAccessibilitySettingsCard(
+                          context, ref, profile, isDark),
                       const SizedBox(height: 16),
                       _buildTutorialCard(context, ref, isDark),
                       const SizedBox(height: 16),
@@ -89,7 +89,8 @@ class ProfilePage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person_outline, size: 120, color: theme.colorScheme.primary.withOpacity(0.3)),
+            Icon(Icons.person_outline,
+                size: 120, color: theme.colorScheme.primary.withOpacity(0.3)),
             const SizedBox(height: 24),
             Text(
               'No profile found',
@@ -233,7 +234,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildSpottedActivityCard(BuildContext context, dynamic profile, bool isDark) {
+  Widget _buildSpottedActivityCard(
+      BuildContext context, dynamic profile, bool isDark) {
     final theme = Theme.of(context);
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 500),
@@ -272,8 +274,9 @@ class ProfilePage extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.auto_awesome, 
-                    size: 32, 
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 32,
                     color: theme.colorScheme.primary,
                   ),
                   const SizedBox(width: 12),
@@ -315,7 +318,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildActivityStat(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildActivityStat(
+      BuildContext context, IconData icon, String label, String value) {
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -337,7 +341,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileInfoCard(BuildContext context, dynamic profile, bool isDark) {
+  Widget _buildProfileInfoCard(
+      BuildContext context, dynamic profile, bool isDark) {
     final theme = Theme.of(context);
     final hasOptionalInfo = profile.gender != null || profile.school != null;
 
@@ -395,8 +400,9 @@ class ProfilePage extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, 
-                      size: 20, 
+                    Icon(
+                      Icons.info_outline,
+                      size: 20,
                       color: theme.colorScheme.primary,
                     ),
                     const SizedBox(width: 8),
@@ -416,7 +422,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildPrivacySettingsCard(BuildContext context, dynamic profile, bool isDark) {
+  Widget _buildPrivacySettingsCard(
+      BuildContext context, dynamic profile, bool isDark) {
     final theme = Theme.of(context);
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 500),
@@ -483,7 +490,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildAccessibilitySettingsCard(BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
+  Widget _buildAccessibilitySettingsCard(
+      BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
     final theme = Theme.of(context);
     return Card(
       elevation: 2,
@@ -536,7 +544,8 @@ class ProfilePage extends ConsumerWidget {
               ),
               activeColor: theme.colorScheme.primary,
               title: const Text('High Contrast'),
-              subtitle: const Text('Increase visual contrast for better readability'),
+              subtitle:
+                  const Text('Increase visual contrast for better readability'),
             ),
             const Divider(),
             SwitchListTile.adaptive(
@@ -551,13 +560,15 @@ class ProfilePage extends ConsumerWidget {
               ),
               activeColor: theme.colorScheme.primary,
               title: const Text('Heavy Animations (Beta)'),
-              subtitle: const Text('Enable experimental animations and visual effects'),
+              subtitle: const Text(
+                  'Enable experimental animations and visual effects'),
             ),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withOpacity(isDark ? 0.15 : 0.35),
+                color: theme.colorScheme.primaryContainer
+                    .withOpacity(isDark ? 0.15 : 0.35),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -647,7 +658,8 @@ class ProfilePage extends ConsumerWidget {
               context,
               Icons.calendar_today,
               'Consent Date',
-              DateFormat('MMM dd, yyyy').format(profile.privacyConsentTimestamp),
+              DateFormat('MMM dd, yyyy')
+                  .format(profile.privacyConsentTimestamp),
             ),
             if (profile.isMinor != null && profile.isMinor!) ...[
               const Divider(),
@@ -670,18 +682,24 @@ class ProfilePage extends ConsumerWidget {
             const Divider(),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.privacy_tip_outlined, color: theme.colorScheme.primary),
-              title: Text(localizations?.legalViewPrivacy ?? 'View Privacy Policy'),
+              leading: Icon(Icons.privacy_tip_outlined,
+                  color: theme.colorScheme.primary),
+              title: Text(
+                  localizations?.legalViewPrivacy ?? 'View Privacy Policy'),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => _openLegalDocument(context, LegalDocumentType.privacyPolicy),
+              onTap: () =>
+                  _openLegalDocument(context, LegalDocumentType.privacyPolicy),
             ),
             const Divider(),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.gavel_outlined, color: theme.colorScheme.primary),
-              title: Text(localizations?.legalViewTerms ?? 'View Terms of Service'),
+              leading:
+                  Icon(Icons.gavel_outlined, color: theme.colorScheme.primary),
+              title: Text(
+                  localizations?.legalViewTerms ?? 'View Terms of Service'),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => _openLegalDocument(context, LegalDocumentType.termsOfService),
+              onTap: () =>
+                  _openLegalDocument(context, LegalDocumentType.termsOfService),
             ),
           ],
         ),
@@ -689,7 +707,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBetaProgramCard(BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
+  Widget _buildBetaProgramCard(
+      BuildContext context, WidgetRef ref, UserProfile profile, bool isDark) {
     final theme = Theme.of(context);
     return Card(
       elevation: 2,
@@ -725,7 +744,8 @@ class ProfilePage extends ConsumerWidget {
             SwitchListTile.adaptive(
               value: profile.isBetaTester,
               contentPadding: EdgeInsets.zero,
-              onChanged: (value) async => _handleBetaToggle(context, ref, profile, value),
+              onChanged: (value) async =>
+                  _handleBetaToggle(context, ref, profile, value),
               activeColor: theme.colorScheme.primary,
               title: const Text('Join TeenTalk Beta'),
               subtitle: const Text(
@@ -742,11 +762,15 @@ class ProfilePage extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                profile.betaConsentGiven == true ? 'Consent captured' : 'Consent required',
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                profile.betaConsentGiven == true
+                    ? 'Consent captured'
+                    : 'Consent required',
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                profile.betaConsentGiven == true && profile.betaConsentTimestamp != null
+                profile.betaConsentGiven == true &&
+                        profile.betaConsentTimestamp != null
                     ? 'Accepted on ${DateFormat('MMM dd, yyyy').format(profile.betaConsentTimestamp!)}. You can opt-out at any time.'
                     : 'Review and accept the beta consent notice before participating. Guardians must approve minors.',
               ),
@@ -773,7 +797,8 @@ class ProfilePage extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer.withOpacity(isDark ? 0.15 : 0.35),
+                  color: theme.colorScheme.primaryContainer
+                      .withOpacity(isDark ? 0.15 : 0.35),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -913,10 +938,12 @@ class ProfilePage extends ConsumerWidget {
                         ),
                         CheckboxListTile(
                           value: consentChecked,
-                          onChanged: (value) => setState(() => consentChecked = value ?? false),
+                          onChanged: (value) =>
+                              setState(() => consentChecked = value ?? false),
                           contentPadding: EdgeInsets.zero,
                           controlAffinity: ListTileControlAffinity.leading,
-                          title: const Text('I consent to participate in the TeenTalk beta program.'),
+                          title: const Text(
+                              'I consent to participate in the TeenTalk beta program.'),
                         ),
                       ],
                     ),
@@ -986,7 +1013,8 @@ class ProfilePage extends ConsumerWidget {
                 const SizedBox(height: 20),
                 Text(
                   'Getting set up',
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
                 _buildInstructionItem(
@@ -1010,7 +1038,8 @@ class ProfilePage extends ConsumerWidget {
                 const SizedBox(height: 20),
                 Text(
                   'Sharing feedback',
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
                 _buildInstructionItem(
@@ -1065,7 +1094,8 @@ class ProfilePage extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -1080,7 +1110,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildInfoRow(
+      BuildContext context, IconData icon, String label, String value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -1109,7 +1140,8 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyInfoRow(BuildContext context, IconData icon, String label, String hint) {
+  Widget _buildEmptyInfoRow(
+      BuildContext context, IconData icon, String label, String hint) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -1201,7 +1233,7 @@ class ProfilePage extends ConsumerWidget {
   Widget _buildTutorialCard(BuildContext context, WidgetRef ref, bool isDark) {
     final theme = Theme.of(context);
     final tutorialState = ref.watch(tutorialControllerProvider);
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -1240,14 +1272,17 @@ class ProfilePage extends ConsumerWidget {
                   ref.read(tutorialControllerProvider.notifier).reset();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Tutorial riavviato! Torna alla home per iniziare.'),
+                      content: Text(
+                          'Tutorial riavviato! Torna alla home per iniziare.'),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
                 },
                 icon: const Icon(Icons.replay),
                 label: Text(
-                  tutorialState.hasCompleted ? 'Riavvia Tutorial' : 'Avvia Tutorial',
+                  tutorialState.hasCompleted
+                      ? 'Riavvia Tutorial'
+                      : 'Avvia Tutorial',
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1314,4 +1349,3 @@ class ProfilePage extends ConsumerWidget {
     context.push('/legal/${type.routeSegment}');
   }
 }
-

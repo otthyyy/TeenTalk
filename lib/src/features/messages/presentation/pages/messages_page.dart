@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../profile/domain/models/user_profile.dart';
 import '../../data/models/conversation.dart';
 import '../../data/repositories/direct_messages_repository.dart';
 import '../providers/direct_messages_provider.dart';
@@ -90,7 +89,8 @@ class MessagesPage extends ConsumerWidget {
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
                     thickness: 0.5,
-                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    color: theme.colorScheme.surfaceContainerHighest
+                        .withOpacity(0.5),
                   ),
                   itemBuilder: (context, index) {
                     final conversation = conversations[index];
@@ -169,7 +169,8 @@ class MessagesPage extends ConsumerWidget {
     );
   }
 
-  String? _resolveOtherParticipant(Conversation conversation, String currentUserId) {
+  String? _resolveOtherParticipant(
+      Conversation conversation, String currentUserId) {
     if (conversation.participantIds.isNotEmpty) {
       return conversation.participantIds.firstWhere(
         (id) => id != currentUserId,
@@ -249,7 +250,8 @@ class MessagesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, ThemeData theme, WidgetRef ref) {
+  Widget _buildErrorState(
+      BuildContext context, ThemeData theme, WidgetRef ref) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),

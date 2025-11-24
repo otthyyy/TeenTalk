@@ -294,7 +294,7 @@ void main() {
     group('Error Handling', () {
       test('Auth state captures error messages', () {
         const errorMessage = 'Email already in use';
-        final authState = AuthState(
+        const authState = AuthState(
           isAuthenticated: false,
           isLoading: false,
           error: errorMessage,

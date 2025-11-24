@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/localization/app_localizations.dart';
@@ -12,13 +11,11 @@ import '../../../../core/theme/design_tokens.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/utils/animation_utils.dart';
 import '../../../../core/widgets/cached_image_widget.dart';
-import '../../../../core/motion/motion_presets.dart';
 import '../../../comments/data/models/comment.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import 'liker_list_modal.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
-
   const PostCardWidget({
     super.key,
     required this.post,
@@ -109,7 +106,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
           animation: _shimmerController,
           builder: (context, child) {
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusLg),
                 gradient: widget.isNew
@@ -257,8 +255,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                       const SizedBox(width: 8),
                       Consumer(
                         builder: (context, ref, child) {
-                          final authorProfileAsync =
-                              ref.watch(userProfileByIdProvider(widget.post.authorId));
+                          final authorProfileAsync = ref.watch(
+                              userProfileByIdProvider(widget.post.authorId));
                           return authorProfileAsync.when(
                             data: (authorProfile) {
                               if (authorProfile == null) {
@@ -269,7 +267,9 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                                 showLabel: false,
                                 size: 16,
                                 onTap: () {
-                                  ref.read(analyticsServiceProvider).logTrustBadgeTap(
+                                  ref
+                                      .read(analyticsServiceProvider)
+                                      .logTrustBadgeTap(
                                         authorProfile.uid,
                                         authorProfile.trustLevel.name,
                                       );
@@ -355,7 +355,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
 
   Widget _buildFooter(ThemeData theme, AppLocalizations? l10n, bool isLiked) {
     return Semantics(
-      label: '${widget.post.likeCount} likes, ${widget.post.commentCount} comments, section: ${widget.post.section}',
+      label:
+          '${widget.post.likeCount} likes, ${widget.post.commentCount} comments, section: ${widget.post.section}',
       child: Row(
         children: [
           Semantics(
@@ -388,13 +389,16 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                 duration: DesignTokens.durationFast,
                 curve: DesignTokens.curveBounce,
                 child: Container(
-                  constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  constraints:
+                      const BoxConstraints(minHeight: 44, minWidth: 44),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: isLiked
                         ? DesignTokens.vibrantPink
                         : theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
+                    borderRadius:
+                        BorderRadius.circular(DesignTokens.radiusFull),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -409,7 +413,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                       const SizedBox(width: 4),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: widget.post.likeCount > 0 ? _onLikeCountTap : null,
+                        onTap:
+                            widget.post.likeCount > 0 ? _onLikeCountTap : null,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
                           child: Text(
@@ -418,8 +423,9 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
                               color: isLiked
                                   ? Colors.white
                                   : theme.colorScheme.onSurfaceVariant,
-                              fontWeight:
-                                  widget.post.likeCount > 0 ? FontWeight.w600 : FontWeight.normal,
+                              fontWeight: widget.post.likeCount > 0
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -439,7 +445,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
               onPressed: widget.onComments,
               child: Container(
                 constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0, vertical: 10.0),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(DesignTokens.radiusFull),
@@ -468,7 +475,8 @@ class _PostCardWidgetState extends ConsumerState<PostCardWidget>
           Semantics(
             label: 'Section: ${widget.post.section}',
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [

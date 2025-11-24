@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/models/user_profile.dart';
 import '../../data/repositories/user_repository.dart';
 import '../providers/user_profile_provider.dart';
 import '../../../../core/constants/brescia_schools.dart';
@@ -20,7 +19,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
   final _nicknameController = TextEditingController();
   Timer? _debounce;
-  
+
   String? _gender;
   String? _school;
   String? _schoolYear;
@@ -75,10 +74,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           _screenshotProtectionEnabled = profile.screenshotProtectionEnabled;
         });
 
-        final canChange =
-            await ref.read(userRepositoryProvider).canChangeNickname(profile.uid);
-        final daysUntil =
-            await ref.read(userRepositoryProvider).getDaysUntilNicknameChange(profile.uid);
+        final canChange = await ref
+            .read(userRepositoryProvider)
+            .canChangeNickname(profile.uid);
+        final daysUntil = await ref
+            .read(userRepositoryProvider)
+            .getDaysUntilNicknameChange(profile.uid);
 
         if (mounted) {
           setState(() {
@@ -125,11 +126,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     try {
       final profileAsync = ref.read(userProfileProvider);
       final currentUid = profileAsync.value?.uid;
-      
-      final isAvailable = await ref.read(userRepositoryProvider).isNicknameAvailable(
-        nickname,
-        excludeUid: currentUid,
-      );
+
+      final isAvailable =
+          await ref.read(userRepositoryProvider).isNicknameAvailable(
+                nickname,
+                excludeUid: currentUid,
+              );
 
       if (mounted) {
         setState(() {
@@ -420,8 +422,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person_off, 
-                    size: 64, 
+                  Icon(
+                    Icons.person_off,
+                    size: 64,
                     color: Colors.grey[400],
                   ),
                   const SizedBox(height: 16),
@@ -483,7 +486,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.account_circle, 
+                              Icon(
+                                Icons.account_circle,
                                 color: theme.colorScheme.primary,
                               ),
                               const SizedBox(width: 8),
@@ -511,20 +515,25 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                       child: SizedBox(
                                         width: 20,
                                         height: 20,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2),
                                       ),
                                     )
                                   : _isNicknameAvailable == true &&
-                                          _nicknameController.text.trim() != _originalNickname
-                                      ? Icon(Icons.check_circle, color: Colors.green[600])
+                                          _nicknameController.text.trim() !=
+                                              _originalNickname
+                                      ? Icon(Icons.check_circle,
+                                          color: Colors.green[600])
                                       : _isNicknameAvailable == false
-                                          ? const Icon(Icons.error, color: Colors.red)
+                                          ? const Icon(Icons.error,
+                                              color: Colors.red)
                                           : null,
                             ),
                             enabled: _canChangeNickname,
                             validator: _validateNickname,
                             onChanged: _onNicknameChanged,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                           ),
                           if (!_canChangeNickname)
                             Padding(
@@ -541,7 +550,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.lock_clock, 
+                                    Icon(
+                                      Icons.lock_clock,
                                       color: Colors.orange[700],
                                       size: 20,
                                     ),
@@ -571,10 +581,13 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               prefixIcon: const Icon(Icons.person_outline),
                             ),
                             items: const [
-                              DropdownMenuItem(value: 'male', child: Text('Male')),
-                              DropdownMenuItem(value: 'female', child: Text('Female')),
                               DropdownMenuItem(
-                                  value: 'non_binary', child: Text('Non-binary')),
+                                  value: 'male', child: Text('Male')),
+                              DropdownMenuItem(
+                                  value: 'female', child: Text('Female')),
+                              DropdownMenuItem(
+                                  value: 'non_binary',
+                                  child: Text('Non-binary')),
                               DropdownMenuItem(
                                   value: 'prefer_not_to_say',
                                   child: Text('Prefer not to say')),
@@ -642,7 +655,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.interests_outlined, 
+                              Icon(
+                                Icons.interests_outlined,
                                 color: theme.colorScheme.primary,
                               ),
                               const SizedBox(width: 8),
@@ -699,17 +713,20 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               ),
                             ],
                           ),
-                          if (_interests.any((i) => !UserInterests.interests.contains(i))) ...[
+                          if (_interests.any(
+                              (i) => !UserInterests.interests.contains(i))) ...[
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
                               children: _interests
-                                  .where((i) => !UserInterests.interests.contains(i))
+                                  .where((i) =>
+                                      !UserInterests.interests.contains(i))
                                   .map((interest) {
                                 return Chip(
                                   label: Text(interest),
-                                  onDeleted: () => _removeCustomInterest(interest),
+                                  onDeleted: () =>
+                                      _removeCustomInterest(interest),
                                   deleteIcon: const Icon(Icons.close, size: 18),
                                 );
                               }).toList(),
@@ -760,13 +777,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               ),
                             ],
                           ),
-                          if (_clubs.any((c) => !UserInterests.clubs.contains(c))) ...[
+                          if (_clubs.any(
+                              (c) => !UserInterests.clubs.contains(c))) ...[
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
                               children: _clubs
-                                  .where((c) => !UserInterests.clubs.contains(c))
+                                  .where(
+                                      (c) => !UserInterests.clubs.contains(c))
                                   .map((club) {
                                 return Chip(
                                   label: Text(club),
@@ -793,7 +812,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.security, 
+                              Icon(
+                                Icons.security,
                                 color: theme.colorScheme.primary,
                               ),
                               const SizedBox(width: 8),
@@ -808,7 +828,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           const SizedBox(height: 16),
                           Container(
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                              color: theme.colorScheme.primaryContainer
+                                  .withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: SwitchListTile(
@@ -827,7 +848,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               secondary: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withOpacity(0.1),
+                                  color: theme.colorScheme.primary
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -843,7 +865,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           const SizedBox(height: 12),
                           Container(
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.secondaryContainer.withOpacity(0.3),
+                              color: theme.colorScheme.secondaryContainer
+                                  .withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: SwitchListTile(
@@ -862,7 +885,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               secondary: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondary.withOpacity(0.1),
+                                  color: theme.colorScheme.secondary
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -913,13 +937,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           const SizedBox(height: 12),
                           Container(
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.tertiaryContainer.withOpacity(0.3),
+                              color: theme.colorScheme.tertiaryContainer
+                                  .withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: SwitchListTile(
                               value: _screenshotProtectionEnabled,
                               onChanged: (value) {
-                                setState(() => _screenshotProtectionEnabled = value);
+                                setState(
+                                    () => _screenshotProtectionEnabled = value);
                               },
                               title: const Text(
                                 'Screenshot Protection',
@@ -932,7 +958,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                               secondary: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.tertiary.withOpacity(0.1),
+                                  color: theme.colorScheme.tertiary
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -965,14 +992,16 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                           const SizedBox(height: 16),
                           Container(
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                              color: theme.colorScheme.errorContainer
+                                  .withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: ListTile(
                               leading: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.error.withOpacity(0.1),
+                                  color:
+                                      theme.colorScheme.error.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -985,24 +1014,25 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
                               subtitle: ref.watch(cacheInfoProvider).when(
-                                data: (info) => Text(
-                                  '${info['fileCount']} images cached (${info['totalSizeMB']} MB)',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                loading: () => const Text(
-                                  'Calculating cache size...',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                error: (_, __) => const Text(
-                                  'Unable to calculate cache size',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ),
+                                    data: (info) => Text(
+                                      '${info['fileCount']} images cached (${info['totalSizeMB']} MB)',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    loading: () => const Text(
+                                      'Calculating cache size...',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    error: (_, __) => const Text(
+                                      'Unable to calculate cache size',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
                               trailing: _isClearingCache
                                   ? const SizedBox(
                                       width: 24,
                                       height: 24,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     )
                                   : IconButton(
                                       onPressed: _clearImageCache,

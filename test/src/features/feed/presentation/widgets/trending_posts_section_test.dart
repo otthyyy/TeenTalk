@@ -6,7 +6,7 @@ import 'package:teen_talk_app/src/features/feed/presentation/providers/feed_prov
 import 'package:teen_talk_app/src/features/feed/presentation/widgets/trending_posts_section.dart';
 
 class TestFeedNotifier extends StateNotifier<FeedState> {
-  TestFeedNotifier(FeedState state) : super(state);
+  TestFeedNotifier(super.state);
 
   void update(FeedState newState) {
     state = newState;
@@ -30,14 +30,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('TrendingPostsSection', () {
-    testWidgets('shows loading indicator while posts are loading', (tester) async {
-      final notifier = TestFeedNotifier(const FeedState(isLoading: true, posts: []));
-      final overrideProvider = StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
+    testWidgets('shows loading indicator while posts are loading',
+        (tester) async {
+      final notifier =
+          TestFeedNotifier(const FeedState(isLoading: true, posts: []));
+      final overrideProvider =
+          StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            schoolAwareFeedProvider('test-section').overrideWithProvider(overrideProvider),
+            schoolAwareFeedProvider('test-section')
+                .overrideWithProvider(overrideProvider),
           ],
           child: const MaterialApp(
             home: Scaffold(
@@ -53,14 +57,18 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows empty state when there are no trending posts', (tester) async {
-      final notifier = TestFeedNotifier(const FeedState(isLoading: false, posts: []));
-      final overrideProvider = StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
+    testWidgets('shows empty state when there are no trending posts',
+        (tester) async {
+      final notifier =
+          TestFeedNotifier(const FeedState(isLoading: false, posts: []));
+      final overrideProvider =
+          StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            schoolAwareFeedProvider('test-section').overrideWithProvider(overrideProvider),
+            schoolAwareFeedProvider('test-section')
+                .overrideWithProvider(overrideProvider),
           ],
           child: const MaterialApp(
             home: Scaffold(
@@ -73,17 +81,21 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
 
-      expect(find.text('No trending posts yet. Check back soon!'), findsOneWidget);
+      expect(
+          find.text('No trending posts yet. Check back soon!'), findsOneWidget);
     });
 
     testWidgets('shows trending post when posts are available', (tester) async {
-      final notifier = TestFeedNotifier(const FeedState(isLoading: false, posts: []));
-      final overrideProvider = StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
+      final notifier =
+          TestFeedNotifier(const FeedState(isLoading: false, posts: []));
+      final overrideProvider =
+          StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            schoolAwareFeedProvider('test-section').overrideWithProvider(overrideProvider),
+            schoolAwareFeedProvider('test-section')
+                .overrideWithProvider(overrideProvider),
           ],
           child: const MaterialApp(
             home: Scaffold(
@@ -106,16 +118,19 @@ void main() {
       expect(find.text('5 comments'), findsOneWidget);
     });
 
-    testWidgets('invokes callback when trending post is tapped', (tester) async {
+    testWidgets('invokes callback when trending post is tapped',
+        (tester) async {
       final notifier = TestFeedNotifier(FeedState(posts: [_mockPost]));
-      final overrideProvider = StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
+      final overrideProvider =
+          StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
 
       Post? selectedPost;
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            schoolAwareFeedProvider('test-section').overrideWithProvider(overrideProvider),
+            schoolAwareFeedProvider('test-section')
+                .overrideWithProvider(overrideProvider),
           ],
           child: MaterialApp(
             home: Scaffold(
@@ -139,13 +154,16 @@ void main() {
     });
 
     testWidgets('shows error message when FeedState has error', (tester) async {
-      final notifier = TestFeedNotifier(const FeedState(error: 'Unable to load', posts: []));
-      final overrideProvider = StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
+      final notifier =
+          TestFeedNotifier(const FeedState(error: 'Unable to load', posts: []));
+      final overrideProvider =
+          StateNotifierProvider<TestFeedNotifier, FeedState>((ref) => notifier);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            schoolAwareFeedProvider('test-section').overrideWithProvider(overrideProvider),
+            schoolAwareFeedProvider('test-section')
+                .overrideWithProvider(overrideProvider),
           ],
           child: const MaterialApp(
             home: Scaffold(

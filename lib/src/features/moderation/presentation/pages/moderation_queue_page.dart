@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/moderation_item.dart';
-import '../../data/models/content_report.dart';
 import '../providers/moderation_provider.dart';
 
 class ModerationQueuePage extends ConsumerWidget {
@@ -102,7 +101,8 @@ class ModerationQueuePage extends ConsumerWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text('• Keep Active: Content is fine, dismiss reports'),
-              Text('• Keep Hidden: Content stays hidden pending further review'),
+              Text(
+                  '• Keep Hidden: Content stays hidden pending further review'),
               Text('• Remove: Permanently remove content'),
             ],
           ),
@@ -119,7 +119,6 @@ class ModerationQueuePage extends ConsumerWidget {
 }
 
 class _ModerationItemCard extends ConsumerWidget {
-
   const _ModerationItemCard({required this.item});
   final ModerationItem item;
 
@@ -166,7 +165,8 @@ class _ModerationItemCard extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: item.reportCount >= 3 ? Colors.red : Colors.orange,
                     borderRadius: BorderRadius.circular(12),
@@ -352,7 +352,8 @@ class _ModerationItemCard extends ConsumerWidget {
     );
   }
 
-  void _showActionMenu(BuildContext context, WidgetRef ref, ModerationItem item) {
+  void _showActionMenu(
+      BuildContext context, WidgetRef ref, ModerationItem item) {
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -440,7 +441,8 @@ class _ModerationItemCard extends ConsumerWidget {
                 );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Action completed successfully')),
+                    const SnackBar(
+                        content: Text('Action completed successfully')),
                   );
                 }
               } catch (e) {
@@ -460,7 +462,6 @@ class _ModerationItemCard extends ConsumerWidget {
 }
 
 class _InfoChip extends StatelessWidget {
-
   const _InfoChip({
     required this.icon,
     required this.label,
@@ -500,7 +501,6 @@ class _InfoChip extends StatelessWidget {
 }
 
 class _DetailRow extends StatelessWidget {
-
   const _DetailRow(this.label, this.value);
   final String label;
   final String value;

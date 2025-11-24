@@ -17,7 +17,8 @@ class TrendingPostsSection extends ConsumerStatefulWidget {
   final ValueChanged<Post>? onPostSelected;
 
   @override
-  ConsumerState<TrendingPostsSection> createState() => _TrendingPostsSectionState();
+  ConsumerState<TrendingPostsSection> createState() =>
+      _TrendingPostsSectionState();
 }
 
 class _TrendingPostsSectionState extends ConsumerState<TrendingPostsSection> {
@@ -105,8 +106,7 @@ class _TrendingPostsSectionState extends ConsumerState<TrendingPostsSection> {
   }
 
   List<Post> _extractTrendingCandidates(List<Post> posts) {
-    final sortedPosts = [...posts]
-      ..sort((a, b) {
+    final sortedPosts = [...posts]..sort((a, b) {
         final engagementComparison =
             b.engagementScore.compareTo(a.engagementScore);
         if (engagementComparison != 0) return engagementComparison;
@@ -137,7 +137,7 @@ class _TrendingPostsSectionState extends ConsumerState<TrendingPostsSection> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -160,11 +160,12 @@ class _TrendingPostsSectionState extends ConsumerState<TrendingPostsSection> {
                 IconButton(
                   tooltip: 'Refresh trending posts',
                   onPressed: () {
-                    ref.read(schoolAwareFeedProvider(widget.section).notifier)
-                      ..loadPosts(
-                        refresh: true,
-                        section: widget.section,
-                      );
+                    ref
+                        .read(schoolAwareFeedProvider(widget.section).notifier)
+                        .loadPosts(
+                          refresh: true,
+                          section: widget.section,
+                        );
                   },
                   icon: const Icon(Icons.refresh),
                 ),

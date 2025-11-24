@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,14 +47,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isOnOnboardingPage = path == '/onboarding';
       final isOnAdminPage = path.startsWith('/admin');
       final isOnLoadingPage = path == '/loading';
-      final shouldShowOnboarding = isAuthenticated && (!hasProfile || !hasCompletedOnboarding);
+      final shouldShowOnboarding =
+          isAuthenticated && (!hasProfile || !hasCompletedOnboarding);
 
       debugPrint('🔀 ROUTER REDIRECT DEBUG:');
       debugPrint('   Path: $path');
-      debugPrint('   Auth: isAuthenticated=$isAuthenticated, isLoading=$isAuthLoading, uid=${authState.user?.uid}');
-      debugPrint('   Profile: hasProfile=$hasProfile, isLoading=$isProfileLoading, hasError=$hasProfileError');
+      debugPrint(
+          '   Auth: isAuthenticated=$isAuthenticated, isLoading=$isAuthLoading, uid=${authState.user?.uid}');
+      debugPrint(
+          '   Profile: hasProfile=$hasProfile, isLoading=$isProfileLoading, hasError=$hasProfileError');
       debugPrint('   Profile UID: ${profile?.uid}');
-      debugPrint('   Profile Data: onboardingComplete=$hasCompletedOnboarding, isProfileComplete=$isProfileComplete, school=${profile?.school}, interests=${profile?.interests}');
+      debugPrint(
+          '   Profile Data: onboardingComplete=$hasCompletedOnboarding, isProfileComplete=$isProfileComplete, school=${profile?.school}, interests=${profile?.interests}');
       debugPrint('   shouldShowOnboarding=$shouldShowOnboarding');
 
       if (isAuthLoading || isProfileLoading) {
@@ -71,7 +74,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If there's a profile error but NO cached data, stay on loading
       // This prevents redirecting to onboarding when we have an error but valid cached profile
       if (hasProfileError && !hasProfile && isAuthenticated) {
-        debugPrint('   ➡️  Staying on loading (profile error with no cached data)');
+        debugPrint(
+            '   ➡️  Staying on loading (profile error with no cached data)');
         return isOnLoadingPage ? null : '/loading';
       }
 
@@ -84,14 +88,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Trust cached profile data for routing decisions, even if hasError=true
       // Only redirect to onboarding if profile data shows onboarding is not complete
       if (isAuthenticated && hasProfile && !hasCompletedOnboarding) {
-        debugPrint('   ➡️  Redirecting to onboarding (onboarding not complete)');
+        debugPrint(
+            '   ➡️  Redirecting to onboarding (onboarding not complete)');
         return isOnOnboardingPage ? null : '/onboarding';
       }
 
       // If we have a profile with completed onboarding, allow access
       // This works even with hasError=true by trusting cached data
       if (isAuthenticated && hasProfile && hasCompletedOnboarding) {
-        debugPrint('   ✅ Has completed onboarding - allowing navigation (hasError=$hasProfileError)');
+        debugPrint(
+            '   ✅ Has completed onboarding - allowing navigation (hasError=$hasProfileError)');
       }
 
       if (isOnAdminPage && !isAdminUser) {
@@ -99,7 +105,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         return '/feed';
       }
 
-      if (isAuthenticated && hasProfile && hasCompletedOnboarding && (isOnAuthPage || isOnOnboardingPage || isOnLoadingPage)) {
+      if (isAuthenticated &&
+          hasProfile &&
+          hasCompletedOnboarding &&
+          (isOnAuthPage || isOnOnboardingPage || isOnLoadingPage)) {
         debugPrint('   ➡️  Redirecting to feed (authenticated and onboarded)');
         return '/feed';
       }
@@ -130,7 +139,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/legal/:document',
         builder: (context, state) {
           final documentSegment = state.pathParameters['document'];
-          final documentType = legalDocumentTypeFromRouteSegment(documentSegment);
+          final documentType =
+              legalDocumentTypeFromRouteSegment(documentSegment);
           if (documentType == null) {
             return const LegalDocumentUnavailablePage();
           }
@@ -145,10 +155,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/feed',
             builder: (context, state) {
-              final openComments = state.uri.queryParameters['openComments'] == 'true';
+              final openComments =
+                  state.uri.queryParameters['openComments'] == 'true';
               final postId = state.uri.queryParameters['postId'];
               return FeedPage(
-                openCommentsForPost: openComments && postId != null ? postId : null,
+                openCommentsForPost:
+                    openComments && postId != null ? postId : null,
               );
             },
             routes: [
@@ -171,7 +183,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => ChatScreen(
                   conversationId: state.pathParameters['conversationId'] ?? '',
                   otherUserId: state.pathParameters['otherUserId'] ?? '',
-                  otherUserDisplayName: state.uri.queryParameters['displayName'],
+                  otherUserDisplayName:
+                      state.uri.queryParameters['displayName'],
                 ),
               ),
             ],
@@ -181,19 +194,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const BetaFeedbackFormPage(),
           ),
           GoRoute(
-             path: '/profile',
-             builder: (context, state) => const ProfilePage(),
-             routes: [
-               GoRoute(
-                 path: 'edit',
-                 builder: (context, state) => const ProfileEditPage(),
-               ),
-               GoRoute(
-                 path: 'sync-queue',
-                 builder: (context, state) => const SyncQueuePage(),
-               ),
-             ],
-           ),
+            path: '/profile',
+            builder: (context, state) => const ProfilePage(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                builder: (context, state) => const ProfileEditPage(),
+              ),
+              GoRoute(
+                path: 'sync-queue',
+                builder: (context, state) => const SyncQueuePage(),
+              ),
+            ],
+          ),
           GoRoute(
             path: '/users/:userId',
             builder: (context, state) => PublicProfilePage(

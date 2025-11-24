@@ -8,19 +8,16 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../common/widgets/trust_badge.dart';
 import '../../../../core/services/analytics_provider.dart';
 import '../../../comments/data/models/comment.dart';
-import '../../../comments/data/repositories/posts_repository.dart';
 import '../../../comments/presentation/providers/comments_provider.dart';
 import '../../../feed/presentation/widgets/post_card_widget.dart';
 import '../../../messages/data/repositories/direct_messages_repository.dart';
-import '../../../messages/presentation/providers/direct_messages_provider.dart' as dm_provider;
-import '../../domain/models/trust_level_localizations.dart';
 
-final userPostsProvider = StateNotifierProvider.family<UserPostsNotifier, UserPostsState, String>(
+final userPostsProvider =
+    StateNotifierProvider.family<UserPostsNotifier, UserPostsState, String>(
   (ref, userId) => UserPostsNotifier(ref, userId),
 );
 
 class UserPostsState {
-
   const UserPostsState({
     this.posts = const [],
     this.isLoading = false,
@@ -51,14 +48,14 @@ class UserPostsState {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       error: clearError ? null : (error ?? this.error),
-      lastDocument: clearLastDocument ? null : (lastDocument ?? this.lastDocument),
+      lastDocument:
+          clearLastDocument ? null : (lastDocument ?? this.lastDocument),
       hasMore: hasMore ?? this.hasMore,
     );
   }
 }
 
 class UserPostsNotifier extends StateNotifier<UserPostsState> {
-
   UserPostsNotifier(this.ref, this.userId) : super(const UserPostsState());
   final Ref ref;
   final String userId;
@@ -107,7 +104,8 @@ class UserPostsNotifier extends StateNotifier<UserPostsState> {
   }
 }
 
-final blockedStatusProvider = FutureProvider.family<({bool isBlocked, bool hasBlocked}), String>(
+final blockedStatusProvider =
+    FutureProvider.family<({bool isBlocked, bool hasBlocked}), String>(
   (ref, otherUserId) async {
     final currentUserId = ref.watch(authStateProvider).user?.uid;
     if (currentUserId == null) {
@@ -115,15 +113,16 @@ final blockedStatusProvider = FutureProvider.family<({bool isBlocked, bool hasBl
     }
 
     final repository = ref.read(directMessagesRepositoryProvider);
-    final isBlocked = await repository.isUserBlocked(otherUserId, currentUserId);
-    final hasBlocked = await repository.isUserBlocked(currentUserId, otherUserId);
+    final isBlocked =
+        await repository.isUserBlocked(otherUserId, currentUserId);
+    final hasBlocked =
+        await repository.isUserBlocked(currentUserId, otherUserId);
 
     return (isBlocked: isBlocked, hasBlocked: hasBlocked);
   },
 );
 
 class PublicProfilePage extends ConsumerStatefulWidget {
-
   const PublicProfilePage({
     super.key,
     required this.userId,
@@ -142,7 +141,9 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userPostsProvider(widget.userId).notifier).loadPosts(refresh: true);
+      ref
+          .read(userPostsProvider(widget.userId).notifier)
+          .loadPosts(refresh: true);
     });
   }
 
@@ -153,7 +154,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       ref.read(userPostsProvider(widget.userId).notifier).loadPosts();
     }
   }
@@ -227,7 +229,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 64, color: theme.colorScheme.error.withOpacity(0.5)),
+            Icon(icon,
+                size: 64, color: theme.colorScheme.error.withOpacity(0.5)),
             const SizedBox(height: 16),
             Text(
               message,
@@ -240,7 +243,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
     );
   }
 
-  Widget _buildBlockedState(BuildContext context, String title, String subtitle) {
+  Widget _buildBlockedState(
+      BuildContext context, String title, String subtitle) {
     final theme = Theme.of(context);
     return Center(
       child: Padding(
@@ -283,7 +287,9 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        await ref.read(userPostsProvider(widget.userId).notifier).loadPosts(refresh: true);
+        await ref
+            .read(userPostsProvider(widget.userId).notifier)
+            .loadPosts(refresh: true);
       },
       child: CustomScrollView(
         controller: _scrollController,
@@ -293,13 +299,15 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: _buildActionButtons(context, userProfile),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 'Posts',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -368,15 +376,19 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
                         // Navigate to comments
                       },
                       onLike: () async {
-                        final postsRepository = ref.read(postsRepositoryProvider);
+                        final postsRepository =
+                            ref.read(postsRepositoryProvider);
                         if (currentUserId != null) {
-                          await postsRepository.likePost(post.id, currentUserId);
+                          await postsRepository.likePost(
+                              post.id, currentUserId);
                         }
                       },
                       onUnlike: () async {
-                        final postsRepository = ref.read(postsRepositoryProvider);
+                        final postsRepository =
+                            ref.read(postsRepositoryProvider);
                         if (currentUserId != null) {
-                          await postsRepository.unlikePost(post.id, currentUserId);
+                          await postsRepository.unlikePost(
+                              post.id, currentUserId);
                         }
                       },
                       onReport: () {
@@ -391,7 +403,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
                   }
                   return null;
                 },
-                childCount: userPostsState.posts.length + (userPostsState.isLoadingMore ? 1 : 0),
+                childCount: userPostsState.posts.length +
+                    (userPostsState.isLoadingMore ? 1 : 0),
               ),
             ),
         ],
@@ -522,7 +535,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () => _handleMessage(context, userProfile, currentUserId),
+            onPressed: () =>
+                _handleMessage(context, userProfile, currentUserId),
             icon: const Icon(Icons.message_outlined),
             label: const Text('Message'),
           ),
@@ -549,10 +563,12 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
     );
   }
 
-  void _handleMessage(BuildContext context, UserProfile userProfile, String? currentUserId) {
+  void _handleMessage(
+      BuildContext context, UserProfile userProfile, String? currentUserId) {
     if (currentUserId == null) return;
 
-    final conversationId = _generateConversationId(currentUserId, widget.userId);
+    final conversationId =
+        _generateConversationId(currentUserId, widget.userId);
     context.push(
       '/messages/chat/$conversationId/${widget.userId}?displayName=${Uri.encodeComponent(userProfile.nickname)}',
     );
@@ -563,7 +579,8 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
     return '${ids[0]}_${ids[1]}';
   }
 
-  void _handleBlock(BuildContext context, UserProfile userProfile, String? currentUserId) {
+  void _handleBlock(
+      BuildContext context, UserProfile userProfile, String? currentUserId) {
     if (currentUserId == null) return;
 
     showDialog(
@@ -588,7 +605,9 @@ class _PublicProfilePageState extends ConsumerState<PublicProfilePage> {
                   );
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${userProfile.nickname} has been blocked')),
+                  SnackBar(
+                      content:
+                          Text('${userProfile.nickname} has been blocked')),
                 );
                 context.pop();
               }

@@ -11,10 +11,11 @@ class AppTheme {
 
   static ThemeData _buildTheme(AppColorTokens colors) {
     final colorScheme = colors.colorScheme;
-    final textTheme = AppTypography.base;
+    const textTheme = AppTypography.base;
     final isDark = colors.brightness == Brightness.dark;
 
-    Color subtleOnSurface(double opacity) => colors.onSurface.withOpacity(opacity);
+    Color subtleOnSurface(double opacity) =>
+        colors.onSurface.withOpacity(opacity);
 
     return ThemeData(
       useMaterial3: true,
@@ -40,7 +41,8 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        systemOverlayStyle:
+            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         titleTextStyle: textTheme.titleLarge?.copyWith(
           color: colors.onBackground,
           fontWeight: FontWeight.w700,
@@ -49,7 +51,7 @@ class AppTheme {
           color: colors.onBackground,
           size: AppIconSizes.base,
         ),
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(AppRadii.lg),
           ),
@@ -70,10 +72,13 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: colors.surfaceVariant,
-        selectedColor: isDark ? BrandColors.deepPurple : BrandColors.lightPurple,
-        secondarySelectedColor: isDark ? BrandColors.deepPink : BrandColors.lightPink,
+        selectedColor:
+            isDark ? BrandColors.deepPurple : BrandColors.lightPurple,
+        secondarySelectedColor:
+            isDark ? BrandColors.deepPink : BrandColors.lightPink,
         disabledColor: colors.surfaceVariant.withOpacity(0.6),
-        padding: AppSpacing.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        padding: AppSpacing.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         labelStyle: textTheme.labelLarge?.copyWith(color: colors.onSurface),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.full),
@@ -103,7 +108,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadii.md),
           borderSide: const BorderSide(color: BrandColors.error, width: 2),
         ),
-        contentPadding: AppSpacing.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.base),
+        contentPadding: AppSpacing.symmetric(
+            horizontal: AppSpacing.base, vertical: AppSpacing.base),
         hintStyle: textTheme.bodyMedium?.copyWith(
           color: colors.onSurfaceVariant,
           fontWeight: FontWeight.w400,
@@ -118,7 +124,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.full),
           ),
-          padding: AppSpacing.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.base),
+          padding: AppSpacing.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.base),
           textStyle: textTheme.labelLarge?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -144,7 +151,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md),
           ),
-          padding: AppSpacing.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.base),
+          padding: AppSpacing.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.base),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -153,7 +161,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md),
           ),
-          padding: AppSpacing.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.md),
+          padding: AppSpacing.symmetric(
+              horizontal: AppSpacing.base, vertical: AppSpacing.md),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -163,7 +172,8 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md),
           ),
-          padding: AppSpacing.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.base),
+          padding: AppSpacing.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.base),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -176,7 +186,8 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.surface.withOpacity(0.95),
-        selectedItemColor: isDark ? BrandColors.lightPurple : colorScheme.primary,
+        selectedItemColor:
+            isDark ? BrandColors.lightPurple : colorScheme.primary,
         unselectedItemColor: colors.onSurfaceVariant,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
@@ -201,7 +212,9 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colors.surface.withOpacity(0.95),
-        indicatorColor: (isDark ? BrandColors.deepPurple : BrandColors.lightPurple).withOpacity(0.2),
+        indicatorColor:
+            (isDark ? BrandColors.deepPurple : BrandColors.lightPurple)
+                .withOpacity(0.2),
         elevation: 0,
         height: 68,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -238,8 +251,10 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.lg),
         ),
-        titleTextStyle: textTheme.headlineSmall?.copyWith(color: colors.onSurface),
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+        titleTextStyle:
+            textTheme.headlineSmall?.copyWith(color: colors.onSurface),
+        contentTextStyle:
+            textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: colors.onSurface,
@@ -260,7 +275,8 @@ class AppTheme {
       ),
       listTileTheme: ListTileThemeData(
         dense: false,
-        contentPadding: AppSpacing.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+        contentPadding: AppSpacing.symmetric(
+            horizontal: AppSpacing.base, vertical: AppSpacing.sm),
         iconColor: colors.onSurfaceVariant,
         textColor: colors.onSurface,
         shape: RoundedRectangleBorder(
@@ -296,7 +312,7 @@ class AppTheme {
           }
           return subtleOnSurface(0.25);
         }),
-        radius: Radius.circular(AppRadii.xl),
+        radius: const Radius.circular(AppRadii.xl),
         thickness: WidgetStateProperty.all(6),
         interactive: true,
       ),
@@ -332,7 +348,8 @@ class _AppShadowExtension extends ThemeExtension<_AppShadowExtension> {
   }
 
   @override
-  _AppShadowExtension lerp(ThemeExtension<_AppShadowExtension>? other, double t) {
+  _AppShadowExtension lerp(
+      ThemeExtension<_AppShadowExtension>? other, double t) {
     if (other is! _AppShadowExtension) {
       return this;
     }

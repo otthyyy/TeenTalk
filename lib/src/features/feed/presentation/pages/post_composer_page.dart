@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint, debugPrintStack;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, debugPrint, debugPrintStack;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:teen_talk_app/src/features/comments/data/repositories/posts_repository.dart';
 import 'package:teen_talk_app/src/features/auth/presentation/providers/auth_provider.dart';
 import 'package:teen_talk_app/src/features/profile/presentation/providers/user_profile_provider.dart';
 import 'package:teen_talk_app/src/core/providers/rate_limit_provider.dart';
@@ -39,7 +39,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
   bool _isUploading = false;
   String _selectedSection = 'spotted';
   bool _hasWarnedNearLimit = false;
-  
+
   final List<Map<String, String>> _sections = [
     {'value': 'spotted', 'label': 'Spotted'},
     {'value': 'general', 'label': 'General'},
@@ -80,7 +80,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       } else {
         // Mobile/Desktop platform: use File
         final file = File(pickedFile.path);
-        
+
         // Verify file exists
         if (!await file.exists()) {
           throw Exception('Selected image file does not exist');
@@ -109,11 +109,13 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         ),
       );
     } catch (e, stackTrace) {
-      _logger.e('Unexpected error picking image', error: e, stackTrace: stackTrace);
+      _logger.e('Unexpected error picking image',
+          error: e, stackTrace: stackTrace);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to select image. Please check app permissions.'),
+          content:
+              Text('Failed to select image. Please check app permissions.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -145,8 +147,10 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             ),
             if (_selectedImageFile != null || _selectedImageBytes != null)
               ListTile(
-                leading: const Icon(TTIcons.delete, color: Colors.red, size: TTIcons.sizeDefault),
-                title: const Text('Remove Image', style: TextStyle(color: Colors.red)),
+                leading: const Icon(TTIcons.delete,
+                    color: Colors.red, size: TTIcons.sizeDefault),
+                title: const Text('Remove Image',
+                    style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.of(context).pop();
                   setState(() {
@@ -171,7 +175,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     final rateLimitService = ref.read(rateLimitServiceProvider);
     final analyticsService = ref.read(analyticsServiceProvider);
     final offlineHelper = ref.read(offlineSubmissionHelperProvider);
-    
+
     if (authState.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You must be logged in to create a post')),
@@ -196,7 +200,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
           const Duration(hours: 1),
         ),
       );
-      
+
       if (mounted) {
         RateLimitDialog.show(
           context,
@@ -215,7 +219,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Offline posts with images are not supported on web.'),
+              content:
+                  Text('Offline posts with images are not supported on web.'),
             ),
           );
         }
@@ -237,7 +242,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         if (queuedId != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Post queued. We'll publish it when you're back online."),
+              content: Text(
+                  "Post queued. We'll publish it when you're back online."),
             ),
           );
           Navigator.of(context).pop(true);
@@ -306,7 +312,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.userMessage ?? 'Failed to upload image. Please try again.'),
+          content: Text(
+              e.userMessage ?? 'Failed to upload image. Please try again.'),
           backgroundColor: theme.colorScheme.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -325,7 +332,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.userMessage ?? 'Failed to create post. Please try again.'),
+          content:
+              Text(e.userMessage ?? 'Failed to create post. Please try again.'),
           backgroundColor: theme.colorScheme.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -382,17 +390,23 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('• Be respectful and kind to others', style: TextStyle(fontSize: 14)),
+              Text('• Be respectful and kind to others',
+                  style: TextStyle(fontSize: 14)),
               SizedBox(height: 8),
-              Text('• No inappropriate language or content', style: TextStyle(fontSize: 14)),
+              Text('• No inappropriate language or content',
+                  style: TextStyle(fontSize: 14)),
               SizedBox(height: 8),
-              Text('• Keep posts relevant and constructive', style: TextStyle(fontSize: 14)),
+              Text('• Keep posts relevant and constructive',
+                  style: TextStyle(fontSize: 14)),
               SizedBox(height: 8),
-              Text('• Respect privacy - no sharing personal info', style: TextStyle(fontSize: 14)),
+              Text('• Respect privacy - no sharing personal info',
+                  style: TextStyle(fontSize: 14)),
               SizedBox(height: 8),
-              Text('• Images must be appropriate and under 5MB', style: TextStyle(fontSize: 14)),
+              Text('• Images must be appropriate and under 5MB',
+                  style: TextStyle(fontSize: 14)),
               SizedBox(height: 8),
-              Text('• Posts are subject to moderation', style: TextStyle(fontSize: 14)),
+              Text('• Posts are subject to moderation',
+                  style: TextStyle(fontSize: 14)),
             ],
           ),
         ),
@@ -411,7 +425,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final rateLimitStatus = ref.watch(postRateLimitStatusProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Post'),
@@ -439,16 +453,16 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 ref.read(analyticsServiceProvider).logRateLimitWarning(
-                  contentType: 'post',
-                  remainingSubmissions: math.min(
-                    status.remainingPerMinute,
-                    status.remainingPerHour,
-                  ),
-                );
+                      contentType: 'post',
+                      remainingSubmissions: math.min(
+                        status.remainingPerMinute,
+                        status.remainingPerHour,
+                      ),
+                    );
                 setState(() => _hasWarnedNearLimit = true);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n?.rateLimitNearLimitWarning ?? 
+                    content: Text(l10n?.rateLimitNearLimitWarning ??
                         'Approaching posting limit'),
                     backgroundColor: theme.colorScheme.tertiary,
                     duration: const Duration(seconds: 3),
@@ -458,17 +472,21 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
             });
           }
 
-          final config = ref.read(rateLimitServiceProvider).getConfig(ContentType.post);
+          final config =
+              ref.read(rateLimitServiceProvider).getConfig(ContentType.post);
 
           return Form(
             key: _formKey,
             child: Column(
               children: [
-                if (!status.canSubmit) _buildCooldownBanner(status, theme, l10n),
-                if (status.canSubmit && status.isNearLimit) 
+                if (!status.canSubmit)
+                  _buildCooldownBanner(status, theme, l10n),
+                if (status.canSubmit && status.isNearLimit)
                   _buildWarningBanner(status, theme, l10n),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing, vertical: DesignTokens.spacingMd),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.spacing,
+                      vertical: DesignTokens.spacingMd),
                   child: _buildRateLimitProgress(status, config, theme, l10n),
                 ),
                 // Section selection
@@ -486,9 +504,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: _sections.map((section) {
-                            final isSelected = section['value'] == _selectedSection;
+                            final isSelected =
+                                section['value'] == _selectedSection;
                             return Padding(
-                              padding: const EdgeInsets.only(right: DesignTokens.spacingSm),
+                              padding: const EdgeInsets.only(
+                                  right: DesignTokens.spacingSm),
                               child: FilterChip(
                                 label: Text(section['label']!),
                                 selected: isSelected,
@@ -507,7 +527,7 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                     ],
                   ),
                 ),
-                
+
                 // Content input
                 Expanded(
                   child: Padding(
@@ -528,7 +548,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                       },
                       decoration: InputDecoration(
                         hintText: 'What\'s on your mind?',
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                        hintStyle: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -538,11 +559,12 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                     ),
                   ),
                 ),
-                
+
                 // Image preview
                 if (_selectedImageFile != null || _selectedImageBytes != null)
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.spacing),
                     padding: const EdgeInsets.all(DesignTokens.spacingSm),
                     decoration: BoxDecoration(
                       border: Border.all(color: theme.colorScheme.outline),
@@ -571,14 +593,16 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                             left: 12,
                             bottom: 12,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.black54,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 _selectedImageName!,
-                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 12),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -596,18 +620,20 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                                       _selectedImageName = null;
                                     });
                                   },
-                            icon: const Icon(TTIcons.close, color: Colors.white, size: TTIcons.sizeDefault),
+                            icon: const Icon(TTIcons.close,
+                                color: Colors.white, size: TTIcons.sizeDefault),
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.black54,
                               disabledBackgroundColor: Colors.black26,
-                              minimumSize: const Size(TTIcons.minTapTarget, TTIcons.minTapTarget),
+                              minimumSize: const Size(
+                                  TTIcons.minTapTarget, TTIcons.minTapTarget),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                
+
                 // Anonymous toggle and image button
                 Container(
                   padding: const EdgeInsets.all(DesignTokens.spacing),
@@ -632,18 +658,20 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                       ),
                       IconButton.outlined(
                         onPressed: _isUploading ? null : _showImagePicker,
-                        icon: const Icon(TTIcons.image, size: TTIcons.sizeDefault),
+                        icon: const Icon(TTIcons.image,
+                            size: TTIcons.sizeDefault),
                       ),
                     ],
                   ),
                 ),
-                
+
                 // Submit button
                 Container(
                   padding: const EdgeInsets.all(16),
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: _isUploading || !status.canSubmit ? null : _submitPost,
+                    onPressed:
+                        _isUploading || !status.canSubmit ? null : _submitPost,
                     child: _isUploading
                         ? const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -651,7 +679,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                               SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               ),
                               SizedBox(width: 8),
                               Text('Posting...'),
@@ -669,9 +698,11 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
                 ),
                 if (_isUploading)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacing),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.spacing),
                     child: LinearProgressIndicator(
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         theme.colorScheme.primary,
                       ),
@@ -690,7 +721,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     );
   }
 
-  Widget _buildCooldownBanner(RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
+  Widget _buildCooldownBanner(
+      RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
@@ -735,7 +767,8 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
     );
   }
 
-  Widget _buildWarningBanner(RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
+  Widget _buildWarningBanner(
+      RateLimitStatus status, ThemeData theme, AppLocalizations? l10n) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -798,7 +831,9 @@ class _PostComposerPageState extends ConsumerState<PostComposerPage> {
         LinearProgressIndicator(
           value: math.min(minuteProgress, hourProgress).clamp(0, 1),
           backgroundColor: theme.colorScheme.surfaceContainerHighest,
-          color: status.isNearLimit ? theme.colorScheme.tertiary : theme.colorScheme.primary,
+          color: status.isNearLimit
+              ? theme.colorScheme.tertiary
+              : theme.colorScheme.primary,
         ),
       ],
     );

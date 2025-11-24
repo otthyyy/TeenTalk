@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 
 import '../models/comment.dart';
@@ -15,21 +13,20 @@ import '../../../feed/data/services/feed_cache_service.dart';
 import '../../../../core/exceptions/post_exceptions.dart';
 
 /// Repository for managing posts in Firestore.
-/// 
+///
 /// IMPORTANT: Ensure Firestore security rules allow:
 /// - Read access to posts collection for authenticated users
 /// - Write access to posts collection for authenticated users
 /// - Update access to likedBy and likeCount fields for authenticated users
 /// - Transaction access for atomic updates on like/unlike operations
-/// 
+///
 /// Example security rule for likes:
 /// ```
-/// allow update: if request.auth != null 
+/// allow update: if request.auth != null
 ///   && request.resource.data.keys().hasOnly(['likedBy', 'likeCount', 'updatedAt'])
 ///   && request.auth.uid in request.resource.data.likedBy;
 /// ```
 class PostsRepository {
-
   PostsRepository({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
@@ -41,7 +38,7 @@ class PostsRepository {
   final FirebaseStorage _storage;
   final Logger _logger;
   final FeedCacheService _cacheService = FeedCacheService();
-  
+
   static const String _postsCollection = 'posts';
   static const String _imagesFolder = 'post_images';
   static const int _maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
@@ -58,12 +55,13 @@ class PostsRepository {
 
   Map<String, dynamic> getCacheMetrics() => _cacheService.getMetrics();
 
-  Future<({
-    List<Post> posts,
-    DocumentSnapshot? lastDocument,
-    bool hasMore,
-    String? paginationToken,
-  })> getPosts({
+  Future<
+      ({
+        List<Post> posts,
+        DocumentSnapshot? lastDocument,
+        bool hasMore,
+        String? paginationToken,
+      })> getPosts({
     DocumentSnapshot? lastDocument,
     int limit = 20,
     String? section,
@@ -80,7 +78,8 @@ class PostsRepository {
         sortField: sortOption.primaryOrderField,
       );
       if (cached != null) {
-        _logger.d('Feed cache hit for section=$section sort=${sortOption.name}');
+        _logger
+            .d('Feed cache hit for section=$section sort=${sortOption.name}');
         return (
           posts: cached.posts,
           lastDocument: cached.lastDocument,
@@ -129,10 +128,13 @@ class PostsRepository {
       debugPrint('🔥 FIRESTORE QUERY ERROR: ${e.code}');
       debugPrint('   Message: ${e.message}');
       debugPrintStack(stackTrace: stackTrace);
-      
-      if (e.code == 'failed-precondition' && e.message?.contains('index') == true) {
-        _logger.e('Missing Firestore index. Query: isModerated=false, section=$section, school=$school, sort=${sortOption.name}');
-        throw Exception('Database index required for this query. Please check Firebase Console and deploy indexes.');
+
+      if (e.code == 'failed-precondition' &&
+          e.message?.contains('index') == true) {
+        _logger.e(
+            'Missing Firestore index. Query: isModerated=false, section=$section, school=$school, sort=${sortOption.name}');
+        throw Exception(
+            'Database index required for this query. Please check Firebase Console and deploy indexes.');
       }
       rethrow;
     }
@@ -145,7 +147,8 @@ class PostsRepository {
       });
     }).toList();
 
-    final nextLastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : lastDocument;
+    final nextLastDocument =
+        snapshot.docs.isNotEmpty ? snapshot.docs.last : lastDocument;
     final hasMore = snapshot.docs.length == limit;
     final paginationToken = posts.isNotEmpty
         ? '${posts.last.createdAt.toIso8601String()}_${posts.last.id}'
@@ -172,10 +175,8 @@ class PostsRepository {
   }
 
   Future<Post?> getPostById(String postId) async {
-    final DocumentSnapshot doc = await _firestore
-        .collection(_postsCollection)
-        .doc(postId)
-        .get();
+    final DocumentSnapshot doc =
+        await _firestore.collection(_postsCollection).doc(postId).get();
 
     if (!doc.exists) return null;
 
@@ -204,7 +205,8 @@ class PostsRepository {
         try {
           fileSize = await imageFile.length();
         } on FileSystemException catch (e) {
-          _logger.e('[PostsRepository] Failed to read image file size', error: e);
+          _logger.e('[PostsRepository] Failed to read image file size',
+              error: e);
           throw const ImageValidationException(
             'Failed to read selected image. Please select a different file.',
           );
@@ -226,7 +228,8 @@ class PostsRepository {
           : 'post_${timestamp}_${imageName ?? 'image.jpg'}';
 
       final ref = _storage.ref().child('$_imagesFolder/$fileName');
-      final metadata = SettableMetadata(contentType: _inferImageContentType(fileName));
+      final metadata =
+          SettableMetadata(contentType: _inferImageContentType(fileName));
 
       UploadTask uploadTask;
       try {
@@ -244,7 +247,8 @@ class PostsRepository {
       try {
         final snapshot = await uploadTask;
         final downloadUrl = await snapshot.ref.getDownloadURL();
-        _logger.i('[PostsRepository] Image upload completed downloadUrl=$downloadUrl');
+        _logger.i(
+            '[PostsRepository] Image upload completed downloadUrl=$downloadUrl');
         return downloadUrl;
       } on FirebaseException catch (e, stackTrace) {
         _logger.e('[PostsRepository] Storage error during upload',
@@ -279,13 +283,15 @@ class PostsRepository {
     if (content.trim().length < _minContentLength) {
       throw const PostValidationException(
         'Post content must be at least $_minContentLength characters',
-        userMessage: 'Your post must be at least $_minContentLength character long.',
+        userMessage:
+            'Your post must be at least $_minContentLength character long.',
       );
     }
     if (content.length > _maxContentLength) {
       throw const PostValidationException(
         'Post content cannot exceed $_maxContentLength characters',
-        userMessage: 'Your post is too long. Maximum is $_maxContentLength characters.',
+        userMessage:
+            'Your post is too long. Maximum is $_maxContentLength characters.',
       );
     }
 
@@ -296,7 +302,8 @@ class PostsRepository {
       if (lowerContent.contains(word)) {
         throw const PostValidationException(
           'Post contains inappropriate content',
-          userMessage: 'Your post contains content that violates our guidelines.',
+          userMessage:
+              'Your post contains content that violates our guidelines.',
         );
       }
     }
@@ -313,7 +320,8 @@ class PostsRepository {
     required String section,
     String? school,
   }) async {
-    _logger.i('[PostsRepository] createPost start author=$authorId section=$section');
+    _logger.i(
+        '[PostsRepository] createPost start author=$authorId section=$section');
     try {
       if (section.trim().isEmpty) {
         throw const PostValidationException(
@@ -321,7 +329,7 @@ class PostsRepository {
           userMessage: 'Please select a section for your post.',
         );
       }
-      
+
       await validatePostContent(content);
 
       final now = DateTime.now();
@@ -410,7 +418,8 @@ class PostsRepository {
     final now = DateTime.now();
     final mentionedUserIds = _extractMentionedUserIds(content);
 
-    final postDoc = await _firestore.collection(_postsCollection).doc(postId).get();
+    final postDoc =
+        await _firestore.collection(_postsCollection).doc(postId).get();
     if (!postDoc.exists) {
       throw Exception('Post not found');
     }
@@ -468,14 +477,16 @@ class PostsRepository {
         },
       );
     } catch (error, stackTrace) {
-      _logger.e('Failed to like post $postId', error: error, stackTrace: stackTrace);
+      _logger.e('Failed to like post $postId',
+          error: error, stackTrace: stackTrace);
       debugPrint('likePost error for $postId: $error');
       debugPrintStack(stackTrace: stackTrace);
       throw Exception(
         _mapLikeErrorMessage(
           error,
           fallbackMessage: 'We couldn\'t register your like. Please try again.',
-          permissionDeniedMessage: 'You don\'t have permission to like this post.',
+          permissionDeniedMessage:
+              'You don\'t have permission to like this post.',
         ),
       );
     }
@@ -521,14 +532,16 @@ class PostsRepository {
         },
       );
     } catch (error, stackTrace) {
-      _logger.e('Failed to unlike post $postId', error: error, stackTrace: stackTrace);
+      _logger.e('Failed to unlike post $postId',
+          error: error, stackTrace: stackTrace);
       debugPrint('unlikePost error for $postId: $error');
       debugPrintStack(stackTrace: stackTrace);
       throw Exception(
         _mapLikeErrorMessage(
           error,
           fallbackMessage: 'We couldn\'t update your like. Please try again.',
-          permissionDeniedMessage: 'You don\'t have permission to update this like.',
+          permissionDeniedMessage:
+              'You don\'t have permission to update this like.',
         ),
       );
     }
@@ -540,7 +553,7 @@ class PostsRepository {
 
     await _firestore.runTransaction((transaction) async {
       final postDoc = await transaction.get(postRef);
-      
+
       if (!postDoc.exists) return;
 
       final postData = postDoc.data() as Map<String, dynamic>;
@@ -567,12 +580,13 @@ class PostsRepository {
 
   Future<void> _updateAnonymousPostsCount(String userId) async {
     final userRef = _firestore.collection('users').doc(userId);
-    
+
     await _firestore.runTransaction((transaction) async {
       final userDoc = await transaction.get(userRef);
-      
+
       if (userDoc.exists) {
-        final currentCount = userDoc.data()?['anonymousPostsCount'] as int? ?? 0;
+        final currentCount =
+            userDoc.data()?['anonymousPostsCount'] as int? ?? 0;
         transaction.update(userRef, {
           'anonymousPostsCount': currentCount + 1,
           'updatedAt': DateTime.now().toIso8601String(),
@@ -588,14 +602,15 @@ class PostsRepository {
     });
   }
 
-  Future<void> _triggerModerationPipeline(String postId, String content, String? imageUrl) async {
+  Future<void> _triggerModerationPipeline(
+      String postId, String content, String? imageUrl) async {
     try {
       // Placeholder for Cloud Function trigger or moderation pipeline
       // In a real implementation, this would:
       // 1. Call a Cloud Function for content analysis
       // 2. Queue the post for moderation review
       // 3. Apply AI-based content filtering
-      
+
       // Store moderation request in Firestore for processing
       await _firestore.collection('moderationQueue').add({
         'postId': postId,
@@ -697,7 +712,8 @@ class PostsRepository {
     if (errorMessage.contains('post no longer exists')) {
       return 'This post no longer exists.';
     }
-    if (errorMessage.contains('network') || errorMessage.contains('connection')) {
+    if (errorMessage.contains('network') ||
+        errorMessage.contains('connection')) {
       return 'Network connection lost. Please check your connection and try again.';
     }
 
@@ -733,7 +749,7 @@ class PostsRepository {
     }
 
     final QuerySnapshot snapshot = await query.get();
-    
+
     final posts = snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Post.fromJson({

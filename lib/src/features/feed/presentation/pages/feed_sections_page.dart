@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../profile/domain/models/user_profile.dart';
 import '../../../profile/presentation/providers/user_profile_provider.dart';
 import '../../../profile/presentation/widgets/incomplete_profile_banner.dart';
 import '../../../comments/data/models/comment.dart';
@@ -12,7 +11,6 @@ import '../../../notifications/presentation/widgets/notification_badge.dart';
 import '../../../../core/providers/image_cache_provider.dart';
 import '../../../../core/layout/bottom_nav_metrics.dart';
 import '../../../../core/motion/motion_presets.dart';
-import '../../../../core/theme/design_tokens.dart';
 import '../../../tutorial/presentation/providers/tutorial_provider.dart';
 import '../../../tutorial/presentation/widgets/app_tutorial.dart';
 import '../providers/feed_provider.dart';
@@ -38,7 +36,6 @@ enum FeedSection {
 }
 
 class FeedSectionsPage extends ConsumerStatefulWidget {
-  
   const FeedSectionsPage({
     super.key,
     this.openCommentsForPost,
@@ -74,14 +71,14 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
             refresh: true,
             section: _selectedSection.value,
           );
-      
-      if (widget.openCommentsForPost != null && 
+
+      if (widget.openCommentsForPost != null &&
           _lastHandledDeepLinkPostId != widget.openCommentsForPost) {
         _handleDeepLinkToPost(widget.openCommentsForPost!);
       }
     });
   }
-  
+
   @override
   void didUpdateWidget(covariant FeedSectionsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -93,22 +90,23 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
       });
     }
   }
-  
+
   Future<void> _handleDeepLinkToPost(String postId) async {
     if (_isProcessingDeepLink) return;
-    
+
     setState(() {
       _isProcessingDeepLink = true;
       _lastHandledDeepLinkPostId = postId;
 
       _checkAndShowTutorial();
     });
-    
+
     try {
-      final result = await ref.read(singlePostWithSchoolCheckProvider(postId).future);
-      
+      final result =
+          await ref.read(singlePostWithSchoolCheckProvider(postId).future);
+
       if (!mounted) return;
-      
+
       if (result.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -124,7 +122,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
         );
         return;
       }
-      
+
       if (result.post != null) {
         setState(() {
           _selectedPostId = postId;
@@ -156,13 +154,14 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
     if (shouldShowTutorial) {
       Future.delayed(const Duration(milliseconds: 1500), () {
         if (!mounted || _tutorialActive) return;
-        
+
         if (_tutorialCheckAttempts < 3 && !_areKeysRendered()) {
           _tutorialCheckAttempts++;
-          Future.delayed(const Duration(milliseconds: 500), _checkAndShowTutorial);
+          Future.delayed(
+              const Duration(milliseconds: 500), _checkAndShowTutorial);
           return;
         }
-        
+
         _showTutorial();
       });
     }
@@ -179,7 +178,7 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
   void _showTutorial() {
     if (!mounted || _tutorialActive) return;
     setState(() => _tutorialActive = true);
-    
+
     final tutorial = AppTutorial(
       context: context,
       targets: TutorialTargets(
@@ -226,7 +225,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
   }
 
   void _prefetchUpcomingImages() {
-    final postsState = ref.read(schoolAwareFeedProvider(_selectedSection.value));
+    final postsState =
+        ref.read(schoolAwareFeedProvider(_selectedSection.value));
     if (postsState.posts.isEmpty) return;
 
     final scrollOffset = _scrollController.offset;
@@ -301,7 +301,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
     final provider = schoolAwareFeedProvider(_selectedSection.value);
 
     ref.listen<FeedState>(provider, (previous, next) {
-      if (next.error != null && next.error!.isNotEmpty && previous?.error != next.error) {
+      if (next.error != null &&
+          next.error!.isNotEmpty &&
+          previous?.error != next.error) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -339,7 +341,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
   }
 
   Widget _buildFeedView(ThemeData theme) {
-    final postsState = ref.watch(schoolAwareFeedProvider(_selectedSection.value));
+    final postsState =
+        ref.watch(schoolAwareFeedProvider(_selectedSection.value));
     final authState = ref.watch(authStateProvider);
     final userProfile = ref.watch(userProfileProvider).value;
 
@@ -360,112 +363,113 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
-          SliverAppBar(
-            expandedHeight: 280,
-            pinned: true,
-            stretch: true,
-            automaticallyImplyLeading: false,
-            backgroundColor: theme.colorScheme.surface,
-            flexibleSpace: FlexibleSpaceBar(
-              background: AnimatedHeader(
-                userProfile: userProfile,
-                sortOption: postsState.sortOption,
-              ),
-              collapseMode: CollapseMode.parallax,
-            ),
-            actions: [
-              Semantics(
-                label: 'Cerca nel feed',
-                button: true,
-                child: IconButton(
-                  key: _tutorialAnchors.searchKey,
-                  icon: const Icon(Icons.search),
-                  tooltip: 'Cerca',
-                  onPressed: () => _openSearch(postsState.posts),
+            SliverAppBar(
+              expandedHeight: 280,
+              pinned: true,
+              stretch: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: theme.colorScheme.surface,
+              flexibleSpace: FlexibleSpaceBar(
+                background: AnimatedHeader(
+                  userProfile: userProfile,
+                  sortOption: postsState.sortOption,
                 ),
+                collapseMode: CollapseMode.parallax,
               ),
-              NotificationBadge(
-                onTap: () {
-                  context.push('/notifications');
-                },
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: OfflineBanner(
-              lastSyncedAt: postsState.lastSyncedAt,
+              actions: [
+                Semantics(
+                  label: 'Cerca nel feed',
+                  button: true,
+                  child: IconButton(
+                    key: _tutorialAnchors.searchKey,
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Cerca',
+                    onPressed: () => _openSearch(postsState.posts),
+                  ),
+                ),
+                NotificationBadge(
+                  onTap: () {
+                    context.push('/notifications');
+                  },
+                ),
+              ],
             ),
-          ),
-          if (userProfile != null && !userProfile.isProfileComplete)
             SliverToBoxAdapter(
-              child: IncompleteProfileBanner(profile: userProfile),
-            ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Semantics(
-                label: 'Navigazione tra le sezioni del feed',
-                child: Container(
-                  key: _tutorialAnchors.feedKey,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: SegmentedControl<FeedSection>(
-                    values: FeedSection.values,
-                    selectedValue: _selectedSection,
-                    onChanged: _onSectionChanged,
-                    labelBuilder: (section) => section.label,
-                  ),
-                ),
+              child: OfflineBanner(
+                lastSyncedAt: postsState.lastSyncedAt,
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Sort by',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+            if (userProfile != null && !userProfile.isProfileComplete)
+              SliverToBoxAdapter(
+                child: IncompleteProfileBanner(profile: userProfile),
+              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Semantics(
+                  label: 'Navigazione tra le sezioni del feed',
+                  child: Container(
+                    key: _tutorialAnchors.feedKey,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: SegmentedControl<FeedSection>(
+                      values: FeedSection.values,
+                      selectedValue: _selectedSection,
+                      onChanged: _onSectionChanged,
+                      labelBuilder: (section) => section.label,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  FeedFilterChips(
-                    selectedOption: postsState.sortOption,
-                    onOptionSelected: _onSortOptionSelected,
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: _buildSafetyBanner(theme),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TrendingPostsSection(
-                section: _selectedSection.value,
-                onPostSelected: (post) {
-                  if (authState.user == null) {
-                    _showAuthRequiredDialog();
-                    return;
-                  }
-                  setState(() {
-                    _selectedPostId = post.id;
-                    _showComments = true;
-                  });
-                },
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sort by',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    FeedFilterChips(
+                      selectedOption: postsState.sortOption,
+                      onOptionSelected: _onSortOptionSelected,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (postsState.isLoading && postsState.posts.isEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: _buildSafetyBanner(theme),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TrendingPostsSection(
+                  section: _selectedSection.value,
+                  onPostSelected: (post) {
+                    if (authState.user == null) {
+                      _showAuthRequiredDialog();
+                      return;
+                    }
+                    setState(() {
+                      _selectedPostId = post.id;
+                      _showComments = true;
+                    });
+                  },
+                ),
+              ),
+            ),
+            if (postsState.isLoading && postsState.posts.isEmpty)
               const SliverToBoxAdapter(
                 child: SkeletonLoader(),
               )
@@ -520,8 +524,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
                           return;
                         }
                         ref
-                            .read(schoolAwareFeedProvider(_selectedSection.value)
-                                .notifier)
+                            .read(
+                                schoolAwareFeedProvider(_selectedSection.value)
+                                    .notifier)
                             .likePost(
                               post.id,
                               authState.user!.uid,
@@ -533,8 +538,9 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
                           return;
                         }
                         ref
-                            .read(schoolAwareFeedProvider(_selectedSection.value)
-                                .notifier)
+                            .read(
+                                schoolAwareFeedProvider(_selectedSection.value)
+                                    .notifier)
                             .unlikePost(
                               post.id,
                               authState.user!.uid,
@@ -545,19 +551,19 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
                       },
                     ).staggeredListItem(index);
                   },
-                  childCount:
-                      postsState.posts.length + (postsState.isLoadingMore ? 1 : 0),
+                  childCount: postsState.posts.length +
+                      (postsState.isLoadingMore ? 1 : 0),
                 ),
               ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: context.scrollPaddingAboveBottomNav(extra: 36),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: context.scrollPaddingAboveBottomNav(extra: 36),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _buildSafetyBanner(ThemeData theme) {
@@ -654,7 +660,8 @@ class _FeedSectionsPageState extends ConsumerState<FeedSectionsPage> {
             ElevatedButton(
               onPressed: () {
                 ref
-                    .read(schoolAwareFeedProvider(_selectedSection.value).notifier)
+                    .read(schoolAwareFeedProvider(_selectedSection.value)
+                        .notifier)
                     .loadPosts(
                       refresh: true,
                       section: _selectedSection.value,

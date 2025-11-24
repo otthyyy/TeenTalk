@@ -1,7 +1,4 @@
-import '../../data/models/auth_user.dart';
-
 class AuthFormState {
-
   const AuthFormState({
     this.email = '',
     this.password = '',
@@ -53,7 +50,6 @@ class AuthFormState {
 }
 
 class ConsentState {
-
   const ConsentState({
     this.gdprConsent = false,
     this.termsConsent = false,
